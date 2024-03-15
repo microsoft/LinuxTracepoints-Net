@@ -53,7 +53,7 @@ namespace TypesTest
 
                 var tracepointName = Encoding.UTF8.GetString(bytes, nameStart, nameEnd - nameStart);
                 var eventStart = nameEnd + 1;
-                if (!e.StartEvent(tracepointName, new ReadOnlyMemory<byte>(bytes, eventStart, pos - eventStart)))
+                if (!e.StartEvent(tracepointName, new ArraySegment<byte>(bytes, eventStart, pos - eventStart)))
                 {
                     this.output.Write("Pos {0}: TryStartEvent error {1}.", eventStart, e.LastError);
                 }
@@ -139,7 +139,7 @@ namespace TypesTest
                     comma = false;
 
                     WriteJsonItemBegin(comma, "provider");
-                    this.output.Write("\"{0}\"", ei.ProviderName);
+                    this.output.Write("\"{0}\"", ei.ProviderName.ToString());
                     comma = true;
 
                     WriteJsonItemBegin(comma, "event");
@@ -149,7 +149,7 @@ namespace TypesTest
                     if (!options.IsEmpty)
                     {
                         WriteJsonItemBegin(comma, "options");
-                        this.output.Write("\"{0}\"", options);
+                        this.output.Write("\"{0}\"", options.ToString());
                     }
 
                     if (ei.Header.Id != 0)
@@ -248,10 +248,10 @@ namespace TypesTest
                             }
                         }
 
-                        if (item.ValueBytes.Length != 0)
+                        if (item.ValueBytes.Count != 0)
                         {
                             WriteJsonItemBegin(comma, "BadValueBytes");
-                            this.output.Write(item.ValueBytes.Length);
+                            this.output.Write(item.ValueBytes.Count);
                             comma = true;
                         }
 

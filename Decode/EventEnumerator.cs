@@ -66,7 +66,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         private ushort m_eventNameSize; // Name starts at m_buf[m_metaBegin]
         private int m_dataBegin; // Relative to m_buf
         private int m_dataEnd;
-        private ReadOnlyMemory<byte> m_buf = default;
+        private byte[] m_buf = Array.Empty<byte>();
         private string m_tracepointName = "";
 
         // Values change during enumeration:
@@ -156,7 +156,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <returns>Returns false for failure. Check LastError for details.</returns>
         public bool StartEvent(
             string tracepointName,
-            ReadOnlyMemory<byte> eventData,
+            ArraySegment<byte> eventData,
             int moveNextLimit = MoveNextLimitDefault)
         {
             // .NET decoder does not currently support big-endian host or big-endian events.
@@ -172,9 +172,9 @@ namespace Microsoft.LinuxTracepoints.Decode
             const EventHeaderFlags KnownFlags = (
                 EventHeaderFlags.Pointer64 | EventHeaderFlags.LittleEndian | EventHeaderFlags.Extension);
 
-            var eventSpan = eventData.Span;
-            var eventPos = 0;
-            var eventEnd = eventData.Length;
+            var eventBuf = eventData.Array;
+            var eventPos = eventData.Offset;
+            var eventEnd = eventPos + eventData.Count;
 
             if (eventEnd - eventPos < SizeofEventHeader ||
                 tracepointName.Length >= EventHeaderTracepointNameMax)
@@ -185,17 +185,17 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             // Get event header and validate it.
 
-            m_header.Flags = (EventHeaderFlags)eventSpan[eventPos];
+            m_header.Flags = (EventHeaderFlags)eventBuf[eventPos];
             eventPos += 1;
-            m_header.Version = eventSpan[eventPos];
+            m_header.Version = eventBuf[eventPos];
             eventPos += 1;
-            m_header.Id = BitConverter.ToUInt16(eventSpan.Slice(eventPos));
+            m_header.Id = BitConverter.ToUInt16(eventBuf, eventPos);
             eventPos += 2;
-            m_header.Tag = BitConverter.ToUInt16(eventSpan.Slice(eventPos));
+            m_header.Tag = BitConverter.ToUInt16(eventBuf, eventPos);
             eventPos += 2;
-            m_header.OpcodeByte = eventSpan[eventPos];
+            m_header.OpcodeByte = eventBuf[eventPos];
             eventPos += 1;
-            m_header.LevelByte = eventSpan[eventPos];
+            m_header.LevelByte = eventBuf[eventPos];
             eventPos += 1;
 
             if (m_header.Flags != (m_header.Flags & KnownFlags) ||
@@ -280,9 +280,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                         return SetNoneState(EventEnumeratorError.InvalidData);
                     }
 
-                    ext.Size = BitConverter.ToUInt16(eventSpan.Slice(eventPos));
+                    ext.Size = BitConverter.ToUInt16(eventBuf, eventPos);
                     eventPos += 2;
-                    ext.Kind = (EventHeaderExtensionKind)BitConverter.ToUInt16(eventSpan.Slice(eventPos));
+                    ext.Kind = (EventHeaderExtensionKind)BitConverter.ToUInt16(eventBuf, eventPos);
                     eventPos += 2;
 
                     if (eventEnd - eventPos < ext.Size)
@@ -333,17 +333,17 @@ namespace Microsoft.LinuxTracepoints.Decode
                 return SetNoneState(EventEnumeratorError.NotSupported);
             }
 
-            int eventNameEndPos = eventSpan.Slice(m_metaBegin, m_metaEnd - m_metaBegin).IndexOf((byte)0);;
+            int eventNameEndPos = Array.IndexOf<byte>(eventBuf, 0, m_metaBegin, m_metaEnd - m_metaBegin);
             if (eventNameEndPos < 0)
             {
                 // Event name not nul-terminated.
                 return SetNoneState(EventEnumeratorError.InvalidData);
             }
 
-            m_eventNameSize = (ushort)eventNameEndPos;
+            m_eventNameSize = (ushort)(eventNameEndPos - m_metaBegin);
             m_dataBegin = eventPos;
             m_dataEnd = eventEnd;
-            m_buf = eventData;
+            m_buf = eventBuf;
             m_tracepointName = tracepointName;
 
             ResetImpl(moveNextLimit);
@@ -849,7 +849,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     else
                     {
-                        m_stackTop.ArrayCount = BitConverter.ToUInt16(m_buf.Span.Slice(m_stackTop.NextOffset));
+                        m_stackTop.ArrayCount = BitConverter.ToUInt16(m_buf, m_stackTop.NextOffset);
                         m_stackTop.ArrayFlags = EventFieldEncoding.FlagCArray;
                         m_fieldType.Encoding &= EventFieldEncoding.ValueMask;
                         m_stackTop.NextOffset += 2;
@@ -900,9 +900,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             return new EventInfo
             {
-                NameBytes = m_buf.Slice(m_metaBegin, m_eventNameSize),
+                NameBytes = new ArraySegment<byte>(m_buf, m_metaBegin, m_eventNameSize),
                 TracepointName = m_tracepointName,
-                ActivityIdBytes = m_buf.Slice(m_activityIdBegin, m_activityIdSize),
+                ActivityIdBytes = new ArraySegment<byte>(m_buf, m_activityIdBegin, m_activityIdSize),
                 Header = m_header,
                 Keyword = m_keyword,
             };
@@ -928,8 +928,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             return new EventItemInfo
             {
-                NameBytes = m_buf.Slice(m_stackTop.NameOffset, m_stackTop.NameSize),
-                ValueBytes = m_buf.Slice(m_dataPosCooked, m_itemSizeCooked),
+                NameBytes = new ArraySegment<byte>(
+                    m_buf,
+                    m_stackTop.NameOffset,
+                    m_stackTop.NameSize),
+                ValueBytes = new ArraySegment<byte>(
+                    m_buf,
+                    m_dataPosCooked,
+                    m_itemSizeCooked),
                 ArrayIndex = m_stackTop.ArrayIndex,
                 ArrayCount = m_stackTop.ArrayCount,
                 ElementSize = m_elementSize,
@@ -956,14 +962,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </para>
         /// </summary>
         /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
-        public ReadOnlyMemory<byte> GetRawDataPosition()
+        public ArraySegment<byte> GetRawDataPosition()
         {
             if (m_state == EventEnumeratorState.None)
             {
                 throw new InvalidOperationException(); // PRECONDITION
             }
 
-            return m_buf.Slice(m_dataPosRaw, m_dataEnd - m_dataPosRaw);
+            return new ArraySegment<byte>(m_buf, m_dataPosRaw, m_dataEnd - m_dataPosRaw);
         }
 
         private void ResetImpl(int moveNextLimit)
@@ -1087,7 +1093,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     else
                     {
-                        m_stackTop.ArrayCount = BitConverter.ToUInt16(m_buf.Span.Slice(m_dataPosRaw));
+                        m_stackTop.ArrayCount = BitConverter.ToUInt16(m_buf, m_dataPosRaw);
                         m_dataPosRaw += 2;
 
                         movedToItem = StartArray(); // StartArray will set Flags.
@@ -1103,7 +1109,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     else
                     {
-                        m_stackTop.ArrayCount = BitConverter.ToUInt16(m_buf.Span.Slice(m_stackTop.NextOffset));
+                        m_stackTop.ArrayCount = BitConverter.ToUInt16(m_buf, m_stackTop.NextOffset);
                         m_stackTop.NextOffset += 2;
 
                         if (m_stackTop.ArrayCount == 0)
@@ -1180,18 +1186,17 @@ namespace Microsoft.LinuxTracepoints.Decode
             var pos = m_stackTop.NameOffset;
             Debug.Assert(m_metaEnd >= pos);
 
-            var metaLen = m_metaEnd - pos;
-            var nameLen = m_buf.Span.Slice(pos, metaLen).IndexOf((byte)0);
+            pos = Array.IndexOf<byte>(m_buf, 0, pos, m_metaEnd - pos);
 
-            if (nameLen < 0 || metaLen - nameLen < 2)
+            if (pos < 0 || m_metaEnd - pos < 2)
             {
                 // Missing nul termination or missing encoding.
                 return new FieldType { Encoding = ReadFieldError };
             }
             else
             {
-                m_stackTop.NameSize = (ushort)nameLen;
-                return ReadFieldType(pos + nameLen + 1);
+                m_stackTop.NameSize = (ushort)(pos - m_stackTop.NameOffset);
+                return ReadFieldType(pos + 1);
             }
         }
 
@@ -1206,8 +1211,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             int pos = typeOffset;
             Debug.Assert(m_metaEnd > pos);
 
-            var bufSpan = m_buf.Span;
-            var encoding = (EventFieldEncoding)bufSpan[pos];
+            var encoding = (EventFieldEncoding)m_buf[pos];
             pos += 1;
 
             var format = EventFieldFormat.Default;
@@ -1221,7 +1225,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
                 else
                 {
-                    format = (EventFieldFormat)bufSpan[pos];
+                    format = (EventFieldFormat)m_buf[pos];
                     pos += 1;
                     if (0 != (format & EventFieldFormat.FlagChain))
                     {
@@ -1232,7 +1236,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
                         else
                         {
-                            tag = BitConverter.ToUInt16(bufSpan.Slice(pos));
+                            tag = BitConverter.ToUInt16(m_buf, pos);
                             pos += 2;
                         }
                     }
@@ -1340,7 +1344,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             Debug.Assert(m_state == EventEnumeratorState.Value);
             Debug.Assert(m_fieldType.Encoding ==
-                ((EventFieldEncoding)m_buf.Span[m_stackTop.NameOffset + m_stackTop.NameSize + 1] & EventFieldEncoding.ValueMask));
+                ((EventFieldEncoding)m_buf[m_stackTop.NameOffset + m_stackTop.NameSize + 1] & EventFieldEncoding.ValueMask));
             m_dataPosCooked = m_dataPosRaw;
             m_elementSize = 0;
 
@@ -1457,8 +1461,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             // cch = strnlen(value, cchRemaining)
             var max = m_dataEnd - m_dataPosRaw;
-            var len = m_buf.Span.Slice(m_dataPosRaw, max).IndexOf((byte)0);
-            m_itemSizeCooked = (len < 0 ? max : len) * sizeof(byte);
+            var endPos = Array.IndexOf<byte>(m_buf, 0, m_dataPosRaw, max);
+            m_itemSizeCooked = (endPos < 0 ? max : endPos - m_dataPosRaw) * sizeof(byte);
             m_itemSizeRaw = m_itemSizeCooked + sizeof(byte);
         }
 
@@ -1467,7 +1471,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             var endPos = m_dataEnd - sizeof(UInt16);
             for (var pos = m_dataPosRaw; pos <= endPos; pos += sizeof(UInt16))
             {
-                if (0 == BitConverter.ToUInt16(m_buf.Span.Slice(pos)))
+                if (0 == BitConverter.ToUInt16(m_buf, pos))
                 {
                     m_itemSizeCooked = pos - m_dataPosRaw;
                     m_itemSizeRaw = m_itemSizeCooked + sizeof(UInt16);
@@ -1484,7 +1488,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             var endPos = m_dataEnd - sizeof(UInt32);
             for (var pos = m_dataPosRaw; pos <= endPos; pos += sizeof(UInt32))
             {
-                if (0 == BitConverter.ToUInt32(m_buf.Span.Slice(pos)))
+                if (0 == BitConverter.ToUInt32(m_buf, pos))
                 {
                     m_itemSizeCooked = pos - m_dataPosRaw;
                     m_itemSizeRaw = m_itemSizeCooked + sizeof(UInt32);
@@ -1507,7 +1511,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 m_dataPosCooked = m_dataPosRaw + sizeof(ushort);
 
-                var cch = BitConverter.ToUInt16(m_buf.Span.Slice(m_dataPosRaw));
+                var cch = BitConverter.ToUInt16(m_buf, m_dataPosRaw);
                 m_itemSizeCooked = cch << charSizeShift;
                 m_itemSizeRaw = m_itemSizeCooked + sizeof(ushort);
             }
@@ -1530,7 +1534,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private bool SetNoneState(EventEnumeratorError error)
         {
-            m_buf = default;
+            m_buf = Array.Empty<byte>();
             m_tracepointName = "";
             m_state = EventEnumeratorState.None;
             m_subState = SubState.None;

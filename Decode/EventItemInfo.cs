@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
 using CultureInfo = System.Globalization.CultureInfo;
 using Debug = System.Diagnostics.Debug;
 using IPAddress = System.Net.IPAddress;
@@ -22,7 +23,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public ReadOnlyMemory<byte> NameBytes;
+        public ArraySegment<byte> NameBytes;
 
         /// <summary>
         /// Raw field value bytes.
@@ -30,7 +31,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// ValueBytes.Count is zero for everything else, including ArrayBegin of array of complex items.
         /// For strings, ValueBytes does not include length prefix or NUL termination.
         /// </summary>
-        public ReadOnlyMemory<byte> ValueBytes;
+        public ArraySegment<byte> ValueBytes;
 
         /// <summary>
         /// Array element index.
@@ -88,7 +89,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                return Text.Encoding.UTF8.GetString(this.NameBytes.Span);
+                return Text.Encoding.UTF8.GetString(this.NameBytes);
             }
         }
 
@@ -301,8 +302,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             switch (value)
             {
-                case 0: return false.ToString(CultureInfo.InvariantCulture);
-                case 1: return true.ToString(CultureInfo.InvariantCulture);
+                case 0: return "false";
+                case 1: return "true";
                 default: return unchecked((int)value).ToString(CultureInfo.InvariantCulture);
             }
         }
@@ -313,12 +314,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetInt32(out Int32 value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case 1: value = unchecked((SByte)v[0]); return true;
-                case 2: value = BitConverter.ToInt16(v); return true;
-                case 4: value = BitConverter.ToInt32(v); return true;
+                case 1: value = unchecked((SByte)this.ValueBytes[0]); return true;
+                case 2: value = BitConverter.ToInt16(this.ValueBytes); return true;
+                case 4: value = BitConverter.ToInt32(this.ValueBytes); return true;
                 default: value = 0; return false;
             }
         }
@@ -329,12 +329,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetUInt32(out UInt32 value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case 1: value = v[0]; return true;
-                case 2: value = BitConverter.ToUInt16(v); return true;
-                case 4: value = BitConverter.ToUInt32(v); return true;
+                case 1: value = this.ValueBytes[0]; return true;
+                case 2: value = BitConverter.ToUInt16(this.ValueBytes); return true;
+                case 4: value = BitConverter.ToUInt32(this.ValueBytes); return true;
                 default: value = 0; return false;
             }
         }
@@ -345,13 +344,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetInt64(out Int64 value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case 1: value = unchecked((SByte)v[0]); return true;
-                case 2: value = BitConverter.ToInt16(v); return true;
-                case 4: value = BitConverter.ToInt32(v); return true;
-                case 8: value = BitConverter.ToInt64(v); return true;
+                case 1: value = unchecked((SByte)this.ValueBytes[0]); return true;
+                case 2: value = BitConverter.ToInt16(this.ValueBytes); return true;
+                case 4: value = BitConverter.ToInt32(this.ValueBytes); return true;
+                case 8: value = BitConverter.ToInt64(this.ValueBytes); return true;
                 default: value = 0; return false;
             }
         }
@@ -362,13 +360,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetUInt64(out UInt64 value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case 1: value = v[0]; return true;
-                case 2: value = BitConverter.ToUInt16(v); return true;
-                case 4: value = BitConverter.ToUInt32(v); return true;
-                case 8: value = BitConverter.ToUInt64(v); return true;
+                case 1: value = this.ValueBytes[0]; return true;
+                case 2: value = BitConverter.ToUInt16(this.ValueBytes); return true;
+                case 4: value = BitConverter.ToUInt32(this.ValueBytes); return true;
+                case 8: value = BitConverter.ToUInt64(this.ValueBytes); return true;
                 default: value = 0; return false;
             }
         }
@@ -379,10 +376,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetSingle(out Single value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case sizeof(Single): value = BitConverter.ToSingle(v); return true;
+                case sizeof(Single): value = BitConverter.ToSingle(this.ValueBytes); return true;
                 default: value = 0; return false;
             }
         }
@@ -393,11 +389,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetDouble(out Double value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case sizeof(Single): value = BitConverter.ToSingle(v); return true;
-                case sizeof(Double): value = BitConverter.ToDouble(v); return true;
+                case sizeof(Single): value = BitConverter.ToSingle(this.ValueBytes); return true;
+                case sizeof(Double): value = BitConverter.ToDouble(this.ValueBytes); return true;
                 default: value = 0; return false;
             }
         }
@@ -408,10 +403,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetGuid(out Guid value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case 16: value = EventUtility.ReadGuidBigEndian(v); return true;
+                case 16: value = EventUtility.ReadGuidBigEndian(this.ValueBytes); return true;
                 default: value = new Guid(); return false;
             }
         }
@@ -422,10 +416,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetPort(out int value)
         {
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case sizeof(UInt16): value = (v[0] << 8) | v[1]; return true;
+                case sizeof(UInt16): value = BinaryPrimitives.ReadUInt16BigEndian(this.ValueBytes); return true;
                 default: value = 0; return false;
             }
         }
@@ -438,11 +431,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         public bool TryGetDateTime(out DateTime value)
         {
             Int64 seconds;
-            var v = this.ValueBytes.Span;
-            switch (v.Length)
+            switch (this.ValueBytes.Count)
             {
-                case 4: seconds = BitConverter.ToInt32(v); break;
-                case 8: seconds = BitConverter.ToInt64(v); break;
+                case 4: seconds = BitConverter.ToInt32(this.ValueBytes); break;
+                case 8: seconds = BitConverter.ToInt64(this.ValueBytes); break;
                 default: value = new DateTime(); return false;
             }
 
@@ -455,16 +447,15 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetIPAddress(out IPAddress value)
         {
-            var v = this.ValueBytes.Span;
-
-            if (v.Length != 4 && v.Length != 16)
+            var c = this.ValueBytes.Count;
+            if (c != 4 && c != 16)
             {
                 value = IPAddress.None;
                 return false;
             }
             else
             {
-                value = new IPAddress(v);
+                value = new IPAddress(this.ValueBytes);
                 return true;
             }
         }
@@ -648,7 +639,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventFieldFormat.StringUtfBom:
                 case EventFieldFormat.StringXml:
                 case EventFieldFormat.StringJson:
-                    v = this.ValueBytes.Span;
+                    v = this.ValueBytes;
                     if (v.Length >= 4 &&
                         v[0] == 0xFF &&
                         v[1] == 0xFE &&
@@ -704,19 +695,19 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventFieldEncoding.Value8:
                         case EventFieldEncoding.ZStringChar8:
                         case EventFieldEncoding.StringLength16Char8:
-                            v = this.ValueBytes.Span;
+                            v = this.ValueBytes;
                             encoding = Text.Encoding.UTF8;
                             break;
                         case EventFieldEncoding.Value16:
                         case EventFieldEncoding.ZStringChar16:
                         case EventFieldEncoding.StringLength16Char16:
-                            v = this.ValueBytes.Span;
+                            v = this.ValueBytes;
                             encoding = Text.Encoding.Unicode;
                             break;
                         case EventFieldEncoding.Value32:
                         case EventFieldEncoding.ZStringChar32:
                         case EventFieldEncoding.StringLength16Char32:
-                            v = this.ValueBytes.Span;
+                            v = this.ValueBytes;
                             encoding = Text.Encoding.UTF32;
                             break;
                     }
@@ -812,13 +803,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     break;
                 case EventFieldFormat.Float:
-                    switch (this.ValueBytes.Length)
+                    switch (this.ValueBytes.Count)
                     {
                         case 4:
-                            return BitConverter.ToSingle(this.ValueBytes.Span)
+                            return BitConverter.ToSingle(this.ValueBytes)
                                 .ToString(CultureInfo.InvariantCulture);
                         case 8:
-                            return BitConverter.ToDouble(this.ValueBytes.Span)
+                            return BitConverter.ToDouble(this.ValueBytes)
                                 .ToString(CultureInfo.InvariantCulture);
                     }
                     break;
@@ -860,23 +851,30 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             // Fallback: HexBinary.
 
-            var v = this.ValueBytes.Span;
-            var str = new Text.StringBuilder(this.ValueBytes.Length * 3);
-            if (v.Length > 0)
+            var valueBytesCount = this.ValueBytes.Count;
+            if (valueBytesCount > 0)
             {
                 const string HexChars = "0123456789ABCDEF";
 
-                str.Append(HexChars[v[0] >> 4]);
-                str.Append(HexChars[v[0] & 0xF]);
-                for (int i = 1; i < v.Length; i++)
+                var a = this.ValueBytes.Array;
+                var pos = this.ValueBytes.Offset;
+                var end = pos + valueBytesCount;
+
+                var str = new Text.StringBuilder(valueBytesCount * 3);
+                str.Append(HexChars[a[pos] >> 4]);
+                str.Append(HexChars[a[pos] & 0xF]);
+
+                for (pos += 1; pos < end; pos += 1)
                 {
                     str.Append(' ');
-                    str.Append(HexChars[v[i] >> 4]);
-                    str.Append(HexChars[v[i] & 0xF]);
+                    str.Append(HexChars[a[pos] >> 4]);
+                    str.Append(HexChars[a[pos] & 0xF]);
                 }
+
+                return str.ToString();
             }
 
-            return str.ToString();
+            return "";
         }
     }
 }

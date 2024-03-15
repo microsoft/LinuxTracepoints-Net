@@ -9,8 +9,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 {
     internal static class EventUtility
     {
+        private static Buffers.SpanAction<char, ArraySegment<byte>>? actionCharsFromString8;
         private static Text.Encoding? encodingUTF32BE;
-        private static Buffers.SpanAction<char, ReadOnlyMemory<byte>>? actionCharsFromString8;
 
         public static Text.Encoding EncodingUTF32BE
         {
@@ -59,7 +59,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         /// <param name="bytes">ISO-8859-1 bytes</param>
         /// <returns>New string.</returns>
-        public static string ReadString8(ReadOnlyMemory<byte> bytes)
+        public static string ReadString8(ArraySegment<byte> bytes)
         {
             var action = actionCharsFromString8; // Get the cached delegate, if present.
             if (action == null)
@@ -68,15 +68,16 @@ namespace Microsoft.LinuxTracepoints.Decode
                 actionCharsFromString8 = action; // Cache the delegate.
             }
 
-            return string.Create(bytes.Length, bytes, action);
+            return string.Create(bytes.Count, bytes, action);
         }
 
-        private static void CharsFromString8(Span<char> chars, ReadOnlyMemory<byte> bytes)
+        private static void CharsFromString8(Span<char> chars, ArraySegment<byte> bytes)
         {
-            var bytesSpan = bytes.Span;
-            for (int i = 0; i < chars.Length; i++)
+            var bytesArray = bytes.Array;
+            var bytesIndex = bytes.Offset;
+            for (int i = 0; i < chars.Length; i += 1, bytesIndex += 1)
             {
-                chars[i] = (char)bytesSpan[i];
+                chars[i] = (char)bytesArray[bytesIndex];
             }
         }
     }

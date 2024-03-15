@@ -19,7 +19,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public ReadOnlyMemory<byte> NameBytes;
+        public ArraySegment<byte> NameBytes;
 
         /// <summary>
         /// TracepointName, e.g. "ProviderName_LnKnnnOptions".
@@ -30,7 +30,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Big-endian activity id bytes. 0 bytes for none,
         /// 16 bytes for activity id only, 32 bytes for activity id and related id.
         /// </summary>
-        public ReadOnlyMemory<byte> ActivityIdBytes;
+        public ArraySegment<byte> ActivityIdBytes;
 
         /// <summary>
         /// Flags, Version, Id, Tag, Opcode, Level.
@@ -54,7 +54,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                return Encoding.UTF8.GetString(this.NameBytes.Span);
+                return Encoding.UTF8.GetString(this.NameBytes);
             }
         }
 
@@ -63,11 +63,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// before level and keyword, e.g. if TracepointName is
         /// "ProviderName_LnKnnnOptions", returns "ProviderName".
         /// </summary>
-        public ReadOnlyMemory<char> ProviderName
+        public ReadOnlySpan<char> ProviderName
         {
             get
             {
-                return this.TracepointName.AsMemory(0, this.TracepointName.LastIndexOf('_'));
+                return this.TracepointName.AsSpan(0, this.TracepointName.LastIndexOf('_'));
             }
         }
 
@@ -76,7 +76,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// level and keyword, e.g. if TracepointName is "ProviderName_LnKnnnOptions",
         /// returns "Options".
         /// </summary>
-        public ReadOnlyMemory<char> Options
+        public ReadOnlySpan<char> Options
         {
             get
             {
@@ -86,7 +86,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     char ch = n[i];
                     if ('A' <= ch && ch <= 'Z' && ch != 'L' && ch != 'K')
                     {
-                        return n.AsMemory(i);
+                        return n.AsSpan(i);
                     }
                 }
 
@@ -101,11 +101,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                var span = this.ActivityIdBytes.Span;
-                Debug.Assert((span.Length & 0xF) == 0);
-                return span.Length < 16
+                var activityIdBytes = (ReadOnlySpan<byte>)this.ActivityIdBytes;
+                Debug.Assert((activityIdBytes.Length & 0xF) == 0);
+                return activityIdBytes.Length < 16
                     ? new Guid?()
-                    : EventUtility.ReadGuidBigEndian(span);
+                    : EventUtility.ReadGuidBigEndian(activityIdBytes);
             }
         }
 
@@ -116,11 +116,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                var span = this.ActivityIdBytes.Span;
-                Debug.Assert((span.Length & 0xF) == 0);
-                return span.Length < 32
+                var activityIdBytes = (ReadOnlySpan<byte>)this.ActivityIdBytes;
+                Debug.Assert((activityIdBytes.Length & 0xF) == 0);
+                return activityIdBytes.Length < 32
                     ? new Guid?()
-                    : EventUtility.ReadGuidBigEndian(span.Slice(16));
+                    : EventUtility.ReadGuidBigEndian(activityIdBytes.Slice(16));
             }
         }
     }
