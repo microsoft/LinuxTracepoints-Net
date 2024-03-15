@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Text;
 using Debug = System.Diagnostics.Debug;
 
 namespace Microsoft.LinuxTracepoints.Decode
@@ -18,7 +19,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public ArraySegment<byte> NameBytes;
+        public ReadOnlyMemory<byte> NameBytes;
 
         /// <summary>
         /// TracepointName, e.g. "ProviderName_LnKnnnOptions".
@@ -29,7 +30,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Big-endian activity id bytes. 0 bytes for none,
         /// 16 bytes for activity id only, 32 bytes for activity id and related id.
         /// </summary>
-        public ArraySegment<byte> ActivityIdBytes;
+        public ReadOnlyMemory<byte> ActivityIdBytes;
 
         /// <summary>
         /// Flags, Version, Id, Tag, Opcode, Level.
@@ -53,29 +54,29 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                return EventUtility.NameFromBytes(this.NameBytes);
+                return Encoding.UTF8.GetString(this.NameBytes.Span);
             }
         }
 
         /// <summary>
-        /// Gets a new string containing ProviderName, i.e. the part of TracepointName
+        /// Gets the chars of ProviderName, i.e. the part of TracepointName
         /// before level and keyword, e.g. if TracepointName is
         /// "ProviderName_LnKnnnOptions", returns "ProviderName".
         /// </summary>
-        public string ProviderName
+        public ReadOnlyMemory<char> ProviderName
         {
             get
             {
-                return this.TracepointName.Substring(0, this.TracepointName.LastIndexOf('_'));
+                return this.TracepointName.AsMemory(0, this.TracepointName.LastIndexOf('_'));
             }
         }
 
         /// <summary>
-        /// Gets a new string containing Options, i.e. the part of TracepointName after
+        /// Gets the chars of Options, i.e. the part of TracepointName after
         /// level and keyword, e.g. if TracepointName is "ProviderName_LnKnnnOptions",
         /// returns "Options".
         /// </summary>
-        public string Options
+        public ReadOnlyMemory<char> Options
         {
             get
             {
@@ -85,11 +86,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     char ch = n[i];
                     if ('A' <= ch && ch <= 'Z' && ch != 'L' && ch != 'K')
                     {
-                        return n.Substring(i);
+                        return n.AsMemory(i);
                     }
                 }
 
-                return "";
+                return default;
             }
         }
 
@@ -100,10 +101,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                Debug.Assert((this.ActivityIdBytes.Count & 0xF) == 0);
-                return this.ActivityIdBytes.Count < 16
+                var span = this.ActivityIdBytes.Span;
+                Debug.Assert((span.Length & 0xF) == 0);
+                return span.Length < 16
                     ? new Guid?()
-                    : EventUtility.GuidFromBytes(this.ActivityIdBytes.Array, this.ActivityIdBytes.Offset);
+                    : EventUtility.ReadGuidBigEndian(span);
             }
         }
 
@@ -114,10 +116,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                Debug.Assert((this.ActivityIdBytes.Count & 0xF) == 0);
-                return this.ActivityIdBytes.Count < 32
+                var span = this.ActivityIdBytes.Span;
+                Debug.Assert((span.Length & 0xF) == 0);
+                return span.Length < 32
                     ? new Guid?()
-                    : EventUtility.GuidFromBytes(this.ActivityIdBytes.Array, this.ActivityIdBytes.Offset + 16);
+                    : EventUtility.ReadGuidBigEndian(span.Slice(16));
             }
         }
     }

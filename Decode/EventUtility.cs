@@ -2,75 +2,82 @@
 // Licensed under the MIT License.
 
 using System;
-using Encoding = System.Text.Encoding;
+using Buffers = System.Buffers;
+using Text = System.Text;
 
 namespace Microsoft.LinuxTracepoints.Decode
 {
     internal static class EventUtility
     {
-        private static Encoding? encodingString8;
-        private static Encoding? encodingUTF32BE;
+        private static Text.Encoding? encodingUTF32BE;
+        private static Buffers.SpanAction<char, ReadOnlyMemory<byte>>? actionCharsFromString8;
 
-        public static Encoding EncodingString8
+        public static Text.Encoding EncodingUTF32BE
         {
             get
             {
-                var value = encodingString8;
-                if (value == null)
+                var encoding = encodingUTF32BE; // Get the cached encoding, if available.
+                if (encoding == null)
                 {
-                    value = Encoding.GetEncoding(1252);
-                    encodingString8 = value;
+                    encoding = new Text.UTF32Encoding(true, true); // Create a new encoding.
+                    encodingUTF32BE = encoding; // Cache the encoding.
                 }
 
-                return value;
+                return encoding;
             }
         }
 
-        public static Encoding EncodingUTF32BE
-        {
-            get
-            {
-                var value = encodingUTF32BE;
-                if (value == null)
-                {
-                    value = Encoding.GetEncoding(12001);
-                    encodingUTF32BE = value;
-                }
-
-                return value;
-            }
-        }
-
-        public static Guid GuidFromBytes(byte[] array, int offset)
+        public static Guid ReadGuidBigEndian(ReadOnlySpan<byte> bytes)
         {
             unchecked
             {
                 var a = (int)(
-                    array[offset + 0] << 24 |
-                    array[offset + 1] << 16 |
-                    array[offset + 2] << 8 |
-                    array[offset + 3] << 0);
+                    bytes[0] << 24 |
+                    bytes[1] << 16 |
+                    bytes[2] << 8 |
+                    bytes[3] << 0);
                 var b = (short)(
-                    array[offset + 4] << 8 |
-                    array[offset + 5] << 0);
+                    bytes[4] << 8 |
+                    bytes[5] << 0);
                 var c = (short)(
-                    array[offset + 6] << 8 |
-                    array[offset + 7] << 0);
+                    bytes[6] << 8 |
+                    bytes[7] << 0);
                 return new Guid(a, b, c,
-                    array[offset + 8],
-                    array[offset + 9],
-                    array[offset + 10],
-                    array[offset + 11],
-                    array[offset + 12],
-                    array[offset + 13],
-                    array[offset + 14],
-                    array[offset + 15]);
+                    bytes[8],
+                    bytes[9],
+                    bytes[10],
+                    bytes[11],
+                    bytes[12],
+                    bytes[13],
+                    bytes[14],
+                    bytes[15]);
             }
         }
 
-        public static string NameFromBytes(ArraySegment<byte> bytes)
+        /// <summary>
+        /// Converts ISO-8859-1 bytes to a string.
+        /// </summary>
+        /// <param name="bytes">ISO-8859-1 bytes</param>
+        /// <returns>New string.</returns>
+        public static string ReadString8(ReadOnlyMemory<byte> bytes)
         {
-            return Encoding.UTF8.GetString(bytes.Array, bytes.Offset, bytes.Count);
+            var action = actionCharsFromString8; // Get the cached delegate, if present.
+            if (action == null)
+            {
+                action = CharsFromString8; // Create a new delegate.
+                actionCharsFromString8 = action; // Cache the delegate.
+            }
+
+            return string.Create(bytes.Length, bytes, action);
+        }
+
+        private static void CharsFromString8(Span<char> chars, ReadOnlyMemory<byte> bytes)
+        {
+            var bytesSpan = bytes.Span;
+            for (int i = 0; i < chars.Length; i++)
+            {
+                chars[i] = (char)bytesSpan[i];
+            }
         }
     }
 }

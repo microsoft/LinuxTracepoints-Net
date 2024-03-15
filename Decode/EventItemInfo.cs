@@ -5,7 +5,7 @@ using System;
 using CultureInfo = System.Globalization.CultureInfo;
 using Debug = System.Diagnostics.Debug;
 using IPAddress = System.Net.IPAddress;
-using TextEncoding = System.Text.Encoding;
+using Text = System.Text;
 
 namespace Microsoft.LinuxTracepoints.Decode
 {
@@ -22,7 +22,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public ArraySegment<byte> NameBytes;
+        public ReadOnlyMemory<byte> NameBytes;
 
         /// <summary>
         /// Raw field value bytes.
@@ -30,7 +30,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// ValueBytes.Count is zero for everything else, including ArrayBegin of array of complex items.
         /// For strings, ValueBytes does not include length prefix or NUL termination.
         /// </summary>
-        public ArraySegment<byte> ValueBytes;
+        public ReadOnlyMemory<byte> ValueBytes;
 
         /// <summary>
         /// Array element index.
@@ -88,7 +88,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                return EventUtility.NameFromBytes(this.NameBytes);
+                return Text.Encoding.UTF8.GetString(this.NameBytes.Span);
             }
         }
 
@@ -313,13 +313,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetInt32(out Int32 value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case 1: value = unchecked((SByte)a[o]); return true;
-                case 2: value = BitConverter.ToInt16(a, o); return true;
-                case 4: value = BitConverter.ToInt32(a, o); return true;
+                case 1: value = unchecked((SByte)v[0]); return true;
+                case 2: value = BitConverter.ToInt16(v); return true;
+                case 4: value = BitConverter.ToInt32(v); return true;
                 default: value = 0; return false;
             }
         }
@@ -330,13 +329,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetUInt32(out UInt32 value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case 1: value = a[o]; return true;
-                case 2: value = BitConverter.ToUInt16(a, o); return true;
-                case 4: value = BitConverter.ToUInt32(a, o); return true;
+                case 1: value = v[0]; return true;
+                case 2: value = BitConverter.ToUInt16(v); return true;
+                case 4: value = BitConverter.ToUInt32(v); return true;
                 default: value = 0; return false;
             }
         }
@@ -347,14 +345,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetInt64(out Int64 value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case 1: value = unchecked((SByte)a[o]); return true;
-                case 2: value = BitConverter.ToInt16(a, o); return true;
-                case 4: value = BitConverter.ToInt32(a, o); return true;
-                case 8: value = BitConverter.ToInt64(a, o); return true;
+                case 1: value = unchecked((SByte)v[0]); return true;
+                case 2: value = BitConverter.ToInt16(v); return true;
+                case 4: value = BitConverter.ToInt32(v); return true;
+                case 8: value = BitConverter.ToInt64(v); return true;
                 default: value = 0; return false;
             }
         }
@@ -365,14 +362,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetUInt64(out UInt64 value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case 1: value = a[o]; return true;
-                case 2: value = BitConverter.ToUInt16(a, o); return true;
-                case 4: value = BitConverter.ToUInt32(a, o); return true;
-                case 8: value = BitConverter.ToUInt64(a, o); return true;
+                case 1: value = v[0]; return true;
+                case 2: value = BitConverter.ToUInt16(v); return true;
+                case 4: value = BitConverter.ToUInt32(v); return true;
+                case 8: value = BitConverter.ToUInt64(v); return true;
                 default: value = 0; return false;
             }
         }
@@ -383,11 +379,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetSingle(out Single value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case sizeof(Single): value = BitConverter.ToSingle(a, o); return true;
+                case sizeof(Single): value = BitConverter.ToSingle(v); return true;
                 default: value = 0; return false;
             }
         }
@@ -398,12 +393,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetDouble(out Double value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case sizeof(Single): value = BitConverter.ToSingle(a, o); return true;
-                case sizeof(Double): value = BitConverter.ToDouble(a, o); return true;
+                case sizeof(Single): value = BitConverter.ToSingle(v); return true;
+                case sizeof(Double): value = BitConverter.ToDouble(v); return true;
                 default: value = 0; return false;
             }
         }
@@ -414,11 +408,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetGuid(out Guid value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case 16: value = EventUtility.GuidFromBytes(a, o); return true;
+                case 16: value = EventUtility.ReadGuidBigEndian(v); return true;
                 default: value = new Guid(); return false;
             }
         }
@@ -429,11 +422,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetPort(out int value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case sizeof(UInt16): value = (a[o] << 8) | a[o + 1]; return true;
+                case sizeof(UInt16): value = (v[0] << 8) | v[1]; return true;
                 default: value = 0; return false;
             }
         }
@@ -446,12 +438,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         public bool TryGetDateTime(out DateTime value)
         {
             Int64 seconds;
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            switch (this.ValueBytes.Count)
+            var v = this.ValueBytes.Span;
+            switch (v.Length)
             {
-                case 4: seconds = BitConverter.ToInt32(a, o); break;
-                case 8: seconds = BitConverter.ToInt64(a, o); break;
+                case 4: seconds = BitConverter.ToInt32(v); break;
+                case 8: seconds = BitConverter.ToInt64(v); break;
                 default: value = new DateTime(); return false;
             }
 
@@ -464,20 +455,16 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool TryGetIPAddress(out IPAddress value)
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            var c = this.ValueBytes.Count;
+            var v = this.ValueBytes.Span;
 
-            if (c != 4 && c != 16)
+            if (v.Length != 4 && v.Length != 16)
             {
                 value = IPAddress.None;
                 return false;
             }
             else
             {
-                byte[] bytes = new byte[c];
-                Array.Copy(a, o, bytes, 0, c);
-                value = new IPAddress(bytes);
+                value = new IPAddress(v);
                 return true;
             }
         }
@@ -652,63 +639,55 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public String GetString()
         {
-            var a = this.ValueBytes.Array;
-            var o = this.ValueBytes.Offset;
-            var c = this.ValueBytes.Count;
-
-            TextEncoding encoding;
+            ReadOnlySpan<byte> v;
+            Text.Encoding encoding;
             switch (this.Format)
             {
                 case EventFieldFormat.String8:
-                    encoding = EventUtility.EncodingString8;
-                    break;
+                    return EventUtility.ReadString8(this.ValueBytes);
                 case EventFieldFormat.StringUtfBom:
                 case EventFieldFormat.StringXml:
                 case EventFieldFormat.StringJson:
-                    if (c >= 4 &&
-                        a[o + 0] == 0xFF &&
-                        a[o + 1] == 0xFE &&
-                        a[o + 2] == 0x00 &&
-                        a[o + 3] == 0x00)
+                    v = this.ValueBytes.Span;
+                    if (v.Length >= 4 &&
+                        v[0] == 0xFF &&
+                        v[1] == 0xFE &&
+                        v[2] == 0x00 &&
+                        v[3] == 0x00)
                     {
-                        o += 4;
-                        c -= 4;
-                        encoding = TextEncoding.UTF32;
+                        v = v.Slice(4);
+                        encoding = Text.Encoding.UTF32;
                     }
-                    else if (c >= 4 &&
-                        a[o + 0] == 0x00 &&
-                        a[o + 1] == 0x00 &&
-                        a[o + 2] == 0xFE &&
-                        a[o + 3] == 0xFF)
+                    else if (v.Length >= 4 &&
+                        v[0] == 0x00 &&
+                        v[1] == 0x00 &&
+                        v[2] == 0xFE &&
+                        v[3] == 0xFF)
                     {
-                        o += 4;
-                        c -= 4;
+                        v = v.Slice(4);
                         encoding = EventUtility.EncodingUTF32BE;
                     }
-                    else if (c >= 3 &&
-                        a[o + 0] == 0xEF &&
-                        a[o + 1] == 0xBB &&
-                        a[o + 2] == 0xBF)
+                    else if (v.Length >= 3 &&
+                        v[0] == 0xEF &&
+                        v[1] == 0xBB &&
+                        v[2] == 0xBF)
                     {
-                        o += 3;
-                        c -= 3;
-                        encoding = TextEncoding.UTF8;
+                        v = v.Slice(3);
+                        encoding = Text.Encoding.UTF8;
                     }
-                    else if (c >= 2 &&
-                        a[o + 0] == 0xFF &&
-                        a[o + 1] == 0xFE)
+                    else if (v.Length >= 2 &&
+                        v[0] == 0xFF &&
+                        v[1] == 0xFE)
                     {
-                        o += 2;
-                        c -= 2;
-                        encoding = TextEncoding.Unicode;
+                        v = v.Slice(2);
+                        encoding = Text.Encoding.Unicode;
                     }
-                    else if (c >= 2 &&
-                        a[o + 0] == 0xFE &&
-                        a[o + 1] == 0xFF)
+                    else if (v.Length >= 2 &&
+                        v[0] == 0xFE &&
+                        v[1] == 0xFF)
                     {
-                        o += 2;
-                        c -= 2;
-                        encoding = TextEncoding.BigEndianUnicode;
+                        v = v.Slice(2);
+                        encoding = Text.Encoding.BigEndianUnicode;
                     }
                     else
                     {
@@ -721,28 +700,30 @@ namespace Microsoft.LinuxTracepoints.Decode
                     switch (this.Encoding)
                     {
                         default:
-                            encoding = EventUtility.EncodingString8;
-                            break;
+                            return EventUtility.ReadString8(this.ValueBytes);
                         case EventFieldEncoding.Value8:
                         case EventFieldEncoding.ZStringChar8:
                         case EventFieldEncoding.StringLength16Char8:
-                            encoding = TextEncoding.UTF8;
+                            v = this.ValueBytes.Span;
+                            encoding = Text.Encoding.UTF8;
                             break;
                         case EventFieldEncoding.Value16:
                         case EventFieldEncoding.ZStringChar16:
                         case EventFieldEncoding.StringLength16Char16:
-                            encoding = TextEncoding.Unicode;
+                            v = this.ValueBytes.Span;
+                            encoding = Text.Encoding.Unicode;
                             break;
                         case EventFieldEncoding.Value32:
                         case EventFieldEncoding.ZStringChar32:
                         case EventFieldEncoding.StringLength16Char32:
-                            encoding = TextEncoding.UTF32;
+                            v = this.ValueBytes.Span;
+                            encoding = Text.Encoding.UTF32;
                             break;
                     }
                     break;
             }
 
-            return encoding.GetString(a, o, c);
+            return encoding.GetString(v);
         }
 
         /// <summary>
@@ -831,13 +812,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     break;
                 case EventFieldFormat.Float:
-                    switch (this.ValueBytes.Count)
+                    switch (this.ValueBytes.Length)
                     {
                         case 4:
-                            return BitConverter.ToSingle(this.ValueBytes.Array, this.ValueBytes.Offset)
+                            return BitConverter.ToSingle(this.ValueBytes.Span)
                                 .ToString(CultureInfo.InvariantCulture);
                         case 8:
-                            return BitConverter.ToDouble(this.ValueBytes.Array, this.ValueBytes.Offset)
+                            return BitConverter.ToDouble(this.ValueBytes.Span)
                                 .ToString(CultureInfo.InvariantCulture);
                     }
                     break;
@@ -878,7 +859,24 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             // Fallback: HexBinary.
-            return BitConverter.ToString(this.ValueBytes.Array, this.ValueBytes.Offset, this.ValueBytes.Count);
+
+            var v = this.ValueBytes.Span;
+            var str = new Text.StringBuilder(this.ValueBytes.Length * 3);
+            if (v.Length > 0)
+            {
+                const string HexChars = "0123456789ABCDEF";
+
+                str.Append(HexChars[v[0] >> 4]);
+                str.Append(HexChars[v[0] & 0xF]);
+                for (int i = 1; i < v.Length; i++)
+                {
+                    str.Append(' ');
+                    str.Append(HexChars[v[i] >> 4]);
+                    str.Append(HexChars[v[i] & 0xF]);
+                }
+            }
+
+            return str.ToString();
         }
     }
 }
