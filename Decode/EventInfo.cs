@@ -2,6 +2,7 @@
 // Licensed under the MIT License.
 
 using System;
+using System.Text;
 using Debug = System.Diagnostics.Debug;
 
 namespace Microsoft.LinuxTracepoints.Decode
@@ -53,29 +54,29 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                return EventUtility.NameFromBytes(this.NameBytes);
+                return Encoding.UTF8.GetString(this.NameBytes);
             }
         }
 
         /// <summary>
-        /// Gets a new string containing ProviderName, i.e. the part of TracepointName
+        /// Gets the chars of ProviderName, i.e. the part of TracepointName
         /// before level and keyword, e.g. if TracepointName is
         /// "ProviderName_LnKnnnOptions", returns "ProviderName".
         /// </summary>
-        public string ProviderName
+        public ReadOnlySpan<char> ProviderName
         {
             get
             {
-                return this.TracepointName.Substring(0, this.TracepointName.LastIndexOf('_'));
+                return this.TracepointName.AsSpan(0, this.TracepointName.LastIndexOf('_'));
             }
         }
 
         /// <summary>
-        /// Gets a new string containing Options, i.e. the part of TracepointName after
+        /// Gets the chars of Options, i.e. the part of TracepointName after
         /// level and keyword, e.g. if TracepointName is "ProviderName_LnKnnnOptions",
         /// returns "Options".
         /// </summary>
-        public string Options
+        public ReadOnlySpan<char> Options
         {
             get
             {
@@ -85,11 +86,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     char ch = n[i];
                     if ('A' <= ch && ch <= 'Z' && ch != 'L' && ch != 'K')
                     {
-                        return n.Substring(i);
+                        return n.AsSpan(i);
                     }
                 }
 
-                return "";
+                return default;
             }
         }
 
@@ -100,10 +101,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                Debug.Assert((this.ActivityIdBytes.Count & 0xF) == 0);
-                return this.ActivityIdBytes.Count < 16
+                var activityIdBytes = (ReadOnlySpan<byte>)this.ActivityIdBytes;
+                Debug.Assert((activityIdBytes.Length & 0xF) == 0);
+                return activityIdBytes.Length < 16
                     ? new Guid?()
-                    : EventUtility.GuidFromBytes(this.ActivityIdBytes.Array, this.ActivityIdBytes.Offset);
+                    : EventUtility.ReadGuidBigEndian(activityIdBytes);
             }
         }
 
@@ -114,10 +116,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             get
             {
-                Debug.Assert((this.ActivityIdBytes.Count & 0xF) == 0);
-                return this.ActivityIdBytes.Count < 32
+                var activityIdBytes = (ReadOnlySpan<byte>)this.ActivityIdBytes;
+                Debug.Assert((activityIdBytes.Length & 0xF) == 0);
+                return activityIdBytes.Length < 32
                     ? new Guid?()
-                    : EventUtility.GuidFromBytes(this.ActivityIdBytes.Array, this.ActivityIdBytes.Offset + 16);
+                    : EventUtility.ReadGuidBigEndian(activityIdBytes.Slice(16));
             }
         }
     }

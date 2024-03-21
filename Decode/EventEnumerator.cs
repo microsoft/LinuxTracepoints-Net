@@ -159,7 +159,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             ArraySegment<byte> eventData,
             int moveNextLimit = MoveNextLimitDefault)
         {
-            // .NET version does not support big-endian host or big-endian events.
+            // .NET decoder does not currently support big-endian host or big-endian events.
             Debug.Assert(BitConverter.IsLittleEndian);
 
             const int EventHeaderTracepointNameMax = 256;
