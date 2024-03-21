@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <AssemblyName>Microsoft.LinuxTracepoints.Types</AssemblyName>
     <RootNamespace>Microsoft.LinuxTracepoints</RootNamespace>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <AnalysisLevel>latest-recommended</AnalysisLevel>
   </PropertyGroup>
 
   <ItemGroup>

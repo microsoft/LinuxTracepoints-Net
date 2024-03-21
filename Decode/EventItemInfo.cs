@@ -1,37 +1,50 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using System;
-using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
-using CultureInfo = System.Globalization.CultureInfo;
-using Debug = System.Diagnostics.Debug;
-using IPAddress = System.Net.IPAddress;
-using Text = System.Text;
+#pragma warning disable CA1051 // Do not declare visible instance fields
 
 namespace Microsoft.LinuxTracepoints.Decode
 {
+    using System;
+    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+    using CultureInfo = System.Globalization.CultureInfo;
+    using Debug = System.Diagnostics.Debug;
+    using IPAddress = System.Net.IPAddress;
+    using Text = System.Text;
+
     /// <summary>
     /// Event item attributes (attributes of a value, array, or structure within the event)
     /// returned by the GetItemInfo() method of EventEnumerator.
     /// </summary>
-    public struct EventItemInfo
+    public ref struct EventItemInfo
     {
         /// <summary>
-        /// UTF-8 encoded "FieldName" followed by 0 or more field attributes.
-        /// Each attribute is ";AttribName=AttribValue".
-        /// FieldName should not contain ';'.
-        /// AttribName should not contain ';' or '='.
-        /// AttribValue may contain ";;" which should be unescaped to ";".
+        /// The Span corresponding to the eventData parameter passed to
+        /// EventEnumerator.StartEvent(). For example, if you called
+        /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
+        /// The NameStart and ValueStart fields are relative to this span.
         /// </summary>
-        public ArraySegment<byte> NameBytes;
+        public ReadOnlySpan<byte> EventData;
 
         /// <summary>
-        /// Raw field value bytes.
-        /// ValueBytes.Count is nonzero for Value items and for ArrayBegin of array of simple values.
-        /// ValueBytes.Count is zero for everything else, including ArrayBegin of array of complex items.
-        /// For strings, ValueBytes does not include length prefix or NUL termination.
+        /// Offset into EventData where NameBytes begins.
         /// </summary>
-        public ArraySegment<byte> ValueBytes;
+        public int NameStart;
+
+        /// <summary>
+        /// Length of NameBytes.
+        /// </summary>
+        public int NameLength;
+
+        /// <summary>
+        /// Offset into EventData where ValueBytes begins.
+        /// </summary>
+        public int ValueStart;
+
+        /// <summary>
+        /// Length of ValueBytes.
+        /// </summary>
+        public int ValueLength;
 
         /// <summary>
         /// Array element index.
@@ -78,6 +91,63 @@ namespace Microsoft.LinuxTracepoints.Decode
         public ushort FieldTag;
 
         /// <summary>
+        /// True if this item's event had the big-endian flag set.
+        /// </summary>
+        public bool EventBigEndian;
+
+        /// <summary>
+        /// Initializes a new instance of the EventItemInfo struct.
+        /// </summary>
+        public EventItemInfo(
+            ReadOnlySpan<byte> eventData,
+            int nameStart,
+            int nameLength,
+            int valueStart,
+            int valueLength,
+            ushort arrayIndex,
+            ushort arrayCount,
+            byte elementSize,
+            EventFieldEncoding encoding,
+            EventFieldFormat format,
+            EventFieldEncoding arrayFlags,
+            ushort fieldTag,
+            bool eventBigEndian)
+        {
+            this.EventData = eventData;
+            this.NameStart = nameStart;
+            this.NameLength = nameLength;
+            this.ValueStart = valueStart;
+            this.ValueLength = valueLength;
+            this.ArrayIndex = arrayIndex;
+            this.ArrayCount = arrayCount;
+            this.ElementSize = elementSize;
+            this.Encoding = encoding;
+            this.Format = format;
+            this.ArrayFlags = arrayFlags;
+            this.FieldTag = fieldTag;
+            this.EventBigEndian = eventBigEndian;
+        }
+
+        /// <summary>
+        /// Raw field value bytes.
+        /// ValueLength is nonzero for Value items and for ArrayBegin of array of simple values.
+        /// ValueLength is zero for everything else, including ArrayBegin of array of complex items.
+        /// For strings, ValueBytes does not include length prefix or NUL termination.
+        /// </summary>
+        public readonly ReadOnlySpan<byte> ValueBytes =>
+            this.EventData.Slice(this.ValueStart, this.ValueLength);
+
+        /// <summary>
+        /// UTF-8 encoded "FieldName" followed by 0 or more field attributes.
+        /// Each attribute is ";AttribName=AttribValue".
+        /// FieldName should not contain ';'.
+        /// AttribName should not contain ';' or '='.
+        /// AttribValue may contain ";;" which should be unescaped to ";".
+        /// </summary>
+        public readonly ReadOnlySpan<byte> NameBytes =>
+            this.EventData.Slice(this.NameStart, this.NameLength);
+
+        /// <summary>
         /// Gets a new string (decoded from NameBytes) containing
         /// "FieldName" followed by 0 or more field attributes.
         /// Each attribute is ";AttribName=AttribValue".
@@ -85,13 +155,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public string Name
-        {
-            get
-            {
-                return Text.Encoding.UTF8.GetString(this.NameBytes);
-            }
-        }
+        public readonly string Name =>
+            Text.Encoding.UTF8.GetString(this.EventData.Slice(this.NameStart, this.NameLength));
 
         /// <summary>
         /// Attempts to convert a Unix time_t (signed seconds since 1970) to a DateTime.
@@ -128,7 +193,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             if (!TryDateTimeFromUnixTimeSeconds(secondsSince1970, out var value))
             {
-                throw new ArgumentOutOfRangeException(nameof(secondsSince1970) + " out of range.");
+                throw new ArgumentOutOfRangeException(nameof(secondsSince1970));
             }
 
             return value;
@@ -292,7 +357,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Converts an integer value from a boolean field into a string.
-        /// If value is 0/1, returns "False"/"True".
+        /// If value is 0/1, returns "false"/"true".
         /// Otherwise, returns value formatted as a signed integer.
         /// Note: input value is UInt32 because Bool8 and Bool16 should not be
         /// sign-extended, i.e. value should come from a call to TryGetUInt32,
@@ -310,131 +375,138 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Gets ValueBytes interpreted as a signed integer.
-        /// Returns false if ValueBytes.Count is not 1, 2, or 4.
+        /// Returns false if ValueLength is not 1, 2, or 4.
         /// </summary>
         public bool TryGetInt32(out Int32 value)
         {
-            switch (this.ValueBytes.Count)
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
             {
-                case 1: value = unchecked((SByte)this.ValueBytes[0]); return true;
-                case 2: value = BitConverter.ToInt16(this.ValueBytes); return true;
-                case 4: value = BitConverter.ToInt32(this.ValueBytes); return true;
+                case 1: value = unchecked((SByte)this.EventData[this.ValueStart]); return true;
+                case 2: value = byteReader.ReadI16(this.EventData.Slice(this.ValueStart)); return true;
+                case 4: value = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = 0; return false;
             }
         }
 
         /// <summary>
         /// Gets ValueBytes interpreted as an unsigned integer.
-        /// Returns false if ValueBytes.Count is not 1, 2, or 4.
+        /// Returns false if ValueLength is not 1, 2, or 4.
         /// </summary>
         public bool TryGetUInt32(out UInt32 value)
         {
-            switch (this.ValueBytes.Count)
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
             {
-                case 1: value = this.ValueBytes[0]; return true;
-                case 2: value = BitConverter.ToUInt16(this.ValueBytes); return true;
-                case 4: value = BitConverter.ToUInt32(this.ValueBytes); return true;
+                case 1: value = this.EventData[this.ValueStart]; return true;
+                case 2: value = byteReader.ReadU16(this.EventData.Slice(this.ValueStart)); return true;
+                case 4: value = byteReader.ReadU32(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = 0; return false;
             }
         }
 
         /// <summary>
         /// Gets ValueBytes interpreted as a signed integer.
-        /// Returns false if ValueBytes.Count is not 1, 2, 4, or 8.
+        /// Returns false if ValueLength is not 1, 2, 4, or 8.
         /// </summary>
         public bool TryGetInt64(out Int64 value)
         {
-            switch (this.ValueBytes.Count)
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
             {
-                case 1: value = unchecked((SByte)this.ValueBytes[0]); return true;
-                case 2: value = BitConverter.ToInt16(this.ValueBytes); return true;
-                case 4: value = BitConverter.ToInt32(this.ValueBytes); return true;
-                case 8: value = BitConverter.ToInt64(this.ValueBytes); return true;
+                case 1: value = unchecked((SByte)this.EventData[this.ValueStart]); return true;
+                case 2: value = byteReader.ReadI16(this.EventData.Slice(this.ValueStart)); return true;
+                case 4: value = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); return true;
+                case 8: value = byteReader.ReadI64(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = 0; return false;
             }
         }
 
         /// <summary>
         /// Gets ValueBytes interpreted as an unsigned integer.
-        /// Returns false if ValueBytes.Count is not 1, 2, 4, or 8.
+        /// Returns false if ValueLength is not 1, 2, 4, or 8.
         /// </summary>
         public bool TryGetUInt64(out UInt64 value)
         {
-            switch (this.ValueBytes.Count)
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
             {
-                case 1: value = this.ValueBytes[0]; return true;
-                case 2: value = BitConverter.ToUInt16(this.ValueBytes); return true;
-                case 4: value = BitConverter.ToUInt32(this.ValueBytes); return true;
-                case 8: value = BitConverter.ToUInt64(this.ValueBytes); return true;
+                case 1: value = this.EventData[this.ValueStart]; return true;
+                case 2: value = byteReader.ReadU16(this.EventData.Slice(this.ValueStart)); return true;
+                case 4: value = byteReader.ReadU32(this.EventData.Slice(this.ValueStart)); return true;
+                case 8: value = byteReader.ReadU64(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = 0; return false;
             }
         }
 
         /// <summary>
         /// Gets ValueBytes interpreted as a 32-bit float.
-        /// Returns false if ValueBytes.Count is not 4.
+        /// Returns false if ValueLength is not 4.
         /// </summary>
         public bool TryGetSingle(out Single value)
         {
-            switch (this.ValueBytes.Count)
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
             {
-                case sizeof(Single): value = BitConverter.ToSingle(this.ValueBytes); return true;
+                case sizeof(Single): value = byteReader.ReadF32(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = 0; return false;
             }
         }
 
         /// <summary>
         /// Gets ValueBytes interpreted as a 32-bit or 64-bit float.
-        /// Returns false if ValueBytes.Count is not 4 or 8.
+        /// Returns false if ValueLength is not 4 or 8.
         /// </summary>
         public bool TryGetDouble(out Double value)
         {
-            switch (this.ValueBytes.Count)
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
             {
-                case sizeof(Single): value = BitConverter.ToSingle(this.ValueBytes); return true;
-                case sizeof(Double): value = BitConverter.ToDouble(this.ValueBytes); return true;
+                case sizeof(Single): value = byteReader.ReadF32(this.EventData.Slice(this.ValueStart)); return true;
+                case sizeof(Double): value = byteReader.ReadF64(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = 0; return false;
             }
         }
 
         /// <summary>
         /// Gets ValueBytes interpreted as a big-endian Guid.
-        /// Returns false if ValueBytes.Count is not 16.
+        /// Returns false if ValueLength is not 16.
         /// </summary>
         public bool TryGetGuid(out Guid value)
         {
-            switch (this.ValueBytes.Count)
+            switch (this.ValueLength)
             {
-                case 16: value = EventUtility.ReadGuidBigEndian(this.ValueBytes); return true;
+                case 16: value = EventUtility.ReadGuidBigEndian(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = new Guid(); return false;
             }
         }
 
         /// <summary>
         /// Gets ValueBytes interpreted as a big-endian 16-bit integer.
-        /// Returns false if ValueBytes.Count is not 2.
+        /// Returns false if ValueLength is not 2.
         /// </summary>
         public bool TryGetPort(out int value)
         {
-            switch (this.ValueBytes.Count)
+            switch (this.ValueLength)
             {
-                case sizeof(UInt16): value = BinaryPrimitives.ReadUInt16BigEndian(this.ValueBytes); return true;
+                case sizeof(UInt16): value = BinaryPrimitives.ReadUInt16BigEndian(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = 0; return false;
             }
         }
 
         /// <summary>
         /// Returns ValueBytes interpreted as a Unix time_t (signed seconds since 1970).
-        /// Returns false if ValueBytes.Count is not 4 or 8, if time is less than
+        /// Returns false if ValueLength is not 4 or 8, if time is less than
         /// DateTime.MinValue, or if time is greater than DateTime.MaxValue.
         /// </summary>
         public bool TryGetDateTime(out DateTime value)
         {
+            var byteReader = new PerfByteReader(this.EventBigEndian);
             Int64 seconds;
-            switch (this.ValueBytes.Count)
+            switch (this.ValueLength)
             {
-                case 4: seconds = BitConverter.ToInt32(this.ValueBytes); break;
-                case 8: seconds = BitConverter.ToInt64(this.ValueBytes); break;
+                case 4: seconds = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); break;
+                case 8: seconds = byteReader.ReadI64(this.EventData.Slice(this.ValueStart)); break;
                 default: value = new DateTime(); return false;
             }
 
@@ -443,11 +515,11 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as an IPAddress.
-        /// Returns false if ValueBytes.Count is not 4 (IPv4) or 8 (IPv6).
+        /// Returns false if ValueLength is not 4 (IPv4) or 8 (IPv6).
         /// </summary>
         public bool TryGetIPAddress(out IPAddress value)
         {
-            var c = this.ValueBytes.Count;
+            var c = this.ValueLength;
             if (c != 4 && c != 16)
             {
                 value = IPAddress.None;
@@ -455,16 +527,16 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                value = new IPAddress(this.ValueBytes);
+                value = new IPAddress(this.EventData.Slice(this.ValueStart, c));
                 return true;
             }
         }
 
         /// <summary>
         /// Returns ValueBytes interpreted as a signed integer.
-        /// Requires ValueBytes.Count is 1, 2, or 4.
+        /// Requires ValueLength is 1, 2, or 4.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 1, 2, or 4.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, or 4.</exception>
         public Int32 GetInt32()
         {
             Int32 value;
@@ -478,9 +550,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as an unsigned integer.
-        /// Requires ValueBytes.Count is 1, 2, or 4.
+        /// Requires ValueLength is 1, 2, or 4.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 1, 2, or 4.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, or 4.</exception>
         public UInt32 GetUInt32()
         {
             UInt32 value;
@@ -494,9 +566,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as a signed integer.
-        /// Requires ValueBytes.Count is 1, 2, 4, or 8.
+        /// Requires ValueLength is 1, 2, 4, or 8.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 1, 2, 4, or 8.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, 4, or 8.</exception>
         public Int64 GetInt64()
         {
             Int64 value;
@@ -510,9 +582,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as an unsigned integer.
-        /// Requires ValueBytes.Count is 1, 2, 4, or 8.
+        /// Requires ValueLength is 1, 2, 4, or 8.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 1, 2, 4, or 8.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, 4, or 8.</exception>
         public UInt64 GetUInt64()
         {
             UInt64 value;
@@ -526,9 +598,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as a 32-bit float.
-        /// Requires ValueBytes.Count is 4.
+        /// Requires ValueLength is 4.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 4.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 4.</exception>
         public Single GetSingle()
         {
             Single value;
@@ -542,9 +614,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as a 32-bit or 64-bit float.
-        /// Requires ValueBytes.Count is 4 or 8.
+        /// Requires ValueLength is 4 or 8.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 4 or 8.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 4 or 8.</exception>
         public Double GetDouble()
         {
             Double value;
@@ -558,9 +630,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as a big-endian Guid.
-        /// Requires ValueBytes.Count is 16.
+        /// Requires ValueLength is 16.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 16.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 16.</exception>
         public Guid GetGuid()
         {
             Guid value;
@@ -574,9 +646,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as a big-endian UInt16.
-        /// Requires ValueBytes.Count is 2.
+        /// Requires ValueLength is 2.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 2.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 2.</exception>
         public int GetPort()
         {
             int value;
@@ -592,10 +664,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns ValueBytes interpreted as a Unix time_t (signed seconds since 1970).
         /// If time is less than DateTime.MinValue, returns DateTime.MinValue.
         /// If time is greater than DateTime.MaxValue, returns DateTime.MaxValue.
-        /// Requires ValueBytes.Count is 4 or 8.
+        /// Requires ValueLength is 4 or 8.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// ValueBytes.Count is not 4 or 8, or value is out of range for DateTime.
+        /// ValueLength is not 4 or 8, or value is out of range for DateTime.
         /// </exception>
         public DateTime GetDateTime()
         {
@@ -610,9 +682,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns ValueBytes interpreted as an IPAddress.
-        /// Requires ValueBytes.Count is 4 (IPv4) or 16 (IPv6).
+        /// Requires ValueLength is 4 (IPv4) or 16 (IPv6).
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueBytes.Count is not 4 or 16.</exception>
+        /// <exception cref="InvalidOperationException">ValueLength is not 4 or 16.</exception>
         public IPAddress GetIPAddress()
         {
             IPAddress value;
@@ -630,16 +702,16 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public String GetString()
         {
-            ReadOnlySpan<byte> v;
+            ReadOnlySpan<byte> v = this.EventData.Slice(this.ValueStart, this.ValueLength);
             Text.Encoding encoding;
             switch (this.Format)
             {
                 case EventFieldFormat.String8:
-                    return EventUtility.ReadString8(this.ValueBytes);
+                    encoding = EventUtility.EncodingLatin1;
+                    break;
                 case EventFieldFormat.StringUtfBom:
                 case EventFieldFormat.StringXml:
                 case EventFieldFormat.StringJson:
-                    v = this.ValueBytes;
                     if (v.Length >= 4 &&
                         v[0] == 0xFF &&
                         v[1] == 0xFE &&
@@ -691,23 +763,21 @@ namespace Microsoft.LinuxTracepoints.Decode
                     switch (this.Encoding)
                     {
                         default:
-                            return EventUtility.ReadString8(this.ValueBytes);
+                            encoding = EventUtility.EncodingLatin1;
+                            break;
                         case EventFieldEncoding.Value8:
                         case EventFieldEncoding.ZStringChar8:
                         case EventFieldEncoding.StringLength16Char8:
-                            v = this.ValueBytes;
                             encoding = Text.Encoding.UTF8;
                             break;
                         case EventFieldEncoding.Value16:
                         case EventFieldEncoding.ZStringChar16:
                         case EventFieldEncoding.StringLength16Char16:
-                            v = this.ValueBytes;
                             encoding = Text.Encoding.Unicode;
                             break;
                         case EventFieldEncoding.Value32:
                         case EventFieldEncoding.ZStringChar32:
                         case EventFieldEncoding.StringLength16Char32:
-                            v = this.ValueBytes;
                             encoding = Text.Encoding.UTF32;
                             break;
                     }
@@ -803,13 +873,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     break;
                 case EventFieldFormat.Float:
-                    switch (this.ValueBytes.Count)
+                    switch (this.ValueLength)
                     {
                         case 4:
-                            return BitConverter.ToSingle(this.ValueBytes)
+                            return new PerfByteReader(this.EventBigEndian).ReadF32(this.EventData.Slice(this.ValueStart))
                                 .ToString(CultureInfo.InvariantCulture);
                         case 8:
-                            return BitConverter.ToDouble(this.ValueBytes)
+                            return new PerfByteReader(this.EventBigEndian).ReadF64(this.EventData.Slice(this.ValueStart))
                                 .ToString(CultureInfo.InvariantCulture);
                     }
                     break;
@@ -851,24 +921,25 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             // Fallback: HexBinary.
 
-            var valueBytesCount = this.ValueBytes.Count;
+            var valueBytesCount = this.ValueLength;
             if (valueBytesCount > 0)
             {
                 const string HexChars = "0123456789ABCDEF";
 
-                var a = this.ValueBytes.Array;
-                var pos = this.ValueBytes.Offset;
-                var end = pos + valueBytesCount;
-
+                var pos = this.ValueStart;
+                var end = this.ValueLength + pos;
                 var str = new Text.StringBuilder(valueBytesCount * 3);
-                str.Append(HexChars[a[pos] >> 4]);
-                str.Append(HexChars[a[pos] & 0xF]);
+
+                var val = this.EventData[pos];
+                str.Append(HexChars[val >> 4]);
+                str.Append(HexChars[val & 0xF]);
 
                 for (pos += 1; pos < end; pos += 1)
                 {
                     str.Append(' ');
-                    str.Append(HexChars[a[pos] >> 4]);
-                    str.Append(HexChars[a[pos] & 0xF]);
+                    val = this.EventData[pos];
+                    str.Append(HexChars[val >> 4]);
+                    str.Append(HexChars[val & 0xF]);
                 }
 
                 return str.ToString();

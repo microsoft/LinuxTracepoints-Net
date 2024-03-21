@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Types", "Types\Types.csproj
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decode", "Decode\Decode.csproj", "{B7D0C4E9-FB0F-4431-BA70-4C8A4936AD1C}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TypesTest", "TypesTest\TypesTest.csproj", "{0FEF60BB-5A34-45CE-93F1-B0FE3C8B708F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodeTest", "DecodeTest\DecodeTest.csproj", "{0FEF60BB-5A34-45CE-93F1-B0FE3C8B708F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

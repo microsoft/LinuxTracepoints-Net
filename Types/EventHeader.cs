@@ -1,9 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using InteropServices = System.Runtime.InteropServices;
-using Tracing = System.Diagnostics.Tracing;
-
 /*--EventHeader Events--------------------------------------------------------
 
 EventHeader is a tracing convention layered on top of Linux Tracepoints.
@@ -159,6 +156,9 @@ The following header extensions are defined:
 */
 namespace Microsoft.LinuxTracepoints
 {
+    using InteropServices = System.Runtime.InteropServices;
+    using Tracing = System.Diagnostics.Tracing;
+
     /// <summary>
     /// <para>
     /// Core metadata for an EventHeader event.
@@ -257,7 +257,7 @@ namespace Microsoft.LinuxTracepoints
         /// </remarks>
         public Tracing.EventOpcode Opcode
         {
-            get => (Tracing.EventOpcode)OpcodeByte;
+            readonly get => (Tracing.EventOpcode)OpcodeByte;
             set => OpcodeByte = (byte)value;
         }
 
@@ -266,7 +266,7 @@ namespace Microsoft.LinuxTracepoints
         /// </summary>
         public Tracing.EventLevel Level
         {
-            get => (Tracing.EventLevel)LevelByte;
+            readonly get => (Tracing.EventLevel)LevelByte;
             set => LevelByte = (byte)value;
         }
 

@@ -3,7 +3,7 @@ using System.IO;
 using Text = System.Text;
 using UnitTesting = Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace TypesTest
+namespace DecodeTest
 {
     [UnitTesting.TestClass]
     [UnitTesting.DeploymentItem("EventHeaderInterceptorLE64.dat")]

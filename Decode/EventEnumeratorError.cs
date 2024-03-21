@@ -21,7 +21,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Event does not follow the EventHeader naming/layout rules,
-        /// is big-endian, has unrecognized flags, or unrecognized types.
+        /// has unrecognized flags, or has unrecognized types.
         /// </summary>
         NotSupported,
 

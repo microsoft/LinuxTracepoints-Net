@@ -1,12 +1,15 @@
 ﻿using Microsoft.LinuxTracepoints;
 using Microsoft.LinuxTracepoints.Decode;
 using System;
+using System.Buffers.Binary;
 using System.IO;
 using Encoding = System.Text.Encoding;
+using CultureInfo = System.Globalization.CultureInfo;
+using System.Diagnostics;
 
-namespace TypesTest
+namespace DecodeTest
 {
-    internal class DatDecode
+    internal sealed class DatDecode
     {
         private readonly EventEnumerator e = new EventEnumerator();
         private readonly TextWriter output;
@@ -23,19 +26,22 @@ namespace TypesTest
 
         public void Decode(byte[] bytes)
         {
+            var bytesMemory = new ReadOnlyMemory<byte>(bytes);
+            var bytesSpan = new ReadOnlySpan<byte>(bytes);
+
             bool comma = false;
             var pos = 0;
-            while (pos < bytes.Length)
+            while (pos < bytesSpan.Length)
             {
                 this.output.WriteLine(comma ? "," : "");
-                if (pos >= bytes.Length - 4)
+                if (pos >= bytesSpan.Length - 4)
                 {
                     this.output.Write("Pos {0}: Unexpected eof.", pos);
                     break;
                 }
 
-                var size = BitConverter.ToInt32(bytes, pos);
-                if (size < 4 || size > bytes.Length - pos)
+                var size = BinaryPrimitives.ReadInt32LittleEndian(bytesSpan.Slice(pos));
+                if (size < 4 || size > bytesSpan.Length - pos)
                 {
                     this.output.Write("Pos {0}: Bad size {1}.", pos, size);
                     break;
@@ -44,16 +50,16 @@ namespace TypesTest
                 var nameStart = pos + 4;
                 pos += size;
 
-                var nameEnd = Array.IndexOf<byte>(bytes, 0, nameStart, pos - nameStart);
-                if (nameEnd < 0)
+                var nameLen = bytesSpan.Slice(nameStart, pos - nameStart).IndexOf((byte)0);
+                if (nameLen < 0)
                 {
                     this.output.Write("Pos {0}: Unterminated event name.", nameStart);
                     break;
                 }
 
-                var tracepointName = Encoding.UTF8.GetString(bytes, nameStart, nameEnd - nameStart);
-                var eventStart = nameEnd + 1;
-                if (!e.StartEvent(tracepointName, new ArraySegment<byte>(bytes, eventStart, pos - eventStart)))
+                var tracepointName = Encoding.UTF8.GetString(bytesSpan.Slice(nameStart, nameLen));
+                var eventStart = nameStart + nameLen + 1;
+                if (!e.StartEvent(tracepointName, bytesMemory.Slice(eventStart, pos - eventStart)))
                 {
                     this.output.Write("Pos {0}: TryStartEvent error {1}.", eventStart, e.LastError);
                 }
@@ -89,13 +95,11 @@ namespace TypesTest
                                     if (item.ElementSize != 0)
                                     {
                                         // Process the entire array directly without using the enumerator.
-                                        var v = item.ValueBytes;
-                                        var o = 0;
-                                        var c = item.ElementSize;
+                                        // Adjust the item.ValueStart and item.ValueLength to point to each element.
+                                        Debug.Assert(item.ValueLength == item.ArrayCount * item.ElementSize);
+                                        item.ValueLength = item.ElementSize;
                                         for (int i = 0; i != item.ArrayCount; i++)
                                         {
-                                            item.ValueBytes = v.Slice(o, c);
-                                            o += c;
                                             if (comma)
                                             {
                                                 this.output.Write(',');
@@ -103,6 +107,7 @@ namespace TypesTest
 
                                             this.output.Write(' ');
                                             this.WriteJsonValue(item.FormatValue());
+                                            item.ValueStart += item.ElementSize;
                                             comma = true;
                                         }
 
@@ -248,10 +253,10 @@ namespace TypesTest
                             }
                         }
 
-                        if (item.ValueBytes.Count != 0)
+                        if (item.ValueBytes.Length != 0)
                         {
                             WriteJsonItemBegin(comma, "BadValueBytes");
-                            this.output.Write(item.ValueBytes.Count);
+                            this.output.Write(item.ValueBytes.Length);
                             comma = true;
                         }
 
@@ -309,7 +314,7 @@ namespace TypesTest
                 if (tag != 0)
                 {
                     this.output.Write(";tag=0x");
-                    this.output.Write(tag.ToString("X"));
+                    this.output.Write(tag.ToString("X", CultureInfo.InvariantCulture));
                 }
 
                 this.output.Write("\": ");

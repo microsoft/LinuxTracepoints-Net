@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#pragma warning disable CA1711 // Identifiers should not have incorrect suffix
+
 namespace Microsoft.LinuxTracepoints
 {
     /// <summary>
