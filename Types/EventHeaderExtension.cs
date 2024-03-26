@@ -1,10 +1,10 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-using InteropServices = System.Runtime.InteropServices;
-
 namespace Microsoft.LinuxTracepoints
 {
+    using InteropServices = System.Runtime.InteropServices;
+
     /// <summary>
     /// <para>
     /// Additional information for an EventHeader event.
