@@ -1,4 +1,4 @@
-namespace DecodeTest
+﻿namespace DecodeTest
 {
     using System;
     using System.IO;
@@ -6,27 +6,36 @@ namespace DecodeTest
     using UnitTesting = Microsoft.VisualStudio.TestTools.UnitTesting;
 
     [UnitTesting.TestClass]
-    //[UnitTesting.DeploymentItem("EventHeaderInterceptorLE64.dat")]
-    //[UnitTesting.DeploymentItem("EventHeaderInterceptorLE64.json")]
-    public class TestEventEnumerator
+    public class TestPerfDataFileReader
     {
         private static readonly char[] LineSplitChars = new char[] { '\r', '\n' };
 
         [UnitTesting.TestMethod]
-        public void DecodeDat()
+        public void DecodePerfData()
         {
-            string expected = File.ReadAllText("EventHeaderInterceptorLE64.json");
+            this.Decode("perf.data");
+        }
+
+        [UnitTesting.TestMethod]
+        public void DecodePipeData()
+        {
+            this.Decode("pipe.data");
+        }
+
+        private void Decode(string baseName)
+        {
+            string expected = File.ReadAllText(baseName + ".json");
             using (var output = new StringWriter())
             {
-                var decode = new DatDecode(output);
+                var decode = new PerfDataDecode(output);
                 output.Write("[");
-                decode.DecodeFile("EventHeaderInterceptorLE64.dat");
+                decode.DecodeFile(baseName);
                 output.WriteLine(" ]");
 
                 string actual = output.ToString();
                 if (expected != actual)
                 {
-                    File.WriteAllText("EventHeaderInterceptorLE64.json.actual", actual, Text.Encoding.UTF8);
+                    File.WriteAllText(baseName + ".json.actual", actual, Text.Encoding.UTF8);
                 }
 
                 string[] expectedLines = expected.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);

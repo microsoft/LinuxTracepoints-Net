@@ -149,8 +149,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Must follow the tracepoint name rules described in EventHeader.h.
         /// </param>
         /// <param name="eventData">
-        /// Set to pointer to the event data (the EventHeaderFlags field of the event header),
-        /// usually something like tep_record->data + tep_event->format.fields[0].offset.
+        /// Set to the event's user data, starting at the EventHeaderFlags field. Typically
+        /// this will be <c>perfSampleEventInfo.GetUserData(perfEvent)</c>.
         /// </param>
         /// <param name="moveNextLimit">
         /// Set to the maximum number of MoveNext calls to allow when processing this event (to

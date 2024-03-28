@@ -476,7 +476,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             switch (this.ValueLength)
             {
-                case 16: value = EventUtility.ReadGuidBigEndian(this.EventData.Slice(this.ValueStart)); return true;
+                case 16: value = Utility.ReadGuidBigEndian(this.EventData.Slice(this.ValueStart)); return true;
                 default: value = new Guid(); return false;
             }
         }
@@ -707,7 +707,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             switch (this.Format)
             {
                 case EventFieldFormat.String8:
-                    encoding = EventUtility.EncodingLatin1;
+                    encoding = Utility.EncodingLatin1;
                     break;
                 case EventFieldFormat.StringUtfBom:
                 case EventFieldFormat.StringXml:
@@ -728,7 +728,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         v[3] == 0xFF)
                     {
                         v = v.Slice(4);
-                        encoding = EventUtility.EncodingUTF32BE;
+                        encoding = Utility.EncodingUTF32BE;
                     }
                     else if (v.Length >= 3 &&
                         v[0] == 0xEF &&
@@ -763,7 +763,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     switch (this.Encoding)
                     {
                         default:
-                            encoding = EventUtility.EncodingLatin1;
+                            encoding = Utility.EncodingLatin1;
                             break;
                         case EventFieldEncoding.Value8:
                         case EventFieldEncoding.ZStringChar8:
@@ -919,33 +919,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
             }
 
-            // Fallback: HexBinary.
-
-            var valueBytesCount = this.ValueLength;
-            if (valueBytesCount > 0)
-            {
-                const string HexChars = "0123456789ABCDEF";
-
-                var pos = this.ValueStart;
-                var end = this.ValueLength + pos;
-                var str = new Text.StringBuilder(valueBytesCount * 3);
-
-                var val = this.EventData[pos];
-                str.Append(HexChars[val >> 4]);
-                str.Append(HexChars[val & 0xF]);
-
-                for (pos += 1; pos < end; pos += 1)
-                {
-                    str.Append(' ');
-                    val = this.EventData[pos];
-                    str.Append(HexChars[val >> 4]);
-                    str.Append(HexChars[val & 0xF]);
-                }
-
-                return str.ToString();
-            }
-
-            return "";
+            return Utility.ToHexString(this.EventData.Slice(this.ValueStart, this.ValueLength));
         }
     }
 }

@@ -447,19 +447,23 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// <para>
         /// Reads the next event from the input file.
-        /// On success, returns Ok and sets perfEventData to the event data,
+        /// </para><para>
+        /// On success, returns Ok and sets perfEvent to the event data,
         /// which can be used with GetSampleEventInfo or GetNonSampleEventInfo,
-        /// depending on the event type. The event data is valid until the next
-        /// call to ReadEvent.
+        /// depending on the event type.
+        /// </para><para>
+        /// The event data is valid until the next call to ReadEvent.
+        /// </para>
         /// </summary>
-        /// <param name="perfEventData">
-        /// Receives the event header and data. Use the Type field to determine
-        /// the event type. As appropriate, call GetSampleEventInfo or
-        /// GetNonSampleEventInfo with perfEventData.Span to decode the event.
+        /// <param name="perfEvent">
+        /// Receives the event header and data. Use the perfEvent.Header.Type field
+        /// to determine the event type. As appropriate, call GetSampleEventInfo or
+        /// GetNonSampleEventInfo to decode the event.
         /// </param>
         /// <returns>Ok on success; EndOfFile or InvalidData if no more events.</returns>
-        public PerfDataFileResult ReadEvent(out PerfEventData perfEventData)
+        public PerfDataFileResult ReadEvent(out PerfEvent perfEvent)
         {
             PerfDataFileResult result;
 
@@ -556,7 +560,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                 case PerfEventType.HeaderTracingData:
 
-                    if (!ReadPostEventData(4, ref eventData, ref bufferSpan))
+                    var oldEndPos = eventData.EndPos;
+                    if (eventHeader.Size != 0x0C ||
+                        !ReadPostEventData(4, ref eventData, ref bufferSpan))
                     {
                         result = PerfDataFileResult.InvalidData;
                         goto ErrorOrEof;
@@ -564,7 +570,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                     if (!m_parsedTracingData)
                     {
-                        var tracingDataHeader = SetHeader(PerfHeaderIndex.TracingData, eventData.Slice(bufferSpan));
+                        var tracingDataHeader = SetHeader(
+                            PerfHeaderIndex.TracingData,
+                            bufferSpan.Slice(oldEndPos, eventData.EndPos - oldEndPos));
                         ParseTracingData(tracingDataHeader);
                     }
                     break;
@@ -602,15 +610,17 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 case PerfHeaderIndex.ClockData:
                                     ParseHeaderClockData(featureHeader);
                                     break;
-                                case PerfHeaderIndex.LastFeature:
-                                    var eventDescHeader = m_headers[(int)PerfHeaderIndex.EventDesc];
-                                    if (!eventDescHeader.IsEmpty)
-                                    {
-                                        ParseHeaderEventDesc(eventDescHeader.Span);
-                                    }
-                                    break;
                             }
                         }
+                    }
+                    break;
+
+                case PerfEventType.FinishedInit:
+
+                    var eventDescHeader = m_headers[(int)PerfHeaderIndex.EventDesc];
+                    if (!eventDescHeader.IsEmpty)
+                    {
+                        ParseHeaderEventDesc(eventDescHeader.Span);
                     }
                     break;
             }
@@ -621,19 +631,19 @@ namespace Microsoft.LinuxTracepoints.Decode
                 goto ErrorOrEof;
             }
 
-            Debug.Assert(m_buffer.Span == bufferSpan); // m_buffer and bufferSpan must be kept in sync.
-
-            perfEventData.Header = eventHeader;
-            perfEventData.Span = bufferSpan.Slice(0, eventData.EndPos);
-            perfEventData.Memory = m_buffer.Slice(0, eventData.EndPos);
-
+            Debug.Assert(m_buffer.Length == bufferSpan.Length); // m_buffer and bufferSpan must be kept in sync.
+            perfEvent = new PerfEvent(
+                eventHeader,
+                m_buffer.Slice(eventData.StartPos, eventData.Length),
+                bufferSpan.Slice(eventData.StartPos, eventData.Length));
             return PerfDataFileResult.Ok;
 
         ErrorOrEof:
 
             FileClose();
             m_filePos = UInt64.MaxValue; // Subsequent ReadEvent should get EndOfFile.
-            perfEventData = default;
+
+            perfEvent = default;
             return result;
         }
 
@@ -642,11 +652,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// usually present only for sample events. If the event prefix is not
         /// present, this function may return an error or it may succeed but return
         /// incorrect information. In general, only use this on events where
-        /// perfEventData.Type == PERF_RECORD_SAMPLE.
+        /// perfEvent.Header.Type == PERF_RECORD_SAMPLE.
         /// </summary>
         /// <param name="perfEventDataSpan">
-        /// The data of the event, usually the Span field of the perfEventData returned
-        /// by ReadEvent.
+        /// The data of the event to decode (e.g. the perfEvent.DataSpan from a
+        /// perfEvent returned from a call to ReadEvent).
         /// </param>
         /// <param name="info">Receives event information.</param>
         /// <returns>Ok on success, other value if this event could not be decoded.</returns>
@@ -656,13 +666,19 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             PerfDataFileResult result;
             UInt64 id;
-            PerfEventHeader eventHeader;
 
-            result = GetSampleEventId(perfEventDataSpan, out eventHeader, out id);
-            if (result != PerfDataFileResult.Ok)
+            if (m_sampleIdOffset < 0)
             {
+                result = PerfDataFileResult.NoData;
                 goto Error;
             }
+            else if (m_sampleIdOffset + sizeof(UInt64) > perfEventDataSpan.Length)
+            {
+                result = PerfDataFileResult.InvalidData;
+                goto Error;
+            }
+
+            id = m_byteReader.ReadU64(perfEventDataSpan.Slice(m_sampleIdOffset));
 
             PerfEventDesc eventDesc;
             if (!m_eventDescById.TryGetValue(id, out eventDesc))
@@ -673,16 +689,16 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             var infoSampleTypes = eventDesc.Attr.SampleType;
 
-            Debug.Assert(perfEventDataSpan.Length >= sizeof(UInt64) * 2); // Otherwise GetSampleEventId would have failed.
-            var pos = sizeof(UInt64); // Skip PerfEventHeader.
+            Debug.Assert(perfEventDataSpan.Length >= sizeof(UInt64)); // Otherwise id lookup would have failed.
+            var pos = 0; // Skip PerfEventHeader.
             var endPos = perfEventDataSpan.Length & -sizeof(UInt64);
 
             result = PerfDataFileResult.InvalidData;
 
             if (0 != (infoSampleTypes & PerfEventSampleFormat.Identifier))
             {
-                Debug.Assert(pos != endPos); // Otherwise GetSampleEventId would have failed.
-                pos += sizeof(UInt64); // Was read in GetSampleEventId.
+                Debug.Assert(pos != endPos); // Otherwise id lookup would have failed.
+                pos += sizeof(UInt64); // Was read in id lookup.
             }
 
             if (0 == (infoSampleTypes & PerfEventSampleFormat.IP))
@@ -759,7 +775,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     goto Error;
                 }
 
-                pos += sizeof(UInt64); // Was read in GetSampleEventId.
+                pos += sizeof(UInt64); // Was read in id lookup.
             }
 
             if (0 == (infoSampleTypes & PerfEventSampleFormat.StreamId))
@@ -927,14 +943,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                     goto Error;
                 }
 
-                info.RawDataStart = pos;
+                info.RawDataStart = pos + sizeof(UInt32);
                 info.RawDataLength = (int)rawSize;
 
                 pos += (sizeof(UInt32) + (int)rawSize + sizeof(UInt64) - 1) & -sizeof(UInt64);
             }
 
             Debug.Assert(pos <= endPos);
-            info.EventData = perfEventDataSpan;
             info.SessionInfo = m_sessionInfo;
             info.EventDesc = eventDesc;
             info.Id = id;
@@ -947,18 +962,21 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Tries to get event information from the event's suffix. The event suffix
+        /// Tries to get event information from the event's suffix. The suffix
         /// is usually present only for non-sample kernel-generated events.
         /// If the event suffix is not present, this function may return an error or
         /// it may succeed but return incorrect information. In general:
-        /// - Only use this on events where perfEventData.Type != PERF_RECORD_SAMPLE
-        ///   and perfEventData.Type < PERF_RECORD_USER_TYPE_START.
-        /// - Only use this on events that come after the PERF_RECORD_FINISHED_INIT
-        ///   event.
+        /// <list type="bullet"><item>
+        /// Only use this on events where perfEventData.Type != PERF_RECORD_SAMPLE
+        /// and perfEventData.Type < PERF_RECORD_USER_TYPE_START.
+        /// </item><item>
+        /// Only use this on events that come after the PERF_RECORD_FINISHED_INIT
+        /// event.
+        /// </item></list>
         /// </summary>
         /// <param name="perfEventDataSpan">
-        /// The data of the event, usually the Span field of the perfEventData returned
-        /// by ReadEvent.
+        /// The data of the event to decode (e.g. the perfEvent.DataSpan from a
+        /// perfEvent returned from a call to ReadEvent).
         /// </param>
         /// <param name="info">Receives event information.</param>
         /// <returns>Ok on success, other value if this event could not be decoded.</returns>
@@ -968,13 +986,19 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             PerfDataFileResult result;
             UInt64 id;
-            PerfEventHeader eventHeader;
 
-            result = GetNonSampleEventId(perfEventDataSpan, out eventHeader, out id);
-            if (result != PerfDataFileResult.Ok)
+            if (m_nonSampleIdOffset < 0)
             {
+                result = PerfDataFileResult.NoData;
                 goto Error;
             }
+            else if (m_nonSampleIdOffset > perfEventDataSpan.Length)
+            {
+                result = PerfDataFileResult.InvalidData;
+                goto Error;
+            }
+
+            id = m_byteReader.ReadU64(perfEventDataSpan.Slice(perfEventDataSpan.Length - m_nonSampleIdOffset));
 
             PerfEventDesc eventDesc;
             if (!m_eventDescById.TryGetValue(id, out eventDesc))
@@ -985,15 +1009,15 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             var infoSampleTypes = eventDesc.Attr.SampleType;
 
-            Debug.Assert(perfEventDataSpan.Length >= sizeof(UInt64) * 2); // Otherwise GetNonSampleEventId would have failed.
+            Debug.Assert(perfEventDataSpan.Length >= sizeof(UInt64) * 2); // Otherwise id lookup would have failed.
             var pos = perfEventDataSpan.Length & -sizeof(UInt64); // Read backwards.
 
             result = PerfDataFileResult.InvalidData;
 
             if (0 != (infoSampleTypes & PerfEventSampleFormat.Identifier))
             {
-                pos -= sizeof(UInt64); // Was read in GetNonSampleEventId.
-                Debug.Assert(pos != 0); // Otherwise GetNonSampleEventId would have failed.
+                pos -= sizeof(UInt64); // Was read in id lookup.
+                Debug.Assert(pos != 0); // Otherwise id lookup would have failed.
             }
 
             if (0 == (infoSampleTypes & PerfEventSampleFormat.Cpu))
@@ -1035,7 +1059,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                pos -= sizeof(UInt64); // Was read in GetNonSampleEventId.
+                pos -= sizeof(UInt64); // Was read in id lookup.
 
                 if (pos == 0)
                 {
@@ -1078,7 +1102,6 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             Debug.Assert(pos >= sizeof(UInt64));
             Debug.Assert(pos < 0x10000 / sizeof(UInt64));
-            info.EventData = perfEventDataSpan;
             info.SessionInfo = m_sessionInfo;
             info.EventDesc = eventDesc;
             info.Id = id;
@@ -1469,7 +1492,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         return; // Unexpected.
                     }
 
-                    var systemName = EventUtility.EncodingLatin1.GetString(sectionValue.Slice(data));
+                    var systemName = Utility.EncodingLatin1.GetString(sectionValue.Slice(data));
 
                     if (data.Length - pos < sizeof(UInt32))
                     {
@@ -1486,7 +1509,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             return; // Unexpected.
                         }
 
-                        var formatFileContents = EventUtility.EncodingLatin1.GetString(sectionValue.Slice(data));
+                        var formatFileContents = Utility.EncodingLatin1.GetString(sectionValue.Slice(data));
                         var longSize64 = m_tracingDataLongSize == 0
                             ? IntPtr.Size == sizeof(UInt64)
                             : m_tracingDataLongSize == sizeof(UInt64);
@@ -1543,7 +1566,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         desc.Attr.Type == PerfTypeId.Tracepoint &&
                         m_metadataById.TryGetValue((uint)desc.Attr.Config, out var metadata))
                     {
-                        m_eventDescList[i] = new PerfEventDesc(desc.Attr, desc.Name, metadata, desc.Ids);
+                        desc.SetMetadata(metadata);
                     }
                 }
 
@@ -1676,68 +1699,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
         }
 
-        private PerfDataFileResult GetSampleEventId(
-            ReadOnlySpan<byte> perfEventDataSpan,
-            out PerfEventHeader eventHeader,
-            out UInt64 id)
-        {
-            PerfDataFileResult result;
-
-            eventHeader = MemoryMarshal.Read<PerfEventHeader>(perfEventDataSpan);
-            if (m_sampleIdOffset < 0)
-            {
-                id = 0;
-                result = PerfDataFileResult.NoData;
-            }
-            else
-            {
-                var index = 1 + m_sampleIdOffset;
-                if (index >= eventHeader.Size / sizeof(UInt64))
-                {
-                    id = 0;
-                    result = PerfDataFileResult.InvalidData;
-                }
-                else
-                {
-                    id = m_byteReader.ReadU64(perfEventDataSpan.Slice(index * sizeof(UInt64)));
-                    result = PerfDataFileResult.Ok;
-                }
-            }
-
-            return result;
-        }
-
-        private PerfDataFileResult GetNonSampleEventId(
-            ReadOnlySpan<byte> perfEventDataSpan,
-            out PerfEventHeader eventHeader,
-            out UInt64 id)
-        {
-            PerfDataFileResult result;
-
-            eventHeader = MemoryMarshal.Read<PerfEventHeader>(perfEventDataSpan);
-            if (m_nonSampleIdOffset < 0)
-            {
-                id = 0;
-                result = PerfDataFileResult.NoData;
-            }
-            else
-            {
-                var index = eventHeader.Size / sizeof(UInt64) - 1 - m_nonSampleIdOffset;
-                if (index <= 0)
-                {
-                    id = 0;
-                    result = PerfDataFileResult.InvalidData;
-                }
-                else
-                {
-                    id = m_byteReader.ReadU64(perfEventDataSpan.Slice(index * sizeof(UInt64)));
-                    result = PerfDataFileResult.Ok;
-                }
-            }
-
-            return result;
-        }
-
         private bool AddAttr(
             ReadOnlySpan<byte> attrBytes,
             ReadOnlySpan<byte> name,
@@ -1763,7 +1724,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 // ID is at a fixed offset.
                 sampleIdOffset = 0;
-                nonSampleIdOffset = 0;
+                nonSampleIdOffset = sizeof(UInt64);
             }
             else if (0 == (sampleType & PerfEventSampleFormat.Id))
             {
@@ -1773,15 +1734,15 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                // ID offset not fixed.
-                sampleIdOffset = (sbyte)(
-                    ((0 != (sampleType & PerfEventSampleFormat.IP)) ? 1 : 0) +
-                    ((0 != (sampleType & PerfEventSampleFormat.Tid)) ? 1 : 0) +
-                    ((0 != (sampleType & PerfEventSampleFormat.Time)) ? 1 : 0) +
-                    ((0 != (sampleType & PerfEventSampleFormat.Addr) ? 1 : 0)));
-                nonSampleIdOffset = (sbyte)(
-                    ((0 != (sampleType & PerfEventSampleFormat.Cpu)) ? 1 : 0) +
-                    ((0 != (sampleType & PerfEventSampleFormat.StreamId)) ? 1 : 0));
+                // ID is at a sampleType-dependent offset.
+                sampleIdOffset = (sbyte)(sizeof(UInt64) * (
+                    (0 != (sampleType & PerfEventSampleFormat.IP) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventSampleFormat.Tid) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventSampleFormat.Time) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventSampleFormat.Addr) ? 1 : 0)));
+                nonSampleIdOffset = (sbyte)(sizeof(UInt64) * (1 +
+                    (0 != (sampleType & PerfEventSampleFormat.Cpu) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventSampleFormat.StreamId) ? 1 : 0)));
             }
 
             if (0 == (attr.Options & PerfEventAttrOptions.SampleIdAll))
@@ -1826,7 +1787,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             var eventDesc = new PerfEventDesc(
                 attr,
-                EventUtility.EncodingLatin1.GetString(name),
+                Utility.EncodingLatin1.GetString(name),
                 metadata,
                 new ReadOnlyCollection<ulong>(ids));
             m_eventDescList.Add(eventDesc);

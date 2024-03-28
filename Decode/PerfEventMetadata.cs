@@ -163,14 +163,14 @@ namespace Microsoft.LinuxTracepoints.Decode
             ContinueNextLine:
 
                 // Skip any newlines.
-                while (ParseUtils.IsEolChar(str[i]))
+                while (Utility.IsEolChar(str[i]))
                 {
                     i += 1;
                     if (i >= str.Length) goto Done;
                 }
 
                 // Skip spaces.
-                while (ParseUtils.IsSpaceOrTab(str[i]))
+                while (Utility.IsSpaceOrTab(str[i]))
                 {
                     Debug.WriteLine("Space before propname in event");
                     i += 1; // Unexpected.
@@ -181,7 +181,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var iPropName = i;
                 while (str[i] != ':')
                 {
-                    if (ParseUtils.IsEolChar(str[i]))
+                    if (Utility.IsEolChar(str[i]))
                     {
                         Debug.WriteLine("EOL before ':' in format");
                         goto ContinueNextLine; // Unexpected.
@@ -200,7 +200,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 i += 1; // Skip ':'
 
                 // Skip spaces.
-                while (i < str.Length && ParseUtils.IsSpaceOrTab(str[i]))
+                while (i < str.Length && Utility.IsSpaceOrTab(str[i]))
                 {
                     i += 1;
                 }
@@ -208,7 +208,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var iPropValue = i;
 
                 // "VALUE..."
-                while (i < str.Length && !ParseUtils.IsEolChar(str[i]))
+                while (i < str.Length && !Utility.IsEolChar(str[i]))
                 {
                     char consumed;
 
@@ -217,24 +217,24 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                     if (consumed == '"')
                     {
-                        i = ParseUtils.ConsumeString(i, str, '"');
+                        i = Utility.ConsumeString(i, str, '"');
                     }
                 }
 
                 // Did we find something we can use?
-                if (propName == "name")
+                if (propName.SequenceEqual("name"))
                 {
                     name = str.Slice(iPropValue, i - iPropValue).ToString();
                 }
-                else if (propName == "ID" && i < str.Length)
+                else if (propName.SequenceEqual("ID") && i < str.Length)
                 {
-                    foundId = ParseUtils.ParseUInt(str.Slice(iPropValue, i - iPropValue), out id);
+                    foundId = Utility.ParseUInt(str.Slice(iPropValue, i - iPropValue), out id);
                 }
-                else if (propName == "print fmt")
+                else if (propName.SequenceEqual("print fmt"))
                 {
                     printFmt = str.Slice(iPropValue, i - iPropValue).ToString();
                 }
-                else if (propName == "format")
+                else if (propName.SequenceEqual("format"))
                 {
                     bool common = true;
                     fields.Clear();
@@ -242,7 +242,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     // Search for lines like: " field:TYPE NAME; offset:N; size:N; signed:N;"
                     while (i < str.Length)
                     {
-                        Debug.Assert(ParseUtils.IsEolChar(str[i]), "Loop should only repeat at EOL");
+                        Debug.Assert(Utility.IsEolChar(str[i]), "Loop should only repeat at EOL");
 
                         if (str.Length - i >= 2 && str[i] == '\r' && str[i + 1] == '\n')
                         {
@@ -254,7 +254,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
 
                         var iLine = i;
-                        while (i < str.Length && !ParseUtils.IsEolChar(str[i]))
+                        while (i < str.Length && !Utility.IsEolChar(str[i]))
                         {
                             i += 1;
                         }

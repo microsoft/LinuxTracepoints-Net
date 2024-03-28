@@ -6,6 +6,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using System.Text;
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
@@ -195,7 +196,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         goto TokensDone;
 
                     case TokenKind.Ident:
-                        if (tokenizer.Value == "long")
+                        if (tokenizer.Value.SequenceEqual("long"))
                         {
                             if (foundLong)
                             {
@@ -206,27 +207,27 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 foundLong = true;
                             }
                         }
-                        else if (tokenizer.Value == "short")
+                        else if (tokenizer.Value.SequenceEqual("short"))
                         {
                             foundShort = true;
                         }
-                        else if (tokenizer.Value == "unsigned")
+                        else if (tokenizer.Value.SequenceEqual("unsigned"))
                         {
                             foundUnsigned = true;
                         }
-                        else if (tokenizer.Value == "signed")
+                        else if (tokenizer.Value.SequenceEqual("signed"))
                         {
                             foundSigned = true;
                         }
-                        else if (tokenizer.Value == "struct")
+                        else if (tokenizer.Value.SequenceEqual("struct"))
                         {
                             foundStruct = true;
                         }
-                        else if (tokenizer.Value == "__data_loc")
+                        else if (tokenizer.Value.SequenceEqual("__data_loc"))
                         {
                             foundDataLoc = true;
                         }
-                        else if (tokenizer.Value == "__rel_loc")
+                        else if (tokenizer.Value.SequenceEqual("__rel_loc"))
                         {
                             foundRelLoc = true;
                         }
@@ -246,7 +247,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                         var arrayCount = tokenizer.Value;
                         int iBegin = 1; // Skip '['.
-                        while (iBegin < arrayCount.Length && ParseUtils.IsSpaceOrTab(arrayCount[iBegin]))
+                        while (iBegin < arrayCount.Length && Utility.IsSpaceOrTab(arrayCount[iBegin]))
                         {
                             iBegin += 1;
                         }
@@ -258,7 +259,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         {
                             iBegin += 2; // Skip "0x".
                             iEnd = iBegin;
-                            while (iEnd < arrayCount.Length && ParseUtils.IsHexDigit(arrayCount[iEnd]))
+                            while (iEnd < arrayCount.Length && Utility.IsHexDigit(arrayCount[iEnd]))
                             {
                                 iEnd += 1;
                             }
@@ -266,7 +267,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         else
                         {
                             iEnd = iBegin;
-                            while (iEnd < arrayCount.Length && ParseUtils.IsDecimalDigit(arrayCount[iEnd]))
+                            while (iEnd < arrayCount.Length && Utility.IsDecimalDigit(arrayCount[iEnd]))
                             {
                                 iEnd += 1;
                             }
@@ -275,7 +276,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         fixedArrayCount = 0;
                         if (iEnd > iBegin)
                         {
-                            ParseUtils.ParseUInt(arrayCount.Slice(iBegin, iEnd - iBegin), out fixedArrayCount);
+                            Utility.ParseUInt(arrayCount.Slice(iBegin, iEnd - iBegin), out fixedArrayCount);
                         }
 
                         tokenizer.MoveNext();
@@ -294,7 +295,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                     case TokenKind.Punctuation:
                         // Most punctuation ignored.
-                        if (tokenizer.Value == "*")
+                        if (tokenizer.Value.SequenceEqual("*"))
                         {
                             foundPointer = true;
                         }
@@ -328,7 +329,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 this.format = PerfFieldFormat.None;
                 this.elementSize = PerfFieldElementSize.Size8;
             }
-            else if (baseType.IsEmpty || baseType == "int")
+            else if (baseType.IsEmpty || baseType.SequenceEqual("int"))
             {
                 this.format = foundUnsigned
                     ? PerfFieldFormat.Unsigned
@@ -360,7 +361,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                 }
             }
-            else if (baseType == "char")
+            else if (baseType.SequenceEqual("char"))
             {
                 this.format = foundUnsigned
                     ? PerfFieldFormat.Unsigned
@@ -369,42 +370,42 @@ namespace Microsoft.LinuxTracepoints.Decode
                     : PerfFieldFormat.String;
                 this.elementSize = PerfFieldElementSize.Size8;
             }
-            else if (baseType == "u8" || baseType == "__u8" || baseType == "uint8_t")
+            else if (baseType.SequenceEqual("u8") || baseType.SequenceEqual("__u8") || baseType.SequenceEqual("uint8_t"))
             {
                 this.format = PerfFieldFormat.Unsigned;
                 this.elementSize = PerfFieldElementSize.Size8;
             }
-            else if (baseType == "s8" || baseType == "__s8" || baseType == "int8_t")
+            else if (baseType.SequenceEqual("s8") || baseType.SequenceEqual("__s8") || baseType.SequenceEqual("int8_t"))
             {
                 this.format = PerfFieldFormat.Signed;
                 this.elementSize = PerfFieldElementSize.Size8;
             }
-            else if (baseType == "u16" || baseType == "__u16" || baseType == "uint16_t")
+            else if (baseType.SequenceEqual("u16") || baseType.SequenceEqual("__u16") || baseType.SequenceEqual("uint16_t"))
             {
                 this.format = PerfFieldFormat.Unsigned;
                 this.elementSize = PerfFieldElementSize.Size16;
             }
-            else if (baseType == "s16" || baseType == "__s16" || baseType == "int16_t")
+            else if (baseType.SequenceEqual("s16") || baseType.SequenceEqual("__s16") || baseType.SequenceEqual("int16_t"))
             {
                 this.format = PerfFieldFormat.Signed;
                 this.elementSize = PerfFieldElementSize.Size16;
             }
-            else if (baseType == "u32" || baseType == "__u32" || baseType == "uint32_t")
+            else if (baseType.SequenceEqual("u32") || baseType.SequenceEqual("__u32") || baseType.SequenceEqual("uint32_t"))
             {
                 this.format = PerfFieldFormat.Unsigned;
                 this.elementSize = PerfFieldElementSize.Size32;
             }
-            else if (baseType == "s32" || baseType == "__s32" || baseType == "int32_t")
+            else if (baseType.SequenceEqual("s32") || baseType.SequenceEqual("__s32") || baseType.SequenceEqual("int32_t"))
             {
                 this.format = PerfFieldFormat.Signed;
                 this.elementSize = PerfFieldElementSize.Size32;
             }
-            else if (baseType == "u64" || baseType == "__u64" || baseType == "uint64_t")
+            else if (baseType.SequenceEqual("u64") || baseType.SequenceEqual("__u64") || baseType.SequenceEqual("uint64_t"))
             {
                 this.format = PerfFieldFormat.Unsigned;
                 this.elementSize = PerfFieldElementSize.Size64;
             }
-            else if (baseType == "s64" || baseType == "__s64" || baseType == "int64_t")
+            else if (baseType.SequenceEqual("s64") || baseType.SequenceEqual("__s64") || baseType.SequenceEqual("int64_t"))
             {
                 this.format = PerfFieldFormat.Signed;
                 this.elementSize = PerfFieldElementSize.Size64;
@@ -597,7 +598,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             while (i < str.Length)
             {
                 // Skip spaces and semicolons.
-                while (ParseUtils.IsSpaceOrTab(str[i]) || str[i] == ';')
+                while (Utility.IsSpaceOrTab(str[i]) || str[i] == ';')
                 {
                     i += 1;
                     if (i >= str.Length)
@@ -622,7 +623,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 i += 1; // Skip ':'
 
                 // Skip spaces.
-                while (i < str.Length && ParseUtils.IsSpaceOrTab(str[i]))
+                while (i < str.Length && Utility.IsSpaceOrTab(str[i]))
                 {
                     Debug.WriteLine("Space before propval in format");
                     i += 1; // Unexpected.
@@ -636,22 +637,22 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
 
                 var propValue = str.Slice(iPropValue, i - iPropValue);
-                if (propName == "field" || propName == "field special")
+                if (propName.SequenceEqual("field") || propName.SequenceEqual("field special"))
                 {
                     field = propValue;
                 }
-                else if (propName == "offset" && i < str.Length)
+                else if (propName.SequenceEqual("offset") && i < str.Length)
                 {
-                    foundOffset = ParseUtils.ParseUInt(propValue, out offset);
+                    foundOffset = Utility.ParseUInt(propValue, out offset);
                 }
-                else if (propName == "size" && i < str.Length)
+                else if (propName.SequenceEqual("size") && i < str.Length)
                 {
-                    foundSize = ParseUtils.ParseUInt(propValue, out size);
+                    foundSize = Utility.ParseUInt(propValue, out size);
                 }
-                else if (propName == "signed" && i < str.Length)
+                else if (propName.SequenceEqual("signed") && i < str.Length)
                 {
                     ushort signedVal;
-                    isSigned = ParseUtils.ParseUInt(propValue, out signedVal)
+                    isSigned = Utility.ParseUInt(propValue, out signedVal)
                         ? signedVal != 0
                         : (bool?)null;
                 }
@@ -673,7 +674,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Given the event's raw data (e.g. PerfSampleEventInfo::raw_data), return
+        /// Given the event's raw data (e.g. PerfSampleEventInfo::RawData), return
         /// this field's raw data. Returns empty for error (e.g. out of bounds).
         ///
         /// Does not do any byte-swapping. This method uses fileBigEndian to resolve
@@ -757,6 +758,456 @@ namespace Microsoft.LinuxTracepoints.Decode
             return result;
         }
 
+        /// <summary>
+        /// Formats the given bytes using this field's type.
+        /// </summary>
+        /// <param name="fieldBytes">Field data, e.g. from GetFieldBytes.</param>
+        /// <param name="eventBigEndian">true if the event was logged using big-endian byte order.</param>
+        /// <param name="jsonQuotes">true to put quotes around strings and hexadecimal numbers.</param>
+        /// <returns></returns>
+        public string FormatField(ReadOnlySpan<byte> fieldBytes, bool eventBigEndian, bool jsonQuotes = false)
+        {
+            StringBuilder sb;
+            var byteReader = new PerfByteReader(eventBigEndian);
+            switch (this.Format)
+            {
+                default:
+                case PerfFieldFormat.None:
+
+                    if (this.Array == PerfFieldArray.None ||
+                        this.ElementSize == PerfFieldElementSize.Size8)
+                    {
+                        return Utility.ToHexString(fieldBytes);
+                    }
+                    goto case PerfFieldFormat.Hex;
+
+                case PerfFieldFormat.String:
+
+                    var len = fieldBytes.IndexOf((byte)0);
+                    if (!jsonQuotes)
+                    {
+                        if (len == 0)
+                        {
+                            return "";
+                        }
+                        else
+                        {
+                            return Utility.EncodingLatin1.GetString(fieldBytes.Slice(0, len >= 0 ? len : fieldBytes.Length));
+                        }
+                    }
+                    else if (len == 0)
+                    {
+                        return "\"\"";
+                    }
+                    else
+                    {
+                        sb = new StringBuilder(len);
+                        sb.Append('"');
+                        for (int i = 0; i < len; i += 1)
+                        {
+                            var ch = (char)fieldBytes[i];
+                            if (ch == '\\')
+                            {
+                                sb.Append('\\');
+                                sb.Append('\\');
+                            }
+                            else if (ch == '"')
+                            {
+                                sb.Append('\\');
+                                sb.Append('"');
+                            }
+                            else if (ch >= ' ')
+                            {
+                                sb.Append(ch);
+                            }
+                            else
+                            {
+                                const string HexChars = "0123456789ABCDEF";
+                                sb.Append('\\');
+                                switch (ch)
+                                {
+                                    case '\b': sb.Append('b'); break;
+                                    case '\f': sb.Append('f'); break;
+                                    case '\n': sb.Append('n'); break;
+                                    case '\r': sb.Append('r'); break;
+                                    case '\t': sb.Append('t'); break;
+                                    default:
+                                        sb.Append('u');
+                                        sb.Append('0');
+                                        sb.Append('0');
+                                        sb.Append(Utility.ToHexChar(ch >> 4));
+                                        sb.Append(Utility.ToHexChar(ch));
+                                        break;
+                                }
+                            }
+                        }
+                        sb.Append('"');
+                        break;
+                    }
+
+                case PerfFieldFormat.Hex:
+
+                    sb = new StringBuilder();
+                    if (this.Array == PerfFieldArray.None)
+                    {
+                        switch (this.ElementSize)
+                        {
+                            default:
+                                return Utility.ToHexString(fieldBytes);
+                            case PerfFieldElementSize.Size8:
+                                if (fieldBytes.Length < 1)
+                                {
+                                    return "null";
+                                }
+                                AppendHexJson(jsonQuotes, sb, fieldBytes[0]);
+                                break;
+                            case PerfFieldElementSize.Size16:
+                                if (fieldBytes.Length < 2)
+                                {
+                                    return "null";
+                                }
+                                AppendHexJson(jsonQuotes, sb, byteReader.ReadU16(fieldBytes));
+                                break;
+                            case PerfFieldElementSize.Size32:
+                                if (fieldBytes.Length < 4)
+                                {
+                                    return "null";
+                                }
+                                AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes));
+                                break;
+                            case PerfFieldElementSize.Size64:
+                                if (fieldBytes.Length < 8)
+                                {
+                                    return "null";
+                                }
+                                AppendHexJson(jsonQuotes, sb, byteReader.ReadU64(fieldBytes));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        sb.Append('[');
+                        switch (this.ElementSize)
+                        {
+                            default:
+                                return Utility.ToHexString(fieldBytes);
+                            case PerfFieldElementSize.Size8:
+                                if (fieldBytes.Length >= 1)
+                                {
+                                    AppendHexJson(jsonQuotes, sb, fieldBytes[0]);
+                                    for (int i = 1; i < fieldBytes.Length; i += 1)
+                                    {
+                                        sb.Append(',');
+                                        AppendHexJson(jsonQuotes, sb, fieldBytes[i]);
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size16:
+                                if (fieldBytes.Length >= 2)
+                                {
+                                    AppendHexJson(jsonQuotes, sb, byteReader.ReadU16(fieldBytes));
+                                    for (int i = 3; i < fieldBytes.Length; i += 2)
+                                    {
+                                        sb.Append(',');
+                                        AppendHexJson(jsonQuotes, sb, byteReader.ReadU16(fieldBytes.Slice(i - 1)));
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size32:
+                                if (fieldBytes.Length >= 4)
+                                {
+                                    AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes));
+                                    for (int i = 7; i < fieldBytes.Length; i += 4)
+                                    {
+                                        sb.Append(',');
+                                        AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes.Slice(i - 3)));
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size64:
+                                if (fieldBytes.Length >= 8)
+                                {
+                                    AppendHexJson(jsonQuotes, sb, byteReader.ReadU64(fieldBytes));
+                                    for (int i = 15; i < fieldBytes.Length; i += 8)
+                                    {
+                                        sb.Append(',');
+                                        AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes.Slice(i - 7)));
+                                    }
+                                }
+                                break;
+                        }
+                        sb.Append(']');
+                    }
+                    break;
+
+                case PerfFieldFormat.Unsigned:
+
+                    sb = new StringBuilder();
+                    if (this.Array == PerfFieldArray.None)
+                    {
+                        switch (this.ElementSize)
+                        {
+                            default:
+                                return Utility.ToHexString(fieldBytes);
+                            case PerfFieldElementSize.Size8:
+                                if (fieldBytes.Length < 1)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(fieldBytes[0]);
+                                break;
+                            case PerfFieldElementSize.Size16:
+                                if (fieldBytes.Length < 2)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(byteReader.ReadU16(fieldBytes));
+                                break;
+                            case PerfFieldElementSize.Size32:
+                                if (fieldBytes.Length < 4)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(byteReader.ReadU32(fieldBytes));
+                                break;
+                            case PerfFieldElementSize.Size64:
+                                if (fieldBytes.Length < 8)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(byteReader.ReadU64(fieldBytes));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        sb.Append('[');
+                        switch (this.ElementSize)
+                        {
+                            default:
+                                return Utility.ToHexString(fieldBytes);
+                            case PerfFieldElementSize.Size8:
+                                if (fieldBytes.Length >= 1)
+                                {
+                                    sb.Append(fieldBytes[0]);
+                                    for (int i = 1; i < fieldBytes.Length; i += 1)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(fieldBytes[i]);
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size16:
+                                if (fieldBytes.Length >= 2)
+                                {
+                                    sb.Append(byteReader.ReadU16(fieldBytes));
+                                    for (int i = 3; i < fieldBytes.Length; i += 2)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(byteReader.ReadU16(fieldBytes.Slice(i - 1)));
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size32:
+                                if (fieldBytes.Length >= 4)
+                                {
+                                    sb.Append(byteReader.ReadU32(fieldBytes));
+                                    for (int i = 7; i < fieldBytes.Length; i += 4)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(byteReader.ReadU32(fieldBytes.Slice(i - 3)));
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size64:
+                                if (fieldBytes.Length >= 8)
+                                {
+                                    sb.Append(byteReader.ReadU64(fieldBytes));
+                                    for (int i = 15; i < fieldBytes.Length; i += 8)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(byteReader.ReadU32(fieldBytes.Slice(i - 7)));
+                                    }
+                                }
+                                break;
+                        }
+                        sb.Append(']');
+                    }
+                    break;
+
+                case PerfFieldFormat.Signed:
+
+                    sb = new StringBuilder();
+                    if (this.Array == PerfFieldArray.None)
+                    {
+                        switch (this.ElementSize)
+                        {
+                            default:
+                                return Utility.ToHexString(fieldBytes);
+                            case PerfFieldElementSize.Size8:
+                                if (fieldBytes.Length < 1)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(unchecked((sbyte)fieldBytes[0]));
+                                break;
+                            case PerfFieldElementSize.Size16:
+                                if (fieldBytes.Length < 2)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(byteReader.ReadI16(fieldBytes));
+                                break;
+                            case PerfFieldElementSize.Size32:
+                                if (fieldBytes.Length < 4)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(byteReader.ReadI32(fieldBytes));
+                                break;
+                            case PerfFieldElementSize.Size64:
+                                if (fieldBytes.Length < 8)
+                                {
+                                    return "null";
+                                }
+                                sb.Append(byteReader.ReadI64(fieldBytes));
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        sb.Append('[');
+                        switch (this.ElementSize)
+                        {
+                            default:
+                                return Utility.ToHexString(fieldBytes);
+                            case PerfFieldElementSize.Size8:
+                                if (fieldBytes.Length >= 1)
+                                {
+                                    sb.Append(unchecked((sbyte)fieldBytes[0]));
+                                    for (int i = 1; i < fieldBytes.Length; i += 1)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(unchecked((sbyte)fieldBytes[i]));
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size16:
+                                if (fieldBytes.Length >= 2)
+                                {
+                                    sb.Append(byteReader.ReadI16(fieldBytes));
+                                    for (int i = 3; i < fieldBytes.Length; i += 2)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(byteReader.ReadI16(fieldBytes.Slice(i - 1)));
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size32:
+                                if (fieldBytes.Length >= 4)
+                                {
+                                    sb.Append(byteReader.ReadI32(fieldBytes));
+                                    for (int i = 7; i < fieldBytes.Length; i += 4)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(byteReader.ReadI32(fieldBytes.Slice(i - 3)));
+                                    }
+                                }
+                                break;
+                            case PerfFieldElementSize.Size64:
+                                if (fieldBytes.Length >= 8)
+                                {
+                                    sb.Append(byteReader.ReadI64(fieldBytes));
+                                    for (int i = 15; i < fieldBytes.Length; i += 8)
+                                    {
+                                        sb.Append(',');
+                                        sb.Append(byteReader.ReadI32(fieldBytes.Slice(i - 7)));
+                                    }
+                                }
+                                break;
+                        }
+                        sb.Append(']');
+                    }
+                    break;
+            }
+
+            return sb.ToString();
+        }
+
+        private static void AppendHexJson(bool jsonQuotes, StringBuilder sb, uint value)
+        {
+            if (!jsonQuotes)
+            {
+                AppendHex(sb, value);
+            }
+            else
+            {
+                sb.Append('"');
+                AppendHex(sb, value);
+                sb.Append('"');
+            }
+        }
+
+        private static void AppendHexJson(bool jsonQuotes, StringBuilder sb, ulong value)
+        {
+            if (!jsonQuotes)
+            {
+                AppendHex(sb, value);
+            }
+            else
+            {
+                sb.Append('"');
+                AppendHex(sb, value);
+                sb.Append('"');
+            }
+        }
+
+        private static void AppendHex(StringBuilder sb, uint value)
+        {
+            sb.Append('0');
+            sb.Append('x');
+
+            var a = sb.Length;
+            do
+            {
+                sb.Append(Utility.ToHexChar(unchecked((int)value)));
+                value >>= 4;
+            } while (value != 0);
+            var b = sb.Length - 1;
+
+            while (a < b)
+            {
+                var ch = sb[b];
+                sb[b] = sb[a];
+                sb[a] = ch;
+                a += 1;
+                b -= 1;
+            }
+        }
+
+        private static void AppendHex(StringBuilder sb, ulong value)
+        {
+            sb.Append('0');
+            sb.Append('x');
+
+            var a = sb.Length;
+            do
+            {
+                sb.Append(Utility.ToHexChar(unchecked((int)value)));
+                value >>= 4;
+            } while (value != 0);
+            var b = sb.Length - 1;
+
+            while (a < b)
+            {
+                var ch = sb[b];
+                sb[b] = sb[a];
+                sb[a] = ch;
+                a += 1;
+                b -= 1;
+            }
+        }
+
         private enum TokenKind : byte
         {
             None,
@@ -817,17 +1268,17 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case '\'':
                         case '\"':
                             // Return up to the closing quote.
-                            i = ParseUtils.ConsumeString(i + 1, this.str, this.str[i]);
+                            i = Utility.ConsumeString(i + 1, this.str, this.str[i]);
                             newType = TokenKind.String;
                             break;
                         case '(':
                             // Return up to closing paren (allow nesting).
-                            i = ParseUtils.ConsumeBraced(i + 1, this.str, '(', ')');
+                            i = Utility.ConsumeBraced(i + 1, this.str, '(', ')');
                             newType = TokenKind.Parentheses;
                             break;
                         case '[':
                             // Return up to closing brace (allow nesting).
-                            i = ParseUtils.ConsumeBraced(i + 1, this.str, '[', ']');
+                            i = Utility.ConsumeBraced(i + 1, this.str, '[', ']');
                             newType = TokenKind.Brackets;
                             break;
                         default: // Return single character token.

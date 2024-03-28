@@ -1,14 +1,14 @@
-﻿using Microsoft.LinuxTracepoints;
-using Microsoft.LinuxTracepoints.Decode;
-using System;
-using System.Buffers.Binary;
-using System.IO;
-using Encoding = System.Text.Encoding;
-using CultureInfo = System.Globalization.CultureInfo;
-using System.Diagnostics;
-
-namespace DecodeTest
+﻿namespace DecodeTest
 {
+    using Microsoft.LinuxTracepoints;
+    using Microsoft.LinuxTracepoints.Decode;
+    using System;
+    using System.Buffers.Binary;
+    using System.Diagnostics;
+    using System.IO;
+    using CultureInfo = System.Globalization.CultureInfo;
+    using Encoding = System.Text.Encoding;
+
     internal sealed class DatDecode
     {
         private readonly EventEnumerator e = new EventEnumerator();
@@ -24,10 +24,14 @@ namespace DecodeTest
             get { return this.output; }
         }
 
-        public void Decode(byte[] bytes)
+        public void DecodeFile(string fileName)
         {
-            var bytesMemory = new ReadOnlyMemory<byte>(bytes);
-            var bytesSpan = new ReadOnlySpan<byte>(bytes);
+            this.DecodeBytes(File.ReadAllBytes(fileName));
+        }
+
+        public void DecodeBytes(ReadOnlyMemory<byte> bytes)
+        {
+            var bytesSpan = bytes.Span;
 
             bool comma = false;
             var pos = 0;
@@ -59,7 +63,7 @@ namespace DecodeTest
 
                 var tracepointName = Encoding.UTF8.GetString(bytesSpan.Slice(nameStart, nameLen));
                 var eventStart = nameStart + nameLen + 1;
-                if (!e.StartEvent(tracepointName, bytesMemory.Slice(eventStart, pos - eventStart)))
+                if (!e.StartEvent(tracepointName, bytes.Slice(eventStart, pos - eventStart)))
                 {
                     this.output.Write("Pos {0}: TryStartEvent error {1}.", eventStart, e.LastError);
                 }

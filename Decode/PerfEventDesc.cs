@@ -16,7 +16,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private readonly PerfEventAbi.PerfEventAttr attr;
         private readonly string name;
-        private readonly PerfEventMetadata? metadata;
+        private PerfEventMetadata? metadata;
         private readonly ReadOnlyCollection<ulong> ids;
 
         /// <summary>
@@ -34,26 +34,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.attr = attr;
             this.name = name;
             this.metadata = metadata;
-            this.ids = ids ?? EmptyIds;
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the PerfEventDesc class with the
-        /// information from an existing PerfEventDesc object but with a new
-        /// list of Ids.
-        /// </summary>
-        /// <param name="other">
-        /// The existing instance, used for the new instance's Attr, Name, and Metadata
-        /// properties.
-        /// </param>
-        /// <param name="ids">
-        /// The sample_ids that share this descriptor. May be null.
-        /// </param>
-        public PerfEventDesc(PerfEventDesc other, ReadOnlyCollection<ulong>? ids)
-        {
-            this.attr = other.attr;
-            this.name = other.name;
-            this.metadata = other.metadata;
             this.ids = ids ?? EmptyIds;
         }
 
@@ -90,6 +70,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// The sample_ids that share this descriptor, or empty list if none.
         /// </summary>
         public ReadOnlyCollection<ulong> Ids => this.ids;
+
+        internal void SetMetadata(PerfEventMetadata metadata)
+        {
+            this.metadata = metadata;
+        }
 
         private static ReadOnlyCollection<ulong> EmptyIds
         {

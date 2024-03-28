@@ -4,12 +4,97 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
-    using System.Diagnostics;
-    using System.Globalization;
+    using Debug = System.Diagnostics.Debug;
+    using NumberStyles = System.Globalization.NumberStyles;
+    using CultureInfo = System.Globalization.CultureInfo;
+    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+    using Text = System.Text;
 
-    internal static class ParseUtils
+    internal static class Utility
     {
         private const NumberStyles BaseNumberStyle = NumberStyles.AllowTrailingWhite;
+        private static Text.Encoding? encodingLatin1; // ISO-8859-1
+        private static Text.Encoding? encodingUTF32BE;
+
+        public static Text.Encoding EncodingLatin1
+        {
+            get
+            {
+                var encoding = encodingLatin1; // Get the cached encoding, if available.
+                if (encoding == null)
+                {
+                    encoding = Text.Encoding.GetEncoding(28591); // Create a new encoding.
+                    encodingLatin1 = encoding; // Cache the encoding.
+                }
+
+                return encoding;
+            }
+        }
+
+        public static Text.Encoding EncodingUTF32BE
+        {
+            get
+            {
+                var encoding = encodingUTF32BE; // Get the cached encoding, if available.
+                if (encoding == null)
+                {
+                    encoding = new Text.UTF32Encoding(true, true); // Create a new encoding.
+                    encodingUTF32BE = encoding; // Cache the encoding.
+                }
+
+                return encoding;
+            }
+        }
+
+        public static char ToHexChar(int nibble)
+        {
+            const string HexChars = "0123456789ABCDEF";
+            return HexChars[nibble & 0xF];
+        }
+
+        public static string ToHexString(ReadOnlySpan<byte> bytes)
+        {
+            var pos = 0;
+            if (pos < bytes.Length)
+            {
+                var str = new Text.StringBuilder(bytes.Length * 3 - 1);
+
+                var val = bytes[pos];
+                str.Append(ToHexChar(val >> 4));
+                str.Append(ToHexChar(val));
+
+                for (pos += 1; pos < bytes.Length; pos += 1)
+                {
+                    str.Append(' ');
+                    val = bytes[pos];
+                    str.Append(ToHexChar(val >> 4));
+                    str.Append(ToHexChar(val & 0xF));
+                }
+
+                return str.ToString();
+            }
+
+            return "";
+        }
+
+        public static Guid ReadGuidBigEndian(ReadOnlySpan<byte> bytes)
+        {
+            unchecked
+            {
+                return new Guid(
+                    BinaryPrimitives.ReadUInt32BigEndian(bytes),
+                    BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(4)),
+                    BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(6)),
+                    bytes[8],
+                    bytes[9],
+                    bytes[10],
+                    bytes[11],
+                    bytes[12],
+                    bytes[13],
+                    bytes[14],
+                    bytes[15]);
+            }
+        }
 
         public static bool IsSpaceOrTab(char ch)
         {

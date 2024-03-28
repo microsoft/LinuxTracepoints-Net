@@ -14,12 +14,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     public ref struct PerfNonSampleEventInfo
     {
         /// <summary>
-        /// The perfEventDataSpan parameter that was passed to
-        /// PerfDataFileReader.GetNonSampleEventInfo().
-        /// </summary>
-        public ReadOnlySpan<byte> EventData;
-
-        /// <summary>
         /// Valid if GetNonSampleEventInfo() succeeded.
         /// Information about the session that collected the event, e.g. clock id and
         /// clock offset.
@@ -71,24 +65,33 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns flags indicating which data was present in the event.
         /// </summary>
-        public readonly PerfEventAbi.PerfEventSampleFormat SampleType
-        {
-            get
-            {
-                var eventDesc = this.EventDesc;
-                return eventDesc != null ? eventDesc.Attr.SampleType : 0;
-            }
-        }
+        public readonly PerfEventAbi.PerfEventSampleFormat SampleType =>
+            this.EventDesc.Attr.SampleType;
 
         /// <summary>
         /// Returns the name of the event, or "" if not available.
         /// </summary>
-        public readonly string Name
+        public readonly string Name => this.EventDesc.Name;
+
+        /// <summary>
+        /// Returns the event's tracefs format metadata, or null if not available.
+        /// </summary>
+        public readonly PerfEventMetadata? Metadata => this.EventDesc.Metadata;
+
+        /// <summary>
+        /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.
+        /// </summary>
+        public readonly PerfEventTimeSpec TimeSpec => this.SessionInfo.TimeToRealTime(this.Time);
+
+        /// <summary>
+        /// Gets the Time as a DateTime, using offset information from SessionInfo.
+        /// </summary>
+        public readonly DateTime DateTime
         {
             get
             {
-                var eventDesc = this.EventDesc;
-                return eventDesc != null ? eventDesc.Name : "";
+                var ts = this.SessionInfo.TimeToRealTime(this.Time);
+                return DateTime.UnixEpoch.AddSeconds(ts.TvSec).AddTicks(ts.TvNsec / 100);
             }
         }
     }
