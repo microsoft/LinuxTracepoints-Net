@@ -3,18 +3,14 @@
 
 namespace Microsoft.LinuxTracepoints.Decode
 {
-    using Microsoft.LinuxTracepoints.Decode.PerfEventAbi;
     using System;
-    using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.IO;
+    using System.Runtime.InteropServices;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using Debug = System.Diagnostics.Debug;
     using Encoding = System.Text.Encoding;
-    using LayoutKind = System.Runtime.InteropServices.LayoutKind;
-    using MemoryMarshal = System.Runtime.InteropServices.MemoryMarshal;
-    using StructLayoutAttribute = System.Runtime.InteropServices.StructLayoutAttribute;
 
     /// <summary>
     /// Status returned by ReadEvent, GetSampleEventInfo, and GetNonSampleEventInfo.
@@ -138,6 +134,18 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         public PerfDataFileReader()
         {
+            Debug.Assert(ClockData.SizeOfStruct == Marshal.SizeOf<ClockData>());
+            Debug.Assert(perf_file_section.SizeOfStruct == Marshal.SizeOf<perf_file_section>());
+            Debug.Assert(perf_pipe_header.SizeOfStruct == Marshal.SizeOf<perf_pipe_header>());
+            Debug.Assert(perf_file_header.SizeOfStruct == Marshal.SizeOf<perf_file_header>());
+
+            Debug.Assert(PerfEventAttr.SizeOfStruct == Marshal.SizeOf<PerfEventAttr>());
+            Debug.Assert(PerfEventHeaderMisc.SizeOfStruct == Marshal.SizeOf<PerfEventHeaderMisc>());
+            Debug.Assert(PerfEventHeader.SizeOfStruct == Marshal.SizeOf<PerfEventHeader>());
+
+            Debug.Assert(EventHeader.SizeOfStruct == Marshal.SizeOf<EventHeader>());
+            Debug.Assert(EventHeaderExtension.SizeOfStruct == Marshal.SizeOf<EventHeaderExtension>());
+
             m_eventDescListReadOnly = m_eventDescList.AsReadOnly();
             m_eventDescByIdReadOnly = new ReadOnlyDictionary<UInt64, PerfEventDesc>(m_eventDescById);
             m_ftracesReadOnly = m_ftraces.AsReadOnly();
@@ -535,12 +543,12 @@ namespace Microsoft.LinuxTracepoints.Decode
             // Check for any special cases based on the type.
             switch (eventHeader.Type)
             {
-                case PerfEventType.HeaderAttr:
+                case PerfEventHeaderType.HeaderAttr:
 
-                    if (eventData.Length >= (int)PerfAttrSize.Ver0)
+                    if (eventData.Length >= (int)PerfEventAttrSize.Ver0)
                     {
                         var attrSize = (int)m_byteReader.ReadU32(bufferSpan.Slice(eventData.StartPos + PerfEventAttr.OffsetOfSize));
-                        if (attrSize < (int)PerfAttrSize.Ver0 || attrSize > eventData.Length)
+                        if (attrSize < (int)PerfEventAttrSize.Ver0 || attrSize > eventData.Length)
                         {
                             result = PerfDataFileResult.InvalidData;
                             goto ErrorOrEof;
@@ -558,7 +566,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     break;
 
-                case PerfEventType.HeaderTracingData:
+                case PerfEventHeaderType.HeaderTracingData:
 
                     var oldEndPos = eventData.EndPos;
                     if (eventHeader.Size != 0x0C ||
@@ -577,12 +585,12 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     break;
 
-                case PerfEventType.HeaderBuildId:
+                case PerfEventHeaderType.HeaderBuildId:
 
                     SetHeader(PerfHeaderIndex.BuildId, eventData.Slice(bufferSpan));
                     break;
 
-                case PerfEventType.Auxtrace:
+                case PerfEventHeaderType.Auxtrace:
 
                     if (ReadPostEventData(8, ref eventData, ref bufferSpan))
                     {
@@ -591,7 +599,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     break;
 
-                case PerfEventType.HeaderFeature:
+                case PerfEventHeaderType.HeaderFeature:
 
                     if (eventData.Length >= sizeof(UInt64))
                     {
@@ -615,7 +623,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     break;
 
-                case PerfEventType.FinishedInit:
+                case PerfEventHeaderType.FinishedInit:
 
                     var eventDescHeader = m_headers[(int)PerfHeaderIndex.EventDesc];
                     if (!eventDescHeader.IsEmpty)
@@ -695,13 +703,13 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             result = PerfDataFileResult.InvalidData;
 
-            if (0 != (infoSampleTypes & PerfEventSampleFormat.Identifier))
+            if (0 != (infoSampleTypes & PerfEventAttrSampleType.Identifier))
             {
                 Debug.Assert(pos != endPos); // Otherwise id lookup would have failed.
                 pos += sizeof(UInt64); // Was read in id lookup.
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.IP))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.IP))
             {
                 info.IP = default;
             }
@@ -716,7 +724,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt64);
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Tid))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Tid))
             {
                 info.Pid = default;
                 info.Tid = default;
@@ -734,7 +742,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt32);
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Time))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Time))
             {
                 info.Time = default;
             }
@@ -749,7 +757,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt64);
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Addr))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Addr))
             {
                 info.Addr = default;
             }
@@ -764,7 +772,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt64);
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Id))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Id))
             {
                 // Nothing to do.
             }
@@ -778,7 +786,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt64); // Was read in id lookup.
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.StreamId))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.StreamId))
             {
                 info.StreamId = default;
             }
@@ -793,7 +801,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt64);
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Cpu))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Cpu))
             {
                 info.Cpu = default;
                 info.CpuReserved = default;
@@ -811,7 +819,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt32);
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Period))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Period))
             {
                 info.Period = default;
             }
@@ -826,7 +834,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += sizeof(UInt64);
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Read))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Read))
             {
                 info.ReadStart = default;
                 info.ReadLength = default;
@@ -835,12 +843,12 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 info.ReadStart = pos;
 
-                const PerfEventReadFormat SupportedReadFormats =
-                    PerfEventReadFormat.TotalTimeEnabled |
-                    PerfEventReadFormat.TotalTimeRunning |
-                    PerfEventReadFormat.Id |
-                    PerfEventReadFormat.Group |
-                    PerfEventReadFormat.Lost;
+                const PerfEventAttrReadFormat SupportedReadFormats =
+                    PerfEventAttrReadFormat.TotalTimeEnabled |
+                    PerfEventAttrReadFormat.TotalTimeRunning |
+                    PerfEventAttrReadFormat.Id |
+                    PerfEventAttrReadFormat.Group |
+                    PerfEventAttrReadFormat.Lost;
 
                 var attrReadFormat = eventDesc.Attr.ReadFormat;
                 if (0 != (attrReadFormat & ~SupportedReadFormats))
@@ -848,13 +856,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                     result = PerfDataFileResult.NotSupported;
                     goto Error;
                 }
-                else if (0 == (attrReadFormat & PerfEventReadFormat.Group))
+                else if (0 == (attrReadFormat & PerfEventAttrReadFormat.Group))
                 {
                     var itemsCount = 1 // value
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.TotalTimeEnabled)) ? 1 : 0)
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.TotalTimeRunning)) ? 1 : 0)
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.Id)) ? 1 : 0)
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.Lost)) ? 1 : 0);
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.TotalTimeEnabled)) ? 1 : 0)
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.TotalTimeRunning)) ? 1 : 0)
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.Id)) ? 1 : 0)
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.Lost)) ? 1 : 0);
                     var size = itemsCount * sizeof(UInt64);
                     if (endPos - pos < size)
                     {
@@ -877,11 +885,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
 
                     var staticCount = 1 // nr
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.TotalTimeEnabled)) ? 1 : 0)
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.TotalTimeRunning)) ? 1 : 0);
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.TotalTimeEnabled)) ? 1 : 0)
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.TotalTimeRunning)) ? 1 : 0);
                     var dynCount = 1 // value
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.Id)) ? 1 : 0)
-                        + ((0 != (attrReadFormat & PerfEventReadFormat.Lost)) ? 1 : 0);
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.Id)) ? 1 : 0)
+                        + ((0 != (attrReadFormat & PerfEventAttrReadFormat.Lost)) ? 1 : 0);
                     var size = sizeof(UInt64) * (staticCount + (int)nr * dynCount);
                     if (endPos - pos < size)
                     {
@@ -894,7 +902,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 info.ReadLength = pos - info.ReadStart;
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Callchain))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Callchain))
             {
                 info.CallchainStart = default;
                 info.CallchainLength = default;
@@ -924,7 +932,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 pos += size;
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Raw))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Raw))
             {
                 info.RawDataStart = default;
                 info.RawDataLength = default;
@@ -1014,13 +1022,13 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             result = PerfDataFileResult.InvalidData;
 
-            if (0 != (infoSampleTypes & PerfEventSampleFormat.Identifier))
+            if (0 != (infoSampleTypes & PerfEventAttrSampleType.Identifier))
             {
                 pos -= sizeof(UInt64); // Was read in id lookup.
                 Debug.Assert(pos != 0); // Otherwise id lookup would have failed.
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Cpu))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Cpu))
             {
                 info.CpuReserved = default;
                 info.Cpu = default;
@@ -1038,7 +1046,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.StreamId))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.StreamId))
             {
                 info.StreamId = default;
             }
@@ -1053,7 +1061,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Id))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Id))
             {
                 // Nothing to do.
             }
@@ -1067,7 +1075,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Time))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Time))
             {
                 info.Time = default;
             }
@@ -1082,7 +1090,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            if (0 == (infoSampleTypes & PerfEventSampleFormat.Tid))
+            if (0 == (infoSampleTypes & PerfEventAttrSampleType.Tid))
             {
                 info.Tid = default;
                 info.Pid = default;
@@ -1252,7 +1260,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             bool ok;
 
             if (attrsSection.size >= 0x80000000 ||
-                attrAndIdSectionSize64 < (int)PerfAttrSize.Ver0 + perf_file_section.SizeOfStruct ||
+                attrAndIdSectionSize64 < (int)PerfEventAttrSize.Ver0 + perf_file_section.SizeOfStruct ||
                 attrAndIdSectionSize64 > 0x10000)
             {
                 ok = false;
@@ -1563,7 +1571,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 {
                     var desc = m_eventDescList[i];
                     if (desc.Metadata == null &&
-                        desc.Attr.Type == PerfTypeId.Tracepoint &&
+                        desc.Attr.Type == PerfEventAttrType.Tracepoint &&
                         m_metadataById.TryGetValue((uint)desc.Attr.Config, out var metadata))
                     {
                         desc.SetMetadata(metadata);
@@ -1652,7 +1660,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                 var attrSize = m_byteReader.ReadI32(data.Slice(pos));
                 pos += sizeof(UInt32);
-                if (attrSize < (int)PerfAttrSize.Ver0 || attrSize > 0x10000)
+                if (attrSize < (int)PerfEventAttrSize.Ver0 || attrSize > 0x10000)
                 {
                     return; // Unexpected.
                 }
@@ -1714,19 +1722,19 @@ namespace Microsoft.LinuxTracepoints.Decode
                 attr.ByteSwap();
             }
 
-            attr.Size = (PerfAttrSize)attrBytes.Length;
+            attr.Size = (PerfEventAttrSize)attrBytes.Length;
 
             var sampleType = attr.SampleType;
 
             sbyte sampleIdOffset;
             sbyte nonSampleIdOffset;
-            if (0 != (sampleType & PerfEventSampleFormat.Identifier))
+            if (0 != (sampleType & PerfEventAttrSampleType.Identifier))
             {
                 // ID is at a fixed offset.
                 sampleIdOffset = 0;
                 nonSampleIdOffset = sizeof(UInt64);
             }
-            else if (0 == (sampleType & PerfEventSampleFormat.Id))
+            else if (0 == (sampleType & PerfEventAttrSampleType.Id))
             {
                 // ID is not available.
                 sampleIdOffset = OffsetNoId;
@@ -1736,13 +1744,13 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 // ID is at a sampleType-dependent offset.
                 sampleIdOffset = (sbyte)(sizeof(UInt64) * (
-                    (0 != (sampleType & PerfEventSampleFormat.IP) ? 1 : 0) +
-                    (0 != (sampleType & PerfEventSampleFormat.Tid) ? 1 : 0) +
-                    (0 != (sampleType & PerfEventSampleFormat.Time) ? 1 : 0) +
-                    (0 != (sampleType & PerfEventSampleFormat.Addr) ? 1 : 0)));
+                    (0 != (sampleType & PerfEventAttrSampleType.IP) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventAttrSampleType.Tid) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventAttrSampleType.Time) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventAttrSampleType.Addr) ? 1 : 0)));
                 nonSampleIdOffset = (sbyte)(sizeof(UInt64) * (1 +
-                    (0 != (sampleType & PerfEventSampleFormat.Cpu) ? 1 : 0) +
-                    (0 != (sampleType & PerfEventSampleFormat.StreamId) ? 1 : 0)));
+                    (0 != (sampleType & PerfEventAttrSampleType.Cpu) ? 1 : 0) +
+                    (0 != (sampleType & PerfEventAttrSampleType.StreamId) ? 1 : 0)));
             }
 
             if (0 == (attr.Options & PerfEventAttrOptions.SampleIdAll))
@@ -1780,7 +1788,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             PerfEventMetadata? metadata = null;
-            if (attr.Type == PerfTypeId.Tracepoint)
+            if (attr.Type == PerfEventAttrType.Tracepoint)
             {
                 m_metadataById.TryGetValue((UInt32)attr.Config, out metadata);
             }
@@ -1920,7 +1928,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
         }
 
-        [StructLayout(LayoutKind.Sequential, Size = SizeOfStruct)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct ClockData
         {
             public const int SizeOfStruct = 24;
@@ -1930,7 +1938,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             public UInt64 clockid_time_ns;
         };
 
-        [StructLayout(LayoutKind.Sequential, Size = SizeOfStruct)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct perf_file_section
         {
             public const int SizeOfStruct = 16;
@@ -1944,7 +1952,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
         }
 
-        [StructLayout(LayoutKind.Sequential, Size = SizeOfStruct)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct perf_pipe_header
         {
             public const int SizeOfStruct = 16;
@@ -1960,7 +1968,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
         }
 
-        [StructLayout(LayoutKind.Sequential, Size = SizeOfStruct)]
+        [StructLayout(LayoutKind.Sequential)]
         private struct perf_file_header
         {
             public const int SizeOfStruct = 104;

@@ -2,18 +2,16 @@
 // Licensed under the MIT License.
 // Adapted from linux/uapi/linux/perf_event.h.
 
-namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
+namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using System.Runtime.InteropServices;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
-    using FieldOffsetAttribute = System.Runtime.InteropServices.FieldOffsetAttribute;
-    using LayoutKind = System.Runtime.InteropServices.LayoutKind;
-    using StructLayoutAttribute = System.Runtime.InteropServices.StructLayoutAttribute;
 
     /// <summary>
-    /// perf_type_id: uint32 value for perf_event_attr::type.
+    /// perf_type_id: uint32 value for PerfEventAttr.Type.
     /// </summary>
-    public enum PerfTypeId : UInt32
+    public enum PerfEventAttrType : UInt32
     {
         /// <summary>
         /// PERF_TYPE_HARDWARE
@@ -54,7 +52,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     /// <summary>
     /// Values for PerfEventAttr.Size.
     /// </summary>
-    public enum PerfAttrSize : UInt32
+    public enum PerfEventAttrSize : UInt32
     {
         /// <summary>
         /// Invalid value for size.
@@ -106,7 +104,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     /// perf_event_sample_format: bits that can be set in PerfEventAttr.SampleType.
     /// </summary>
     [Flags]
-    public enum PerfEventSampleFormat : UInt64
+    public enum PerfEventAttrSampleType : UInt64
     {
         /// <summary>
         /// PERF_SAMPLE_IP
@@ -245,9 +243,9 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     }
 
     /// <summary>
-    /// perf_event_read_format: bits that can be set in perf_event_attr::read_format.
+    /// perf_event_read_format: bits that can be set in PerfEventAttr.ReadFormat.
     /// </summary>
-    public enum PerfEventReadFormat : UInt64
+    public enum PerfEventAttrReadFormat : UInt64
     {
         /// <summary>
         /// PERF_FORMAT_TOTAL_TIME_ENABLED
@@ -281,7 +279,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     }
 
     /// <summary>
-    /// Bits for perf_event_attr::options.
+    /// Bits for PerfEventAttr.Options.
     /// </summary>
     [Flags]
     public enum PerfEventAttrOptions : UInt64
@@ -392,7 +390,6 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
         ///</summary>
         SampleIdAll = 1UL << 18,
 
-
         /// <summary>
         /// exclude_host: don't count in host
         ///</summary>
@@ -492,7 +489,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     /// <summary>
     /// perf_event_attr: Event's collection parameters.
     /// </summary>
-    [StructLayout(LayoutKind.Explicit, Size = PerfEventAttr.SizeOfStruct)]
+    [StructLayout(LayoutKind.Explicit)]
     public struct PerfEventAttr
     {
         /// <summary>
@@ -520,14 +517,14 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
         /// Major type: hardware/software/tracepoint/etc.
         /// </summary>
         [FieldOffset(0)]
-        public PerfTypeId Type;
+        public PerfEventAttrType Type;
 
         /// <summary>
         /// size:
         /// Size of the attr structure, for fwd/bwd compat.
         /// </summary>
         [FieldOffset(4)]
-        public PerfAttrSize Size;
+        public PerfEventAttrSize Size;
 
         /// <summary>
         /// config:
@@ -554,13 +551,13 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
         /// sample_type
         /// </summary>
         [FieldOffset(24)]
-        public PerfEventSampleFormat SampleType;
+        public PerfEventAttrSampleType SampleType;
 
         /// <summary>
         /// read_format
         /// </summary>
         [FieldOffset(32)]
-        public PerfEventReadFormat ReadFormat;
+        public PerfEventAttrReadFormat ReadFormat;
 
         /// <summary>
         /// In C, this is a bit-field of various options:
@@ -742,12 +739,12 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
         /// </summary>
         public void ByteSwap()
         {
-            this.Type = (PerfTypeId)BinaryPrimitives.ReverseEndianness((UInt32)this.Type);
-            this.Size = (PerfAttrSize)BinaryPrimitives.ReverseEndianness((UInt32)this.Size);
+            this.Type = (PerfEventAttrType)BinaryPrimitives.ReverseEndianness((UInt32)this.Type);
+            this.Size = (PerfEventAttrSize)BinaryPrimitives.ReverseEndianness((UInt32)this.Size);
             this.Config = BinaryPrimitives.ReverseEndianness(this.Config);
             this.SamplePeriod = BinaryPrimitives.ReverseEndianness(this.SamplePeriod);
-            this.SampleType = (PerfEventSampleFormat)BinaryPrimitives.ReverseEndianness((UInt64)this.SampleType);
-            this.ReadFormat = (PerfEventReadFormat)BinaryPrimitives.ReverseEndianness((UInt64)this.ReadFormat);
+            this.SampleType = (PerfEventAttrSampleType)BinaryPrimitives.ReverseEndianness((UInt64)this.SampleType);
+            this.ReadFormat = (PerfEventAttrReadFormat)BinaryPrimitives.ReverseEndianness((UInt64)this.ReadFormat);
 
             // Bitfield: Reverse bits within each byte, don't reorder bytes.
             var options = (UInt64)this.Options;
@@ -794,7 +791,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     /// advantage of PERF_SAMPLE_IDENTIFIER is that its position is fixed
     /// relative to header.size.
     /// </summary>
-    public enum PerfEventType : UInt32
+    public enum PerfEventHeaderType : UInt32
     {
         /// <summary>
         /// Invalid event type.
@@ -1424,9 +1421,9 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     }
 
     /// <summary>
-    /// Values for PerfRecordMisc.Cpumode.
+    /// Values for PerfEventHeaderMisc.CpuMode.
     /// </summary>
-    public enum PerfRecordMiscCpumode : Byte
+    public enum PerfEventHeaderMiscCpuMode : Byte
     {
         /// <summary>
         /// PERF_RECORD_MISC_CPUMODE_UNKNOWN
@@ -1462,8 +1459,8 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     /// <summary>
     /// Value for PerfEventHeader.Misc.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Size = 2)]
-    public struct PerfRecordMisc
+    [StructLayout(LayoutKind.Sequential)]
+    public struct PerfEventHeaderMisc
     {
         /// <summary>
         /// sizeof(PerfRecordMisc) == 2
@@ -1478,7 +1475,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
         /// <summary>
         /// PERF_RECORD_MISC_CPUMODE
         /// </summary>
-        public PerfRecordMiscCpumode Cpumode => (PerfRecordMiscCpumode)(this.Value & 0x7);
+        public PerfEventHeaderMiscCpuMode CpuMode => (PerfEventHeaderMiscCpuMode)(this.Value & 0x7);
 
         /// <summary>
         /// PERF_RECORD_MISC_PROC_MAP_PARSE_TIMEOUT:
@@ -1530,7 +1527,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
     /// <summary>
     /// perf_event_header: Information at the start of each event.
     /// </summary>
-    [StructLayout(LayoutKind.Sequential, Size = PerfEventHeader.SizeOfStruct)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct PerfEventHeader
     {
         /// <summary>
@@ -1541,14 +1538,14 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
         /// <summary>
         /// perf_event_header::type: Type of event.
         /// </summary>
-        public PerfEventType Type;
+        public PerfEventHeaderType Type;
 
         /// <summary>
         /// perf_event_header::misc:
         /// 
         /// The misc field contains additional information about the sample.
         /// </summary>
-        public PerfRecordMisc Misc;
+        public PerfEventHeaderMisc Misc;
 
         /// <summary>
         /// perf_event_header::size:
@@ -1562,7 +1559,7 @@ namespace Microsoft.LinuxTracepoints.Decode.PerfEventAbi
         /// </summary>
         public void ByteSwap()
         {
-            this.Type = (PerfEventType)BinaryPrimitives.ReverseEndianness((UInt32)this.Type);
+            this.Type = (PerfEventHeaderType)BinaryPrimitives.ReverseEndianness((UInt32)this.Type);
             this.Misc.Value = BinaryPrimitives.ReverseEndianness(this.Misc.Value);
             this.Size = BinaryPrimitives.ReverseEndianness(this.Size);
         }

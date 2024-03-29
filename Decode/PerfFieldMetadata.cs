@@ -822,7 +822,6 @@ namespace Microsoft.LinuxTracepoints.Decode
                             }
                             else
                             {
-                                const string HexChars = "0123456789ABCDEF";
                                 sb.Append('\\');
                                 switch (ch)
                                 {

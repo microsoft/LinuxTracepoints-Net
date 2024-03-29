@@ -18,7 +18,7 @@ namespace Microsoft.LinuxTracepoints
     /// field tag is not present and is assumed to be 0.
     /// </para>
     /// </summary>
-    public enum EventFieldFormat : byte
+    public enum EventHeaderFieldFormat : byte
     {
         ValueMask = 0x7F,
 

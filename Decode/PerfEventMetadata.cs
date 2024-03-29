@@ -8,17 +8,19 @@ namespace Microsoft.LinuxTracepoints.Decode
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
-    /// Values for the Kind property of PerfEventMetadata.
+    /// Values for the DecodingStyle property of PerfEventMetadata.
     /// </summary>
-    public enum PerfEventKind : byte
+    public enum PerfEventDecodingStyle : byte
     {
         /// <summary>
-        /// No special handling detected.
+        /// Event should be decoded using tracefs "format" file.
         /// </summary>
-        Normal,
+        TraceEvent,
 
         /// <summary>
-        /// First user field is named "eventheader_flags".
+        /// Event contains embedded "EventHeader" metadata and should be decoded using
+        /// EventHeaderEnumerator. (TraceEvent decoding information is present, but the
+        /// first TraceEvent-format field is named "eventheader_flags".)
         /// </summary>
         EventHeader,
     }
@@ -37,7 +39,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         private readonly uint id; // From common_type; not the same as the perf_event_attr::id or PerfSampleEventInfo::id.
         private readonly ushort commonFieldCount; // fields[common_field_count] is the first user field.
         private readonly ushort commonFieldsSize; // Offset of the end of the last common field
-        private readonly PerfEventKind kind;
+        private readonly PerfEventDecodingStyle decodingStyle;
 
         private PerfEventMetadata(
             string systemName,
@@ -47,7 +49,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             uint id,
             ushort commonFieldCount,
             ushort commonFieldsSize,
-            PerfEventKind kind)
+            PerfEventDecodingStyle decodingStyle)
         {
             this.systemName = systemName;
             this.name = name;
@@ -56,7 +58,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.id = id;
             this.commonFieldCount = commonFieldCount;
             this.commonFieldsSize = commonFieldsSize;
-            this.kind = kind;
+            this.decodingStyle = decodingStyle;
         }
 
         /// <summary>
@@ -120,7 +122,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns the detected event decoding system - Normal or EventHeader.
         /// </summary>
-        public PerfEventKind Kind => this.kind;
+        public PerfEventDecodingStyle DecodingStyle => this.decodingStyle;
 
         /// <summary>
         /// Parses an event's "format" file and sets the fields of this object based
@@ -312,10 +314,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                     commonFieldsSize = (ushort)(lastCommonField.Offset + lastCommonField.Size);
                 }
 
-                var kind =
+                var decodingStyle =
                     fields.Count > commonFieldCount && fields[commonFieldCount].Name == "eventheader_flags"
-                    ? PerfEventKind.EventHeader
-                    : PerfEventKind.Normal;
+                    ? PerfEventDecodingStyle.EventHeader
+                    : PerfEventDecodingStyle.TraceEvent;
 
                 result = new PerfEventMetadata(
                     systemName,
@@ -325,7 +327,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     id,
                     commonFieldCount,
                     commonFieldsSize,
-                    kind);
+                    decodingStyle);
             }
 
             return result;

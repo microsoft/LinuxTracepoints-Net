@@ -20,7 +20,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// This is the first 8 bytes of the event, byte-swapped if appropriate.
         /// </para>
         /// </summary>
-        public readonly PerfEventAbi.PerfEventHeader Header;
+        public readonly PerfEventHeader Header;
 
         /// <summary>
         /// <para>
@@ -59,7 +59,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="data">The data of the event (the bytes after the header).</param>
         /// <param name="dataSpan">The data of the event (i.e. data.Span).</param>
         public PerfEvent(
-            PerfEventAbi.PerfEventHeader header,
+            PerfEventHeader header,
             ReadOnlyMemory<byte> data,
             ReadOnlySpan<byte> dataSpan)
         {

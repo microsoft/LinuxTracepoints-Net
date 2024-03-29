@@ -6,17 +6,18 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
-    using System.Text;
     using Debug = System.Diagnostics.Debug;
+    using Encoding = System.Text.Encoding;
+    using StringBuilder = System.Text.StringBuilder;
 
     /// <summary>
-    /// Event attributes returned by the GetEventInfo() method of EventEnumerator.
+    /// Event attributes returned by the GetEventInfo() method of EventHeaderEnumerator.
     /// </summary>
-    public ref struct EventInfo
+    public ref struct EventHeaderEventInfo
     {
         /// <summary>
         /// The Span corresponding to the eventData parameter passed to
-        /// EventEnumerator.StartEvent(). For example, if you called
+        /// EventHeaderEnumerator.StartEvent(). For example, if you called
         /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
         /// The NameStart and ActivityIdStart fields are relative to this span.
         /// </summary>
@@ -58,9 +59,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public ulong Keyword;
 
         /// <summary>
-        /// Initializes a new instance of the EventInfo struct.
+        /// Initializes a new instance of the EventHeaderEventInfo struct.
         /// </summary>
-        public EventInfo(
+        public EventHeaderEventInfo(
             ReadOnlySpan<byte> eventData,
             int nameStart,
             int nameLength,
@@ -164,6 +165,18 @@ namespace Microsoft.LinuxTracepoints.Decode
                 return this.ActivityIdLength < 32
                     ? new Guid?()
                     : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
+            }
+        }
+
+        /// <summary>
+        /// Appends this.Name to the specified StringBuilder.
+        /// </summary>
+        public readonly void AppendName(StringBuilder sb)
+        {
+            var end = this.NameStart + this.NameLength;
+            for (var i = this.NameStart; i < end; i += 1)
+            {
+                sb.Append((char)this.EventData[i]);
             }
         }
     }

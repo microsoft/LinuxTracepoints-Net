@@ -4,9 +4,9 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     /// <summary>
-    /// Values for the State property of EventEnumerator.
+    /// Values for the State property of EventHeaderEnumerator.
     /// </summary>
-    public enum EventEnumeratorState : byte
+    public enum EventHeaderEnumeratorState : byte
     {
         /// <summary>
         /// After construction, a call to Clear, or a failed StartEvent.

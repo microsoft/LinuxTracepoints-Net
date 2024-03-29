@@ -14,7 +14,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         private static PerfEventDesc? empty;
         private static ReadOnlyCollection<ulong>? emptyIds;
 
-        private readonly PerfEventAbi.PerfEventAttr attr;
+        private readonly PerfEventAttr attr;
         private readonly string name;
         private PerfEventMetadata? metadata;
         private readonly ReadOnlyCollection<ulong> ids;
@@ -29,7 +29,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="name">Event's name, or "" if not available.</param>
         /// <param name="metadata">Event's metadata, or null if not available.</param>
         /// <param name="ids">The sample_ids that share this descriptor. May be null.</param>
-        public PerfEventDesc(in PerfEventAbi.PerfEventAttr attr, string name, PerfEventMetadata? metadata, ReadOnlyCollection<ulong>? ids)
+        public PerfEventDesc(in PerfEventAttr attr, string name, PerfEventMetadata? metadata, ReadOnlyCollection<ulong>? ids)
         {
             this.attr = attr;
             this.name = name;
@@ -54,7 +54,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Event's perf_event_attr, or an attr with size = 0 if not available.
         /// </summary>
-        public ref readonly PerfEventAbi.PerfEventAttr Attr => ref this.attr;
+        public ref readonly PerfEventAttr Attr => ref this.attr;
 
         /// <summary>
         /// Event's name, or "" if not available.

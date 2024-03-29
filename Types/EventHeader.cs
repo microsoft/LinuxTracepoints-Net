@@ -156,7 +156,7 @@ The following header extensions are defined:
 */
 namespace Microsoft.LinuxTracepoints
 {
-    using InteropServices = System.Runtime.InteropServices;
+    using System.Runtime.InteropServices;
     using Tracing = System.Diagnostics.Tracing;
 
     /// <summary>
@@ -191,9 +191,11 @@ namespace Microsoft.LinuxTracepoints
     /// for each level.
     /// </para>
     /// </summary>
-    [InteropServices.StructLayout(InteropServices.LayoutKind.Sequential, Size = 8)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct EventHeader
     {
+        public const int SizeOfStruct = 8;
+
         /// <summary>
         /// Pointer64, LittleEndian, Extension.
         /// </summary>

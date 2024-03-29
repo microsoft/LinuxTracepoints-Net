@@ -1,7 +1,6 @@
-﻿namespace DecodeTest
+﻿namespace DecodePerf
 {
     using Microsoft.LinuxTracepoints.Decode;
-    using Microsoft.LinuxTracepoints.Decode.PerfEventAbi;
     using System;
     using System.Diagnostics;
     using System.IO;
@@ -10,7 +9,7 @@
     internal sealed class PerfDataDecode : IDisposable
     {
         private readonly PerfDataFileReader reader = new PerfDataFileReader();
-        private readonly EventEnumerator enumerator = new EventEnumerator();
+        private readonly EventHeaderEnumerator enumerator = new EventHeaderEnumerator();
         private readonly TextWriter output;
 
         public PerfDataDecode(TextWriter output)
@@ -64,14 +63,14 @@
                     break;
                 }
 
-                if (e.Header.Type != PerfEventType.Sample)
+                if (e.Header.Type != PerfEventHeaderType.Sample)
                 {
-                    if (e.Header.Type == PerfEventType.FinishedInit)
+                    if (e.Header.Type == PerfEventHeaderType.FinishedInit)
                     {
                         finishedInit = true;
                     }
 
-                    if (e.Header.Type >= PerfEventType.UserTypeStart)
+                    if (e.Header.Type >= PerfEventHeaderType.UserTypeStart)
                     {
                         this.output.Write(
                             $@"  {{ ""NonSampleSpecial"":""{e.Header.Type}"",""Size"":{e.Data.Length} }}");
@@ -113,7 +112,7 @@
                             this.output.Write(
                                 $@"  {{ ""SampleNoMeta"":""{e.Header.Type}"",""Size"":{e.Data.Length} }}");
                         }
-                        else if (eventMeta.Kind != PerfEventKind.EventHeader)
+                        else if (eventMeta.DecodingStyle != PerfEventDecodingStyle.EventHeader)
                         {
                             this.output.Write(
                                 $@"  {{ ""Sample"":""{e.Header.Type}/{info.Name}"",""Size"":{e.Data.Length},""Time"":""{info.DateTime:o}""");
@@ -145,21 +144,21 @@
                                     var item = this.enumerator.GetItemInfo();
                                     switch (this.enumerator.State)
                                     {
-                                        case EventEnumeratorState.Value:
+                                        case EventHeaderEnumeratorState.Value:
                                             this.WriteJsonItemBegin(comma, item.Name, item.FieldTag, item.ArrayFlags != 0);
                                             this.WriteJsonValue(item.FormatValue());
                                             comma = true;
                                             break;
-                                        case EventEnumeratorState.StructBegin:
+                                        case EventHeaderEnumeratorState.StructBegin:
                                             this.WriteJsonItemBegin(comma, item.Name, item.FieldTag, item.ArrayFlags != 0);
                                             this.output.Write('{');
                                             comma = false;
                                             break;
-                                        case EventEnumeratorState.StructEnd:
+                                        case EventHeaderEnumeratorState.StructEnd:
                                             this.output.Write(" }");
                                             comma = true;
                                             break;
-                                        case EventEnumeratorState.ArrayBegin:
+                                        case EventHeaderEnumeratorState.ArrayBegin:
                                             this.WriteJsonItemBegin(comma, item.Name, item.FieldTag);
                                             this.output.Write('[');
                                             comma = false;
@@ -194,7 +193,7 @@
                                                 continue; // Skip the MoveNext().
                                             }
                                             break;
-                                        case EventEnumeratorState.ArrayEnd:
+                                        case EventHeaderEnumeratorState.ArrayEnd:
                                             this.output.Write(" ]");
                                             comma = true;
                                             break;
@@ -317,7 +316,7 @@
             {
                 if (c == '\0')
                 {
-                    this.output.Write("\\0");
+                    this.output.Write("\\u0000");
                 }
                 else
                 {

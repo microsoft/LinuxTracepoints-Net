@@ -6,6 +6,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using System.Text;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
@@ -14,13 +15,13 @@ namespace Microsoft.LinuxTracepoints.Decode
 
     /// <summary>
     /// Event item attributes (attributes of a value, array, or structure within the event)
-    /// returned by the GetItemInfo() method of EventEnumerator.
+    /// returned by the GetItemInfo() method of EventHeaderEnumerator.
     /// </summary>
-    public ref struct EventItemInfo
+    public ref struct EventHeaderItemInfo
     {
         /// <summary>
         /// The Span corresponding to the eventData parameter passed to
-        /// EventEnumerator.StartEvent(). For example, if you called
+        /// EventHeaderEnumerator.StartEvent(). For example, if you called
         /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
         /// The NameStart and ValueStart fields are relative to this span.
         /// </summary>
@@ -70,20 +71,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Field's underlying encoding. The encoding indicates how to determine the field's
         /// size and the semantic type to use when Format = Default.
         /// </summary>
-        public EventFieldEncoding Encoding;
+        public EventHeaderFieldEncoding Encoding;
 
         /// <summary>
         /// Field's semantic type. May be Default, in which case the semantic type should be
         /// determined based on the default format for the field's encoding.
         /// For StructBegin/StructEnd, this contains the struct field count.
         /// </summary>
-        public EventFieldFormat Format;
+        public EventHeaderFieldFormat Format;
 
         /// <summary>
         /// 0 if item is not an ArrayBegin, ArrayEnd, or array Value.
         /// FlagCArray or FlagVArray if item is an ArrayBegin, ArrayEnd, or array Value.
         /// </summary>
-        public EventFieldEncoding ArrayFlags;
+        public EventHeaderFieldEncoding ArrayFlags;
 
         /// <summary>
         /// Field tag, or 0 if none.
@@ -96,9 +97,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public bool EventBigEndian;
 
         /// <summary>
-        /// Initializes a new instance of the EventItemInfo struct.
+        /// Initializes a new instance of the EventHeaderItemInfo struct.
         /// </summary>
-        public EventItemInfo(
+        public EventHeaderItemInfo(
             ReadOnlySpan<byte> eventData,
             int nameStart,
             int nameLength,
@@ -107,9 +108,9 @@ namespace Microsoft.LinuxTracepoints.Decode
             ushort arrayIndex,
             ushort arrayCount,
             byte elementSize,
-            EventFieldEncoding encoding,
-            EventFieldFormat format,
-            EventFieldEncoding arrayFlags,
+            EventHeaderFieldEncoding encoding,
+            EventHeaderFieldFormat format,
+            EventHeaderFieldEncoding arrayFlags,
             ushort fieldTag,
             bool eventBigEndian)
         {
@@ -138,7 +139,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.EventData.Slice(this.ValueStart, this.ValueLength);
 
         /// <summary>
-        /// UTF-8 encoded "FieldName" followed by 0 or more field attributes.
+        /// UTF-8 encoded field name followed by 0 or more field attributes,
+        /// e.g. "FieldName" or "FieldName;AttribName=AttribValue".
         /// Each attribute is ";AttribName=AttribValue".
         /// FieldName should not contain ';'.
         /// AttribName should not contain ';' or '='.
@@ -149,7 +151,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Gets a new string (decoded from NameBytes) containing
-        /// "FieldName" followed by 0 or more field attributes.
+        /// field name followed by 0 or more field attributes, e.g.
+        /// "FieldName" or "FieldName;AttribName=AttribValue".
         /// Each attribute is ";AttribName=AttribValue".
         /// FieldName should not contain ';'.
         /// AttribName should not contain ';' or '='.
@@ -163,7 +166,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns false if the result is less than DateTime.MinValue or greater than
         /// DateTime.MaxValue.
         /// </summary>
-        public static bool TryDateTimeFromUnixTimeSeconds(long secondsSince1970, out DateTime value)
+        public static bool TryUnixTimeToDateTime(long secondsSince1970, out DateTime value)
         {
             const long UnixEpochSeconds = 62135596800;
             const long DaysToYear10000 = 3652059;
@@ -184,43 +187,27 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Converts a Unix time_t (signed seconds since 1970) to a DateTime.
-        /// Throws ArgumentOutOfRangeException if the result is less than
-        /// DateTime.MinValue or greater than DateTime.MaxValue.
-        /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">secondsSince1970 out of range.</exception>
-        public static DateTime DateTimeFromUnixTimeSeconds(long secondsSince1970)
-        {
-            if (!TryDateTimeFromUnixTimeSeconds(secondsSince1970, out var value))
-            {
-                throw new ArgumentOutOfRangeException(nameof(secondsSince1970));
-            }
-
-            return value;
-        }
-
-        /// <summary>
         /// Converts a Unix time_t (signed seconds since 1970) to a string.
-        /// If year is in range 0001..9999, returns a value like "2020-02-02T02:02:02".
-        /// If year is outside of 0001..9999, returns a value like "TIME(-1234567890)".
+        /// If year is in range 0001..9999, returns a new string like "2020-02-02T02:02:02".
+        /// If year is outside of 0001..9999, returns a new string like "TIME(-1234567890)".
         /// </summary>
-        public static string StringFromUnixTimeSeconds(long secondsSince1970)
+        public static string UnixTimeToString(long secondsSince1970)
         {
-            return TryDateTimeFromUnixTimeSeconds(secondsSince1970, out var value)
+            return TryUnixTimeToDateTime(secondsSince1970, out var value)
                 ? value.ToString("s", CultureInfo.InvariantCulture)
                 : "TIME(" + secondsSince1970.ToString(CultureInfo.InvariantCulture) + ")";
         }
 
         /// <summary>
-        /// Returns the specified Linux errno value formatted as a string.
-        /// If value is a known errno value, returns a value like "EPERM(1)".
-        /// If value is not a known errno value, returns a value like "ERRNO(404)".
+        /// If the specified value is a recognized Linux error number, returns a
+        /// string like "OK(0)" or "EPERM(1)". Otherwise returns null.
         /// </summary>
-        public static string StringFromLinuxErrno(int errno)
+        public static string? ErrnoLookup(int linuxErrno)
         {
-            switch (errno)
+            switch (linuxErrno)
             {
-                default: return "ERRNO(" + errno.ToString(CultureInfo.InvariantCulture) + ")";
+                default: return null;
+                case 0: return "OK(0)";
                 case 1: return "EPERM(1)";
                 case 2: return "ENOENT(2)";
                 case 3: return "ESRCH(3)";
@@ -356,6 +343,19 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// If the specified value is a recognized Linux error number, returns a
+        /// string like "OK(0)" or "EPERM(1)". Otherwise returns a new string like
+        /// "ERRNO(404)".
+        /// </summary>
+        public static string ErrnoToString(int linuxErrno)
+        {
+            var value = ErrnoLookup(linuxErrno);
+            return value != null
+                ? value
+                : "ERRNO(" + linuxErrno.ToString(CultureInfo.InvariantCulture) + ")";
+        }
+
+        /// <summary>
         /// Converts an integer value from a boolean field into a string.
         /// If value is 0/1, returns "false"/"true".
         /// Otherwise, returns value formatted as a signed integer.
@@ -363,7 +363,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// sign-extended, i.e. value should come from a call to TryGetUInt32,
         /// not a call to TryGetInt32.
         /// </summary>
-        public static string StringFromBoolean(UInt32 value)
+        public static string BooleanToString(UInt32 value)
         {
             switch (value)
             {
@@ -377,7 +377,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets ValueBytes interpreted as a signed integer.
         /// Returns false if ValueLength is not 1, 2, or 4.
         /// </summary>
-        public bool TryGetInt32(out Int32 value)
+        public readonly bool TryGetInt32(out Int32 value)
         {
             var byteReader = new PerfByteReader(this.EventBigEndian);
             switch (this.ValueLength)
@@ -393,7 +393,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets ValueBytes interpreted as an unsigned integer.
         /// Returns false if ValueLength is not 1, 2, or 4.
         /// </summary>
-        public bool TryGetUInt32(out UInt32 value)
+        public readonly bool TryGetUInt32(out UInt32 value)
         {
             var byteReader = new PerfByteReader(this.EventBigEndian);
             switch (this.ValueLength)
@@ -409,7 +409,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets ValueBytes interpreted as a signed integer.
         /// Returns false if ValueLength is not 1, 2, 4, or 8.
         /// </summary>
-        public bool TryGetInt64(out Int64 value)
+        public readonly bool TryGetInt64(out Int64 value)
         {
             var byteReader = new PerfByteReader(this.EventBigEndian);
             switch (this.ValueLength)
@@ -426,7 +426,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets ValueBytes interpreted as an unsigned integer.
         /// Returns false if ValueLength is not 1, 2, 4, or 8.
         /// </summary>
-        public bool TryGetUInt64(out UInt64 value)
+        public readonly bool TryGetUInt64(out UInt64 value)
         {
             var byteReader = new PerfByteReader(this.EventBigEndian);
             switch (this.ValueLength)
@@ -443,7 +443,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets ValueBytes interpreted as a 32-bit float.
         /// Returns false if ValueLength is not 4.
         /// </summary>
-        public bool TryGetSingle(out Single value)
+        public readonly bool TryGetFloat(out Single value)
         {
             var byteReader = new PerfByteReader(this.EventBigEndian);
             switch (this.ValueLength)
@@ -457,7 +457,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets ValueBytes interpreted as a 32-bit or 64-bit float.
         /// Returns false if ValueLength is not 4 or 8.
         /// </summary>
-        public bool TryGetDouble(out Double value)
+        public readonly bool TryGetFloat(out Double value)
         {
             var byteReader = new PerfByteReader(this.EventBigEndian);
             switch (this.ValueLength)
@@ -469,10 +469,31 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// Gets ValueBytes interpreted as a 32-bit or 64-bit float.
+        /// Returns false if ValueLength is not 4 or 8.
+        /// </summary>
+        public readonly bool TryGetFloat(out string value)
+        {
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
+            {
+                case sizeof(Single):
+                    value = byteReader.ReadF32(this.EventData.Slice(this.ValueStart)).ToString(CultureInfo.InvariantCulture);
+                    return true;
+                case sizeof(Double):
+                    value = byteReader.ReadF64(this.EventData.Slice(this.ValueStart)).ToString(CultureInfo.InvariantCulture);
+                    return true;
+                default:
+                    value = "";
+                    return false;
+            }
+        }
+
+        /// <summary>
         /// Gets ValueBytes interpreted as a big-endian Guid.
         /// Returns false if ValueLength is not 16.
         /// </summary>
-        public bool TryGetGuid(out Guid value)
+        public readonly bool TryGetGuid(out Guid value)
         {
             switch (this.ValueLength)
             {
@@ -485,7 +506,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets ValueBytes interpreted as a big-endian 16-bit integer.
         /// Returns false if ValueLength is not 2.
         /// </summary>
-        public bool TryGetPort(out int value)
+        public readonly bool TryGetPort(out int value)
         {
             switch (this.ValueLength)
             {
@@ -495,29 +516,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns ValueBytes interpreted as a Unix time_t (signed seconds since 1970).
-        /// Returns false if ValueLength is not 4 or 8, if time is less than
-        /// DateTime.MinValue, or if time is greater than DateTime.MaxValue.
-        /// </summary>
-        public bool TryGetDateTime(out DateTime value)
-        {
-            var byteReader = new PerfByteReader(this.EventBigEndian);
-            Int64 seconds;
-            switch (this.ValueLength)
-            {
-                case 4: seconds = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); break;
-                case 8: seconds = byteReader.ReadI64(this.EventData.Slice(this.ValueStart)); break;
-                default: value = new DateTime(); return false;
-            }
-
-            return TryDateTimeFromUnixTimeSeconds(seconds, out value);
-        }
-
-        /// <summary>
         /// Returns ValueBytes interpreted as an IPAddress.
         /// Returns false if ValueLength is not 4 (IPv4) or 8 (IPv6).
         /// </summary>
-        public bool TryGetIPAddress(out IPAddress value)
+        public readonly bool TryGetIPAddress(out IPAddress value)
         {
             var c = this.ValueLength;
             if (c != 4 && c != 16)
@@ -533,185 +535,148 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns ValueBytes interpreted as a signed integer.
-        /// Requires ValueLength is 1, 2, or 4.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, or 4.</exception>
-        public Int32 GetInt32()
-        {
-            Int32 value;
-            if (!this.TryGetInt32(out value))
-            {
-                throw new InvalidOperationException(nameof(GetInt32) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Returns ValueBytes interpreted as an unsigned integer.
-        /// Requires ValueLength is 1, 2, or 4.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, or 4.</exception>
-        public UInt32 GetUInt32()
-        {
-            UInt32 value;
-            if (!this.TryGetUInt32(out value))
-            {
-                throw new InvalidOperationException(nameof(GetUInt32) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Returns ValueBytes interpreted as a signed integer.
-        /// Requires ValueLength is 1, 2, 4, or 8.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, 4, or 8.</exception>
-        public Int64 GetInt64()
-        {
-            Int64 value;
-            if (!this.TryGetInt64(out value))
-            {
-                throw new InvalidOperationException(nameof(GetInt64) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Returns ValueBytes interpreted as an unsigned integer.
-        /// Requires ValueLength is 1, 2, 4, or 8.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 1, 2, 4, or 8.</exception>
-        public UInt64 GetUInt64()
-        {
-            UInt64 value;
-            if (!this.TryGetUInt64(out value))
-            {
-                throw new InvalidOperationException(nameof(GetUInt64) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Returns ValueBytes interpreted as a 32-bit float.
-        /// Requires ValueLength is 4.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 4.</exception>
-        public Single GetSingle()
-        {
-            Single value;
-            if (!this.TryGetSingle(out value))
-            {
-                throw new InvalidOperationException(nameof(GetSingle) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Returns ValueBytes interpreted as a 32-bit or 64-bit float.
-        /// Requires ValueLength is 4 or 8.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 4 or 8.</exception>
-        public Double GetDouble()
-        {
-            Double value;
-            if (!this.TryGetDouble(out value))
-            {
-                throw new InvalidOperationException(nameof(GetDouble) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Returns ValueBytes interpreted as a big-endian Guid.
-        /// Requires ValueLength is 16.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 16.</exception>
-        public Guid GetGuid()
-        {
-            Guid value;
-            if (!this.TryGetGuid(out value))
-            {
-                throw new InvalidOperationException(nameof(GetGuid) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
-        /// Returns ValueBytes interpreted as a big-endian UInt16.
-        /// Requires ValueLength is 2.
-        /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 2.</exception>
-        public int GetPort()
-        {
-            int value;
-            if (!this.TryGetPort(out value))
-            {
-                throw new InvalidOperationException(nameof(GetPort) + " with bad value size");
-            }
-
-            return value;
-        }
-
-        /// <summary>
         /// Returns ValueBytes interpreted as a Unix time_t (signed seconds since 1970).
-        /// If time is less than DateTime.MinValue, returns DateTime.MinValue.
-        /// If time is greater than DateTime.MaxValue, returns DateTime.MaxValue.
-        /// Requires ValueLength is 4 or 8.
+        /// Returns false if ValueLength is not 4 or 8, if time is less than
+        /// DateTime.MinValue (0001), or if time is greater than DateTime.MaxValue (9999).
         /// </summary>
-        /// <exception cref="InvalidOperationException">
-        /// ValueLength is not 4 or 8, or value is out of range for DateTime.
-        /// </exception>
-        public DateTime GetDateTime()
+        public readonly bool TryGetUnixTime(out DateTime value)
         {
-            DateTime value;
-            if (!this.TryGetDateTime(out value))
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            Int64 seconds;
+            switch (this.ValueLength)
             {
-                throw new InvalidOperationException(nameof(GetDateTime) + " with bad value size");
+                case 4: seconds = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); break;
+                case 8: seconds = byteReader.ReadI64(this.EventData.Slice(this.ValueStart)); break;
+                default: value = new DateTime(); return false;
             }
 
-            return value;
+            return TryUnixTimeToDateTime(seconds, out value);
         }
 
         /// <summary>
-        /// Returns ValueBytes interpreted as an IPAddress.
-        /// Requires ValueLength is 4 (IPv4) or 16 (IPv6).
+        /// Returns ValueBytes interpreted as a Unix time_t (signed seconds since 1970)
+        /// and formatted as a string. If the year is in the range 0001..9999, the string
+        /// will be formatted like "2020-02-02T02:02:02"; otherwise, the string will be
+        /// formatted like "TIME(-1234567890)".
+        /// Returns false if ValueLength is not 4 or 8.
         /// </summary>
-        /// <exception cref="InvalidOperationException">ValueLength is not 4 or 16.</exception>
-        public IPAddress GetIPAddress()
+        public readonly bool TryGetUnixTime(out string value)
         {
-            IPAddress value;
-            if (!this.TryGetIPAddress(out value))
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            Int64 seconds;
+            switch (this.ValueLength)
             {
-                throw new InvalidOperationException(nameof(GetIPAddress) + " with bad value size");
+                case 4: seconds = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); break;
+                case 8: seconds = byteReader.ReadI64(this.EventData.Slice(this.ValueStart)); break;
+                default: value = ""; return false;
             }
 
-            return value;
+            value = UnixTimeToString(seconds);
+            return true;
         }
 
         /// <summary>
-        /// Returns ValueBytes interpreted as a String.
-        /// Character encoding is determined from Format and Encoding.
+        /// Returns ValueBytes interpreted as a Linux error number.
+        /// Returns false if ValueLength is not 4.
         /// </summary>
-        public String GetString()
+        public readonly bool TryGetErrno(out int value)
         {
-            ReadOnlySpan<byte> v = this.EventData.Slice(this.ValueStart, this.ValueLength);
-            Text.Encoding encoding;
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
+            {
+                case 4: value = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); return true;
+                default: value = -1; return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns ValueBytes interpreted as a Linux error number and formatted as a string.
+        /// If the error number is recognized, the string will be formatted like "OK(0)" or "EPERM(1)";
+        /// otherwise the string will be formatted like "ERRNO(404)".
+        /// Returns false if ValueLength is not 4.
+        /// </summary>
+        public readonly bool TryGetErrno(out string value)
+        {
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            Int32 errno;
+            switch (this.ValueLength)
+            {
+                case 4: errno = byteReader.ReadI32(this.EventData.Slice(this.ValueStart)); break;
+                default: value = ""; return false;
+            }
+
+            value = ErrnoToString(errno);
+            return true;
+        }
+
+        /// <summary>
+        /// Gets ValueBytes interpreted as a bool8, bool16, or bool32.
+        /// Returns false if ValueLength is not 1, 2, or 4.
+        /// </summary>
+        public readonly bool TryGetBoolean(out Int32 value)
+        {
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            switch (this.ValueLength)
+            {
+                case 1: value = this.EventData[this.ValueStart]; return true; // Don't sign-extend bool8.
+                case 2: value = byteReader.ReadU16(this.EventData.Slice(this.ValueStart)); return true; // Don't sign-extend bool16.
+                case 4: value = unchecked((int)byteReader.ReadU32(this.EventData.Slice(this.ValueStart))); return true;
+                default: value = 0; return false;
+            }
+        }
+
+        /// <summary>
+        /// Gets ValueBytes interpreted as a bool8, bool16, or bool32 and formatted as a
+        /// string. If the value is 0 or 1, the string will be "false" or "true"; otherwise
+        /// the string will be the value formatted as a signed integer.
+        /// Returns false if ValueLength is not 1, 2, or 4.
+        /// </summary>
+        public readonly bool TryGetBoolean(out string value)
+        {
+            var byteReader = new PerfByteReader(this.EventBigEndian);
+            UInt32 intVal;
+            switch (this.ValueLength)
+            {
+                case 1: intVal = this.EventData[this.ValueStart]; break;
+                case 2: intVal = byteReader.ReadU16(this.EventData.Slice(this.ValueStart)); break;
+                case 4: intVal = byteReader.ReadU32(this.EventData.Slice(this.ValueStart)); break;
+                default: value = ""; return false;
+            }
+
+            value = BooleanToString((UInt32)intVal);
+            return true;
+        }
+
+        /// <summary>
+        /// Gets ValueBytes decoded as a new string. Character encoding (e.g. UTF-8, Latin1,
+        /// etc.) is determined from Encoding, Format, and possibly from a BOM at the
+        /// beginning of ValueBytes.
+        /// </summary>
+        public readonly String GetString()
+        {
+            Encoding encoding;
+            var bytes = this.GetStringBytes(out encoding);
+            return encoding.GetString(bytes);
+        }
+
+        /// <summary>
+        /// Determines the character encoding for ValueBytes based on Encoding, format,
+        /// and possibly from a BOM at the beginning of ValueBytes. Returns the
+        /// character bytes, not including the BOM (if any).
+        /// </summary>
+        /// <param name="encoding">Receives the value's character encoding.</param>
+        /// <returns>Character bytes, not including the BOM (if any).</returns>
+        public readonly ReadOnlySpan<byte> GetStringBytes(out Encoding encoding)
+        {
+            var v = this.EventData.Slice(this.ValueStart, this.ValueLength);
             switch (this.Format)
             {
-                case EventFieldFormat.String8:
+                case EventHeaderFieldFormat.String8:
                     encoding = Utility.EncodingLatin1;
                     break;
-                case EventFieldFormat.StringUtfBom:
-                case EventFieldFormat.StringXml:
-                case EventFieldFormat.StringJson:
+                case EventHeaderFieldFormat.StringUtfBom:
+                case EventHeaderFieldFormat.StringXml:
+                case EventHeaderFieldFormat.StringJson:
                     if (v.Length >= 4 &&
                         v[0] == 0xFF &&
                         v[1] == 0xFE &&
@@ -757,7 +722,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         goto StringUtf;
                     }
                     break;
-                case EventFieldFormat.StringUtf:
+                case EventHeaderFieldFormat.StringUtf:
                 default:
                 StringUtf:
                     switch (this.Encoding)
@@ -765,26 +730,26 @@ namespace Microsoft.LinuxTracepoints.Decode
                         default:
                             encoding = Utility.EncodingLatin1;
                             break;
-                        case EventFieldEncoding.Value8:
-                        case EventFieldEncoding.ZStringChar8:
-                        case EventFieldEncoding.StringLength16Char8:
+                        case EventHeaderFieldEncoding.Value8:
+                        case EventHeaderFieldEncoding.ZStringChar8:
+                        case EventHeaderFieldEncoding.StringLength16Char8:
                             encoding = Text.Encoding.UTF8;
                             break;
-                        case EventFieldEncoding.Value16:
-                        case EventFieldEncoding.ZStringChar16:
-                        case EventFieldEncoding.StringLength16Char16:
+                        case EventHeaderFieldEncoding.Value16:
+                        case EventHeaderFieldEncoding.ZStringChar16:
+                        case EventHeaderFieldEncoding.StringLength16Char16:
                             encoding = Text.Encoding.Unicode;
                             break;
-                        case EventFieldEncoding.Value32:
-                        case EventFieldEncoding.ZStringChar32:
-                        case EventFieldEncoding.StringLength16Char32:
+                        case EventHeaderFieldEncoding.Value32:
+                        case EventHeaderFieldEncoding.ZStringChar32:
+                        case EventHeaderFieldEncoding.StringLength16Char32:
                             encoding = Text.Encoding.UTF32;
                             break;
                     }
                     break;
             }
 
-            return encoding.GetString(v);
+            return v;
         }
 
         /// <summary>
@@ -792,29 +757,30 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public string FormatValue()
         {
-            Debug.Assert(this.Encoding > EventFieldEncoding.Struct);
-            Debug.Assert(this.Encoding < EventFieldEncoding.Max);
+            Debug.Assert(this.Encoding > EventHeaderFieldEncoding.Struct);
+            Debug.Assert(this.Encoding < EventHeaderFieldEncoding.Max);
 
             switch (this.Format)
             {
                 default:
                     switch (this.Encoding)
                     {
-                        case EventFieldEncoding.Value8:
-                        case EventFieldEncoding.Value16:
-                        case EventFieldEncoding.Value32:
-                        case EventFieldEncoding.Value64:
+                        case EventHeaderFieldEncoding.Value8:
+                        case EventHeaderFieldEncoding.Value16:
+                        case EventHeaderFieldEncoding.Value32:
+                        case EventHeaderFieldEncoding.Value64:
                             goto UnsignedInt;
-                        case EventFieldEncoding.ZStringChar8:
-                        case EventFieldEncoding.ZStringChar16:
-                        case EventFieldEncoding.ZStringChar32:
-                        case EventFieldEncoding.StringLength16Char8:
-                        case EventFieldEncoding.StringLength16Char16:
-                        case EventFieldEncoding.StringLength16Char32:
+                        case EventHeaderFieldEncoding.ZStringChar8:
+                        case EventHeaderFieldEncoding.ZStringChar16:
+                        case EventHeaderFieldEncoding.ZStringChar32:
+                        case EventHeaderFieldEncoding.StringLength16Char8:
+                        case EventHeaderFieldEncoding.StringLength16Char16:
+                        case EventHeaderFieldEncoding.StringLength16Char32:
                             goto StringUtf;
                     }
                     break;
-                case EventFieldFormat.UnsignedInt:
+
+                case EventHeaderFieldFormat.UnsignedInt:
                 UnsignedInt:
                     {
                         if (this.TryGetUInt64(out var value))
@@ -823,7 +789,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
                     }
                     break;
-                case EventFieldFormat.SignedInt:
+
+                case EventHeaderFieldFormat.SignedInt:
                     {
                         if (this.TryGetInt64(out var value))
                         {
@@ -831,23 +798,26 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
                     }
                     break;
-                case EventFieldFormat.HexInt:
+
+                case EventHeaderFieldFormat.HexInt:
                     {
                         if (this.TryGetUInt64(out var value))
                         {
-                            return "0x" + value.ToString("X", CultureInfo.InvariantCulture);
+                            return string.Format(CultureInfo.InvariantCulture, "0x{0:X}", value);
                         }
                     }
                     break;
-                case EventFieldFormat.Errno:
+
+                case EventHeaderFieldFormat.Errno:
                     {
-                        if (this.TryGetInt32(out var value))
+                        if (this.TryGetErrno(out string value))
                         {
-                            return StringFromLinuxErrno(value);
+                            return value;
                         }
                     }
                     break;
-                case EventFieldFormat.Pid:
+
+                case EventHeaderFieldFormat.Pid:
                     {
                         if (this.TryGetInt32(out var value))
                         {
@@ -855,44 +825,46 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
                     }
                     break;
-                case EventFieldFormat.Time:
+
+                case EventHeaderFieldFormat.Time:
                     {
-                        if (this.TryGetInt64(out var value))
+                        if (this.TryGetUnixTime(out string value))
                         {
-                            return StringFromUnixTimeSeconds(value);
+                            return value;
                         }
                     }
                     break;
-                case EventFieldFormat.Boolean:
+
+                case EventHeaderFieldFormat.Boolean:
                     {
-                        // Use UInt32 so we don't sign-extend bool8 or bool16.
-                        if (this.TryGetUInt32(out var value))
+                        if (this.TryGetBoolean(out string value))
                         {
-                            return StringFromBoolean(value);
+                            return value;
                         }
                     }
                     break;
-                case EventFieldFormat.Float:
-                    switch (this.ValueLength)
+
+                case EventHeaderFieldFormat.Float:
                     {
-                        case 4:
-                            return new PerfByteReader(this.EventBigEndian).ReadF32(this.EventData.Slice(this.ValueStart))
-                                .ToString(CultureInfo.InvariantCulture);
-                        case 8:
-                            return new PerfByteReader(this.EventBigEndian).ReadF64(this.EventData.Slice(this.ValueStart))
-                                .ToString(CultureInfo.InvariantCulture);
+                        if (this.TryGetFloat(out string value))
+                        {
+                            return value;
+                        }
                     }
                     break;
-                case EventFieldFormat.HexBinary:
+
+                case EventHeaderFieldFormat.HexBinary:
                     break;
-                case EventFieldFormat.String8:
-                case EventFieldFormat.StringUtf:
-                case EventFieldFormat.StringUtfBom:
-                case EventFieldFormat.StringXml:
-                case EventFieldFormat.StringJson:
+
+                case EventHeaderFieldFormat.String8:
+                case EventHeaderFieldFormat.StringUtf:
+                case EventHeaderFieldFormat.StringUtfBom:
+                case EventHeaderFieldFormat.StringXml:
+                case EventHeaderFieldFormat.StringJson:
                 StringUtf:
                     return this.GetString();
-                case EventFieldFormat.Uuid:
+
+                case EventHeaderFieldFormat.Uuid:
                     {
                         if (this.TryGetGuid(out var value))
                         {
@@ -900,7 +872,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
                     }
                     break;
-                case EventFieldFormat.Port:
+
+                case EventHeaderFieldFormat.Port:
                     {
                         if (this.TryGetPort(out var value))
                         {
@@ -908,8 +881,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
                     }
                     break;
-                case EventFieldFormat.IPv4:
-                case EventFieldFormat.IPv6:
+
+                case EventHeaderFieldFormat.IPv4:
+                case EventHeaderFieldFormat.IPv6:
                     {
                         if (this.TryGetIPAddress(out var value))
                         {

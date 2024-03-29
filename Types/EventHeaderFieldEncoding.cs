@@ -28,7 +28,7 @@ namespace Microsoft.LinuxTracepoints
     /// Setting both CArray and VArray is invalid (reserved).
     /// </para>
     /// </summary>
-    public enum EventFieldEncoding : byte
+    public enum EventHeaderFieldEncoding : byte
     {
         ValueMask = 0x1F,
         FlagMask = 0xE0,
@@ -44,7 +44,7 @@ namespace Microsoft.LinuxTracepoints
         FlagVArray = 0x40,
 
         /// <summary>
-        /// An EventFieldFormat byte follows the EventFieldEncoding byte.
+        /// An EventHeaderFieldFormat byte follows the EventHeaderFieldEncoding byte.
         /// </summary>
         FlagChain = 0x80,
 

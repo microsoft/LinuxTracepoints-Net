@@ -3,7 +3,7 @@
 
 namespace Microsoft.LinuxTracepoints
 {
-    using InteropServices = System.Runtime.InteropServices;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// <para>
@@ -19,9 +19,11 @@ namespace Microsoft.LinuxTracepoints
     /// alignment/padding) by the event payload data.
     /// </para>
     /// </summary>
-    [InteropServices.StructLayout(InteropServices.LayoutKind.Sequential, Size = 4)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct EventHeaderExtension
     {
+        public const int SizeOfStruct = 4;
+
         public ushort Size;
         public EventHeaderExtensionKind Kind;
 

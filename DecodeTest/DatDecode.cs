@@ -11,7 +11,7 @@
 
     internal sealed class DatDecode
     {
-        private readonly EventEnumerator e = new EventEnumerator();
+        private readonly EventHeaderEnumerator e = new EventHeaderEnumerator();
         private readonly TextWriter output;
 
         public DatDecode(TextWriter output)
@@ -78,21 +78,21 @@
                             var item = e.GetItemInfo();
                             switch (e.State)
                             {
-                                case EventEnumeratorState.Value:
+                                case EventHeaderEnumeratorState.Value:
                                     WriteJsonItemBegin(comma, item.Name, item.FieldTag, item.ArrayFlags != 0);
                                     this.WriteJsonValue(item.FormatValue());
                                     comma = true;
                                     break;
-                                case EventEnumeratorState.StructBegin:
+                                case EventHeaderEnumeratorState.StructBegin:
                                     WriteJsonItemBegin(comma, item.Name, item.FieldTag, item.ArrayFlags != 0);
                                     this.output.Write('{');
                                     comma = false;
                                     break;
-                                case EventEnumeratorState.StructEnd:
+                                case EventHeaderEnumeratorState.StructEnd:
                                     this.output.Write(" }");
                                     comma = true;
                                     break;
-                                case EventEnumeratorState.ArrayBegin:
+                                case EventHeaderEnumeratorState.ArrayBegin:
                                     WriteJsonItemBegin(comma, item.Name, item.FieldTag);
                                     this.output.Write('[');
                                     comma = false;
@@ -127,7 +127,7 @@
                                         continue; // Skip the MoveNext().
                                     }
                                     break;
-                                case EventEnumeratorState.ArrayEnd:
+                                case EventHeaderEnumeratorState.ArrayEnd:
                                     this.output.Write(" ]");
                                     comma = true;
                                     break;
@@ -243,7 +243,7 @@
 
                         if (item.Format != 0)
                         {
-                            if (item.Encoding == EventFieldEncoding.Struct)
+                            if (item.Encoding == EventHeaderFieldEncoding.Struct)
                             {
                                 WriteJsonItemBegin(comma, "FieldCount");
                                 this.output.Write((byte)item.Format);
@@ -292,7 +292,7 @@
                         this.output.Write(" }");
                         comma = true;
                     }
-                    if (e.LastError != EventEnumeratorError.Success)
+                    if (e.LastError != EventHeaderEnumeratorError.Success)
                     {
                         WriteJsonItemBegin(comma, "err");
                         this.output.Write("\"{0}\"", e.LastError.ToString());

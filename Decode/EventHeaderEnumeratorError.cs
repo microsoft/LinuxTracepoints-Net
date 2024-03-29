@@ -4,9 +4,9 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     /// <summary>
-    /// Values for the LastError property of EventEnumerator.
+    /// Values for the LastError property of EventHeaderEnumerator.
     /// </summary>
-    public enum EventEnumeratorError : byte
+    public enum EventHeaderEnumeratorError : byte
     {
         /// <summary>
         /// No error.

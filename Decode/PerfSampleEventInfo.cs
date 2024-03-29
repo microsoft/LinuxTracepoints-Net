@@ -117,7 +117,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns flags indicating which data was present in the event.
         /// </summary>
-        public readonly PerfEventAbi.PerfEventSampleFormat SampleType =>
+        public readonly PerfEventAttrSampleType SampleType =>
             this.EventDesc.Attr.SampleType;
 
         /// <summary>

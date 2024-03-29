@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decode", "Decode\Decode.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodeTest", "DecodeTest\DecodeTest.csproj", "{0FEF60BB-5A34-45CE-93F1-B0FE3C8B708F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecodePerf", "DecodePerf\DecodePerf.csproj", "{312CAED2-D193-45EB-AE79-30F563C2D319}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{0FEF60BB-5A34-45CE-93F1-B0FE3C8B708F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0FEF60BB-5A34-45CE-93F1-B0FE3C8B708F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0FEF60BB-5A34-45CE-93F1-B0FE3C8B708F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{312CAED2-D193-45EB-AE79-30F563C2D319}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{312CAED2-D193-45EB-AE79-30F563C2D319}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{312CAED2-D193-45EB-AE79-30F563C2D319}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{312CAED2-D193-45EB-AE79-30F563C2D319}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
