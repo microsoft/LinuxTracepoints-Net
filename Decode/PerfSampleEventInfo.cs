@@ -14,6 +14,36 @@ namespace Microsoft.LinuxTracepoints.Decode
     public ref struct PerfSampleEventInfo
     {
         /// <summary>
+        /// <para>
+        /// The bytes of the event, including header and data, in event byte order.
+        /// </para><para>
+        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
+        /// The format of the data depends on this.Header.Type.
+        /// </para><para>
+        /// This is the same as Bytes, i.e. this.BytesSpan == this.Bytes.Span. This field
+        /// is provided as an optimization to avoid the overhead of redundant calls to
+        /// Bytes.Span.
+        /// </para><para>
+        /// This field points into the PerfDataFileReader's data buffer. The referenced data
+        /// is only valid until the next call to ReadEvent.
+        /// </para>
+        /// </summary>
+        public ReadOnlySpan<byte> BytesSpan;
+
+        /// <summary>
+        /// <para>
+        /// The bytes of the event, including header and data, in event byte order.
+        /// </para><para>
+        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
+        /// The format of the data depends on this.Header.Type.
+        /// </para><para>
+        /// This field points into the PerfDataFileReader's data buffer. The referenced data
+        /// is only valid until the next call to ReadEvent.
+        /// </para>
+        /// </summary>
+        public ReadOnlyMemory<byte> Bytes;
+
+        /// <summary>
         /// Valid if GetSampleEventInfo() succeeded.
         /// Information about the session that collected the event, e.g. clock id and
         /// clock offset.
@@ -32,6 +62,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         public UInt64 Id;
 
         /// <summary>
+        /// Valid if SampleType contains IP.
+        /// </summary>
+        public UInt64 IP;
+
+        /// <summary>
         /// Valid if SampleType contains Tid.
         /// </summary>
         public UInt32 Pid;
@@ -46,6 +81,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Use SessionInfo.TimeToRealTime() to convert to a TimeSpec.
         /// </summary>
         public UInt64 Time;
+
+        /// <summary>
+        /// Valid if SampleType contains Addr.
+        /// </summary>
+        public UInt64 Addr;
 
         /// <summary>
         /// Valid if SampleType contains StreamId.
@@ -63,23 +103,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         public UInt32 CpuReserved;
 
         /// <summary>
-        /// Valid if SampleType contains IP.
-        /// </summary>
-        public UInt64 IP;
-
-        /// <summary>
-        /// Valid if SampleType contains Addr.
-        /// </summary>
-        public UInt64 Addr;
-
-        /// <summary>
         /// Valid if SampleType contains Period.
         /// </summary>
         public UInt64 Period;
 
         /// <summary>
         /// Valid if SampleType contains Read.
-        /// Offset into event data where ReadValues begins.
+        /// Offset into Bytes where ReadValues begins.
         /// </summary>
         public int ReadStart;
 
@@ -91,7 +121,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Valid if SampleType contains Callchain.
-        /// Offset into event data where Callchain begins.
+        /// Offset into Bytes where Callchain begins.
         /// </summary>
         public int CallchainStart;
 
@@ -103,7 +133,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Valid if SampleType contains Raw.
-        /// Offset into event data where RawData begins.
+        /// Offset into Bytes where RawData begins.
         /// </summary>
         public int RawDataStart;
 
@@ -113,9 +143,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public int RawDataLength;
 
+        /// <summary>
+        /// Returns true if the event data is in big-endian byte order.
+        /// </summary>
+        public readonly bool IsBigEndian => this.SessionInfo.IsBigEndian;
 
         /// <summary>
-        /// Returns flags indicating which data was present in the event.
+        /// Returns ByteReader(IsBigEndian).
+        /// </summary>
+        public readonly PerfByteReader ByteReader => this.SessionInfo.ByteReader;
+
+        /// <summary>
+        /// Returns flags indicating which properties were present in the event.
         /// </summary>
         public readonly PerfEventAttrSampleType SampleType =>
             this.EventDesc.Attr.SampleType;
@@ -137,13 +176,20 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Gets the Time as a DateTime, using offset information from SessionInfo.
+        /// If the resulting DateTime is out of range (year before 1 or after 9999),
+        /// returns DateTime.MinValue.
         /// </summary>
         public readonly DateTime DateTime
         {
             get
             {
                 var ts = this.SessionInfo.TimeToRealTime(this.Time);
-                return DateTime.UnixEpoch.AddSeconds(ts.TvSec).AddTicks(ts.TvNsec / 100);
+                DateTime result;
+                if (PerfConvert.TryUnixTimeToDateTime(ts.TvSec, out result))
+                {
+                    result = result.AddTicks(ts.TvNsec / 100);
+                }
+                return result;
             }
         }
 
@@ -151,56 +197,63 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Gets the read_format data from the event in event-endian byte order.
         /// Valid if SampleType contains Read.
         /// </summary>
-        public readonly ReadOnlyMemory<byte> GetReadValues(in PerfEvent perfEvent)
-        {
-            return perfEvent.Data.Slice(this.ReadStart, this.ReadLength);
-        }
+        public readonly ReadOnlyMemory<byte> ReadValues =>
+            this.Bytes.Slice(this.ReadStart, this.ReadLength);
 
         /// <summary>
         /// Gets the read_format data from the event in event-endian byte order.
         /// Valid if SampleType contains Read.
         /// </summary>
-        public readonly ReadOnlySpan<byte> GetReadValuesSpan(in PerfEvent perfEvent)
-        {
-            return perfEvent.DataSpan.Slice(this.ReadStart, this.ReadLength);
-        }
+        public readonly ReadOnlySpan<byte> ReadValuesSpan =>
+            this.BytesSpan.Slice(this.ReadStart, this.ReadLength);
 
         /// <summary>
         /// Gets the callchain data from the event in event-endian byte order.
         /// Valid if SampleType contains Callchain.
         /// </summary>
-        public readonly ReadOnlyMemory<byte> GetCallchain(in PerfEvent perfEvent)
-        {
-            return perfEvent.Data.Slice(this.CallchainStart, this.CallchainLength);
-        }
+        public readonly ReadOnlyMemory<byte> Callchain =>
+            this.Bytes.Slice(this.CallchainStart, this.CallchainLength);
 
         /// <summary>
         /// Gets the callchain data from the event in event-endian byte order.
         /// Valid if SampleType contains Callchain.
         /// </summary>
-        public readonly ReadOnlySpan<byte> GetCallchainSpan(in PerfEvent perfEvent)
-        {
-            return perfEvent.DataSpan.Slice(this.CallchainStart, this.CallchainLength);
-        }
+        public readonly ReadOnlySpan<byte> CallchainSpan =>
+            this.BytesSpan.Slice(this.CallchainStart, this.CallchainLength);
 
         /// <summary>
         /// Gets the raw field data from the event in event-endian byte order.
         /// This includes the data for the event's common fields, followed by user fields.
         /// Valid if SampleType contains Raw.
         /// </summary>
-        public readonly ReadOnlyMemory<byte> GetRawData(in PerfEvent perfEvent)
-        {
-            return perfEvent.Data.Slice(this.RawDataStart, this.RawDataLength);
-        }
+        public readonly ReadOnlyMemory<byte> RawData =>
+            this.Bytes.Slice(this.RawDataStart, this.RawDataLength);
 
         /// <summary>
         /// Gets the raw field data from the event in event-endian byte order.
         /// This includes the data for the event's common fields, followed by user fields.
         /// Valid if SampleType contains Raw.
         /// </summary>
-        public readonly ReadOnlySpan<byte> GetRawDataSpan(in PerfEvent perfEvent)
+        public readonly ReadOnlySpan<byte> RawDataSpan =>
+            this.BytesSpan.Slice(this.RawDataStart, this.RawDataLength);
+
+        /// <summary>
+        /// Gets the user field data from the event in event-endian byte order.
+        /// This starts immediately after the event's common fields.
+        /// Valid if SampleType contains Raw and metadata is available.
+        /// </summary>
+        public readonly ReadOnlyMemory<byte> UserData
         {
-            return perfEvent.DataSpan.Slice(this.RawDataStart, this.RawDataLength);
+            get
+            {
+                var metadata = this.EventDesc.Metadata;
+                return metadata == null || metadata.CommonFieldsSize > this.RawDataLength
+                    ? default
+                    : this.Bytes.Slice(
+                        this.RawDataStart + metadata.CommonFieldsSize,
+                        this.RawDataLength - metadata.CommonFieldsSize);
+
+            }
         }
 
         /// <summary>
@@ -208,29 +261,17 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// This starts immediately after the event's common fields.
         /// Valid if SampleType contains Raw and metadata is available.
         /// </summary>
-        public readonly ReadOnlyMemory<byte> GetUserData(in PerfEvent perfEvent)
+        public readonly ReadOnlySpan<byte> UserDataSpan
         {
-            var metadata = this.EventDesc.Metadata;
-            return metadata == null || metadata.CommonFieldsSize > this.RawDataLength
-                ? default
-                : perfEvent.Data.Slice(
-                    this.RawDataStart + metadata.CommonFieldsSize,
-                    this.RawDataLength - metadata.CommonFieldsSize);
-        }
-
-        /// <summary>
-        /// Gets the user field data from the event in event-endian byte order.
-        /// This starts immediately after the event's common fields.
-        /// Valid if SampleType contains Raw and metadata is available.
-        /// </summary>
-        public readonly ReadOnlySpan<byte> GetUserDataSpan(in PerfEvent perfEvent)
-        {
-            var metadata = this.EventDesc.Metadata;
-            return metadata == null || metadata.CommonFieldsSize > this.RawDataLength
-                ? default
-                : perfEvent.DataSpan.Slice(
-                    this.RawDataStart + metadata.CommonFieldsSize,
-                    this.RawDataLength - metadata.CommonFieldsSize);
+            get
+            {
+                var metadata = this.EventDesc.Metadata;
+                return metadata == null || metadata.CommonFieldsSize > this.RawDataLength
+                    ? default
+                    : this.BytesSpan.Slice(
+                        this.RawDataStart + metadata.CommonFieldsSize,
+                        this.RawDataLength - metadata.CommonFieldsSize);
+            }
         }
     }
 }

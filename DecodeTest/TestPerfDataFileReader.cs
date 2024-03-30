@@ -2,7 +2,9 @@
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Buffers;
     using System.IO;
+    using System.Text.Json;
     using Encoding = System.Text.Encoding;
     using Logger = Microsoft.VisualStudio.TestTools.UnitTesting.Logging.Logger;
 
@@ -26,17 +28,20 @@
         private static void Decode(string baseName)
         {
             string expected = File.ReadAllText(baseName + ".json");
-            using (var output = new StringWriter())
+            var buffer = new ArrayBufferWriter<byte>();
+            using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true, SkipValidation = true }))
             {
-                var decode = new DecodePerf.PerfDataDecode(output);
-                output.Write("[");
+                var decode = new DecodePerf.PerfDataDecode(writer);
+                writer.WriteStartArray();
                 decode.DecodeFile(baseName);
-                output.WriteLine(" ]");
+                writer.WriteEndArray();
+                writer.Flush();
 
-                string actual = output.ToString();
+                var writtenBytes = buffer.WrittenSpan;
+                string actual = Encoding.UTF8.GetString(writtenBytes);
                 if (expected != actual)
                 {
-                    File.WriteAllText(baseName + ".json.actual", actual, Encoding.UTF8);
+                    File.WriteAllBytes(baseName + ".json.actual", writtenBytes.ToArray());
                 }
 
                 string[] expectedLines = expected.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);

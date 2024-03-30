@@ -1,6 +1,8 @@
 ﻿namespace DecodePerf
 {
     using System;
+    using System.Buffers;
+    using System.Text.Json;
     using Microsoft.LinuxTracepoints.Decode;
 
     internal class Program
@@ -10,24 +12,18 @@
             int result;
             try
             {
-                using (var decode = new PerfDataDecode(Console.Out))
+                using (var output = Console.OpenStandardOutput())
                 {
-                    var comma = false;
-
-                    Console.Out.WriteLine('{');
-                    foreach (var arg in args)
+                    using (var writer = new Utf8JsonWriter(output, new JsonWriterOptions { Indented = true, SkipValidation = true }))
                     {
-                        if (comma)
+                        var decode = new PerfDataDecode(writer);
+                        writer.WriteStartArray();
+                        foreach (var arg in args)
                         {
-                            Console.WriteLine(',');
+                            decode.DecodeFile(arg);
                         }
-                        Console.Out.Write($@" ""{arg.Replace("\\", "\\\\")}"": [");
-                        decode.DecodeFile(arg);
-                        Console.Out.Write(" ]");
-                        comma = true;
+                        writer.WriteEndArray();
                     }
-
-                    Console.Out.WriteLine('}');
                 }
 
                 result = 0;

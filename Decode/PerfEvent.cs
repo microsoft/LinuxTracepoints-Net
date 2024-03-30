@@ -11,62 +11,65 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// <summary>
     /// Value returned by PerfDataFileReader.ReadEvent.
     /// </summary>
-    public ref struct PerfEvent
+    public readonly ref struct PerfEvent
     {
         /// <summary>
         /// <para>
-        /// The header of the event in host-endian byte order.
+        /// The header of the event in host byte order.
         /// </para><para>
-        /// This is the first 8 bytes of the event, byte-swapped if appropriate.
+        /// This is a copy of the first 8 bytes of the event, byte-swapped if event byte
+        /// order is different from host byte order.
         /// </para>
         /// </summary>
         public readonly PerfEventHeader Header;
 
         /// <summary>
         /// <para>
-        /// The data of the event in event-endian byte order.
+        /// The bytes of the event, including header and data, in event byte order.
         /// </para><para>
-        /// The data is the portion of the event bytes after the header. The format depends
-        /// on this.Header.Type.
+        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
+        /// The format of the data depends on this.Header.Type.
+        /// </para><para>
+        /// This is the same as Bytes, i.e. this.BytesSpan == this.Bytes.Span. This field
+        /// is provided as an optimization to avoid the overhead of redundant calls to
+        /// Bytes.Span.
         /// </para><para>
         /// This field points into the PerfDataFileReader's data buffer. The referenced data
         /// is only valid until the next call to ReadEvent.
         /// </para>
         /// </summary>
-        public readonly ReadOnlyMemory<byte> Data;
+        public readonly ReadOnlySpan<byte> BytesSpan;
 
         /// <summary>
         /// <para>
-        /// The data of the event in event-endian byte order.
+        /// The bytes of the event, including header and data, in event byte order.
         /// </para><para>
-        /// The data is the portion of the event bytes after the header. The format depends
-        /// on this.Header.Type.
-        /// </para><para>
-        /// This is the same as Data, i.e. this.DataSpan == this.Data.Span. This field
-        /// is provided as an optimization to avoid the overhead of redundant calls to
-        /// Memory.Span.
+        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
+        /// The format of the data depends on this.Header.Type.
         /// </para><para>
         /// This field points into the PerfDataFileReader's data buffer. The referenced data
         /// is only valid until the next call to ReadEvent.
         /// </para>
         /// </summary>
-        public readonly ReadOnlySpan<byte> DataSpan;
+        public readonly ReadOnlyMemory<byte> Bytes;
 
         /// <summary>
         /// Initializes a new instance of the PerfEvent struct.
         /// </summary>
-        /// <param name="header">The header of the event in host-endian byte order.</param>
-        /// <param name="data">The data of the event (the bytes after the header).</param>
-        /// <param name="dataSpan">The data of the event (i.e. data.Span).</param>
+        /// <param name="header">The header of the event, in host-endian byte order.</param>
+        /// <param name="bytes">The bytes of the event, in event-endian byte order (including header).</param>
+        /// <param name="bytesSpan">The span of the bytes parameter (i.e. bytes.Span).</param>
         public PerfEvent(
             PerfEventHeader header,
-            ReadOnlyMemory<byte> data,
-            ReadOnlySpan<byte> dataSpan)
+            ReadOnlyMemory<byte> bytes,
+            ReadOnlySpan<byte> bytesSpan)
         {
-            Debug.Assert(dataSpan == data.Span);
+            Debug.Assert(bytes.Length >= 8);
+            Debug.Assert(bytes.Length == bytesSpan.Length);
+
             this.Header = header;
-            this.Data = data;
-            this.DataSpan = dataSpan;
+            this.BytesSpan = bytesSpan;
+            this.Bytes = bytes;
         }
     }
 }

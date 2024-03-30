@@ -15,6 +15,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         private uint clockOffsetNanoseconds;
         private uint clockid = 0xFFFFFFFF;
         bool clockOffsetKnown;
+        private readonly PerfByteReader byteReader;
+
+        public PerfEventSessionInfo(PerfByteReader byteReader)
+        {
+            this.byteReader = byteReader;
+        }
 
         /// <summary>
         /// Returns the empty PerfEventSessionInfo instance.
@@ -26,12 +32,22 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var value = empty;
                 if (value == null)
                 {
-                    value = new PerfEventSessionInfo();
+                    value = new PerfEventSessionInfo(default);
                     empty = value;
                 }
                 return value;
             }
         }
+
+        /// <summary>
+        /// Returns true if the session data is in big-endian byte order.
+        /// </summary>
+        public bool IsBigEndian => this.byteReader.FromBigEndian;
+
+        /// <summary>
+        /// Returns ByteReader(IsBigEndian).
+        /// </summary>
+        public PerfByteReader ByteReader => this.byteReader;
 
         /// <summary>
         /// Returns the clockid of the session timestamp, e.g. CLOCK_MONOTONIC.

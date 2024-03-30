@@ -763,9 +763,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         /// <param name="fieldBytes">Field data, e.g. from GetFieldBytes.</param>
         /// <param name="eventBigEndian">true if the event was logged using big-endian byte order.</param>
-        /// <param name="jsonQuotes">true to put quotes around strings and hexadecimal numbers.</param>
         /// <returns></returns>
-        public string FormatField(ReadOnlySpan<byte> fieldBytes, bool eventBigEndian, bool jsonQuotes = false)
+        public string FormatField(ReadOnlySpan<byte> fieldBytes, bool eventBigEndian)
         {
             StringBuilder sb;
             var byteReader = new PerfByteReader(eventBigEndian);
@@ -784,65 +783,15 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case PerfFieldFormat.String:
 
                     var len = fieldBytes.IndexOf((byte)0);
-                    if (!jsonQuotes)
+                    if (len == 0)
                     {
-                        if (len == 0)
-                        {
-                            return "";
-                        }
-                        else
-                        {
-                            return Utility.EncodingLatin1.GetString(fieldBytes.Slice(0, len >= 0 ? len : fieldBytes.Length));
-                        }
-                    }
-                    else if (len == 0)
-                    {
-                        return "\"\"";
+                        return "";
                     }
                     else
                     {
-                        sb = new StringBuilder(len);
-                        sb.Append('"');
-                        for (int i = 0; i < len; i += 1)
-                        {
-                            var ch = (char)fieldBytes[i];
-                            if (ch == '\\')
-                            {
-                                sb.Append('\\');
-                                sb.Append('\\');
-                            }
-                            else if (ch == '"')
-                            {
-                                sb.Append('\\');
-                                sb.Append('"');
-                            }
-                            else if (ch >= ' ')
-                            {
-                                sb.Append(ch);
-                            }
-                            else
-                            {
-                                sb.Append('\\');
-                                switch (ch)
-                                {
-                                    case '\b': sb.Append('b'); break;
-                                    case '\f': sb.Append('f'); break;
-                                    case '\n': sb.Append('n'); break;
-                                    case '\r': sb.Append('r'); break;
-                                    case '\t': sb.Append('t'); break;
-                                    default:
-                                        sb.Append('u');
-                                        sb.Append('0');
-                                        sb.Append('0');
-                                        sb.Append(Utility.ToHexChar(ch >> 4));
-                                        sb.Append(Utility.ToHexChar(ch));
-                                        break;
-                                }
-                            }
-                        }
-                        sb.Append('"');
-                        break;
+                        return Utility.EncodingLatin1.GetString(fieldBytes.Slice(0, len >= 0 ? len : fieldBytes.Length));
                     }
+                    break;
 
                 case PerfFieldFormat.Hex:
 
@@ -858,28 +807,28 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 {
                                     return "null";
                                 }
-                                AppendHexJson(jsonQuotes, sb, fieldBytes[0]);
+                                AppendHex(sb, fieldBytes[0]);
                                 break;
                             case PerfFieldElementSize.Size16:
                                 if (fieldBytes.Length < 2)
                                 {
                                     return "null";
                                 }
-                                AppendHexJson(jsonQuotes, sb, byteReader.ReadU16(fieldBytes));
+                                AppendHex(sb, byteReader.ReadU16(fieldBytes));
                                 break;
                             case PerfFieldElementSize.Size32:
                                 if (fieldBytes.Length < 4)
                                 {
                                     return "null";
                                 }
-                                AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes));
+                                AppendHex(sb, byteReader.ReadU32(fieldBytes));
                                 break;
                             case PerfFieldElementSize.Size64:
                                 if (fieldBytes.Length < 8)
                                 {
                                     return "null";
                                 }
-                                AppendHexJson(jsonQuotes, sb, byteReader.ReadU64(fieldBytes));
+                                AppendHex(sb, byteReader.ReadU64(fieldBytes));
                                 break;
                         }
                     }
@@ -893,44 +842,44 @@ namespace Microsoft.LinuxTracepoints.Decode
                             case PerfFieldElementSize.Size8:
                                 if (fieldBytes.Length >= 1)
                                 {
-                                    AppendHexJson(jsonQuotes, sb, fieldBytes[0]);
+                                    AppendHex(sb, fieldBytes[0]);
                                     for (int i = 1; i < fieldBytes.Length; i += 1)
                                     {
                                         sb.Append(',');
-                                        AppendHexJson(jsonQuotes, sb, fieldBytes[i]);
+                                        AppendHex(sb, fieldBytes[i]);
                                     }
                                 }
                                 break;
                             case PerfFieldElementSize.Size16:
                                 if (fieldBytes.Length >= 2)
                                 {
-                                    AppendHexJson(jsonQuotes, sb, byteReader.ReadU16(fieldBytes));
+                                    AppendHex(sb, byteReader.ReadU16(fieldBytes));
                                     for (int i = 3; i < fieldBytes.Length; i += 2)
                                     {
                                         sb.Append(',');
-                                        AppendHexJson(jsonQuotes, sb, byteReader.ReadU16(fieldBytes.Slice(i - 1)));
+                                        AppendHex(sb, byteReader.ReadU16(fieldBytes.Slice(i - 1)));
                                     }
                                 }
                                 break;
                             case PerfFieldElementSize.Size32:
                                 if (fieldBytes.Length >= 4)
                                 {
-                                    AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes));
+                                    AppendHex(sb, byteReader.ReadU32(fieldBytes));
                                     for (int i = 7; i < fieldBytes.Length; i += 4)
                                     {
                                         sb.Append(',');
-                                        AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes.Slice(i - 3)));
+                                        AppendHex(sb, byteReader.ReadU32(fieldBytes.Slice(i - 3)));
                                     }
                                 }
                                 break;
                             case PerfFieldElementSize.Size64:
                                 if (fieldBytes.Length >= 8)
                                 {
-                                    AppendHexJson(jsonQuotes, sb, byteReader.ReadU64(fieldBytes));
+                                    AppendHex(sb, byteReader.ReadU64(fieldBytes));
                                     for (int i = 15; i < fieldBytes.Length; i += 8)
                                     {
                                         sb.Append(',');
-                                        AppendHexJson(jsonQuotes, sb, byteReader.ReadU32(fieldBytes.Slice(i - 7)));
+                                        AppendHex(sb, byteReader.ReadU32(fieldBytes.Slice(i - 7)));
                                     }
                                 }
                                 break;
@@ -1131,34 +1080,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             return sb.ToString();
-        }
-
-        private static void AppendHexJson(bool jsonQuotes, StringBuilder sb, uint value)
-        {
-            if (!jsonQuotes)
-            {
-                AppendHex(sb, value);
-            }
-            else
-            {
-                sb.Append('"');
-                AppendHex(sb, value);
-                sb.Append('"');
-            }
-        }
-
-        private static void AppendHexJson(bool jsonQuotes, StringBuilder sb, ulong value)
-        {
-            if (!jsonQuotes)
-            {
-                AppendHex(sb, value);
-            }
-            else
-            {
-                sb.Append('"');
-                AppendHex(sb, value);
-                sb.Append('"');
-            }
         }
 
         private static void AppendHex(StringBuilder sb, uint value)

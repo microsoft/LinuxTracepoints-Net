@@ -1,15 +1,14 @@
 namespace DecodeTest
 {
-    using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
+    using System.Buffers;
     using System.IO;
+    using System.Text.Json;
     using Encoding = System.Text.Encoding;
     using Logging = Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
 
     [TestClass]
-    //[UnitTesting.DeploymentItem("EventHeaderInterceptorLE64.dat")]
-    //[UnitTesting.DeploymentItem("EventHeaderInterceptorLE64.json")]
     public class TestEventHeaderEnumerator
     {
         private static readonly char[] LineSplitChars = new char[] { '\r', '\n' };
@@ -18,17 +17,20 @@ namespace DecodeTest
         public void DecodeDat()
         {
             string expected = File.ReadAllText("EventHeaderInterceptorLE64.json");
-            using (var output = new StringWriter())
+            var buffer = new ArrayBufferWriter<byte>();
+            using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true, SkipValidation = true }))
             {
-                var decode = new DatDecode(output);
-                output.Write("[");
+                var decode = new DatDecode(writer);
+                writer.WriteStartArray();
                 decode.DecodeFile("EventHeaderInterceptorLE64.dat");
-                output.WriteLine(" ]");
+                writer.WriteEndArray();
+                writer.Flush();
 
-                string actual = output.ToString();
+                var writtenBytes = buffer.WrittenSpan;
+                string actual = Encoding.UTF8.GetString(writtenBytes);
                 if (expected != actual)
                 {
-                    File.WriteAllText("EventHeaderInterceptorLE64.json.actual", actual, Encoding.UTF8);
+                    File.WriteAllBytes("EventHeaderInterceptorLE64.json.actual", writtenBytes.ToArray());
                 }
 
                 string[] expectedLines = expected.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);

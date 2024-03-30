@@ -1,65 +1,59 @@
 ﻿namespace DecodePerf
 {
+    using Microsoft.LinuxTracepoints;
     using Microsoft.LinuxTracepoints.Decode;
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Text.Json;
     using CultureInfo = System.Globalization.CultureInfo;
 
     internal sealed class PerfDataDecode : IDisposable
     {
         private readonly PerfDataFileReader reader = new PerfDataFileReader();
         private readonly EventHeaderEnumerator enumerator = new EventHeaderEnumerator();
-        private readonly TextWriter output;
+        private readonly Utf8JsonWriter writer;
 
-        public PerfDataDecode(TextWriter output)
+        public PerfDataDecode(Utf8JsonWriter writer)
         {
-            this.output = output;
-        }
-
-        public TextWriter Output
-        {
-            get { return this.output; }
+            this.writer = writer;
         }
 
         public void DecodeFile(string fileName)
         {
-            this.reader.OpenFile(fileName);
+            reader.OpenFile(fileName);
             this.Decode();
         }
 
         public void DecodeStream(Stream stream, bool leaveOpen = false)
         {
-            this.reader.OpenStream(stream, leaveOpen);
+            reader.OpenStream(stream, leaveOpen);
             this.Decode();
         }
 
         public void Dispose()
         {
-            this.reader.Dispose();
+            reader.Dispose();
+            writer.Dispose();
         }
 
         private void Decode()
         {
-            bool comma = false;
             bool finishedInit = false;
-            var byteReader = this.reader.ByteReader;
+            var byteReader = reader.ByteReader;
             PerfDataFileResult result;
             PerfEvent e;
             while (true)
             {
-                result = this.reader.ReadEvent(out e);
+                result = reader.ReadEvent(out e);
                 if (result == PerfDataFileResult.EndOfFile)
                 {
                     break;
                 }
 
-                this.output.WriteLine(comma ? "," : "");
-                comma = true;
-
                 if (result != PerfDataFileResult.Ok)
                 {
-                    this.output.Write("Pos {0}: ReadEvent {1}", this.reader.FilePos, result);
+                    writer.WriteCommentValue($"Pos {reader.FilePos}: ReadEvent {result}");
                     break;
                 }
 
@@ -72,71 +66,86 @@
 
                     if (e.Header.Type >= PerfEventHeaderType.UserTypeStart)
                     {
-                        this.output.Write(
-                            $@"  {{ ""NonSampleSpecial"":""{e.Header.Type}"",""Size"":{e.Data.Length} }}");
+                        writer.WriteStartObject();
+                        writer.WriteString("NonSampleSpecial", e.Header.Type.ToString());
+                        writer.WriteNumber("Size", e.Bytes.Length);
+                        writer.WriteEndObject();
                     }
                     else if (!finishedInit)
                     {
-                        this.output.Write(
-                            $@"  {{ ""NonSampleEarly"":""{e.Header.Type}"",""Size"":{e.Data.Length} }}");
+                        writer.WriteStartObject();
+                        writer.WriteString("NonSampleEarly", e.Header.Type.ToString());
+                        writer.WriteNumber("Size", e.Bytes.Length);
+                        writer.WriteEndObject();
                     }
                     else
                     {
                         PerfNonSampleEventInfo info;
-                        result = this.reader.GetNonSampleEventInfo(e.DataSpan, out info);
+                        result = reader.GetNonSampleEventInfo(e, out info);
                         if (result != PerfDataFileResult.Ok)
                         {
-                            this.output.Write("Pos {0}: GetNonSampleEventInfo {1}", this.reader.FilePos, result);
+                            writer.WriteCommentValue($"Pos {reader.FilePos}: GetNonSampleEventInfo {result}");
                         }
                         else
                         {
-                            this.output.Write(
-                                $@"  {{ ""NonSample"":""{e.Header.Type}/{info.Name}"",""Size"":{e.Data.Length},""Time"":""{info.DateTime:o}"" }}");
+                            writer.WriteStartObject();
+                            writer.WriteString("NonSample", $"{e.Header.Type}/{info.Name}");
+                            writer.WriteNumber("Size", e.Bytes.Length);
+                            writer.WriteString("Time", info.DateTime);
+                            writer.WriteEndObject();
                         }
                     }
                 }
                 else
                 {
                     PerfSampleEventInfo info;
-                    result = this.reader.GetSampleEventInfo(e.DataSpan, out info);
+                    result = reader.GetSampleEventInfo(e, out info);
                     if (result != PerfDataFileResult.Ok)
                     {
-                        this.output.Write("Pos {0}: GetSampleEventInfo {1}", this.reader.FilePos, result);
+                        writer.WriteCommentValue($"Pos {reader.FilePos}: GetSampleEventInfo {result}");
                     }
                     else
                     {
                         var eventMeta = info.Metadata;
-                        var eventData = info.GetRawDataSpan(e);
+                        var eventData = info.RawDataSpan;
                         if (eventMeta == null)
                         {
-                            this.output.Write(
-                                $@"  {{ ""SampleNoMeta"":""{e.Header.Type}"",""Size"":{e.Data.Length} }}");
+                            writer.WriteStartObject();
+                            writer.WriteString("SampleNoMeta", e.Header.Type.ToString());
+                            writer.WriteNumber("Size", e.Bytes.Length);
+                            writer.WriteEndObject();
                         }
                         else if (eventMeta.DecodingStyle != PerfEventDecodingStyle.EventHeader)
                         {
-                            this.output.Write(
-                                $@"  {{ ""Sample"":""{e.Header.Type}/{info.Name}"",""Size"":{e.Data.Length},""Time"":""{info.DateTime:o}""");
+                            writer.WriteStartObject();
+                            writer.WriteString("Sample", $"{e.Header.Type}/{info.Name}");
+                            writer.WriteNumber("Size", e.Bytes.Length);
+                            writer.WriteString("Time", info.DateTime);
 
                             for (int i = eventMeta.CommonFieldCount; i < eventMeta.Fields.Length; i++)
                             {
                                 var fieldMeta = eventMeta.Fields[i];
                                 var fieldData = fieldMeta.GetFieldBytes(eventData, byteReader.FromBigEndian);
-                                this.output.Write($@",""{fieldMeta.Name}"":{fieldMeta.FormatField(fieldData, byteReader.FromBigEndian, true)}");
+                                writer.WriteString(fieldMeta.Name, fieldMeta.FormatField(fieldData, byteReader.FromBigEndian));
                             }
 
-                            this.output.Write(" }");
+                            writer.WriteEndObject();
                         }
-                        else if (!this.enumerator.StartEvent(eventMeta.Name, info.GetUserData(e)))
+                        else if (!this.enumerator.StartEvent(eventMeta.Name, info.UserData))
                         {
-                            this.output.Write(
-                                $@"  {{ ""SampleBadEH"":""{e.Header.Type}/{info.Name}"",""Size"":{e.Data.Length},""Time"":""{info.DateTime:o}"" }}");
+                            writer.WriteStartObject();
+                            writer.WriteString("SampleBadEH", $"{e.Header.Type}/{info.Name}");
+                            writer.WriteNumber("Size", e.Bytes.Length);
+                            writer.WriteString("Time", info.DateTime);
+                            writer.WriteEndObject();
                         }
                         else
                         {
-                            this.output.Write(
-                                $@"  {{ ""SampleEH"":""{e.Header.Type}/{info.Name}"",""Size"":{e.Data.Length},""Time"":""{info.DateTime:o}""");
+                            writer.WriteStartObject();
+                            writer.WriteString("SampleEH", $"{e.Header.Type}/{info.Name}");
+                            writer.WriteNumber("Size", e.Bytes.Length);
+                            writer.WriteString("Time", info.DateTime);
 
-                            comma = true;
                             if (this.enumerator.MoveNext())
                             {
                                 while (true)
@@ -145,23 +154,30 @@
                                     switch (this.enumerator.State)
                                     {
                                         case EventHeaderEnumeratorState.Value:
-                                            this.WriteJsonItemBegin(comma, item.Name, item.FieldTag, item.ArrayFlags != 0);
-                                            this.WriteJsonValue(item.FormatValue());
-                                            comma = true;
+                                            if (item.ArrayFlags == 0)
+                                            {
+                                                writer.WriteString(MakeName(item.NameAsString, item.FieldTag), item.FormatValue());
+                                            }
+                                            else
+                                            {
+                                                writer.WriteStringValue(item.FormatValue());
+                                            }
                                             break;
                                         case EventHeaderEnumeratorState.StructBegin:
-                                            this.WriteJsonItemBegin(comma, item.Name, item.FieldTag, item.ArrayFlags != 0);
-                                            this.output.Write('{');
-                                            comma = false;
+                                            if (item.ArrayFlags == 0)
+                                            {
+                                                writer.WriteStartObject(MakeName(item.NameAsString, item.FieldTag));
+                                            }
+                                            else
+                                            {
+                                                writer.WriteStartObject();
+                                            }
                                             break;
                                         case EventHeaderEnumeratorState.StructEnd:
-                                            this.output.Write(" }");
-                                            comma = true;
+                                            writer.WriteEndObject();
                                             break;
                                         case EventHeaderEnumeratorState.ArrayBegin:
-                                            this.WriteJsonItemBegin(comma, item.Name, item.FieldTag);
-                                            this.output.Write('[');
-                                            comma = false;
+                                            writer.WriteStartArray(MakeName(item.NameAsString, item.FieldTag));
                                             if (item.ElementSize != 0)
                                             {
                                                 // Process the entire array directly without using the enumerator.
@@ -170,19 +186,11 @@
                                                 item.ValueLength = item.ElementSize;
                                                 for (int i = 0; i != item.ArrayCount; i++)
                                                 {
-                                                    if (comma)
-                                                    {
-                                                        this.output.Write(',');
-                                                    }
-
-                                                    this.output.Write(' ');
-                                                    this.WriteJsonValue(item.FormatValue());
+                                                    writer.WriteStringValue(item.FormatValue());
                                                     item.ValueStart += item.ElementSize;
-                                                    comma = true;
                                                 }
 
-                                                this.output.Write(" ]");
-                                                comma = true;
+                                                writer.WriteEndArray();
 
                                                 // Skip the entire array at once.
                                                 if (!this.enumerator.MoveNextSibling()) // Instead of MoveNext().
@@ -194,8 +202,7 @@
                                             }
                                             break;
                                         case EventHeaderEnumeratorState.ArrayEnd:
-                                            this.output.Write(" ]");
-                                            comma = true;
+                                            writer.WriteEndArray();
                                             break;
                                     }
 
@@ -209,58 +216,44 @@
                         EventDone:
 
                             var ei = this.enumerator.GetEventInfo();
-                            this.WriteJsonItemBegin(comma, "meta");
-                            this.output.Write('{');
-                            comma = false;
-
-                            this.WriteJsonItemBegin(comma, "provider");
-                            this.output.Write("\"{0}\"", ei.ProviderName.ToString());
-                            comma = true;
-
-                            this.WriteJsonItemBegin(comma, "event");
-                            this.output.Write("\"{0}\"", ei.Name);
+                            this.writer.WriteStartObject("meta");
+                            this.writer.WriteString("provider", ei.ProviderName);
+                            this.writer.WriteString("event", ei.Name);
 
                             var options = ei.Options;
                             if (!options.IsEmpty)
                             {
-                                this.WriteJsonItemBegin(comma, "options");
-                                this.output.Write("\"{0}\"", options.ToString());
+                                this.writer.WriteString("options", options);
                             }
 
                             if (ei.Header.Id != 0)
                             {
-                                this.WriteJsonItemBegin(comma, "id");
-                                this.output.Write("{0}", ei.Header.Id);
+                                this.writer.WriteNumber("id", ei.Header.Id);
                             }
 
                             if (ei.Header.Version != 0)
                             {
-                                this.WriteJsonItemBegin(comma, "version");
-                                this.output.Write("{0}", ei.Header.Version);
+                                this.writer.WriteNumber("version", ei.Header.Version);
                             }
 
                             if (ei.Header.Level != 0)
                             {
-                                this.WriteJsonItemBegin(comma, "level");
-                                this.output.Write("{0}", (byte)ei.Header.Level);
+                                this.writer.WriteNumber("level", (byte)ei.Header.Level);
                             }
 
                             if (ei.Keyword != 0)
                             {
-                                this.WriteJsonItemBegin(comma, "keyword");
-                                this.output.Write("\"0x{0:X}\"", ei.Keyword);
+                                this.writer.WriteString("keyword", $"0x{ei.Keyword:X}");
                             }
 
                             if (ei.Header.Opcode != 0)
                             {
-                                this.WriteJsonItemBegin(comma, "opcode");
-                                this.output.Write("{0}", (byte)ei.Header.Opcode);
+                                this.writer.WriteNumber("opcode", (byte)ei.Header.Opcode);
                             }
 
                             if (ei.Header.Tag != 0)
                             {
-                                this.WriteJsonItemBegin(comma, "tag");
-                                this.output.Write("\"0x{0:X}\"", ei.Header.Tag);
+                                this.writer.WriteString("tag", $"0x{ei.Header.Tag:X}");
                             }
 
                             Guid? g;
@@ -268,63 +261,37 @@
                             g = ei.ActivityId;
                             if (g.HasValue)
                             {
-                                this.WriteJsonItemBegin(comma, "activity");
-                                this.output.Write("\"{0}\"", g.Value.ToString());
+                                this.writer.WriteString("activity", g.Value);
                             }
 
                             g = ei.RelatedActivityId;
                             if (g.HasValue)
                             {
-                                this.WriteJsonItemBegin(comma, "relatedActivity");
-                                this.output.Write("\"{0}\"", g.Value.ToString());
+                                this.writer.WriteString("relatedActivity", g.Value);
                             }
 
-                            this.output.Write("} }");
-                            comma = true;
+                            /*
+                            var options = ei.Options;
+                            if (options.Length != 0)
+                            {
+                                WriteJsonItemBegin(comma, "options");
+                                this.output.Write(options);
+                            }
+                            */
+
+                            this.writer.WriteEndObject(); // meta
+                            this.writer.WriteEndObject(); // event
                         }
                     }
                 }
             }
         }
 
-        private void WriteJsonItemBegin(bool comma, string name, int tag = 0, bool noname = false)
+        private static string MakeName(string baseName, int tag)
         {
-            if (noname)
-            {
-                this.output.Write(comma ? ", " : " ");
-            }
-            else
-            {
-                this.output.Write(comma ? ", \"" : " \"");
-                this.output.Write(name);
-
-                if (tag != 0)
-                {
-                    this.output.Write(";tag=0x");
-                    this.output.Write(tag.ToString("X", CultureInfo.InvariantCulture));
-                }
-
-                this.output.Write("\": ");
-            }
-        }
-
-        private void WriteJsonValue(string value)
-        {
-            this.output.Write('"');
-
-            foreach (var c in value)
-            {
-                if (c == '\0')
-                {
-                    this.output.Write("\\u0000");
-                }
-                else
-                {
-                    this.output.Write(c);
-                }
-            }
-
-            this.output.Write('"');
+            return tag == 0
+                ? baseName
+                : baseName + ";tag=0x" + tag.ToString("X", CultureInfo.InvariantCulture);
         }
     }
 }

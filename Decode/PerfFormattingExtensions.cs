@@ -1,10 +1,10 @@
-﻿namespace Microsoft.LinuxTracepoints.Decode
+﻿namespace Microsoft.LinuxTracepoints.Decode.Formatting
 {
     using System;
     using System.Globalization;
     using System.Text;
 
-    public static class PerfExtensions
+    public static class PerfFormattingExtensions
     {
         /// <summary>
         /// Appends a Unix time_t (signed seconds since 1970) to a StringBuilder.
@@ -13,7 +13,7 @@
         /// </summary>
         public static StringBuilder AppendUnixTime(this StringBuilder sb, long secondsSince1970)
         {
-            if (!EventHeaderItemInfo.TryUnixTimeToDateTime(secondsSince1970, out var value))
+            if (!PerfConvert.TryUnixTimeToDateTime(secondsSince1970, out var value))
             {
                 sb.Append("TIME(");
                 sb.Append(secondsSince1970);
@@ -34,7 +34,7 @@
         /// </summary>
         public static StringBuilder AppendErrno(this StringBuilder sb, int linuxErrno)
         {
-            var value = EventHeaderItemInfo.ErrnoLookup(linuxErrno);
+            var value = PerfConvert.ErrnoLookup(linuxErrno);
             if (value == null)
             {
                 sb.Append("ERRNO(");
