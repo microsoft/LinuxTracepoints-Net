@@ -1123,11 +1123,11 @@
   {
     "NULL": {
       "Encoding": "StringLength16Char8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "ch10": {
       "Encoding": "StringLength16Char8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     }
   },
   {
@@ -2208,47 +2208,47 @@
   {
     "V8": {
       "Encoding": "Value8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V16": {
       "Encoding": "Value16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V32": {
       "Encoding": "Value32",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V64": {
       "Encoding": "Value64",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V128": {
       "Encoding": "Value128",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "NChar8": {
       "Encoding": "ZStringChar8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "NChar16": {
       "Encoding": "ZStringChar16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "NChar32": {
       "Encoding": "ZStringChar32",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "LChar8": {
       "Encoding": "StringLength16Char8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "LChar16": {
       "Encoding": "StringLength16Char16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "LChar32": {
       "Encoding": "StringLength16Char32",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     }
   },
   {
@@ -2729,7 +2729,7 @@
     },
     "NChar16": {
       "Encoding": "ZStringChar16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "five": {
       "Encoding": "Value32",
@@ -2776,7 +2776,7 @@
     },
     "NChar16": {
       "Encoding": "ZStringChar16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "five": {
       "Encoding": "Value32",
@@ -3898,11 +3898,11 @@
   {
     "NULL": {
       "Encoding": "StringLength16Char8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "ch10": {
       "Encoding": "StringLength16Char8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     }
   },
   {
@@ -4983,47 +4983,47 @@
   {
     "V8": {
       "Encoding": "Value8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V16": {
       "Encoding": "Value16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V32": {
       "Encoding": "Value32",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V64": {
       "Encoding": "Value64",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "V128": {
       "Encoding": "Value128",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "NChar8": {
       "Encoding": "ZStringChar8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "NChar16": {
       "Encoding": "ZStringChar16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "NChar32": {
       "Encoding": "ZStringChar32",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "LChar8": {
       "Encoding": "StringLength16Char8",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "LChar16": {
       "Encoding": "StringLength16Char16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "LChar32": {
       "Encoding": "StringLength16Char32",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     }
   },
   {
@@ -5504,7 +5504,7 @@
     },
     "NChar16": {
       "Encoding": "ZStringChar16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "five": {
       "Encoding": "Value32",
@@ -5551,7 +5551,7 @@
     },
     "NChar16": {
       "Encoding": "ZStringChar16",
-      "Format": "HexBinary"
+      "Format": "HexBytes"
     },
     "five": {
       "Encoding": "Value32",

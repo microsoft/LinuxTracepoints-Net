@@ -5,8 +5,11 @@
     using System;
     using System.Diagnostics;
     using System.IO;
+    using System.Net;
+    using System.Runtime.InteropServices;
     using System.Text.Json;
     using CultureInfo = System.Globalization.CultureInfo;
+    using Encoding = System.Text.Encoding;
 
     internal sealed class PerfDataDecode : IDisposable
     {
@@ -107,7 +110,6 @@
                     else
                     {
                         var eventMeta = info.Metadata;
-                        var eventData = info.RawDataSpan;
                         if (eventMeta == null)
                         {
                             writer.WriteStartObject();
@@ -125,8 +127,18 @@
                             for (int i = eventMeta.CommonFieldCount; i < eventMeta.Fields.Length; i++)
                             {
                                 var fieldMeta = eventMeta.Fields[i];
-                                var fieldData = fieldMeta.GetFieldBytes(eventData, byteReader.FromBigEndian);
-                                writer.WriteString(fieldMeta.Name, fieldMeta.FormatField(fieldData, byteReader.FromBigEndian));
+                                var fieldValue = fieldMeta.GetFieldValue(info.RawDataSpan, byteReader.FromBigEndian);
+                                if (!fieldValue.IsArray)
+                                {
+                                    writer.WritePropertyName(fieldMeta.Name);
+                                    this.WriteValue(fieldValue);
+                                }
+                                else
+                                {
+                                    writer.WriteStartArray(fieldMeta.Name);
+                                    WriteSimpleArrayValues(fieldValue);
+                                    writer.WriteEndArray();
+                                }
                             }
 
                             writer.WriteEndObject();
@@ -154,42 +166,29 @@
                                     switch (this.enumerator.State)
                                     {
                                         case EventHeaderEnumeratorState.Value:
-                                            if (item.ArrayFlags == 0)
+                                            if (!item.Value.IsArray)
                                             {
-                                                writer.WriteString(MakeName(item.NameAsString, item.FieldTag), item.FormatValue());
+                                                writer.WritePropertyName(MakeName(item.NameAsString, item.Value.FieldTag));
                                             }
-                                            else
-                                            {
-                                                writer.WriteStringValue(item.FormatValue());
-                                            }
+                                            this.WriteValue(item.Value);
                                             break;
                                         case EventHeaderEnumeratorState.StructBegin:
-                                            if (item.ArrayFlags == 0)
+                                            if (!item.Value.IsArray)
                                             {
-                                                writer.WriteStartObject(MakeName(item.NameAsString, item.FieldTag));
+                                                writer.WritePropertyName(MakeName(item.NameAsString, item.Value.FieldTag));
                                             }
-                                            else
-                                            {
-                                                writer.WriteStartObject();
-                                            }
+                                            writer.WriteStartObject();
                                             break;
                                         case EventHeaderEnumeratorState.StructEnd:
                                             writer.WriteEndObject();
                                             break;
                                         case EventHeaderEnumeratorState.ArrayBegin:
-                                            writer.WriteStartArray(MakeName(item.NameAsString, item.FieldTag));
-                                            if (item.ElementSize != 0)
+                                            writer.WritePropertyName(MakeName(item.NameAsString, item.Value.FieldTag));
+                                            writer.WriteStartArray();
+                                            if (item.Value.ElementSize != 0)
                                             {
                                                 // Process the entire array directly without using the enumerator.
-                                                // Adjust the item.ValueStart and item.ValueLength to point to each element.
-                                                Debug.Assert(item.ValueLength == item.ArrayCount * item.ElementSize);
-                                                item.ValueLength = item.ElementSize;
-                                                for (int i = 0; i != item.ArrayCount; i++)
-                                                {
-                                                    writer.WriteStringValue(item.FormatValue());
-                                                    item.ValueStart += item.ElementSize;
-                                                }
-
+                                                WriteSimpleArrayValues(item.Value);
                                                 writer.WriteEndArray();
 
                                                 // Skip the entire array at once.
@@ -284,6 +283,613 @@
                         }
                     }
                 }
+            }
+        }
+
+        private void WriteValue(in PerfValue item)
+        {
+            switch (item.Encoding)
+            {
+                default:
+                    throw new NotSupportedException("Unknown encoding.");
+                case EventFieldEncoding.Invalid:
+                    writer.WriteNullValue();
+                    return;
+                case EventFieldEncoding.Struct:
+                    throw new InvalidOperationException("Invalid encoding for FormatValue.");
+                case EventFieldEncoding.Value8:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            writer.WriteNumberValue(item.GetU8());
+                            return;
+                        case EventFieldFormat.SignedInt:
+                            writer.WriteNumberValue(item.GetI8());
+                            return;
+                        case EventFieldFormat.HexInt:
+                            this.WriteHexInt(item.GetU8(), stackalloc char[4]);
+                            return;
+                        case EventFieldFormat.Boolean:
+                            this.WriteBooleanValue(item.GetU8());
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            this.WriteHexBytes(item.GetSpan1(), stackalloc char[2]);
+                            return;
+                        case EventFieldFormat.String8:
+                            this.WriteChar16Value((char)item.GetU8());
+                            return;
+                    }
+                case EventFieldEncoding.Value16:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            writer.WriteNumberValue(item.GetU16());
+                            return;
+                        case EventFieldFormat.SignedInt:
+                            writer.WriteNumberValue(item.GetI16());
+                            return;
+                        case EventFieldFormat.HexInt:
+                            this.WriteHexInt(item.GetU16(), stackalloc char[6]);
+                            return;
+                        case EventFieldFormat.Boolean:
+                            this.WriteBooleanValue(item.GetU16());
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            this.WriteHexBytes(item.GetSpan2(), stackalloc char[5]);
+                            return;
+                        case EventFieldFormat.StringUtf:
+                            this.WriteChar16Value((char)item.GetU16());
+                            return;
+                        case EventFieldFormat.Port:
+                            writer.WriteNumberValue(item.GetPort());
+                            return;
+                    }
+                case EventFieldEncoding.Value32:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            writer.WriteNumberValue(item.GetU32());
+                            return;
+                        case EventFieldFormat.SignedInt:
+                        case EventFieldFormat.Pid:
+                            writer.WriteNumberValue(item.GetI32());
+                            return;
+                        case EventFieldFormat.HexInt:
+                            this.WriteHexInt(item.GetU32(), stackalloc char[10]);
+                            return;
+                        case EventFieldFormat.Errno:
+                            this.WriteErrno(item.GetI32());
+                            return;
+                        case EventFieldFormat.Time:
+                            this.WriteUnixTime32Value(item.GetI32());
+                            return;
+                        case EventFieldFormat.Boolean:
+                            this.WriteBooleanValue(item.GetU32());
+                            return;
+                        case EventFieldFormat.Float:
+                            this.WriteFloat32Value(item.GetF32());
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            this.WriteHexBytes(item.GetSpan4(), stackalloc char[11]);
+                            return;
+                        case EventFieldFormat.StringUtf:
+                            this.WriteChar32Value(item.GetU32());
+                            return;
+                        case EventFieldFormat.IPv4:
+                            this.WriteIPAddressValue(item.GetIPv4(), stackalloc char[16]);
+                            return;
+                    }
+                case EventFieldEncoding.Value64:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            writer.WriteNumberValue(item.GetU64());
+                            return;
+                        case EventFieldFormat.SignedInt:
+                            writer.WriteNumberValue(item.GetI64());
+                            return;
+                        case EventFieldFormat.HexInt:
+                            this.WriteHexInt(item.GetU64(), stackalloc char[18]);
+                            return;
+                        case EventFieldFormat.Time:
+                            this.WriteUnixTime64Value(item.GetI64());
+                            return;
+                        case EventFieldFormat.Float:
+                            this.WriteFloat64Value(item.GetF64());
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            this.WriteHexBytes(item.GetSpan8(), stackalloc char[23]);
+                            return;
+                    }
+                case EventFieldEncoding.Value128:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.HexBytes:
+                            this.WriteHexBytes(item.GetSpan16(), stackalloc char[47]);
+                            return;
+                        case EventFieldFormat.Uuid:
+                            writer.WriteStringValue(item.GetGuid());
+                            return;
+                        case EventFieldFormat.IPv6:
+                            this.WriteIPAddressValue(item.GetIPv6(), stackalloc char[46]);
+                            return;
+                    }
+                case EventFieldEncoding.ZStringChar8:
+                case EventFieldEncoding.StringLength16Char8:
+                    switch (item.Format)
+                    {
+                        case EventFieldFormat.HexBytes:
+                            writer.WriteStringValue(PerfConvert.ToHexString(item.Bytes)); // Garbage.
+                            return;
+                        case EventFieldFormat.String8:
+                            writer.WriteStringValue(PerfConvert.EncodingLatin1.GetString(item.Bytes)); // Garbage.
+                            return;
+                        case EventFieldFormat.StringUtfBom:
+                        case EventFieldFormat.StringXml:
+                        case EventFieldFormat.StringJson:
+                            this.WriteUtfBomValue(item);
+                            return;
+                        default:
+                        case EventFieldFormat.StringUtf:
+                            writer.WriteStringValue(item.Bytes); // Assume UTF-8
+                            return;
+                    }
+                case EventFieldEncoding.ZStringChar16:
+                case EventFieldEncoding.StringLength16Char16:
+                    switch (item.Format)
+                    {
+                        case EventFieldFormat.HexBytes:
+                            writer.WriteStringValue(PerfConvert.ToHexString(item.Bytes)); // Garbage.
+                            return;
+                        case EventFieldFormat.StringUtfBom:
+                        case EventFieldFormat.StringXml:
+                        case EventFieldFormat.StringJson:
+                            this.WriteUtfBomValue(item); // Garbage
+                            return;
+                        default:
+                        case EventFieldFormat.StringUtf:
+                            if (item.ByteReader.ByteSwapNeeded)
+                            {
+                                this.WriteUtfBomValue(item); // Garbage
+                            }
+                            else
+                            {
+                                writer.WriteStringValue(MemoryMarshal.Cast<byte, char>(item.Bytes));
+                            }
+                            return;
+                    }
+                case EventFieldEncoding.ZStringChar32:
+                case EventFieldEncoding.StringLength16Char32:
+                    switch (item.Format)
+                    {
+                        case EventFieldFormat.HexBytes:
+                            writer.WriteStringValue(PerfConvert.ToHexString(item.Bytes)); // Garbage.
+                            return;
+                        case EventFieldFormat.StringUtfBom:
+                        case EventFieldFormat.StringXml:
+                        case EventFieldFormat.StringJson:
+                            this.WriteUtfBomValue(item); // Garbage
+                            return;
+                        default:
+                        case EventFieldFormat.StringUtf:
+                            this.WriteUtfBomValue(item); // Garbage
+                            return;
+                    }
+            }
+        }
+
+        /// <summary>
+        /// Interprets the item as the BeginArray of a simple array (ElementSize != 0).
+        /// Calls writer.WriteValue(...) for each element in the array.
+        /// </summary>
+        private void WriteSimpleArrayValues(in PerfValue item)
+        {
+            var arrayCount = item.ArrayCount;
+
+            // Room for 16 byte value converted to HexBytes.
+            // Room for IPv6 address converted to string.
+            Span<char> charBuf = stackalloc char[16 * 3];
+
+            switch (item.Encoding)
+            {
+                default:
+                    throw new NotSupportedException("Unknown encoding.");
+                case EventFieldEncoding.Invalid:
+                case EventFieldEncoding.Struct:
+                case EventFieldEncoding.ZStringChar8:
+                case EventFieldEncoding.StringLength16Char8:
+                case EventFieldEncoding.ZStringChar16:
+                case EventFieldEncoding.StringLength16Char16:
+                case EventFieldEncoding.ZStringChar32:
+                case EventFieldEncoding.StringLength16Char32:
+                    throw new InvalidOperationException("Invalid encoding for WriteSimpleArray.");
+                case EventFieldEncoding.Value8:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetU8(i));
+                            }
+                            return;
+                        case EventFieldFormat.SignedInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetI8(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteHexInt(item.GetU8(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.Boolean:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteBooleanValue(item.GetU8(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteHexBytes(item.GetSpan1(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.String8:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteChar16Value((char)item.GetU8(i));
+                            }
+                            return;
+                    }
+                case EventFieldEncoding.Value16:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetU16(i));
+                            }
+                            return;
+                        case EventFieldFormat.SignedInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetI16(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteHexInt(item.GetU16(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.Boolean:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteBooleanValue(item.GetU16(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteHexBytes(item.GetSpan2(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.StringUtf:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteChar16Value((char)item.GetU16(i));
+                            }
+                            return;
+                        case EventFieldFormat.Port:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetPort(i));
+                            }
+                            return;
+                    }
+                case EventFieldEncoding.Value32:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetU32(i));
+                            }
+                            return;
+                        case EventFieldFormat.SignedInt:
+                        case EventFieldFormat.Pid:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetI32(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteHexInt(item.GetU32(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.Errno:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteErrno(item.GetI32(i));
+                            }
+                            return;
+                        case EventFieldFormat.Time:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteUnixTime32Value(item.GetI32(i));
+                            }
+                            return;
+                        case EventFieldFormat.Boolean:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteBooleanValue(item.GetU32(i));
+                            }
+                            return;
+                        case EventFieldFormat.Float:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteFloat32Value(item.GetF32(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteHexBytes(item.GetSpan4(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.StringUtf:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteChar32Value(item.GetU32(i));
+                            }
+                            return;
+                        case EventFieldFormat.IPv4:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteIPAddressValue(item.GetIPv4(i), charBuf);
+                            }
+                            return;
+                    }
+                case EventFieldEncoding.Value64:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.UnsignedInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetU64(i));
+                            }
+                            return;
+                        case EventFieldFormat.SignedInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteNumberValue(item.GetI64(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexInt:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                WriteHexInt(item.GetU64(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.Time:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteUnixTime64Value(item.GetI64(i));
+                            }
+                            return;
+                        case EventFieldFormat.Float:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteFloat64Value(item.GetF64(i));
+                            }
+                            return;
+                        case EventFieldFormat.HexBytes:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                WriteHexBytes(item.GetSpan8(i), charBuf);
+                            }
+                            return;
+                    }
+                case EventFieldEncoding.Value128:
+                    switch (item.Format)
+                    {
+                        default:
+                        case EventFieldFormat.HexBytes:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                WriteHexBytes(item.GetSpan16(i), charBuf);
+                            }
+                            return;
+                        case EventFieldFormat.Uuid:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                writer.WriteStringValue(item.GetGuid(i));
+                            }
+                            return;
+                        case EventFieldFormat.IPv6:
+                            for (int i = 0; i < arrayCount; i += 1)
+                            {
+                                this.WriteIPAddressValue(item.GetIPv6(i), charBuf);
+                            }
+                            return;
+                    }
+            }
+        }
+
+        private void WriteUtfBomValue(in PerfValue item)
+        {
+            var bytes = item.GetStringBytes(out var encoding);
+            if (encoding == Encoding.UTF8)
+            {
+                writer.WriteStringValue(bytes);
+            }
+            else if (encoding == Encoding.Unicode)
+            {
+                writer.WriteStringValue(MemoryMarshal.Cast<byte, char>(bytes));
+            }
+            else
+            {
+                writer.WriteStringValue(encoding.GetString(bytes)); // Garbage.
+            }
+        }
+
+        private void WriteFloat32Value(float value)
+        {
+            if (float.IsFinite(value))
+            {
+                writer.WriteNumberValue(value);
+            }
+            else
+            {
+                writer.WriteStringValue(value.ToString(CultureInfo.InvariantCulture)); // Garbage
+            }
+        }
+
+        private void WriteFloat64Value(double value)
+        {
+            if (double.IsFinite(value))
+            {
+                writer.WriteNumberValue(value);
+            }
+            else
+            {
+                writer.WriteStringValue(value.ToString(CultureInfo.InvariantCulture)); // Garbage
+            }
+        }
+
+        private void WriteChar16Value(char ch)
+        {
+            writer.WriteStringValue(MemoryMarshal.CreateReadOnlySpan(ref ch, 1));
+        }
+
+        private void WriteChar32Value(uint ch32)
+        {
+            Span<char> chars = stackalloc char[2];
+            var bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateReadOnlySpan(ref ch32, 1));
+            var count = Encoding.UTF32.GetChars(bytes, chars);
+            writer.WriteStringValue(chars.Slice(0, count));
+        }
+
+        private void WriteIPAddressValue(ReadOnlySpan<byte> value, Span<char> charBuf)
+        {
+            var addr = new IPAddress(value); // Garbage.
+            int count;
+            if (!addr.TryFormat(charBuf, out count))
+            {
+                Debug.Fail("TryFormat failed for IPAddress.");
+                writer.WriteStringValue(addr.ToString()); // Garbage.
+            }
+            else
+            {
+                writer.WriteStringValue(charBuf.Slice(0, count));
+            }
+        }
+
+        private void WriteUnixTime32Value(Int32 value)
+        {
+            writer.WriteStringValue(PerfConvert.UnixTime32ToDateTime(value));
+        }
+
+        private void WriteUnixTime64Value(Int64 value)
+        {
+            var dateTime = PerfConvert.UnixTime64ToDateTime(value);
+            if (dateTime.HasValue)
+            {
+                writer.WriteStringValue(dateTime.Value);
+            }
+            else
+            {
+                writer.WriteNumberValue(value);
+            }
+        }
+
+        private void WriteErrno(int errno)
+        {
+            var errnoString = PerfConvert.ErrnoLookup(errno);
+            if (errnoString == null)
+            {
+                writer.WriteNumberValue(errno);
+            }
+            else
+            {
+                writer.WriteStringValue(errnoString);
+            }
+        }
+
+        private void WriteHexBytes(ReadOnlySpan<byte> bytes, Span<char> charBuf)
+        {
+            var charPos = 0;
+            if (bytes.Length > 0)
+            {
+                var b = bytes[0];
+                charBuf[charPos++] = PerfConvert.ToHexChar(b >> 4);
+                charBuf[charPos++] = PerfConvert.ToHexChar(b);
+                for (int i = 1; i < bytes.Length; i += 1)
+                {
+                    b = bytes[i];
+                    charBuf[charPos++] = ' ';
+                    charBuf[charPos++] = PerfConvert.ToHexChar(b >> 4);
+                    charBuf[charPos++] = PerfConvert.ToHexChar(b);
+                }
+            }
+
+            writer.WriteStringValue(charBuf.Slice(0, charPos));
+        }
+
+        private void WriteHexInt(UInt32 value, Span<char> charBuf)
+        {
+            var charPos = charBuf.Length;
+            do
+            {
+                charBuf[--charPos] = PerfConvert.ToHexChar(unchecked((int)value));
+                value >>= 4;
+            }
+            while (value != 0);
+            charBuf[--charPos] = 'x';
+            charBuf[--charPos] = '0';
+            writer.WriteStringValue(charBuf.Slice(charPos));
+        }
+
+        private void WriteHexInt(UInt64 value, Span<char> charBuf)
+        {
+            var bufPos = charBuf.Length;
+            do
+            {
+                charBuf[--bufPos] = PerfConvert.ToHexChar(unchecked((int)value));
+                value >>= 4;
+            }
+            while (value != 0);
+            charBuf[--bufPos] = 'x';
+            charBuf[--bufPos] = '0';
+            writer.WriteStringValue(charBuf.Slice(bufPos));
+        }
+
+        private void WriteBooleanValue(UInt32 value)
+        {
+            switch (value)
+            {
+                case 0:
+                    writer.WriteBooleanValue(false);
+                    break;
+                case 1:
+                    writer.WriteBooleanValue(true);
+                    break;
+                default:
+                    writer.WriteNumberValue(unchecked((int)value));
+                    break;
             }
         }
 

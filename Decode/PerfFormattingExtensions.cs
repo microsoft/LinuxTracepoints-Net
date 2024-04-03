@@ -3,6 +3,7 @@
     using System;
     using System.Globalization;
     using System.Text;
+    using static System.Net.Mime.MediaTypeNames;
 
     public static class PerfFormattingExtensions
     {
@@ -11,17 +12,18 @@
         /// If year is in range 0001..9999, appends a string like "2020-02-02T02:02:02".
         /// If year is outside of 0001..9999, appends a string like "TIME(-1234567890)".
         /// </summary>
-        public static StringBuilder AppendUnixTime(this StringBuilder sb, long secondsSince1970)
+        public static StringBuilder AppendUnixTime64(this StringBuilder sb, long secondsSince1970)
         {
-            if (!PerfConvert.TryUnixTimeToDateTime(secondsSince1970, out var value))
+            var maybe = PerfConvert.UnixTime64ToDateTime(secondsSince1970);
+            if (maybe is DateTime value)
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "{0:s}", value);
+            }
+            else
             {
                 sb.Append("TIME(");
                 sb.Append(secondsSince1970);
                 sb.Append(')');
-            }
-            else
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, "{0:s}", value);
             }
 
             return sb;
@@ -108,6 +110,33 @@
         public static StringBuilder AppendUTF8(this StringBuilder sb, ReadOnlySpan<byte> bytes)
         {
             return AppendByteString(sb, bytes, Encoding.UTF8);
+        }
+
+        public static StringBuilder AppendHexBytes(this StringBuilder sb, ReadOnlySpan<byte> bytes)
+        {
+            Span<char> chars = stackalloc char[3];
+            if (0 < bytes.Length)
+            {
+                sb.EnsureCapacity(sb.Length + bytes.Length * 3 - 1);
+
+                var val = bytes[0];
+                chars[0] = ' ';
+                chars[1] = PerfConvert.ToHexChar(val >> 4);
+                chars[2] = PerfConvert.ToHexChar(val);
+                sb.Append(chars.Slice(1));
+
+                for (int pos = 1; pos < bytes.Length; pos += 1)
+                {
+                    val = bytes[pos];
+                    chars[1] = PerfConvert.ToHexChar(val >> 4);
+                    chars[2] = PerfConvert.ToHexChar(val);
+                    sb.Append(chars);
+                }
+
+                return sb;
+            }
+
+            return sb;
         }
     }
 }

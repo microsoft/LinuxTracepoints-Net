@@ -13,56 +13,56 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// <summary>
     /// Event attributes returned by the GetEventInfo() method of EventHeaderEnumerator.
     /// </summary>
-    public ref struct EventHeaderEventInfo
+    public readonly ref struct EventHeaderEventInfo
     {
         /// <summary>
-        /// The Span corresponding to the eventData parameter passed to
+        /// The Span corresponding to the EventData parameter passed to
         /// EventHeaderEnumerator.StartEvent(). For example, if you called
         /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
         /// The NameStart and ActivityIdStart fields are relative to this span.
         /// </summary>
-        public ReadOnlySpan<byte> EventData;
+        public readonly ReadOnlySpan<byte> EventData;
 
         /// <summary>
         /// Offset into EventData where NameBytes begins.
         /// </summary>
-        public int NameStart;
+        public readonly int NameStart;
 
         /// <summary>
         /// Length of NameBytes.
         /// </summary>
-        public int NameLength;
+        public readonly int NameLength;
 
         /// <summary>
         /// Offset into EventData where ActivityIdBytes begins.
         /// </summary>
-        public int ActivityIdStart;
+        public readonly int ActivityIdStart;
 
         /// <summary>
         /// Length of ActivityIdBytes (may be 0, 16, or 32).
         /// </summary>
-        public int ActivityIdLength;
+        public readonly int ActivityIdLength;
 
         /// <summary>
         /// TracepointName, e.g. "ProviderName_LnKnnnOptions".
         /// </summary>
-        public string TracepointName;
+        public readonly string TracepointName;
 
         /// <summary>
         /// Flags, Version, Id, Tag, Opcode, Level.
         /// </summary>
-        public EventHeader Header;
+        public readonly EventHeader Header;
 
         /// <summary>
         /// Event category bits.
         /// </summary>
-        public ulong Keyword;
+        public readonly ulong Keyword;
 
         /// <summary>
         /// Initializes a new instance of the EventHeaderEventInfo struct.
         /// </summary>
         public EventHeaderEventInfo(
-            ReadOnlySpan<byte> eventData,
+            ReadOnlySpan<byte> EventData,
             int nameStart,
             int nameLength,
             int activityIdStart,
@@ -71,7 +71,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             EventHeader header,
             ulong keyword)
         {
-            this.EventData = eventData;
+            this.EventData = EventData;
             this.NameStart = nameStart;
             this.NameLength = nameLength;
             this.ActivityIdStart = activityIdStart;
@@ -88,7 +88,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public readonly ReadOnlySpan<byte> NameBytes =>
+        public ReadOnlySpan<byte> NameBytes =>
             this.EventData.Slice(this.NameStart, this.NameLength);
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public readonly string Name =>
+        public string Name =>
             Encoding.UTF8.GetString(this.EventData.Slice(this.NameStart, this.NameLength));
 
         /// <summary>
@@ -107,7 +107,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// before level and keyword, e.g. if TracepointName is
         /// "ProviderName_LnKnnnOptions", returns "ProviderName".
         /// </summary>
-        public readonly ReadOnlySpan<char> ProviderName =>
+        public ReadOnlySpan<char> ProviderName =>
             this.TracepointName.AsSpan(0, this.TracepointName.LastIndexOf('_'));
 
         /// <summary>
@@ -115,7 +115,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// level and keyword, e.g. if TracepointName is "ProviderName_LnKnnnOptions",
         /// returns "Options".
         /// </summary>
-        public readonly ReadOnlySpan<char> Options
+        public ReadOnlySpan<char> Options
         {
             get
             {
@@ -137,13 +137,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Big-endian activity id bytes. 0 bytes for none,
         /// 16 bytes for activity id only, 32 bytes for activity id and related id.
         /// </summary>
-        public readonly ReadOnlySpan<byte> ActivityIdBytes =>
+        public ReadOnlySpan<byte> ActivityIdBytes =>
             this.EventData.Slice(this.ActivityIdStart, this.ActivityIdLength);
 
         /// <summary>
         /// 128-bit activity id decoded from ActivityIdBytes, or NULL if no activity id.
         /// </summary>
-        public readonly Guid? ActivityId
+        public Guid? ActivityId
         {
             get
             {
@@ -157,7 +157,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// 128-bit related id decoded from ActivityIdBytes, or NULL if no related id.
         /// </summary>
-        public readonly Guid? RelatedActivityId
+        public Guid? RelatedActivityId
         {
             get
             {
@@ -171,7 +171,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Appends this.Name to the specified StringBuilder.
         /// </summary>
-        public readonly void AppendName(StringBuilder sb)
+        public void AppendName(StringBuilder sb)
         {
             var end = this.NameStart + this.NameLength;
             for (var i = this.NameStart; i < end; i += 1)

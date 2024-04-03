@@ -1509,7 +1509,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         return; // Unexpected.
                     }
 
-                    var systemName = Utility.EncodingLatin1.GetString(sectionValue.Slice(data));
+                    var systemName = PerfConvert.EncodingLatin1.GetString(sectionValue.Slice(data));
 
                     if (data.Length - pos < sizeof(UInt32))
                     {
@@ -1526,7 +1526,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             return; // Unexpected.
                         }
 
-                        var formatFileContents = Utility.EncodingLatin1.GetString(sectionValue.Slice(data));
+                        var formatFileContents = PerfConvert.EncodingLatin1.GetString(sectionValue.Slice(data));
                         var longSize64 = m_tracingDataLongSize == 0
                             ? IntPtr.Size == sizeof(UInt64)
                             : m_tracingDataLongSize == sizeof(UInt64);
@@ -1804,7 +1804,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             var eventDesc = new PerfEventDesc(
                 attr,
-                Utility.EncodingLatin1.GetString(name),
+                PerfConvert.EncodingLatin1.GetString(name),
                 metadata,
                 new ReadOnlyCollection<ulong>(ids));
             m_eventDescList.Add(eventDesc);

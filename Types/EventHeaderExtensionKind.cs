@@ -14,7 +14,7 @@ namespace Microsoft.LinuxTracepoints
         /// If not set, this is the last extension block (event payload data follows).
         /// If set, this is not the last extension block (another extension block follows).
         /// </summary>
-        FlagChain = 0x8000,
+        ChainFlag = 0x8000,
 
         /// <summary>
         /// Invalid extension kind.

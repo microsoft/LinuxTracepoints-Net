@@ -3,6 +3,8 @@
 
 namespace Microsoft.LinuxTracepoints.Decode
 {
+    using System;
+
     /// <summary>
     /// Information about a perf event collection session.
     /// </summary>
@@ -16,6 +18,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         private uint clockid = 0xFFFFFFFF;
         bool clockOffsetKnown;
         private readonly PerfByteReader byteReader;
+        private readonly bool readOnly;
+
+        private PerfEventSessionInfo()
+        {
+            this.readOnly = true;
+        }
 
         public PerfEventSessionInfo(PerfByteReader byteReader)
         {
@@ -32,7 +40,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var value = empty;
                 if (value == null)
                 {
-                    value = new PerfEventSessionInfo(default);
+                    value = new PerfEventSessionInfo();
                     empty = value;
                 }
                 return value;
@@ -53,37 +61,30 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns the clockid of the session timestamp, e.g. CLOCK_MONOTONIC.
         /// Returns 0xFFFFFFFF if the session timestamp clockid is unknown.
         /// </summary>
-        public uint ClockId
-        {
-            get => this.clockid;
-        }
+        public uint ClockId => this.clockid;
 
         /// <summary>
         /// Returns true if session clock offset is known.
         /// </summary>
-        public bool ClockOffsetKnown
-        {
-            get => this.clockOffsetKnown;
-        }
+        public bool ClockOffsetKnown => this.clockOffsetKnown;
 
         /// <summary>
         /// Returns the CLOCK_REALTIME value that corresponds to an event timestamp of 0
         /// for this session. Returns 1970 if the session timestamp offset is unknown.
         /// </summary>
-        public PerfEventTimeSpec ClockOffset
-        {
-            get => new PerfEventTimeSpec
-            {
-                TvSec = this.clockOffsetSeconds,
-                TvNsec = this.clockOffsetNanoseconds,
-            };
-        }
+        public PerfEventTimeSpec ClockOffset =>
+            new PerfEventTimeSpec(this.clockOffsetSeconds, this.clockOffsetNanoseconds);
 
         /// <summary>
         /// From HEADER_CLOCKID. If unknown, use SetClockId(0xFFFFFFFF).
         /// </summary>
         public void SetClockId(uint clockid)
         {
+            if (this.readOnly)
+            {
+                throw new InvalidOperationException("Cannot modify read-only PerfEventSessionInfo.");
+            }
+
             this.clockid = clockid;
         }
 
@@ -92,7 +93,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public void SetClockData(uint clockid, ulong wallClockNS, ulong clockidTimeNS)
         {
-            if (clockid == 0xFFFFFFFF)
+            if (this.readOnly)
+            {
+                throw new InvalidOperationException("Cannot modify read-only PerfEventSessionInfo.");
+            }
+            else if (clockid == 0xFFFFFFFF)
             {
                 // Offset is unspecified.
 
@@ -166,8 +171,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             if (this.clockOffsetSeconds >= 0)
             {
-                clockidTimeNS = 0;
                 wallClockNS = (ulong)this.clockOffsetSeconds * Billion + this.clockOffsetNanoseconds;
+                clockidTimeNS = 0;
             }
             else
             {
@@ -192,7 +197,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sec += 1;
                 nsec -= Billion;
             }
-            return new PerfEventTimeSpec { TvSec = sec, TvNsec = nsec };
+            return new PerfEventTimeSpec(sec, nsec);
         }
     }
 }

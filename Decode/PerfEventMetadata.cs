@@ -30,8 +30,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public class PerfEventMetadata
     {
-        private static PerfEventMetadata? empty;
-
         private readonly string systemName;
         private readonly string name;
         private readonly string printFmt;
@@ -59,24 +57,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.commonFieldCount = commonFieldCount;
             this.commonFieldsSize = commonFieldsSize;
             this.decodingStyle = decodingStyle;
-        }
-
-        /// <summary>
-        /// Gets the empty PerfEventMetadata object.
-        /// </summary>
-        public static PerfEventMetadata Empty
-        {
-            get
-            {
-                var value = empty;
-                if (value == null)
-                {
-                    value = new PerfEventMetadata("", "", "", Array.Empty<PerfFieldMetadata>(), 0, 0, 0, 0);
-                    empty = value;
-                }
-
-                return value;
-            }
         }
 
         /// <summary>

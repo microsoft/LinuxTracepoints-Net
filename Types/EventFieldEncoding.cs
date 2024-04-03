@@ -14,21 +14,21 @@ namespace Microsoft.LinuxTracepoints
     /// </para><para>
     /// The top 3 bits of the field encoding byte are flags:
     /// </para><list type="bullet"><item>
-    /// FlagCArray indicates that this field is a constant-length array, with the
+    /// CArrayFlag indicates that this field is a constant-length array, with the
     /// element count specified as a 16-bit value in the event metadata (must not be
     /// 0).
     /// </item><item>
-    /// FlagVArray indicates that this field is a variable-length array, with the
+    /// VArrayFlag indicates that this field is a variable-length array, with the
     /// element count specified as a 16-bit value in the event payload (immediately
     /// before the array elements, may be 0).
     /// </item><item>
-    /// FlagChain indicates that a format byte is present after the encoding byte.
+    /// ChainFlag indicates that a format byte is present after the encoding byte.
     /// If Chain is not set, the format byte is omitted and is assumed to be 0.
     /// </item></list><para>
     /// Setting both CArray and VArray is invalid (reserved).
     /// </para>
     /// </summary>
-    public enum EventHeaderFieldEncoding : byte
+    public enum EventFieldEncoding : byte
     {
         ValueMask = 0x1F,
         FlagMask = 0xE0,
@@ -36,17 +36,17 @@ namespace Microsoft.LinuxTracepoints
         /// <summary>
         /// Constant-length array: 16-bit element count in metadata (must not be 0).
         /// </summary>
-        FlagCArray = 0x20,
+        CArrayFlag = 0x20,
 
         /// <summary>
         /// Variable-length array: 16-bit element count in payload (may be 0).
         /// </summary>
-        FlagVArray = 0x40,
+        VArrayFlag = 0x40,
 
         /// <summary>
         /// An EventHeaderFieldFormat byte follows the EventHeaderFieldEncoding byte.
         /// </summary>
-        FlagChain = 0x80,
+        ChainFlag = 0x80,
 
         /// <summary>
         /// Invalid encoding value.

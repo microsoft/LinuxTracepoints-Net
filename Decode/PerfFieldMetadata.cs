@@ -10,89 +10,49 @@ namespace Microsoft.LinuxTracepoints.Decode
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
-    /// The type of the ElementSize property of PerfFieldMetadata.
-    /// Size of a fixed-size field. sizeof(field) == 1 << (byte)perfFieldElementSize.
-    /// </summary>
-    public enum PerfFieldElementSize : byte
-    {
-        /// <summary>
-        /// sizeof(uint8_t)  == 1 << Size8
-        /// </summary>
-        Size8,
-
-        /// <summary>
-        /// sizeof(uint16_t) == 1 << Size16
-        /// </summary>
-        Size16,
-
-        /// <summary>
-        /// sizeof(uint32_t) == 1 << Size32
-        /// </summary>
-        Size32,
-
-        /// <summary>
-        /// sizeof(uint64_t) == 1 << Size64
-        /// </summary>
-        Size64,
-    };
-
-    /// <summary>
-    /// The type of the Format property of PerfFieldMetadata.
-    /// Base format of a field.
-    /// </summary>
-    public enum PerfFieldFormat : byte
-    {
-        /// <summary>
-        /// Type unknown (treat as binary blob)
-        /// </summary>
-        None,
-
-        /// <summary>
-        /// u8, u16, u32, u64, etc.
-        /// </summary>
-        Unsigned,
-
-        /// <summary>
-        /// s8, s16, s32, s64, etc.
-        /// </summary>
-        Signed,
-
-        /// <summary>
-        /// unsigned long, pointers
-        /// </summary>
-        Hex,
-
-        /// <summary>
-        /// char, char[]
-        /// </summary>
-        String,
-    };
-
-    /// <summary>
     /// The type of the Array property of PerfFieldMetadata.
     /// Array-ness of a field.
     /// </summary>
     public enum PerfFieldArray : byte
     {
         /// <summary>
-        /// e.g. "char val"
+        /// e.g. "char val; size:1;".
         /// </summary>
         None,
 
         /// <summary>
-        /// e.g. "char val[12]"
+        /// e.g. "char val[12]; size:12;".
         /// </summary>
         Fixed,
 
         /// <summary>
-        /// e.g. "__data_loc char val[]", value = (len << 16) | offset.
+        /// e.g. "char val[]; size:0;".
         /// </summary>
-        Dynamic,
+        RestOfEvent,
 
         /// <summary>
-        /// e.g. "__rel_loc char val[]", value = (len << 16) | relativeOffset.
+        /// e.g. "__rel_loc char val[]; size:2;".
+        /// Value relativeOffset. dataLen is determined via strlen.
         /// </summary>
-        RelDyn,
+        RelLoc2,
+
+        /// <summary>
+        /// e.g. "__data_loc char val[]; size:2;".
+        /// Value is offset. dataLen is determined via strlen.
+        /// </summary>
+        DataLoc2,
+
+        /// <summary>
+        /// e.g. "__rel_loc char val[]; size:4;".
+        /// Value is (dataLen << 16) | relativeOffset.
+        /// </summary>
+        RelLoc4,
+
+        /// <summary>
+        /// e.g. "__data_loc char val[]; size:4;".
+        /// Value is (dataLen << 16) | offset.
+        /// </summary>
+        DataLoc4,
     };
 
     /// <summary>
@@ -100,67 +60,10 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public class PerfFieldMetadata
     {
-        private static PerfFieldMetadata? empty;
-
-        /// <summary>
-        /// deduced from field, e.g. "my_field".
-        /// </summary>
-        private readonly string name;
-
-        /// <summary>
-        /// value of "field:" property, e.g. "char my_field[8]".
-        /// </summary>
-        private readonly string field;
-
-        /// <summary>
-        /// value of "offset:" property.
-        /// </summary>
-        private readonly ushort offset;
-
-        /// <summary>
-        /// value of "size:" property.
-        /// </summary>
-        private readonly ushort size;
-
-        /// <summary>
-        /// deduced from field, size.
-        /// </summary>
-        private readonly ushort fixedArrayCount;
-
-        /// <summary>
-        /// deduced from field, size.
-        /// </summary>
-        private readonly PerfFieldElementSize elementSize;
-
-        /// <summary>
-        /// deduced from field, size, signed.
-        /// </summary>
-        private readonly PerfFieldFormat format;
-
-        /// <summary>
-        /// deduced from field, size.
-        /// </summary>
-        private readonly PerfFieldArray array;
-
-        /// <summary>
-        /// Same as PerfFieldMetadata(false, {}, 0, 0)
-        /// </summary>
-        private PerfFieldMetadata()
-        {
-            this.name = "noname";
-            this.field = "";
-            this.offset = 0;
-            this.size = 0;
-            this.fixedArrayCount = 0;
-            this.elementSize = PerfFieldElementSize.Size8;
-            this.format = PerfFieldFormat.None;
-            this.array = PerfFieldArray.None;
-        }
-
         /// <summary>
         /// Initializes Field, Offset, and Size properties exactly as specified.
-        /// Deduces the other properties. The signed parameter should be null if the
-        /// "signed:" property is not present in the format line.
+        /// Parses and deduces the other properties. The signed parameter should be null
+        /// if the "signed:" property is not present in the format line.
         /// </summary>
         public PerfFieldMetadata(
             bool longSize64, // true if sizeof(long) == 8, false if sizeof(long) == 4.
@@ -181,10 +84,10 @@ namespace Microsoft.LinuxTracepoints.Decode
             var foundPointer = false;
             ReadOnlySpan<char> baseType = default;
 
-            // DEDUCE: name, fixedArrayCount
+            // PARSE: Name, SpecifiedArrayCount
 
             ReadOnlySpan<char> nameSpan = default;
-            ushort fixedArrayCount = 0;
+            ushort specifiedArrayCount = 0;
 
             Tokenizer tokenizer = new Tokenizer(field);
             while (true)
@@ -273,10 +176,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                             }
                         }
 
-                        fixedArrayCount = 0;
+                        specifiedArrayCount = 0;
                         if (iEnd > iBegin)
                         {
-                            Utility.ParseUInt(arrayCount.Slice(iBegin, iEnd - iBegin), out fixedArrayCount);
+                            Utility.ParseUInt(arrayCount.Slice(iBegin, iEnd - iBegin), out specifiedArrayCount);
                         }
 
                         tokenizer.MoveNext();
@@ -309,274 +212,513 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         TokensDone:
 
-            this.name = nameSpan.IsEmpty ? "noname" : nameSpan.ToString();
-            this.field = field;
-            this.offset = offset;
-            this.size = size;
-            this.fixedArrayCount = fixedArrayCount;
+            this.Name = nameSpan.IsEmpty ? "noname" : nameSpan.ToString();
+            this.Field = field;
+            this.Offset = offset;
+            this.Size = size;
+            this.Signed = signed;
+            this.SpecifiedArrayCount = specifiedArrayCount;
 
-            // DEDUCE: elementSize, format
-
-            bool fixupElementSize = false;
+            // PARSE: SpecifiedEncoding, SpecifiedFormat
 
             if (foundPointer)
             {
-                this.format = PerfFieldFormat.Hex;
-                this.elementSize = longSize64 ? PerfFieldElementSize.Size64 : PerfFieldElementSize.Size32;
+                this.SpecifiedFormat = EventFieldFormat.HexInt;
+                this.SpecifiedEncoding = longSize64 ? EventFieldEncoding.Value64 : EventFieldEncoding.Value32;
             }
             else if (foundStruct)
             {
-                this.format = PerfFieldFormat.None;
-                this.elementSize = PerfFieldElementSize.Size8;
+                this.SpecifiedFormat = EventFieldFormat.HexBytes; // SPECIAL
+                this.SpecifiedEncoding = EventFieldEncoding.Struct; // SPECIAL
             }
             else if (baseType.IsEmpty || baseType.SequenceEqual("int"))
             {
-                this.format = foundUnsigned
-                    ? PerfFieldFormat.Unsigned
-                    : PerfFieldFormat.Signed;
+                this.SpecifiedFormat = foundUnsigned
+                    ? EventFieldFormat.UnsignedInt
+                    : EventFieldFormat.SignedInt;
                 if (foundLongLong)
                 {
-                    this.elementSize = PerfFieldElementSize.Size64;
+                    this.SpecifiedEncoding = EventFieldEncoding.Value64;
                 }
                 else if (foundLong)
                 {
-                    this.elementSize = longSize64 ? PerfFieldElementSize.Size64 : PerfFieldElementSize.Size32;
+                    this.SpecifiedEncoding = longSize64 ? EventFieldEncoding.Value64 : EventFieldEncoding.Value32;
                     if (foundUnsigned)
                     {
-                        this.format = PerfFieldFormat.Hex; // Use hex for unsigned long.
+                        this.SpecifiedFormat = EventFieldFormat.HexInt; // Use hex for unsigned long.
                     }
                 }
                 else if (foundShort)
                 {
-                    this.elementSize = PerfFieldElementSize.Size16;
+                    this.SpecifiedEncoding = EventFieldEncoding.Value16;
                 }
                 else
                 {
-                    this.elementSize = PerfFieldElementSize.Size32; // "unsigned" or "signed" means "int".
+                    this.SpecifiedEncoding = EventFieldEncoding.Value32; // "unsigned" or "signed" means "int".
                     if (baseType.IsEmpty && !foundUnsigned && !foundSigned)
                     {
                         // Unexpected.
                         Debug.WriteLine("No baseType found for \"{}\"",
-                            this.field);
+                            this.Field);
                     }
                 }
             }
             else if (baseType.SequenceEqual("char"))
             {
-                this.format = foundUnsigned
-                    ? PerfFieldFormat.Unsigned
+                this.SpecifiedFormat = foundUnsigned
+                    ? EventFieldFormat.UnsignedInt
                     : foundSigned
-                    ? PerfFieldFormat.Signed
-                    : PerfFieldFormat.String;
-                this.elementSize = PerfFieldElementSize.Size8;
+                    ? EventFieldFormat.SignedInt
+                    : EventFieldFormat.String8; // SPECIAL
+                this.SpecifiedEncoding = EventFieldEncoding.Value8;
             }
             else if (baseType.SequenceEqual("u8") || baseType.SequenceEqual("__u8") || baseType.SequenceEqual("uint8_t"))
             {
-                this.format = PerfFieldFormat.Unsigned;
-                this.elementSize = PerfFieldElementSize.Size8;
+                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value8;
             }
             else if (baseType.SequenceEqual("s8") || baseType.SequenceEqual("__s8") || baseType.SequenceEqual("int8_t"))
             {
-                this.format = PerfFieldFormat.Signed;
-                this.elementSize = PerfFieldElementSize.Size8;
+                this.SpecifiedFormat = EventFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value8;
             }
             else if (baseType.SequenceEqual("u16") || baseType.SequenceEqual("__u16") || baseType.SequenceEqual("uint16_t"))
             {
-                this.format = PerfFieldFormat.Unsigned;
-                this.elementSize = PerfFieldElementSize.Size16;
+                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value16;
             }
             else if (baseType.SequenceEqual("s16") || baseType.SequenceEqual("__s16") || baseType.SequenceEqual("int16_t"))
             {
-                this.format = PerfFieldFormat.Signed;
-                this.elementSize = PerfFieldElementSize.Size16;
+                this.SpecifiedFormat = EventFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value16;
             }
             else if (baseType.SequenceEqual("u32") || baseType.SequenceEqual("__u32") || baseType.SequenceEqual("uint32_t"))
             {
-                this.format = PerfFieldFormat.Unsigned;
-                this.elementSize = PerfFieldElementSize.Size32;
+                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value32;
             }
             else if (baseType.SequenceEqual("s32") || baseType.SequenceEqual("__s32") || baseType.SequenceEqual("int32_t"))
             {
-                this.format = PerfFieldFormat.Signed;
-                this.elementSize = PerfFieldElementSize.Size32;
+                this.SpecifiedFormat = EventFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value32;
             }
             else if (baseType.SequenceEqual("u64") || baseType.SequenceEqual("__u64") || baseType.SequenceEqual("uint64_t"))
             {
-                this.format = PerfFieldFormat.Unsigned;
-                this.elementSize = PerfFieldElementSize.Size64;
+                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value64;
             }
             else if (baseType.SequenceEqual("s64") || baseType.SequenceEqual("__s64") || baseType.SequenceEqual("int64_t"))
             {
-                this.format = PerfFieldFormat.Signed;
-                this.elementSize = PerfFieldElementSize.Size64;
+                this.SpecifiedFormat = EventFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Value64;
             }
             else
             {
-                this.format = PerfFieldFormat.Hex;
-                fixupElementSize = true;
+                this.SpecifiedFormat = EventFieldFormat.HexInt;
+                this.SpecifiedEncoding = EventFieldEncoding.Invalid; // SPECIAL
             }
 
-            // FIXUP: format
+            // PARSE: Array
 
-            if (this.format == PerfFieldFormat.Unsigned || this.format == PerfFieldFormat.Signed)
+            if (this.Size == 0)
+            {
+                this.Array = PerfFieldArray.RestOfEvent;
+            }
+            else if (this.Size == 2 && foundRelLoc)
+            {
+                this.Array = PerfFieldArray.RelLoc2;
+            }
+            else if (this.Size == 2 && foundDataLoc)
+            {
+                this.Array = PerfFieldArray.DataLoc2;
+            }
+            else if (this.Size == 4 && foundRelLoc)
+            {
+                this.Array = PerfFieldArray.RelLoc4;
+            }
+            else if (this.Size == 4 && foundDataLoc)
+            {
+                this.Array = PerfFieldArray.DataLoc4;
+            }
+            else if (foundArray)
+            {
+                this.Array = PerfFieldArray.Fixed;
+            }
+            else
+            {
+                this.Array = PerfFieldArray.None;
+            }
+
+            // DEDUCE: DeducedFormat.
+
+            // Apply the "signed:" property if specified.
+            if (this.SpecifiedFormat == EventFieldFormat.UnsignedInt ||
+                this.SpecifiedFormat == EventFieldFormat.SignedInt)
             {
                 // If valid, signed overrides baseType.
                 switch (signed)
                 {
-                    default: break; // i.e. null
-                    case false: this.format = PerfFieldFormat.Unsigned; break;
-                    case true: this.format = PerfFieldFormat.Signed; break;
-                }
-            }
-
-            // DEDUCE: array
-
-            if (foundRelLoc)
-            {
-                this.array = PerfFieldArray.RelDyn;
-                this.fixedArrayCount = 0;
-            }
-            else if (foundDataLoc)
-            {
-                this.array = PerfFieldArray.Dynamic;
-                this.fixedArrayCount = 0;
-            }
-            else if (foundArray)
-            {
-                this.array = PerfFieldArray.Fixed;
-                if (fixupElementSize && this.fixedArrayCount != 0 && this.size % this.fixedArrayCount == 0)
-                {
-                    // Try to deduce element size from size and array count.
-                    switch (this.size / this.fixedArrayCount)
-                    {
-                        default:
-                            break;
-                        case 1:
-                            this.elementSize = PerfFieldElementSize.Size8;
-                            fixupElementSize = false;
-                            break;
-                        case 2:
-                            this.elementSize = PerfFieldElementSize.Size16;
-                            fixupElementSize = false;
-                            break;
-                        case 4:
-                            this.elementSize = PerfFieldElementSize.Size32;
-                            fixupElementSize = false;
-                            break;
-                        case 8:
-                            this.elementSize = PerfFieldElementSize.Size64;
-                            fixupElementSize = false;
-                            break;
-                    }
+                    default: this.DeducedFormat = this.SpecifiedFormat; break; // signed == null
+                    case false: this.DeducedFormat = EventFieldFormat.UnsignedInt; break;
+                    case true: this.DeducedFormat = EventFieldFormat.SignedInt; break;
                 }
             }
             else
             {
-                this.array = PerfFieldArray.None;
-                this.fixedArrayCount = 0;
+                this.DeducedFormat = this.SpecifiedFormat;
+            }
 
-                // If valid, size overrides element size deduced from type name.
-                switch (this.size)
+            // DEDUCE: DeducedEncoding, DeducedArrayCount, ElementSizeShift.
+
+            if (this.SpecifiedFormat == EventFieldFormat.String8)
+            {
+                Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Value8);
+                this.DeducedEncoding = this.Size == 1 ? EventFieldEncoding.Value8 : EventFieldEncoding.ZStringChar8;
+                this.DeducedArrayCount = 1;
+                this.ElementSizeShift = byte.MaxValue;
+            }
+            else if (this.SpecifiedFormat == EventFieldFormat.HexBytes)
+            {
+                Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Struct);
+                this.DeducedEncoding = this.Size == 1 ? EventFieldEncoding.Value8 : EventFieldEncoding.StringLength16Char8;
+                this.DeducedArrayCount = 1;
+                this.ElementSizeShift = byte.MaxValue;
+            }
+            else
+            {
+                switch (this.Array)
                 {
+                    case PerfFieldArray.None:
+
+                        // Size overrides element size deduced from type name.
+                        switch (this.Size)
+                        {
+                            case 1:
+                                this.DeducedEncoding = EventFieldEncoding.Value8;
+                                this.ElementSizeShift = 0;
+                                break;
+                            case 2:
+                                this.DeducedEncoding = EventFieldEncoding.Value16;
+                                this.ElementSizeShift = 1;
+                                break;
+                            case 4:
+                                this.DeducedEncoding = EventFieldEncoding.Value32;
+                                this.ElementSizeShift = 2;
+                                break;
+                            case 8:
+                                this.DeducedEncoding = EventFieldEncoding.Value64;
+                                this.ElementSizeShift = 3;
+                                break;
+                            default:
+                                goto DoHexDump;
+                        }
+
+                        this.DeducedArrayCount = 1;
+                        break;
+
+                    case PerfFieldArray.Fixed:
+
+                        if (this.SpecifiedArrayCount == 0)
+                        {
+                            this.DeducedEncoding = this.SpecifiedEncoding | EventFieldEncoding.CArrayFlag;
+                            switch (this.SpecifiedEncoding)
+                            {
+                                case EventFieldEncoding.Value8:
+                                    this.DeducedArrayCount = this.Size;
+                                    this.ElementSizeShift = 0;
+                                    break;
+                                case EventFieldEncoding.Value16:
+                                    if (this.Size % sizeof(UInt16) != 0)
+                                    {
+                                        goto DoHexDump;
+                                    }
+                                    this.DeducedArrayCount = (ushort)(this.Size / sizeof(UInt16));
+                                    this.ElementSizeShift = 1;
+                                    break;
+                                case EventFieldEncoding.Value32:
+                                    if (this.Size % sizeof(UInt32) != 0)
+                                    {
+                                        goto DoHexDump;
+                                    }
+                                    this.DeducedArrayCount = (ushort)(this.Size / sizeof(UInt32));
+                                    this.ElementSizeShift = 2;
+                                    break;
+                                case EventFieldEncoding.Value64:
+                                    if (this.Size % sizeof(UInt64) != 0)
+                                    {
+                                        goto DoHexDump;
+                                    }
+                                    this.DeducedArrayCount = (ushort)(this.Size / sizeof(UInt64));
+                                    this.ElementSizeShift = 3;
+                                    break;
+                                default:
+                                    Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Invalid);
+                                    goto DoHexDump;
+                            }
+                        }
+                        else
+                        {
+                            if (this.Size % this.SpecifiedArrayCount != 0)
+                            {
+                                goto DoHexDump;
+                            }
+
+                            switch (this.Size / this.SpecifiedArrayCount)
+                            {
+                                case 1:
+                                    this.DeducedEncoding = EventFieldEncoding.Value8 | EventFieldEncoding.CArrayFlag;
+                                    this.ElementSizeShift = 0;
+                                    break;
+                                case 2:
+                                    this.DeducedEncoding = EventFieldEncoding.Value16 | EventFieldEncoding.CArrayFlag;
+                                    this.ElementSizeShift = 1;
+                                    break;
+                                case 4:
+                                    this.DeducedEncoding = EventFieldEncoding.Value32 | EventFieldEncoding.CArrayFlag;
+                                    this.ElementSizeShift = 2;
+                                    break;
+                                case 8:
+                                    this.DeducedEncoding = EventFieldEncoding.Value64 | EventFieldEncoding.CArrayFlag;
+                                    this.ElementSizeShift = 3;
+                                    break;
+                                default:
+                                    goto DoHexDump;
+                            }
+
+                            this.DeducedArrayCount = this.SpecifiedArrayCount;
+                        }
+                        break;
+
                     default:
+
+                        // Variable-length data.
+
+                        switch (this.SpecifiedEncoding)
+                        {
+                            case EventFieldEncoding.Value8:
+                                this.ElementSizeShift = 0;
+                                break;
+                            case EventFieldEncoding.Value16:
+                                this.ElementSizeShift = 1;
+                                break;
+                            case EventFieldEncoding.Value32:
+                                this.ElementSizeShift = 2;
+                                break;
+                            case EventFieldEncoding.Value64:
+                                this.ElementSizeShift = 3;
+                                break;
+                            default:
+                                Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Invalid);
+                                goto DoHexDump;
+                        }
+
+                        this.DeducedEncoding = this.SpecifiedEncoding | EventFieldEncoding.VArrayFlag;
+                        this.DeducedArrayCount = 0;
                         break;
-                    case 1:
-                        this.elementSize = PerfFieldElementSize.Size8;
-                        fixupElementSize = false;
-                        break;
-                    case 2:
-                        this.elementSize = PerfFieldElementSize.Size16;
-                        fixupElementSize = false;
-                        break;
-                    case 4:
-                        this.elementSize = PerfFieldElementSize.Size32;
-                        fixupElementSize = false;
-                        break;
-                    case 8:
-                        this.elementSize = PerfFieldElementSize.Size64;
-                        fixupElementSize = false;
+
+                    DoHexDump:
+
+                        this.DeducedEncoding = EventFieldEncoding.StringLength16Char8;
+                        this.DeducedFormat = EventFieldFormat.HexBytes;
+                        this.DeducedArrayCount = 1;
+                        this.ElementSizeShift = byte.MaxValue;
                         break;
                 }
             }
 
-            if (fixupElementSize)
+#if DEBUG
+            Debug.Assert(this.Name.Length > 0);
+            Debug.Assert(this.Field.Length > 0);
+
+            var encodingValue = this.DeducedEncoding & EventFieldEncoding.ValueMask;
+            switch (encodingValue)
             {
-                this.elementSize = PerfFieldElementSize.Size8;
+                case EventFieldEncoding.Value8:
+                    if (this.DeducedArrayCount != 0)
+                    {
+                        Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(byte));
+                    }
+                    Debug.Assert(this.ElementSizeShift == 0);
+                    break;
+                case EventFieldEncoding.Value16:
+                    if (this.DeducedArrayCount != 0)
+                    {
+                        Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(UInt16));
+                    }
+                    Debug.Assert(this.ElementSizeShift == 1);
+                    break;
+                case EventFieldEncoding.Value32:
+                    if (this.DeducedArrayCount != 0)
+                    {
+                        Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(UInt32));
+                    }
+                    Debug.Assert(this.ElementSizeShift == 2);
+                    break;
+                case EventFieldEncoding.Value64:
+                    if (this.DeducedArrayCount != 0)
+                    {
+                        Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(UInt64));
+                    }
+                    Debug.Assert(this.ElementSizeShift == 3);
+                    break;
+                case EventFieldEncoding.StringLength16Char8:
+                    Debug.Assert(this.DeducedArrayCount == 1);
+                    Debug.Assert((this.DeducedEncoding & EventFieldEncoding.FlagMask) == 0);
+                    Debug.Assert(this.DeducedFormat == EventFieldFormat.HexBytes);
+                    Debug.Assert(this.ElementSizeShift == byte.MaxValue);
+                    break;
+                case EventFieldEncoding.ZStringChar8:
+                    Debug.Assert(this.DeducedArrayCount == 1);
+                    Debug.Assert((this.DeducedEncoding & EventFieldEncoding.FlagMask) == 0);
+                    Debug.Assert(this.DeducedFormat == EventFieldFormat.String8);
+                    Debug.Assert(this.ElementSizeShift == byte.MaxValue);
+                    break;
+                default:
+                    Debug.Fail("Unexpected DeducedEncoding type");
+                    break;
             }
+
+            var encodingFlags = this.DeducedEncoding & EventFieldEncoding.FlagMask;
+            switch (encodingFlags)
+            {
+                case 0:
+                    Debug.Assert(this.DeducedArrayCount == 1);
+                    break;
+                case EventFieldEncoding.VArrayFlag:
+                    Debug.Assert(this.DeducedArrayCount == 0);
+                    break;
+                case EventFieldEncoding.CArrayFlag:
+                    Debug.Assert(this.DeducedArrayCount >= 1);
+                    break;
+                default:
+                    Debug.Fail("Unexpected DeducedEncoding flags");
+                    break;
+            }
+
+            switch (this.DeducedFormat)
+            {
+                case EventFieldFormat.UnsignedInt:
+                case EventFieldFormat.SignedInt:
+                case EventFieldFormat.HexInt:
+                    Debug.Assert(encodingValue >= EventFieldEncoding.Value8);
+                    Debug.Assert(encodingValue <= EventFieldEncoding.Value64);
+                    break;
+                case EventFieldFormat.HexBytes:
+                    Debug.Assert(encodingValue == EventFieldEncoding.StringLength16Char8);
+                    break;
+                case EventFieldFormat.String8:
+                    Debug.Assert(encodingValue == EventFieldEncoding.ZStringChar8);
+                    break;
+                default:
+                    Debug.Fail("Unexpected DeducedFormat type");
+                    break;
+            }
+#endif
+
+            return;
         }
 
         /// <summary>
-        /// Gets the empty PerfFieldMetadata object.
+        /// Name of the field, or "noname" if unable to determine the name.
+        /// (Parsed from Field, e.g. if Field = "char my_field[8]" then Name = "my_field".)
         /// </summary>
-        public static PerfFieldMetadata Empty
-        {
-            get
-            {
-                var value = empty;
-                if (value == null)
-                {
-                    value = new PerfFieldMetadata();
-                    empty = value;
-                }
-
-                return value;
-            }
-        }
+        public string Name { get; }
 
         /// <summary>
-        /// Returns the field name, e.g. "my_field". Never empty. (Deduced from
-        /// "field:".)
+        /// Field declaration in pseudo-C syntax, e.g. "char my_field[8]".
+        /// (Value of the format's "field:" property.)
         /// </summary>
-        public string Name => this.name;
+        public string Field { get; }
 
         /// <summary>
-        /// Returns the field declaration, e.g. "char my_field[8]".
-        /// (Parsed directly from "field:".)
+        /// The byte offset of the start of the field data from the start of
+        /// the event raw data. (Value of the format's "offset:" property.)
         /// </summary>
-        public string Field => this.field;
+        public ushort Offset { get; }
 
         /// <summary>
-        /// Returns the byte offset of the start of the field data from the start of
-        /// the event raw data. (Parsed directly from "offset:".)
+        /// The byte size of the field data. May be 0 to indicate "rest of event".
+        /// (Value of the format's "size:" property.)
         /// </summary>
-        public ushort Offset => this.offset;
+        public ushort Size { get; }
 
         /// <summary>
-        /// Returns the byte size of the field data. (Parsed directly from "size:".)
+        /// Whether the field is signed; null if unspecified.
+        /// (Value of the format's "signed:" property.)
         /// </summary>
-        public ushort Size => this.size;
+        public bool? Signed { get; }
 
         /// <summary>
-        /// Returns the number of elements in this field. Meaningful only when
-        /// Array() == Fixed. (Deduced from "field:" and "size:".)
+        /// The number of elements in this field, as specified in the field property,
+        /// or 0 if no array count was found.
+        /// (Parsed from Field, e.g. if Field = "char my_field[8]" then SpecifiedArrayCount = 8.)
         /// </summary>
-        public ushort FixedArrayCount => this.fixedArrayCount;
+        public ushort SpecifiedArrayCount { get; }
 
         /// <summary>
-        /// Returns the size of each element in this field. (Deduced from "field:"
-        /// and "size:".)
+        /// The number of elements in this field, as deduced from field and size.
+        /// If the field is not being treated as an array (i.e. a single item, or
+        /// an array that is being treated as a string or a blob), this will be 1.
+        /// If the field is a variable-length array, this will be 0.
         /// </summary>
-        public PerfFieldElementSize ElementSize => this.elementSize;
+        public ushort DeducedArrayCount { get; }
 
         /// <summary>
-        /// Returns the format of the field. (Deduced from "field:" and "signed:".)
+        /// The encoding of the field's base type, as specified in the field property.
+        /// This may be Value8, Value16, Value32, Value64, Struct, or Invalid if no
+        /// recognized encoding was found.
+        /// (Parsed from Field, e.g. if Field = "char my_field[8]" then base type is
+        /// "char" so Encoding = "Value8".)
         /// </summary>
-        public PerfFieldFormat Format => this.format;
+        public EventFieldEncoding SpecifiedEncoding { get; }
 
         /// <summary>
-        /// Returns whether this is an array, and if so, how the array length should
-        /// be determined. (Deduced from "field:" and "size:".)
+        /// The encoding of the field's base type, as deduced from field and size.
+        /// This will be Value8, Value16, Value32, Value64, ZStringChar8 for a
+        /// nul-terminated string, or StringLength16Char8 for a binary blob.
+        /// The VArrayFlag flag or the CArrayFlag flag may be set for Value8,
+        /// Value16, Value32, and Value64.
         /// </summary>
-        public PerfFieldArray Array => this.array;
+        public EventFieldEncoding DeducedEncoding { get; }
 
         /// <summary>
+        /// The format of the field's base type, as specified by the field and signed properties.
+        /// This will be UnsignedInt, SignedInt, HexInt, String8, or HexBytes.
+        /// (Parsed from Field, e.g. if Field = "char my_field[8]" then base type is
+        /// "char" so Format = "String8".)
+        /// </summary>
+        public EventFieldFormat SpecifiedFormat { get; }
+
+        /// <summary>
+        /// The format of the field's base type, as deduced from field, size, and signed.
+        /// </summary>
+        public EventFieldFormat DeducedFormat { get; }
+
+        /// <summary>
+        /// The kind of array this field is, as specified in the field property.
+        /// (Parsed from Field and Size, e.g. if Field = "char my_field[8]" then Array = Fixed.)
+        /// </summary>
+        public PerfFieldArray Array { get; }
+
+        /// <summary>
+        /// For string or blob, this is byte.MaxValue.
+        /// For other types, ElementSizeShift is the log2 of the size of each element
+        /// in the field. If the field is a single N-bit integer or an array of N-bit
+        /// integers, ElementSizeShift is: 0 for 8-bit integers, 1 for 16-bit integers,
+        /// 2 for 32-bit integers, and 3 for 64-bit integers.
+        /// </summary>
+        public byte ElementSizeShift { get; }
+
+        /// <summary>
+        /// <para>
         /// Parses a line of the "format:" section of an event's "format" file. The
         /// formatLine string will generally look like
         /// "[whitespace?]field:[declaration]; offset:[number]; size:[number]; ...".
-        ///
+        ///</para><para>
         /// If "field:" is non-empty, "offset:" is a valid unsigned integer, and
         /// "size:" is a valid unsigned integer, returns
         /// PerfFieldMetadata(field, offset, size, signed). Otherwise,  returns null.
+        /// </para>
         /// </summary>
         public static PerfFieldMetadata? Parse(
             bool longSize64, // true if sizeof(long) == 8, false if sizeof(long) == 4.
@@ -674,458 +816,203 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// <para>
         /// Given the event's raw data (e.g. PerfSampleEventInfo::RawData), return
-        /// this field's raw data. Returns empty for error (e.g. out of bounds).
-        ///
+        /// this field's raw data. Returns null for out of bounds.
+        ///</para><para>
         /// Does not do any byte-swapping. This method uses fileBigEndian to resolve
         /// data_loc and rel_loc references, not to fix up the field data.
-        /// 
+        ///</para><para>
         /// Note that in some cases, the size returned by GetFieldBytes may be
         /// different from the value returned by Size():
-        ///
-        /// - If eventRawDataSize < Offset() + Size(), returns {}.
-        /// - If Size() == 0, returns all data from offset to the end of the event,
-        ///   i.e. it returns eventRawDataSize - Offset() bytes.
-        /// - If Array() is Dynamic or RelDyn, the returned size depends on the
-        ///   event contents.
+        /// <list type="bullet"><item>
+        /// If eventRawDataSize < Offset() + Size(), returns {}.
+        /// </item><item>
+        /// If Size() == 0, returns all data from offset to the end of the event,
+        /// i.e. it returns eventRawDataSize - Offset() bytes.
+        /// </item><item>
+        /// If Array() is Dynamic or RelDyn, the returned size depends on the
+        /// event contents.
+        /// </item></list>
+        /// </para>
         /// </summary>
         public ReadOnlySpan<byte> GetFieldBytes(
             ReadOnlySpan<byte> eventRawData,
             bool fileBigEndian)
         {
-            ReadOnlySpan<byte> result;
-            if (this.offset + this.size > eventRawData.Length)
-            {
-                result = default;
-            }
-            else if (this.size == 0)
-            {
-                // size 0 means "the rest of the event data"
-                result = eventRawData.Slice(this.offset);
-            }
-            else
+            if (this.Offset + this.Size <= eventRawData.Length)
             {
                 var byteReader = new PerfByteReader(fileBigEndian);
-                switch (this.array)
+                int dynOffset, dynSize;
+                switch (this.Array)
                 {
-                    default:
-                        result = eventRawData.Slice(this.offset, this.size);
+                    case PerfFieldArray.None:
+                    case PerfFieldArray.Fixed:
+
+                        return eventRawData.Slice(this.Offset, this.Size);
+
+                    case PerfFieldArray.RestOfEvent:
+
+                        return eventRawData.Slice(this.Offset);
+
+                    case PerfFieldArray.DataLoc2:
+                    case PerfFieldArray.RelLoc2:
+
+                        // 2-byte value is an offset leading to the real data, size is strlen.
+                        dynOffset = byteReader.ReadU16(eventRawData.Slice(this.Offset));
+                        if (this.Array == PerfFieldArray.RelLoc2)
+                        {
+                            // offset is relative to end of field.
+                            dynOffset += this.Offset + this.Size;
+                        }
+
+                        if (dynOffset < eventRawData.Length)
+                        {
+                            dynSize = eventRawData.Slice(dynOffset).IndexOf((byte)0);
+                            if (dynSize >= 0)
+                            {
+                                return eventRawData.Slice(dynOffset, dynSize);
+                            }
+                        }
+
                         break;
 
-                    case PerfFieldArray.Dynamic:
-                    case PerfFieldArray.RelDyn:
-                        result = default;
-                        if (this.size == 4)
-                        {
-                            // 4-byte value is an offset/length pair leading to the real data.
-                            var dyn = byteReader.ReadU32(eventRawData.Slice(this.offset));
-                            var dynSize = (int)(dyn >> 16);
-                            var dynOffset = (int)(dyn & 0xFFFF);
-                            if (this.array == PerfFieldArray.RelDyn)
-                            {
-                                // offset is relative to end of field.
-                                dynOffset += this.offset + this.size;
-                            }
+                    case PerfFieldArray.DataLoc4:
+                    case PerfFieldArray.RelLoc4:
 
-                            if (dynOffset + dynSize <= eventRawData.Length)
-                            {
-                                result = eventRawData.Slice(dynOffset, dynSize);
-                            }
-                        }
-                        else if (this.size == 2)
+                        // 4-byte value is an offset/length pair leading to the real data.
+                        var dyn32 = byteReader.ReadU32(eventRawData.Slice(this.Offset));
+                        dynSize = (int)(dyn32 >> 16);
+                        dynOffset = (int)(dyn32 & 0xFFFF);
+                        if (this.Array == PerfFieldArray.RelLoc4)
                         {
-                            // 2-byte value is an offset leading to the real data, size is strlen.
-                            int dynOffset = byteReader.ReadU16(eventRawData.Slice(this.offset));
-                            if (this.array == PerfFieldArray.RelDyn)
-                            {
-                                // offset is relative to end of field.
-                                dynOffset += this.offset + this.size;
-                            }
-
-                            if (dynOffset < eventRawData.Length)
-                            {
-                                var dynSize = eventRawData.Slice(dynOffset).IndexOf((byte)0);
-                                if (dynSize >= 0)
-                                {
-                                    result = eventRawData.Slice(dynOffset, dynSize);
-                                }
-                            }
+                            // offset is relative to end of field.
+                            dynOffset += this.Offset + this.Size;
                         }
+
+                        if (dynOffset + dynSize <= eventRawData.Length)
+                        {
+                            return eventRawData.Slice(dynOffset, dynSize);
+                        }
+
                         break;
                 }
             }
 
-            return result;
+            return default;
         }
 
-        /// <summary>
-        /// Formats the given bytes using this field's type.
-        /// </summary>
-        /// <param name="fieldBytes">Field data, e.g. from GetFieldBytes.</param>
-        /// <param name="eventBigEndian">true if the event was logged using big-endian byte order.</param>
-        /// <returns></returns>
-        public string FormatField(ReadOnlySpan<byte> fieldBytes, bool eventBigEndian)
+        public PerfValue GetFieldValue(
+            ReadOnlySpan<byte> eventRawData,
+            bool fileBigEndian)
         {
-            StringBuilder sb;
-            var byteReader = new PerfByteReader(eventBigEndian);
-            switch (this.Format)
+            var byteReader = new PerfByteReader(fileBigEndian);
+            bool checkStrLen = this.DeducedEncoding == EventFieldEncoding.ZStringChar8;
+            ReadOnlySpan<byte> bytes;
+            ushort arrayCount;
+
+            if (this.Offset + this.Size <= eventRawData.Length)
             {
-                default:
-                case PerfFieldFormat.None:
+                int dynOffset, dynSize;
+                switch (this.Array)
+                {
+                    case PerfFieldArray.None:
+                    case PerfFieldArray.Fixed:
 
-                    if (this.Array == PerfFieldArray.None ||
-                        this.ElementSize == PerfFieldElementSize.Size8)
-                    {
-                        return Utility.ToHexString(fieldBytes);
-                    }
-                    goto case PerfFieldFormat.Hex;
-
-                case PerfFieldFormat.String:
-
-                    var len = fieldBytes.IndexOf((byte)0);
-                    if (len == 0)
-                    {
-                        return "";
-                    }
-                    else
-                    {
-                        return Utility.EncodingLatin1.GetString(fieldBytes.Slice(0, len >= 0 ? len : fieldBytes.Length));
-                    }
-                    break;
-
-                case PerfFieldFormat.Hex:
-
-                    sb = new StringBuilder();
-                    if (this.Array == PerfFieldArray.None)
-                    {
-                        switch (this.ElementSize)
+                        bytes = eventRawData.Slice(this.Offset, this.Size);
+                        if (checkStrLen)
                         {
-                            default:
-                                return Utility.ToHexString(fieldBytes);
-                            case PerfFieldElementSize.Size8:
-                                if (fieldBytes.Length < 1)
-                                {
-                                    return "null";
-                                }
-                                AppendHex(sb, fieldBytes[0]);
-                                break;
-                            case PerfFieldElementSize.Size16:
-                                if (fieldBytes.Length < 2)
-                                {
-                                    return "null";
-                                }
-                                AppendHex(sb, byteReader.ReadU16(fieldBytes));
-                                break;
-                            case PerfFieldElementSize.Size32:
-                                if (fieldBytes.Length < 4)
-                                {
-                                    return "null";
-                                }
-                                AppendHex(sb, byteReader.ReadU32(fieldBytes));
-                                break;
-                            case PerfFieldElementSize.Size64:
-                                if (fieldBytes.Length < 8)
-                                {
-                                    return "null";
-                                }
-                                AppendHex(sb, byteReader.ReadU64(fieldBytes));
-                                break;
+                            bytes = UntilFirstNul(bytes);
                         }
-                    }
-                    else
-                    {
-                        sb.Append('[');
-                        switch (this.ElementSize)
-                        {
-                            default:
-                                return Utility.ToHexString(fieldBytes);
-                            case PerfFieldElementSize.Size8:
-                                if (fieldBytes.Length >= 1)
-                                {
-                                    AppendHex(sb, fieldBytes[0]);
-                                    for (int i = 1; i < fieldBytes.Length; i += 1)
-                                    {
-                                        sb.Append(',');
-                                        AppendHex(sb, fieldBytes[i]);
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size16:
-                                if (fieldBytes.Length >= 2)
-                                {
-                                    AppendHex(sb, byteReader.ReadU16(fieldBytes));
-                                    for (int i = 3; i < fieldBytes.Length; i += 2)
-                                    {
-                                        sb.Append(',');
-                                        AppendHex(sb, byteReader.ReadU16(fieldBytes.Slice(i - 1)));
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size32:
-                                if (fieldBytes.Length >= 4)
-                                {
-                                    AppendHex(sb, byteReader.ReadU32(fieldBytes));
-                                    for (int i = 7; i < fieldBytes.Length; i += 4)
-                                    {
-                                        sb.Append(',');
-                                        AppendHex(sb, byteReader.ReadU32(fieldBytes.Slice(i - 3)));
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size64:
-                                if (fieldBytes.Length >= 8)
-                                {
-                                    AppendHex(sb, byteReader.ReadU64(fieldBytes));
-                                    for (int i = 15; i < fieldBytes.Length; i += 8)
-                                    {
-                                        sb.Append(',');
-                                        AppendHex(sb, byteReader.ReadU32(fieldBytes.Slice(i - 7)));
-                                    }
-                                }
-                                break;
-                        }
-                        sb.Append(']');
-                    }
-                    break;
 
-                case PerfFieldFormat.Unsigned:
+                        arrayCount = this.DeducedArrayCount;
+                        goto FixedSize;
 
-                    sb = new StringBuilder();
-                    if (this.Array == PerfFieldArray.None)
-                    {
-                        switch (this.ElementSize)
-                        {
-                            default:
-                                return Utility.ToHexString(fieldBytes);
-                            case PerfFieldElementSize.Size8:
-                                if (fieldBytes.Length < 1)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(fieldBytes[0]);
-                                break;
-                            case PerfFieldElementSize.Size16:
-                                if (fieldBytes.Length < 2)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(byteReader.ReadU16(fieldBytes));
-                                break;
-                            case PerfFieldElementSize.Size32:
-                                if (fieldBytes.Length < 4)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(byteReader.ReadU32(fieldBytes));
-                                break;
-                            case PerfFieldElementSize.Size64:
-                                if (fieldBytes.Length < 8)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(byteReader.ReadU64(fieldBytes));
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        sb.Append('[');
-                        switch (this.ElementSize)
-                        {
-                            default:
-                                return Utility.ToHexString(fieldBytes);
-                            case PerfFieldElementSize.Size8:
-                                if (fieldBytes.Length >= 1)
-                                {
-                                    sb.Append(fieldBytes[0]);
-                                    for (int i = 1; i < fieldBytes.Length; i += 1)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(fieldBytes[i]);
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size16:
-                                if (fieldBytes.Length >= 2)
-                                {
-                                    sb.Append(byteReader.ReadU16(fieldBytes));
-                                    for (int i = 3; i < fieldBytes.Length; i += 2)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(byteReader.ReadU16(fieldBytes.Slice(i - 1)));
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size32:
-                                if (fieldBytes.Length >= 4)
-                                {
-                                    sb.Append(byteReader.ReadU32(fieldBytes));
-                                    for (int i = 7; i < fieldBytes.Length; i += 4)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(byteReader.ReadU32(fieldBytes.Slice(i - 3)));
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size64:
-                                if (fieldBytes.Length >= 8)
-                                {
-                                    sb.Append(byteReader.ReadU64(fieldBytes));
-                                    for (int i = 15; i < fieldBytes.Length; i += 8)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(byteReader.ReadU32(fieldBytes.Slice(i - 7)));
-                                    }
-                                }
-                                break;
-                        }
-                        sb.Append(']');
-                    }
-                    break;
+                    case PerfFieldArray.RestOfEvent:
 
-                case PerfFieldFormat.Signed:
+                        bytes = eventRawData.Slice(this.Offset);
+                        goto VariableSize;
 
-                    sb = new StringBuilder();
-                    if (this.Array == PerfFieldArray.None)
-                    {
-                        switch (this.ElementSize)
+                    case PerfFieldArray.DataLoc2:
+                    case PerfFieldArray.RelLoc2:
+
+                        // 2-byte value is an offset leading to the real data, size is strlen.
+                        dynOffset = byteReader.ReadU16(eventRawData.Slice(this.Offset));
+                        if (this.Array == PerfFieldArray.RelLoc2)
                         {
-                            default:
-                                return Utility.ToHexString(fieldBytes);
-                            case PerfFieldElementSize.Size8:
-                                if (fieldBytes.Length < 1)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(unchecked((sbyte)fieldBytes[0]));
-                                break;
-                            case PerfFieldElementSize.Size16:
-                                if (fieldBytes.Length < 2)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(byteReader.ReadI16(fieldBytes));
-                                break;
-                            case PerfFieldElementSize.Size32:
-                                if (fieldBytes.Length < 4)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(byteReader.ReadI32(fieldBytes));
-                                break;
-                            case PerfFieldElementSize.Size64:
-                                if (fieldBytes.Length < 8)
-                                {
-                                    return "null";
-                                }
-                                sb.Append(byteReader.ReadI64(fieldBytes));
-                                break;
+                            // offset is relative to end of field.
+                            dynOffset += this.Offset + this.Size;
                         }
-                    }
-                    else
-                    {
-                        sb.Append('[');
-                        switch (this.ElementSize)
+
+                        if (dynOffset < eventRawData.Length)
                         {
-                            default:
-                                return Utility.ToHexString(fieldBytes);
-                            case PerfFieldElementSize.Size8:
-                                if (fieldBytes.Length >= 1)
-                                {
-                                    sb.Append(unchecked((sbyte)fieldBytes[0]));
-                                    for (int i = 1; i < fieldBytes.Length; i += 1)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(unchecked((sbyte)fieldBytes[i]));
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size16:
-                                if (fieldBytes.Length >= 2)
-                                {
-                                    sb.Append(byteReader.ReadI16(fieldBytes));
-                                    for (int i = 3; i < fieldBytes.Length; i += 2)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(byteReader.ReadI16(fieldBytes.Slice(i - 1)));
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size32:
-                                if (fieldBytes.Length >= 4)
-                                {
-                                    sb.Append(byteReader.ReadI32(fieldBytes));
-                                    for (int i = 7; i < fieldBytes.Length; i += 4)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(byteReader.ReadI32(fieldBytes.Slice(i - 3)));
-                                    }
-                                }
-                                break;
-                            case PerfFieldElementSize.Size64:
-                                if (fieldBytes.Length >= 8)
-                                {
-                                    sb.Append(byteReader.ReadI64(fieldBytes));
-                                    for (int i = 15; i < fieldBytes.Length; i += 8)
-                                    {
-                                        sb.Append(',');
-                                        sb.Append(byteReader.ReadI32(fieldBytes.Slice(i - 7)));
-                                    }
-                                }
-                                break;
+                            bytes = eventRawData.Slice(dynOffset);
+                            checkStrLen = true;
+                            goto VariableSize;
                         }
-                        sb.Append(']');
-                    }
-                    break;
+
+                        break;
+
+                    case PerfFieldArray.DataLoc4:
+                    case PerfFieldArray.RelLoc4:
+
+                        // 4-byte value is an offset/length pair leading to the real data.
+                        var dyn32 = byteReader.ReadU32(eventRawData.Slice(this.Offset));
+                        dynSize = (int)(dyn32 >> 16);
+                        dynOffset = (int)(dyn32 & 0xFFFF);
+                        if (this.Array == PerfFieldArray.RelLoc4)
+                        {
+                            // offset is relative to end of field.
+                            dynOffset += this.Offset + this.Size;
+                        }
+
+                        if (dynOffset + dynSize <= eventRawData.Length)
+                        {
+                            bytes = eventRawData.Slice(dynOffset, dynSize);
+                            goto VariableSize;
+                        }
+
+                        break;
+                }
             }
 
-            return sb.ToString();
+            return default;
+
+        VariableSize:
+
+            if (checkStrLen)
+            {
+                bytes = UntilFirstNul(bytes);
+            }
+
+            var mask = (1 << this.ElementSizeShift) - 1;
+            if (this.ElementSizeShift != byte.MaxValue &&
+                0 != (bytes.Length & mask))
+            {
+                bytes = bytes.Slice(0, bytes.Length & ~mask);
+            }
+
+            arrayCount = this.DeducedArrayCount;
+            if (arrayCount == 0)
+            {
+                arrayCount = (ushort)(bytes.Length >> this.ElementSizeShift);
+            }
+
+        FixedSize:
+
+            return new PerfValue(
+                bytes,
+                byteReader,
+                this.DeducedEncoding,
+                this.DeducedFormat,
+                unchecked((byte)(1 << this.ElementSizeShift)),
+                arrayCount);
         }
 
-        private static void AppendHex(StringBuilder sb, uint value)
+        private static ReadOnlySpan<byte> UntilFirstNul(ReadOnlySpan<byte> bytes)
         {
-            sb.Append('0');
-            sb.Append('x');
-
-            var a = sb.Length;
-            do
-            {
-                sb.Append(Utility.ToHexChar(unchecked((int)value)));
-                value >>= 4;
-            } while (value != 0);
-            var b = sb.Length - 1;
-
-            while (a < b)
-            {
-                var ch = sb[b];
-                sb[b] = sb[a];
-                sb[a] = ch;
-                a += 1;
-                b -= 1;
-            }
-        }
-
-        private static void AppendHex(StringBuilder sb, ulong value)
-        {
-            sb.Append('0');
-            sb.Append('x');
-
-            var a = sb.Length;
-            do
-            {
-                sb.Append(Utility.ToHexChar(unchecked((int)value)));
-                value >>= 4;
-            } while (value != 0);
-            var b = sb.Length - 1;
-
-            while (a < b)
-            {
-                var ch = sb[b];
-                sb[b] = sb[a];
-                sb[a] = ch;
-                a += 1;
-                b -= 1;
-            }
+            var i = bytes.IndexOf((byte)0);
+            return i >= 0 ? bytes.Slice(0, i) : bytes;
         }
 
         private enum TokenKind : byte

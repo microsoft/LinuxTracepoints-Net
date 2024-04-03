@@ -185,9 +185,13 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 var ts = this.SessionInfo.TimeToRealTime(this.Time);
                 DateTime result;
-                if (PerfConvert.TryUnixTimeToDateTime(ts.TvSec, out result))
+                if (PerfConvert.UnixTime64ToDateTime(ts.TvSec) is DateTime seconds)
                 {
-                    result = result.AddTicks(ts.TvNsec / 100);
+                    result = seconds.AddTicks(ts.TvNsec / 100);
+                }
+                else
+                {
+                    result = default;
                 }
                 return result;
             }

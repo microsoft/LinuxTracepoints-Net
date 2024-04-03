@@ -11,7 +11,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public class PerfEventDesc
     {
-        private static PerfEventDesc? empty;
         private static ReadOnlyCollection<ulong>? emptyIds;
 
         private readonly PerfEventAttr attr;
@@ -35,20 +34,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.name = name;
             this.metadata = metadata;
             this.ids = ids ?? EmptyIds;
-        }
-
-        public static PerfEventDesc Empty
-        {
-            get
-            {
-                var value = empty;
-                if (value == null)
-                {
-                    value = new PerfEventDesc(default, "", null, EmptyIds);
-                    empty = value;
-                }
-                return value;
-            }
         }
 
         /// <summary>

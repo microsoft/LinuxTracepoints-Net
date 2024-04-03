@@ -13,19 +13,19 @@ namespace Microsoft.LinuxTracepoints
     /// In the case of the Struct encoding, the low 7 bits of the Format byte contain
     /// the number of logical fields in the struct (which must not be 0).
     /// </para><para>
-    /// The top bit of the field format byte is the FlagChain. If set, it indicates
+    /// The top bit of the field format byte is the ChainFlag. If set, it indicates
     /// that a field tag (uint16) is present after the format byte. If not set, the
     /// field tag is not present and is assumed to be 0.
     /// </para>
     /// </summary>
-    public enum EventHeaderFieldFormat : byte
+    public enum EventFieldFormat : byte
     {
         ValueMask = 0x7F,
 
         /// <summary>
         /// A field tag (uint16) follows the Format byte.
         /// </summary>
-        FlagChain = 0x80,
+        ChainFlag = 0x80,
 
         /// <summary>
         /// Use the default format of the encoding.
@@ -84,7 +84,7 @@ namespace Microsoft.LinuxTracepoints
         /// binary, decoded as hex dump of bytes.
         /// Use with any encoding.
         /// </summary>
-        HexBinary,
+        HexBytes,
 
         /// <summary>
         /// 8-bit char string, unspecified character set (usually treated as ISO-8859-1 or CP-1252).

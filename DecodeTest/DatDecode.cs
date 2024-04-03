@@ -72,19 +72,19 @@
                             switch (e.State)
                             {
                                 case EventHeaderEnumeratorState.Value:
-                                    if (item.ArrayFlags == 0)
+                                    if (item.Value.ArrayFlags == 0)
                                     {
-                                        this.writer.WriteString(MakeName(item.NameAsString, item.FieldTag), item.FormatValue());
+                                        this.writer.WriteString(MakeName(item.NameAsString, item.Value.FieldTag), item.Value.FormatValue());
                                     }
                                     else
                                     {
-                                        this.writer.WriteStringValue(item.FormatValue());
+                                        this.writer.WriteStringValue(item.Value.FormatValue());
                                     }
                                     break;
                                 case EventHeaderEnumeratorState.StructBegin:
-                                    if (item.ArrayFlags == 0)
+                                    if (item.Value.ArrayFlags == 0)
                                     {
-                                        this.writer.WriteStartObject(MakeName(item.NameAsString, item.FieldTag));
+                                        this.writer.WriteStartObject(MakeName(item.NameAsString, item.Value.FieldTag));
                                     }
                                     else
                                     {
@@ -95,18 +95,15 @@
                                     this.writer.WriteEndObject();
                                     break;
                                 case EventHeaderEnumeratorState.ArrayBegin:
-                                    this.writer.WriteStartArray(MakeName(item.NameAsString, item.FieldTag));
+                                    this.writer.WriteStartArray(MakeName(item.NameAsString, item.Value.FieldTag));
 
-                                    if (item.ElementSize != 0)
+                                    if (item.Value.ElementSize != 0)
                                     {
                                         // Process the entire array directly without using the enumerator.
                                         // Adjust the item.ValueStart and item.ValueLength to point to each element.
-                                        Debug.Assert(item.ValueLength == item.ArrayCount * item.ElementSize);
-                                        item.ValueLength = item.ElementSize;
-                                        for (int i = 0; i != item.ArrayCount; i++)
+                                        for (int i = 0; i != item.Value.ArrayCount; i++)
                                         {
-                                            this.writer.WriteStringValue(item.FormatValue());
-                                            item.ValueStart += item.ElementSize;
+                                            this.writer.WriteStringValue(item.Value.FormatSimpleArrayValue(i));
                                         }
 
                                         this.writer.WriteEndArray();
@@ -209,44 +206,39 @@
                     while (e.MoveNextMetadata())
                     {
                         var item = e.GetItemInfo();
-                        this.writer.WriteStartObject(MakeName(item.NameAsString, item.FieldTag));
+                        this.writer.WriteStartObject(MakeName(item.NameAsString, item.Value.FieldTag));
 
-                        this.writer.WriteString("Encoding", item.Encoding.ToString());
+                        this.writer.WriteString("Encoding", item.Value.Encoding.ToString());
 
-                        if (item.Format != 0)
+                        if (item.Value.Format != 0)
                         {
-                            if (item.Encoding == EventHeaderFieldEncoding.Struct)
+                            if (item.Value.Encoding == EventFieldEncoding.Struct)
                             {
-                                this.writer.WriteNumber("FieldCount", (byte)item.Format);
+                                this.writer.WriteNumber("FieldCount", (byte)item.Value.Format);
                             }
                             else
                             {
-                                this.writer.WriteString("Format", item.Format.ToString());
+                                this.writer.WriteString("Format", item.Value.Format.ToString());
                             }
                         }
 
-                        if (item.ValueBytes.Length != 0)
+                        if (item.Value.Bytes.Length != 0)
                         {
-                            this.writer.WriteNumber("BadValueBytes", item.ValueBytes.Length);
+                            this.writer.WriteNumber("BadValueBytes", item.Value.Bytes.Length);
                         }
 
-                        if (item.ElementSize != 0)
+                        if (item.Value.ElementSize != 0)
                         {
-                            this.writer.WriteNumber("BadElementSize", item.ElementSize);
+                            this.writer.WriteNumber("BadFixedSize", item.Value.ElementSize);
                         }
 
-                        if (item.ArrayIndex != 0)
+                        if (item.Value.ArrayFlags != 0)
                         {
-                            this.writer.WriteNumber("BadArrayIndex", item.ArrayIndex);
+                            this.writer.WriteNumber("ArrayCount", item.Value.ArrayCount);
                         }
-
-                        if (item.ArrayFlags != 0)
+                        else if (item.Value.ArrayCount != 1)
                         {
-                            this.writer.WriteNumber("ArrayCount", item.ArrayCount);
-                        }
-                        else if (item.ArrayCount != 1)
-                        {
-                            this.writer.WriteNumber("BadArrayCount", item.ArrayCount);
+                            this.writer.WriteNumber("BadArrayCount", item.Value.ArrayCount);
                         }
 
                         this.writer.WriteEndObject();

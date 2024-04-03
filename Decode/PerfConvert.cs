@@ -2,6 +2,8 @@
 {
     using System;
     using System.Globalization;
+    using System.Text;
+    using static System.Net.Mime.MediaTypeNames;
 
     public static class PerfConvert
     {
@@ -10,61 +12,122 @@
         private const long SecondsPerDay = 60 * 60 * 24;
         private const long MaxSeconds = DaysToYear10000 * SecondsPerDay - UnixEpochSeconds;
 
+        private static Encoding? encodingLatin1; // ISO-8859-1
+        private static Encoding? encodingUTF32BE;
+
         /// <summary>
-        /// Attempts to convert a Unix time_t (signed seconds since 1970) to a DateTime.
-        /// Returns false if the result is less than DateTime.MinValue or greater than
+        /// Gets an encoding for ISO-8859-1 (Latin-1) characters.
+        /// </summary>
+        public static Encoding EncodingLatin1
+        {
+            get
+            {
+                var encoding = encodingLatin1; // Get the cached encoding, if available.
+                if (encoding == null)
+                {
+                    encoding = Encoding.GetEncoding(28591); // Create a new encoding.
+                    encodingLatin1 = encoding; // Cache the encoding.
+                }
+
+                return encoding;
+            }
+        }
+
+        /// <summary>
+        /// Gets an encoding for UTF-32 big-endian characters.
+        /// </summary>
+        public static Encoding EncodingUTF32BE
+        {
+            get
+            {
+                var encoding = encodingUTF32BE; // Get the cached encoding, if available.
+                if (encoding == null)
+                {
+                    encoding = new UTF32Encoding(true, true); // Create a new encoding.
+                    encodingUTF32BE = encoding; // Cache the encoding.
+                }
+
+                return encoding;
+            }
+        }
+
+        public static char ToHexChar(int nibble)
+        {
+            const string HexChars = "0123456789ABCDEF";
+            return HexChars[nibble & 0xF];
+        }
+
+        public static string ToHexString(ReadOnlySpan<byte> bytes)
+        {
+            if (bytes.Length > 0)
+            {
+                var sb = new StringBuilder(bytes.Length * 3 - 1);
+                Formatting.PerfFormattingExtensions.AppendHexBytes(sb, bytes);
+                return sb.ToString();
+            }
+
+            return "";
+        }
+
+        /// <summary>
+        /// Converts a 32-bit Unix time_t (signed seconds since 1970) to a DateTime.
+        /// </summary>
+        public static DateTime UnixTime32ToDateTime(Int32 secondsSince1970)
+        {
+            return new DateTime((secondsSince1970 + UnixEpochSeconds) * 10000000, DateTimeKind.Utc);
+        }
+
+        /// <summary>
+        /// Converts a 32-bit Unix time_t (signed seconds since 1970) to a new string
+        /// like "2020-02-02T02:02:02".
+        /// </summary>
+        public static string UnixTime32ToString(Int32 secondsSince1970)
+        {
+            return PerfConvert.UnixTime32ToDateTime(secondsSince1970)
+                .ToString("s", CultureInfo.InvariantCulture);
+        }
+
+        /// <summary>
+        /// Attempts to convert a 64-bit Unix time_t (signed seconds since 1970) to a DateTime.
+        /// Returns null if the result is less than DateTime.MinValue or greater than
         /// DateTime.MaxValue.
         /// </summary>
-        public static bool TryUnixTimeToDateTime(long secondsSince1970, out DateTime value)
+        public static DateTime? UnixTime64ToDateTime(Int64 secondsSince1970)
         {
             if (secondsSince1970 < -UnixEpochSeconds ||
                 secondsSince1970 >= MaxSeconds)
             {
-                value = DateTime.MinValue;
-                return false;
+                return null;
             }
             else
             {
-                value = new DateTime((secondsSince1970 + UnixEpochSeconds) * 10000000, DateTimeKind.Utc);
-                return true;
+                return new DateTime((secondsSince1970 + UnixEpochSeconds) * 10000000, DateTimeKind.Utc);
             }
         }
 
         /// <summary>
-        /// Attempts to convert a Unix time_t (signed seconds since 1970) to a DateTime.
-        /// Throws ArgumentOutOfRangeException if the result is less than DateTime.MinValue
-        /// or greater than DateTime.MaxValue.
+        /// Converts a 64-bit Unix time_t (signed seconds since 1970) to a new string.
+        /// If year is in range 0001..9999, returns a value like "2020-02-02T02:02:02".
+        /// If year is outside of 0001..9999, returns a value like "TIME(-1234567890)".
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">
-        /// The result is less than DateTime.MinValue or greater than DateTime.MaxValue.
-        /// </exception>
-        public static DateTime UnixTimeToDateTime(long secondsSince1970)
+        public static string UnixTime64ToString(Int64 secondsSince1970)
         {
-            if (secondsSince1970 < -UnixEpochSeconds ||
-                secondsSince1970 >= MaxSeconds)
+            var maybe = PerfConvert.UnixTime64ToDateTime(secondsSince1970);
+            if (maybe is DateTime value)
             {
-                throw new ArgumentOutOfRangeException(nameof(secondsSince1970));
+                return value.ToString("s", CultureInfo.InvariantCulture);
             }
-
-            return new DateTime((secondsSince1970 + UnixEpochSeconds) * 10000000, DateTimeKind.Utc);
-        }
-        /// <summary>
-        /// Converts a Unix time_t (signed seconds since 1970) to a string.
-        /// If year is in range 0001..9999, returns a new string like "2020-02-02T02:02:02".
-        /// If year is outside of 0001..9999, returns a new string like "TIME(-1234567890)".
-        /// </summary>
-        public static string UnixTimeToString(long secondsSince1970)
-        {
-            return PerfConvert.TryUnixTimeToDateTime(secondsSince1970, out var value)
-                ? value.ToString("s", CultureInfo.InvariantCulture)
-                : "TIME(" + secondsSince1970.ToString(CultureInfo.InvariantCulture) + ")";
+            else
+            {
+                return "TIME(" + secondsSince1970.ToString(CultureInfo.InvariantCulture) + ")";
+            }
         }
 
         /// <summary>
         /// If the specified value is a recognized Linux error number, returns a
         /// string like "OK(0)" or "ENOENT(2)". Otherwise returns null.
         /// </summary>
-        public static string? ErrnoLookup(int linuxErrno)
+        public static string? ErrnoLookup(Int32 linuxErrno)
         {
             switch (linuxErrno)
             {
@@ -209,7 +272,7 @@
         /// string like "OK(0)" or "ENOENT(2)". Otherwise returns a new string like
         /// "ERRNO(404)".
         /// </summary>
-        public static string ErrnoToString(int linuxErrno)
+        public static string ErrnoToString(Int32 linuxErrno)
         {
             var value = ErrnoLookup(linuxErrno);
             return value != null
