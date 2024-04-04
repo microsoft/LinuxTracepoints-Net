@@ -133,7 +133,7 @@
                     var ei = e.GetEventInfo();
                     this.writer.WriteStartObject("meta");
                     this.writer.WriteString("provider", ei.ProviderName);
-                    this.writer.WriteString("event", ei.Name);
+                    this.writer.WriteString("event", ei.NameAsString);
 
                     var options = ei.Options;
                     if (!options.IsEmpty)

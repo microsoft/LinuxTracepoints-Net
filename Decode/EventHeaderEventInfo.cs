@@ -99,7 +99,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public string Name =>
+        public string NameAsString =>
             Encoding.UTF8.GetString(this.EventData.Slice(this.NameStart, this.NameLength));
 
         /// <summary>
@@ -165,18 +165,6 @@ namespace Microsoft.LinuxTracepoints.Decode
                 return this.ActivityIdLength < 32
                     ? new Guid?()
                     : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
-            }
-        }
-
-        /// <summary>
-        /// Appends this.Name to the specified StringBuilder.
-        /// </summary>
-        public void AppendName(StringBuilder sb)
-        {
-            var end = this.NameStart + this.NameLength;
-            for (var i = this.NameStart; i < end; i += 1)
-            {
-                sb.Append((char)this.EventData[i]);
             }
         }
     }

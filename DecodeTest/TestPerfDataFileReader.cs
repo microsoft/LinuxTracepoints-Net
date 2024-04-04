@@ -29,7 +29,7 @@
         {
             string expected = File.ReadAllText(baseName + ".json");
             var buffer = new ArrayBufferWriter<byte>();
-            using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true, SkipValidation = true }))
+            using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
             {
                 using (var decode = new DecodePerf.PerfDataDecode(writer))
                 {

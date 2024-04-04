@@ -50,6 +50,5 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
         public readonly string NameAsString => Encoding.UTF8.GetString(this.NameBytes);
-
     }
 }
