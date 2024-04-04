@@ -9,6 +9,9 @@
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
     <AnalysisLevel>latest-recommended</AnalysisLevel>
+    <BaseOutputPath>..\bin</BaseOutputPath>
+    <IntermediateOutputPath>..\obj</IntermediateOutputPath>
+    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,22 +30,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="EventHeaderInterceptorLE64.dat">
+    <None Update="expected\EventHeaderInterceptorLE64.dat.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="EventHeaderInterceptorLE64.json">
+    <None Update="expected\perf.data.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="perf.data">
+    <None Update="expected\pipe.data.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="perf.data.json">
+    <None Update="input\EventHeaderInterceptorLE64.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="pipe.data">
+    <None Update="input\perf.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="pipe.data.json">
+    <None Update="input\pipe.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -4,13 +4,9 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <WarningLevel>9999</WarningLevel>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <BaseOutputPath>..\bin</BaseOutputPath>
+    <IntermediateOutputPath>..\obj</IntermediateOutputPath>
+    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
     <WarningLevel>9999</WarningLevel>
   </PropertyGroup>
 
