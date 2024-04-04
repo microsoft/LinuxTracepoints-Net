@@ -29,7 +29,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Constructs a new PerfEventSessionInfo instance.
         /// Instances of this class are normally created by the PerfEventReader class.
         /// </summary>
-        public PerfEventSessionInfo(PerfByteReader byteReader)
+        internal PerfEventSessionInfo(PerfByteReader byteReader)
         {
             this.byteReader = byteReader;
         }

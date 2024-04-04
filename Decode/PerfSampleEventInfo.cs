@@ -167,9 +167,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public readonly string Name => this.EventDesc.Name;
 
         /// <summary>
-        /// Returns the event's tracefs format metadata, or null if not available.
+        /// Returns the event's tracefs format (decoding information), or null if not available.
         /// </summary>
-        public readonly PerfEventMetadata? Metadata => this.EventDesc.Metadata;
+        public readonly PerfEventFormat? Format => this.EventDesc.Format;
 
         /// <summary>
         /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.
@@ -246,18 +246,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Gets the user field data from the event in event-endian byte order.
         /// This starts immediately after the event's common fields.
-        /// Valid if SampleType contains Raw and metadata is available.
+        /// Valid if SampleType contains Raw and format is available.
         /// </summary>
         public readonly ReadOnlyMemory<byte> UserData
         {
             get
             {
-                var metadata = this.EventDesc.Metadata;
-                return metadata == null || metadata.CommonFieldsSize > this.RawDataLength
+                var format = this.EventDesc.Format;
+                return format == null || format.CommonFieldsSize > this.RawDataLength
                     ? default
                     : this.Bytes.Slice(
-                        this.RawDataStart + metadata.CommonFieldsSize,
-                        this.RawDataLength - metadata.CommonFieldsSize);
+                        this.RawDataStart + format.CommonFieldsSize,
+                        this.RawDataLength - format.CommonFieldsSize);
 
             }
         }
@@ -265,18 +265,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Gets the user field data from the event in event-endian byte order.
         /// This starts immediately after the event's common fields.
-        /// Valid if SampleType contains Raw and metadata is available.
+        /// Valid if SampleType contains Raw and format is available.
         /// </summary>
         public readonly ReadOnlySpan<byte> UserDataSpan
         {
             get
             {
-                var metadata = this.EventDesc.Metadata;
-                return metadata == null || metadata.CommonFieldsSize > this.RawDataLength
+                var format = this.EventDesc.Format;
+                return format == null || format.CommonFieldsSize > this.RawDataLength
                     ? default
                     : this.BytesSpan.Slice(
-                        this.RawDataStart + metadata.CommonFieldsSize,
-                        this.RawDataLength - metadata.CommonFieldsSize);
+                        this.RawDataStart + format.CommonFieldsSize,
+                        this.RawDataLength - format.CommonFieldsSize);
             }
         }
     }

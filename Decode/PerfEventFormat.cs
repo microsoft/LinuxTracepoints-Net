@@ -8,14 +8,14 @@ namespace Microsoft.LinuxTracepoints.Decode
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
-    /// Values for the DecodingStyle property of PerfEventMetadata.
+    /// Values for the DecodingStyle property of PerfEventFormat.
     /// </summary>
     public enum PerfEventDecodingStyle : byte
     {
         /// <summary>
         /// Event should be decoded using tracefs "format" file.
         /// </summary>
-        TraceEvent,
+        TraceEventFormat,
 
         /// <summary>
         /// Event contains embedded "EventHeader" metadata and should be decoded using
@@ -28,22 +28,22 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// <summary>
     /// Event information parsed from a tracefs "format" file.
     /// </summary>
-    public class PerfEventMetadata
+    public class PerfEventFormat
     {
         private readonly string systemName;
         private readonly string name;
         private readonly string printFmt;
-        private readonly PerfFieldMetadata[] fields;
+        private readonly PerfFieldFormat[] fields;
         private readonly uint id; // From common_type; not the same as the perf_event_attr::id or PerfSampleEventInfo::id.
         private readonly ushort commonFieldCount; // fields[common_field_count] is the first user field.
         private readonly ushort commonFieldsSize; // Offset of the end of the last common field
         private readonly PerfEventDecodingStyle decodingStyle;
 
-        private PerfEventMetadata(
+        private PerfEventFormat(
             string systemName,
             string name,
             string printFmt,
-            PerfFieldMetadata[] fields,
+            PerfFieldFormat[] fields,
             uint id,
             ushort commonFieldCount,
             ushort commonFieldsSize,
@@ -77,7 +77,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns the fields from the "format:" property.
         /// </summary>
-        public PerfFieldMetadata[] Fields => this.fields;
+        public PerfFieldFormat[] Fields => this.fields;
 
         /// <summary>
         /// Returns the value of the "ID:" property. Note that this value gets
@@ -109,7 +109,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// on the results.
         /// 
         /// If "ID:" is a valid unsigned and and "name:" is not empty, returns a new
-        /// PerfEventMetadata. Otherwise, returns null.
+        /// PerfEventFormat. Otherwise, returns null.
         /// </summary>
         /// <param name="longSize64">
         /// Indicates the size to use for "long" fields in this event.
@@ -124,14 +124,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// formatFileContents for "user_events:my_event" will usually be the contents of
         /// "/sys/kernel/tracing/events/user_events/my_event/format".
         /// </param>
-        public static PerfEventMetadata? Parse(
+        public static PerfEventFormat? Parse(
             bool longSize64,
             string systemName,
             ReadOnlySpan<char> formatFileContents)
         {
             var name = "";
             var printFmt = "";
-            var fields = new List<PerfFieldMetadata>();
+            var fields = new List<PerfFieldFormat>();
             var id = 0u;
             var commonFieldCount = (ushort)0;
 
@@ -257,7 +257,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             }
                         }
 
-                        var field = PerfFieldMetadata.Parse(longSize64, str.Slice(iLine, i - iLine));
+                        var field = PerfFieldFormat.Parse(longSize64, str.Slice(iLine, i - iLine));
                         if (field == null)
                         {
                             Debug.WriteLine("Field parse failure");
@@ -276,7 +276,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         Done:
 
-            PerfEventMetadata? result;
+            PerfEventFormat? result;
             if (name.Length == 0 || !foundId)
             {
                 result = null;
@@ -297,13 +297,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var decodingStyle =
                     fields.Count > commonFieldCount && fields[commonFieldCount].Name == "eventheader_flags"
                     ? PerfEventDecodingStyle.EventHeader
-                    : PerfEventDecodingStyle.TraceEvent;
+                    : PerfEventDecodingStyle.TraceEventFormat;
 
-                result = new PerfEventMetadata(
+                result = new PerfEventFormat(
                     systemName,
                     name,
                     printFmt,
-                    fields.Count == 0 ? Array.Empty<PerfFieldMetadata>() : fields.ToArray(),
+                    fields.Count == 0 ? Array.Empty<PerfFieldFormat>() : fields.ToArray(),
                     id,
                     commonFieldCount,
                     commonFieldsSize,

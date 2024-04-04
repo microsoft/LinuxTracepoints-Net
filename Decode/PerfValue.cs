@@ -68,9 +68,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Initializes a new instance of the PerfValue struct. These are normally created
-        /// by EventHeaderEnumerator.GetItemInfo() or by PerfFieldMetadata.GetFieldValue().
+        /// by EventHeaderEnumerator.GetItemInfo() or by PerfFieldFormat.GetFieldValue().
         /// </summary>
-        public PerfValue(
+        internal PerfValue(
             ReadOnlySpan<byte> bytes,
             PerfByteReader byteReader,
             EventFieldEncoding encodingAndArrayFlags,

@@ -1,14 +1,11 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#pragma warning disable CA1051 // Do not declare visible instance fields
-
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
     using Debug = System.Diagnostics.Debug;
     using Encoding = System.Text.Encoding;
-    using StringBuilder = System.Text.StringBuilder;
 
     /// <summary>
     /// Event attributes returned by the GetEventInfo() method of EventHeaderEnumerator.
@@ -16,52 +13,9 @@ namespace Microsoft.LinuxTracepoints.Decode
     public readonly ref struct EventHeaderEventInfo
     {
         /// <summary>
-        /// The Span corresponding to the EventData parameter passed to
-        /// EventHeaderEnumerator.StartEvent(). For example, if you called
-        /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
-        /// The NameStart and ActivityIdStart fields are relative to this span.
-        /// </summary>
-        public readonly ReadOnlySpan<byte> EventData;
-
-        /// <summary>
-        /// Offset into EventData where NameBytes begins.
-        /// </summary>
-        public readonly int NameStart;
-
-        /// <summary>
-        /// Length of NameBytes.
-        /// </summary>
-        public readonly int NameLength;
-
-        /// <summary>
-        /// Offset into EventData where ActivityIdBytes begins.
-        /// </summary>
-        public readonly int ActivityIdStart;
-
-        /// <summary>
-        /// Length of ActivityIdBytes (may be 0, 16, or 32).
-        /// </summary>
-        public readonly int ActivityIdLength;
-
-        /// <summary>
-        /// TracepointName, e.g. "ProviderName_LnKnnnOptions".
-        /// </summary>
-        public readonly string TracepointName;
-
-        /// <summary>
-        /// Flags, Version, Id, Tag, Opcode, Level.
-        /// </summary>
-        public readonly EventHeader Header;
-
-        /// <summary>
-        /// Event category bits.
-        /// </summary>
-        public readonly ulong Keyword;
-
-        /// <summary>
         /// Initializes a new instance of the EventHeaderEventInfo struct.
         /// </summary>
-        public EventHeaderEventInfo(
+        internal EventHeaderEventInfo(
             ReadOnlySpan<byte> EventData,
             int nameStart,
             int nameLength,
@@ -80,6 +34,49 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.Header = header;
             this.Keyword = keyword;
         }
+
+        /// <summary>
+        /// The Span corresponding to the EventData parameter passed to
+        /// EventHeaderEnumerator.StartEvent(). For example, if you called
+        /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
+        /// The NameStart and ActivityIdStart fields are relative to this span.
+        /// </summary>
+        public ReadOnlySpan<byte> EventData { get; }
+
+        /// <summary>
+        /// Offset into EventData where NameBytes begins.
+        /// </summary>
+        public int NameStart { get; }
+
+        /// <summary>
+        /// Length of NameBytes.
+        /// </summary>
+        public int NameLength { get; }
+
+        /// <summary>
+        /// Offset into EventData where ActivityIdBytes begins.
+        /// </summary>
+        public int ActivityIdStart { get; }
+
+        /// <summary>
+        /// Length of ActivityIdBytes (may be 0, 16, or 32).
+        /// </summary>
+        public int ActivityIdLength { get; }
+
+        /// <summary>
+        /// TracepointName, e.g. "ProviderName_LnKnnnOptions".
+        /// </summary>
+        public string TracepointName { get; }
+
+        /// <summary>
+        /// Flags, Version, Id, Tag, Opcode, Level.
+        /// </summary>
+        public EventHeader Header { get; }
+
+        /// <summary>
+        /// Event category bits.
+        /// </summary>
+        public ulong Keyword { get; }
 
         /// <summary>
         /// UTF-8 encoded "EventName" followed by 0 or more field attributes.

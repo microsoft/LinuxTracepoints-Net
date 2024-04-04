@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#pragma warning disable CA1051 // Do not declare visible instance fields
-
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
@@ -15,6 +13,17 @@ namespace Microsoft.LinuxTracepoints.Decode
     public readonly ref struct EventHeaderItemInfo
     {
         /// <summary>
+        /// Initializes a new instance of the EventHeaderItemInfo struct.
+        /// </summary>
+        internal EventHeaderItemInfo(
+            ReadOnlySpan<byte> nameBytes,
+            PerfValue value)
+        {
+            this.NameBytes = nameBytes;
+            this.Value = value;
+        }
+
+        /// <summary>
         /// UTF-8 encoded field name followed by 0 or more field attributes,
         /// e.g. "FieldName" or "FieldName;AttribName=AttribValue".
         /// Each attribute is ";AttribName=AttribValue".
@@ -22,23 +31,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public readonly ReadOnlySpan<byte> NameBytes;
+        public ReadOnlySpan<byte> NameBytes { get; }
 
         /// <summary>
         /// Field value.
         /// </summary>
-        public readonly PerfValue Value;
-
-        /// <summary>
-        /// Initializes a new instance of the EventHeaderItemInfo struct.
-        /// </summary>
-        public EventHeaderItemInfo(
-            ReadOnlySpan<byte> nameBytes,
-            PerfValue value)
-        {
-            this.NameBytes = nameBytes;
-            this.Value = value;
-        }
+        public PerfValue Value { get; }
 
         /// <summary>
         /// Gets a new string (decoded from NameBytes) containing

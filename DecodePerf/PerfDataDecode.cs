@@ -4,7 +4,6 @@
     using Microsoft.LinuxTracepoints.Decode;
     using System;
     using System.Buffers;
-    using System.Threading;
     using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
     using Encoding = System.Text.Encoding;
@@ -154,17 +153,17 @@
                     {
                         writer.WriteCommentValue($"Pos {reader.FilePos}: GetSampleEventInfo {result}"); // Garbage.
                     }
-                    else if (!(info.Metadata is PerfEventMetadata infoMetadata))
+                    else if (!(info.Format is PerfEventFormat infoFormat))
                     {
-                        // No TraceFS metadata for this event. Unexpected.
+                        // No TraceFS format for this event. Unexpected.
                         writer.WriteStartObject();
                         writer.WriteNull("sNoMeta");
                         writer.WriteNumber("size", e.Bytes.Length);
                         writer.WriteEndObject();
                     }
-                    else if (infoMetadata.DecodingStyle != PerfEventDecodingStyle.EventHeader)
+                    else if (infoFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader)
                     {
-                        // TraceFS metadata present. Not an EventHeader event.
+                        // TraceFS format present. Not an EventHeader event.
                         writer.WriteStartObject();
 
                         if (this.Meta.HasFlag(PerfDataMeta.N))
@@ -173,11 +172,11 @@
                         }
 
                         // Skip the common fields by default.
-                        var firstField = this.Meta.HasFlag(PerfDataMeta.Common) ? 0 : infoMetadata.CommonFieldCount;
+                        var firstField = this.Meta.HasFlag(PerfDataMeta.Common) ? 0 : infoFormat.CommonFieldCount;
 
-                        for (int i = firstField; i < infoMetadata.Fields.Length; i++)
+                        for (int i = firstField; i < infoFormat.Fields.Length; i++)
                         {
-                            var fieldMeta = infoMetadata.Fields[i];
+                            var fieldMeta = infoFormat.Fields[i];
                             var fieldValue = fieldMeta.GetFieldValue(info.RawDataSpan, byteReader);
                             if (!fieldValue.IsArray)
                             {
@@ -201,7 +200,7 @@
 
                         writer.WriteEndObject();
                     }
-                    else if (!this.enumerator.StartEvent(infoMetadata.Name, info.UserData))
+                    else if (!this.enumerator.StartEvent(infoFormat.Name, info.UserData))
                     {
                         writer.WriteStartObject();
                         writer.WriteString("nEventHeaderBad", info.Name);
@@ -224,9 +223,9 @@
                         if (this.Meta.HasFlag(PerfDataMeta.N))
                         {
                             writer.WriteString("n", // Garbage
-                                infoMetadata.SystemName == "user_events"
+                                infoFormat.SystemName == "user_events"
                                 ? $"{new string(ei.ProviderName)}:{ei.NameAsString}"
-                                : $"{infoMetadata.SystemName}:{ei.ProviderName.ToString()}:{ei.NameAsString}");
+                                : $"{infoFormat.SystemName}:{ei.ProviderName.ToString()}:{ei.NameAsString}");
                         }
 
                         if (this.enumerator.MoveNext())

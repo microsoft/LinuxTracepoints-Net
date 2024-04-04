@@ -316,7 +316,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderExtensionKind.Metadata:
                             if (m_metaBegin != 0)
                             {
-                                // Multiple Metadata extensions.
+                                // Multiple Format extensions.
                                 return SetNoneState(EventHeaderEnumeratorError.InvalidData);
                             }
 

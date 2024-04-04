@@ -9,7 +9,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
-    /// The type of the Array property of PerfFieldMetadata.
+    /// The type of the Array property of PerfFieldFormat.
     /// Array-ness of a field.
     /// </summary>
     public enum PerfFieldArray : byte
@@ -55,16 +55,16 @@ namespace Microsoft.LinuxTracepoints.Decode
     };
 
     /// <summary>
-    /// Stores metadata about a field, parsed from a tracefs "format" file.
+    /// Stores decoding information about a field, parsed from a tracefs "format" file.
     /// </summary>
-    public class PerfFieldMetadata
+    public class PerfFieldFormat
     {
         /// <summary>
         /// Initializes Field, Offset, and Size properties exactly as specified.
         /// Parses and deduces the other properties. The signed parameter should be null
         /// if the "signed:" property is not present in the format line.
         /// </summary>
-        public PerfFieldMetadata(
+        internal PerfFieldFormat(
             bool longSize64, // true if sizeof(long) == 8, false if sizeof(long) == 4.
             string field,
             ushort offset,
@@ -716,10 +716,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///</para><para>
         /// If "field:" is non-empty, "offset:" is a valid unsigned integer, and
         /// "size:" is a valid unsigned integer, returns
-        /// PerfFieldMetadata(field, offset, size, signed). Otherwise,  returns null.
-        /// </para>
+        /// PerfFieldFormat(field, offset, size, signed). Otherwise,  returns null.
+        /// </para><para>
+        /// Note that You'll usually use PerfEventFormat.Parse to parse the entire format
+        /// file rather than calling this method directly.
+        ///</para>
         /// </summary>
-        public static PerfFieldMetadata? Parse(
+        public static PerfFieldFormat? Parse(
             bool longSize64, // true if sizeof(long) == 8, false if sizeof(long) == 4.
             ReadOnlySpan<char> formatLine)
         {
@@ -801,14 +804,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         Done:
 
-            PerfFieldMetadata? result;
+            PerfFieldFormat? result;
             if (field.Length == 0 || !foundOffset || !foundSize)
             {
                 result = null;
             }
             else
             {
-                result = new PerfFieldMetadata(longSize64, field.ToString(), offset, size, isSigned);
+                result = new PerfFieldFormat(longSize64, field.ToString(), offset, size, isSigned);
             }
 
             return result;

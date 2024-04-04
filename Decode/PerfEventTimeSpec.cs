@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#pragma warning disable CA1051 // Do not declare visible instance fields
-
 namespace Microsoft.LinuxTracepoints.Decode
 {
     /// <summary>
@@ -11,16 +9,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public readonly struct PerfEventTimeSpec
     {
-        /// <summary>
-        /// Seconds since 1970.
-        /// </summary>
-        public readonly long TvSec;
-
-        /// <summary>
-        /// Nanoseconds.
-        /// </summary>
-        public readonly uint TvNsec;
-
         /// <summary>
         /// Initializes a new instance of the PerfEventTimeSpec struct.
         /// </summary>
@@ -31,5 +19,15 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.TvSec = tvSec;
             this.TvNsec = tvNsec;
         }
+
+        /// <summary>
+        /// Seconds since 1970.
+        /// </summary>
+        public long TvSec { get; }
+
+        /// <summary>
+        /// Nanoseconds.
+        /// </summary>
+        public uint TvNsec { get; }
     }
 }

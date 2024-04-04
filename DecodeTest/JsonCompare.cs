@@ -22,13 +22,13 @@
 
         public static void AssertSame(
             TestContext testContext,
-            string inputFileName,
+            string baseFileName,
             ArrayBufferWriter<byte> actualBuffer)
         {
+            var jsonFileName = baseFileName + ".json";
             var actualDirectory = Path.Combine(testContext.DeploymentDirectory, "actual");
             Directory.CreateDirectory(actualDirectory);
 
-            var jsonFileName = inputFileName + ".json";
             var expectedFileName = Path.Combine(testContext.DeploymentDirectory, "expected", jsonFileName);
             var expectedText = File.ReadAllText(expectedFileName, Encoding.UTF8);
             var expectedLines = expectedText.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);

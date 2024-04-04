@@ -127,7 +127,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         private ReadOnlyMemory<byte> m_headerEvent; // Points into m_headers.
         private readonly List<ReadOnlyMemory<byte>> m_ftraces = new List<ReadOnlyMemory<byte>>(); // Points into m_headers.
         private readonly ReadOnlyCollection<ReadOnlyMemory<byte>> m_ftracesReadOnly;
-        private readonly Dictionary<UInt32, PerfEventMetadata> m_metadataById = new Dictionary<UInt32, PerfEventMetadata>();
+        private readonly Dictionary<UInt32, PerfEventFormat> m_formatById = new Dictionary<UInt32, PerfEventFormat>();
         private ReadOnlyMemory<byte> m_kallsyms; // Points into m_headers.
         private ReadOnlyMemory<byte> m_printk; // Points into m_headers.
         private ReadOnlyMemory<byte> m_cmdline; // Points into m_headers.
@@ -300,7 +300,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             m_headerPage = default;
             m_headerEvent = default;
             m_ftraces.Clear();
-            m_metadataById.Clear();
+            m_formatById.Clear();
             m_kallsyms = default;
             m_printk = default;
             m_cmdline = default;
@@ -311,10 +311,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// perf.data file (Mode = Open, Access = Read, Share = Read + Delete) and
         /// reads the file header.
         /// 
-        /// If not a pipe-mode file, loads metadata.
+        /// If not a pipe-mode file, loads headers/attributes.
         /// 
-        /// If a pipe-mode file, metadata will be loaded as the metadata events are
-        /// encountered by ReadEvent.
+        /// If a pipe-mode file, headers and attributes will be loaded as the header
+        /// events are encountered by ReadEvent.
         /// 
         /// On successful return, the file will be positioned before the first event.
         /// </summary>
@@ -331,10 +331,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// perf.data file (Mode = Open, Access = Read, Share = Read + Delete) and
         /// reads the file header.
         /// 
-        /// If not a pipe-mode file, loads metadata.
+        /// If not a pipe-mode file, loads headers/attributes.
         /// 
-        /// If a pipe-mode file, metadata will be loaded as the metadata events are
-        /// encountered by ReadEvent.
+        /// If a pipe-mode file, headers and attributes will be loaded as the header
+        /// events are encountered by ReadEvent.
         /// 
         /// On successful return, the file will be positioned before the first event.
         /// </summary>
@@ -350,10 +350,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Closes the current input file (if any), then opens the specified stream
         /// and reads the file header.
         /// 
-        /// If reading a pipe-mode file, metadata will be loaded as the metadata
+        /// If reading a pipe-mode file, headers will be loaded as the header
         /// events are encountered by ReadEvent. No seeking will occur.
         /// 
-        /// If not a pipe-mode file, loads metadata. The stream must be seekable.
+        /// If not a pipe-mode file, loads headers. The stream must be seekable.
         /// 
         /// On successful return, the file will be positioned before the first event.
         /// </summary>
@@ -416,7 +416,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (headerSize == perf_pipe_header.SizeOfStruct)
             {
-                // Pipe mode, no metadata section, no seeking allowed.
+                // Pipe mode, no attrs section, no seeking allowed.
                 Debug.Assert(m_filePos == perf_pipe_header.SizeOfStruct);
                 m_dataBeginFilePos = perf_pipe_header.SizeOfStruct;
                 m_dataEndFilePos = UInt64.MaxValue;
@@ -1535,14 +1535,14 @@ namespace Microsoft.LinuxTracepoints.Decode
                         var longSize64 = m_tracingDataLongSize == 0
                             ? IntPtr.Size == sizeof(UInt64)
                             : m_tracingDataLongSize == sizeof(UInt64);
-                        var eventMetadata = PerfEventMetadata.Parse(longSize64, systemName, formatFileContents);
-                        if (eventMetadata != null)
+                        var eventFormat = PerfEventFormat.Parse(longSize64, systemName, formatFileContents);
+                        if (eventFormat != null)
                         {
                             sbyte commonTypeOffset = OffsetUnset;
                             byte commonTypeSize = 0;
-                            for (ushort i = 0; i != eventMetadata.CommonFieldCount; i += 1)
+                            for (ushort i = 0; i != eventFormat.CommonFieldCount; i += 1)
                             {
-                                var field = eventMetadata.Fields[i];
+                                var field = eventFormat.Fields[i];
                                 if (field.Name == "common_type")
                                 {
                                     if (field.Offset <= sbyte.MaxValue &&
@@ -1575,20 +1575,20 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 continue;
                             }
 
-                            m_metadataById.TryAdd(eventMetadata.Id, eventMetadata);
+                            m_formatById.TryAdd(eventFormat.Id, eventFormat);
                         }
                     }
                 }
 
-                // Update EventDesc with the new metadata.
+                // Update EventDesc with the new formats.
                 for (var i = 0; i < m_eventDescList.Count; i += 1)
                 {
                     var desc = m_eventDescList[i];
-                    if (desc.Metadata == null &&
+                    if (desc.Format == null &&
                         desc.Attr.Type == PerfEventAttrType.Tracepoint &&
-                        m_metadataById.TryGetValue((uint)desc.Attr.Config, out var metadata))
+                        m_formatById.TryGetValue((uint)desc.Attr.Config, out var format))
                     {
-                        desc.SetMetadata(metadata);
+                        desc.SetFormat(format);
                     }
                 }
 
@@ -1801,16 +1801,16 @@ namespace Microsoft.LinuxTracepoints.Decode
                 ids[i] = m_byteReader.ReadU64(idsBytes.Slice(i * sizeof(UInt64)));
             }
 
-            PerfEventMetadata? metadata = null;
+            PerfEventFormat? format = null;
             if (attr.Type == PerfEventAttrType.Tracepoint)
             {
-                m_metadataById.TryGetValue((UInt32)attr.Config, out metadata);
+                m_formatById.TryGetValue((UInt32)attr.Config, out format);
             }
 
             var eventDesc = new PerfEventDesc(
                 attr,
                 PerfConvert.EncodingLatin1.GetString(name),
-                metadata,
+                format,
                 new ReadOnlyCollection<ulong>(ids));
             m_eventDescList.Add(eventDesc);
 
@@ -1913,7 +1913,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             return FileSeek(offset) && FileRead(buffer);
         }
 
-        private struct PosLength
+        private readonly struct PosLength
         {
             public readonly int StartPos;
             public readonly int Length;

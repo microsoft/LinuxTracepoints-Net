@@ -116,9 +116,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public readonly string Name => this.EventDesc.Name;
 
         /// <summary>
-        /// Returns the event's tracefs format metadata, or null if not available.
+        /// Returns the event's tracefs format (decoding information), or null if not available.
         /// </summary>
-        public readonly PerfEventMetadata? Metadata => this.EventDesc.Metadata;
+        public readonly PerfEventFormat? Format => this.EventDesc.Format;
 
         /// <summary>
         /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.

@@ -1,8 +1,6 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#pragma warning disable CA1051 // Do not declare visible instance fields
-
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
@@ -13,46 +11,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public readonly ref struct PerfEvent
     {
-        /// <summary>
-        /// <para>
-        /// The header of the event in host byte order.
-        /// </para><para>
-        /// This is a copy of the first 8 bytes of the event, byte-swapped if event byte
-        /// order is different from host byte order.
-        /// </para>
-        /// </summary>
-        public readonly PerfEventHeader Header;
-
-        /// <summary>
-        /// <para>
-        /// The bytes of the event, including header and data, in event byte order.
-        /// </para><para>
-        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
-        /// The format of the data depends on this.Header.Type.
-        /// </para><para>
-        /// This is the same as Bytes, i.e. this.BytesSpan == this.Bytes.Span. This field
-        /// is provided as an optimization to avoid the overhead of redundant calls to
-        /// Bytes.Span.
-        /// </para><para>
-        /// This field points into the PerfDataFileReader's data buffer. The referenced data
-        /// is only valid until the next call to ReadEvent.
-        /// </para>
-        /// </summary>
-        public readonly ReadOnlySpan<byte> BytesSpan;
-
-        /// <summary>
-        /// <para>
-        /// The bytes of the event, including header and data, in event byte order.
-        /// </para><para>
-        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
-        /// The format of the data depends on this.Header.Type.
-        /// </para><para>
-        /// This field points into the PerfDataFileReader's data buffer. The referenced data
-        /// is only valid until the next call to ReadEvent.
-        /// </para>
-        /// </summary>
-        public readonly ReadOnlyMemory<byte> Bytes;
-
         /// <summary>
         /// Initializes a new instance of the PerfEvent struct.
         /// </summary>
@@ -71,5 +29,45 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.BytesSpan = bytesSpan;
             this.Bytes = bytes;
         }
+
+        /// <summary>
+        /// <para>
+        /// The header of the event in host byte order.
+        /// </para><para>
+        /// This is a copy of the first 8 bytes of the event, byte-swapped if event byte
+        /// order is different from host byte order.
+        /// </para>
+        /// </summary>
+        public PerfEventHeader Header { get; }
+
+        /// <summary>
+        /// <para>
+        /// The bytes of the event, including header and data, in event byte order.
+        /// </para><para>
+        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
+        /// The format of the data depends on this.Header.Type.
+        /// </para><para>
+        /// This is the same as Bytes, i.e. this.BytesSpan == this.Bytes.Span. This field
+        /// is provided as an optimization to avoid the overhead of redundant calls to
+        /// Bytes.Span.
+        /// </para><para>
+        /// This field points into the PerfDataFileReader's data buffer. The referenced data
+        /// is only valid until the next call to ReadEvent.
+        /// </para>
+        /// </summary>
+        public ReadOnlySpan<byte> BytesSpan { get; }
+
+        /// <summary>
+        /// <para>
+        /// The bytes of the event, including header and data, in event byte order.
+        /// </para><para>
+        /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
+        /// The format of the data depends on this.Header.Type.
+        /// </para><para>
+        /// This field points into the PerfDataFileReader's data buffer. The referenced data
+        /// is only valid until the next call to ReadEvent.
+        /// </para>
+        /// </summary>
+        public ReadOnlyMemory<byte> Bytes { get; }
     }
 }

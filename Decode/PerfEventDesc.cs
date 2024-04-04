@@ -14,9 +14,6 @@ namespace Microsoft.LinuxTracepoints.Decode
         private static ReadOnlyCollection<ulong>? emptyIds;
 
         private readonly PerfEventAttr attr;
-        private readonly string name;
-        private PerfEventMetadata? metadata;
-        private readonly ReadOnlyCollection<ulong> ids;
 
         /// <summary>
         /// Initializes a new instance of the PerfEventDesc class with the
@@ -26,14 +23,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Event's perf_event_attr, or an attr with size = 0 if event's attr is not available.
         /// </param>
         /// <param name="name">Event's name, or "" if not available.</param>
-        /// <param name="metadata">Event's metadata, or null if not available.</param>
+        /// <param name="format">Event's format, or null if not available.</param>
         /// <param name="ids">The sample_ids that share this descriptor. May be null.</param>
-        public PerfEventDesc(in PerfEventAttr attr, string name, PerfEventMetadata? metadata, ReadOnlyCollection<ulong>? ids)
+        public PerfEventDesc(in PerfEventAttr attr, string name, PerfEventFormat? format, ReadOnlyCollection<ulong>? ids)
         {
             this.attr = attr;
-            this.name = name;
-            this.metadata = metadata;
-            this.ids = ids ?? EmptyIds;
+            this.Name = name;
+            this.Format = format;
+            this.Ids = ids ?? EmptyIds;
         }
 
         /// <summary>
@@ -44,21 +41,21 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Event's name, or "" if not available.
         /// </summary>
-        public string Name => this.name;
+        public string Name { get; }
 
         /// <summary>
-        /// Event's metadata, or null if not available.
+        /// Event's format, or null if not available.
         /// </summary>
-        public PerfEventMetadata? Metadata => this.metadata;
+        public PerfEventFormat? Format { get; private set; }
 
         /// <summary>
         /// The sample_ids that share this descriptor, or empty list if none.
         /// </summary>
-        public ReadOnlyCollection<ulong> Ids => this.ids;
+        public ReadOnlyCollection<ulong> Ids { get; }
 
-        internal void SetMetadata(PerfEventMetadata metadata)
+        internal void SetFormat(PerfEventFormat format)
         {
-            this.metadata = metadata;
+            this.Format = format;
         }
 
         private static ReadOnlyCollection<ulong> EmptyIds
