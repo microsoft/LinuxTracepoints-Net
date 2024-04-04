@@ -12,7 +12,7 @@ namespace DecodeTest
 
         private void Decode(string inputName)
         {
-            var buffer = new ArrayBufferWriter<byte>();
+            var buffer = JsonCompare.CreateBuffer();
             using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
             {
                 var decode = new DatDecode(writer);
@@ -21,7 +21,7 @@ namespace DecodeTest
                 writer.WriteEndArray();
             }
 
-            JsonCompare.AssertSame(TestContext, inputName, buffer.WrittenSpan);
+            JsonCompare.AssertSame(TestContext, inputName, buffer);
         }
 
         [TestMethod]

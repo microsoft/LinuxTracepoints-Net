@@ -1,7 +1,6 @@
 ﻿namespace DecodeTest
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System.Buffers;
     using System.IO;
     using System.Text.Json;
 
@@ -12,7 +11,7 @@
 
         private void Decode(string inputName)
         {
-            var buffer = new ArrayBufferWriter<byte>();
+            var buffer = JsonCompare.CreateBuffer();
             using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
             {
                 using (var decode = new DecodePerf.PerfDataDecode(writer))
@@ -23,7 +22,7 @@
                 }
             }
 
-            JsonCompare.AssertSame(TestContext, inputName, buffer.WrittenSpan);
+            JsonCompare.AssertSame(TestContext, inputName, buffer);
         }
 
         [TestMethod]
