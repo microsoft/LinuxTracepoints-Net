@@ -20,10 +20,14 @@ namespace Microsoft.LinuxTracepoints
     /// </summary>
     public enum EventFieldFormat : byte
     {
+        /// <summary>
+        /// Mask for the base format type (low 7 bits).
+        /// </summary>
         ValueMask = 0x7F,
 
         /// <summary>
-        /// A field tag (uint16) follows the Format byte.
+        /// If present in the field, this flag indicates that a uint16
+        /// field tag follows the EventFieldFormat byte.
         /// </summary>
         ChainFlag = 0x80,
 
@@ -138,5 +142,23 @@ namespace Microsoft.LinuxTracepoints
         /// IPv6 address, in6_addr layout. Use with Value128 encoding.
         /// </summary>
         IPv6,
+    }
+
+    /// <summary>
+    /// Extension methods for <see cref="EventFieldFormat"/>.
+    /// </summary>
+    public static class EventFieldFormatExtensions
+    {
+        /// <summary>
+        /// Returns the format without any flags (format &amp; ValueMask).
+        /// </summary>
+        public static EventFieldFormat BaseFormat(this EventFieldFormat format) =>
+            format & EventFieldFormat.ValueMask;
+
+        /// <summary>
+        /// Returns true if ChainFlag is present (tag present in event).
+        /// </summary>
+        public static bool HasChainFlag(this EventFieldFormat format) =>
+            0 != (format & EventFieldFormat.ChainFlag);
     }
 }

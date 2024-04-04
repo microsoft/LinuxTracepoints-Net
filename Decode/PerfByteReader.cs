@@ -116,59 +116,6 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Reads an unsigned integer from the specified byte array.
-        /// If bytes.Length is 1, 2, or 4, the value is read as a byte,
-        /// UInt16, or UInt32, respectively.
-        /// Otherwise, the value is set to 0 and the method returns false.
-        /// </summary>
-        public readonly bool TryReadDynU32(ReadOnlySpan<byte> bytes, out UInt32 value)
-        {
-            switch (bytes.Length)
-            {
-                case 1:
-                    value = bytes[0];
-                    return true;
-                case 2:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt16BigEndian(bytes) : BinaryPrimitives.ReadUInt16LittleEndian(bytes);
-                    return true;
-                case 4:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt32BigEndian(bytes) : BinaryPrimitives.ReadUInt32LittleEndian(bytes);
-                    return true;
-                default:
-                    value = 0;
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Reads an unsigned integer from the specified byte array.
-        /// If bytes.Length is 1, 2, 4, or 8, the value is read as a byte,
-        /// UInt16, UInt32, or UInt64, respectively.
-        /// Otherwise, the value is set to 0 and the method returns false.
-        /// </summary>
-        public readonly bool TryReadDynU64(ReadOnlySpan<byte> bytes, out UInt64 value)
-        {
-            switch (bytes.Length)
-            {
-                case 1:
-                    value = bytes[0];
-                    return true;
-                case 2:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt16BigEndian(bytes) : BinaryPrimitives.ReadUInt16LittleEndian(bytes);
-                    return true;
-                case 4:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt32BigEndian(bytes) : BinaryPrimitives.ReadUInt32LittleEndian(bytes);
-                    return true;
-                case 8:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt64BigEndian(bytes) : BinaryPrimitives.ReadUInt64LittleEndian(bytes);
-                    return true;
-                default:
-                    value = 0;
-                    return false;
-            }
-        }
-
-        /// <summary>
         /// If ByteSwapNeeded, returns ReverseEndianness(value). Otherwise, returns value.
         /// </summary>
         public readonly UInt16 FixU16(UInt16 value)

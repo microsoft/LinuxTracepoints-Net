@@ -30,7 +30,14 @@ namespace Microsoft.LinuxTracepoints
     /// </summary>
     public enum EventFieldEncoding : byte
     {
+        /// <summary>
+        /// Mask for the base encoding type (low 5 bits).
+        /// </summary>
         ValueMask = 0x1F,
+
+        /// <summary>
+        /// Mask for the encoding flags: CArrayFlag, VArrayFlag, ChainFlag.
+        /// </summary>
         FlagMask = 0xE0,
 
         /// <summary>
@@ -44,7 +51,8 @@ namespace Microsoft.LinuxTracepoints
         VArrayFlag = 0x40,
 
         /// <summary>
-        /// An EventHeaderFieldFormat byte follows the EventHeaderFieldEncoding byte.
+        /// If present in the field, this flag indicates that an EventFieldFormat
+        /// byte follows the EventFieldEncoding byte.
         /// </summary>
         ChainFlag = 0x80,
 
@@ -79,7 +87,7 @@ namespace Microsoft.LinuxTracepoints
         Value64,
 
         /// <summary>
-        /// 16-byte value, default format HexBinary.
+        /// 16-byte value, default format HexBytes.
         /// </summary>
         Value128,
 
@@ -100,7 +108,7 @@ namespace Microsoft.LinuxTracepoints
 
         /// <summary>
         /// uint16 Length followed by uint8 Data[Length], default format StringUtf.
-        /// Also used for binary data (format HexBinary).
+        /// Also used for binary data (format HexBytes).
         /// </summary>
         StringLength16Char8,
 
@@ -118,5 +126,82 @@ namespace Microsoft.LinuxTracepoints
         /// Invalid encoding value. Value will change in future versions of this header.
         /// </summary>
         Max,
+    }
+
+    /// <summary>
+    /// Extension methods for <see cref="EventFieldEncoding"/>.
+    /// </summary>
+    public static class EventFieldEncodingExtensions
+    {
+        /// <summary>
+        /// Returns the encoding without any flags (encoding &amp; ValueMask).
+        /// </summary>
+        public static EventFieldEncoding BaseEncoding(this EventFieldEncoding encoding) =>
+            encoding & EventFieldEncoding.ValueMask;
+
+        /// <summary>
+        /// Returns the array flags of the encoding (VArrayFlag or CArrayFlag, if set).
+        /// </summary>
+        public static EventFieldEncoding ArrayFlags(this EventFieldEncoding encoding) =>
+            encoding & (EventFieldEncoding.VArrayFlag | EventFieldEncoding.CArrayFlag);
+
+        /// <summary>
+        /// Returns true if any ArrayFlag is present (constant-length or variable-length array).
+        /// </summary>
+        public static bool IsArray(this EventFieldEncoding encoding) =>
+            0 != (encoding & (EventFieldEncoding.VArrayFlag | EventFieldEncoding.CArrayFlag));
+
+        /// <summary>
+        /// Returns true if CArrayFlag is present (constant-length array).
+        /// </summary>
+        public static bool IsCArray(this EventFieldEncoding encoding) =>
+            0 != (encoding & EventFieldEncoding.CArrayFlag);
+
+        /// <summary>
+        /// Returns true if VArrayFlag is present (variable-length array).
+        /// </summary>
+        public static bool IsVArray(this EventFieldEncoding encoding) =>
+            0 != (encoding & EventFieldEncoding.VArrayFlag);
+
+        /// <summary>
+        /// Returns true if ChainFlag is present (format byte is present in event).
+        /// </summary>
+        public static bool HasChainFlag(this EventFieldEncoding encoding) =>
+            0 != (encoding & EventFieldEncoding.ChainFlag);
+
+        /// <summary>
+        /// Gets the default format for the encoding, or EventFieldFormat.Default if the encoding is invalid.
+        /// <list type="bullet"><item>
+        /// Value8, Value16, Value32, Value64: UnsignedInt.
+        /// </item><item>
+        /// Value128: HexBytes.
+        /// </item><item>
+        /// String: StringUtf.
+        /// </item><item>
+        /// Other: Default.
+        /// </item></list>
+        /// </summary>
+        public static EventFieldFormat DefaultFormat(this EventFieldEncoding encoding)
+        {
+            switch (encoding & EventFieldEncoding.ValueMask)
+            {
+                case EventFieldEncoding.Value8:
+                case EventFieldEncoding.Value16:
+                case EventFieldEncoding.Value32:
+                case EventFieldEncoding.Value64:
+                    return EventFieldFormat.UnsignedInt;
+                case EventFieldEncoding.Value128:
+                    return EventFieldFormat.HexBytes;
+                case EventFieldEncoding.ZStringChar8:
+                case EventFieldEncoding.ZStringChar16:
+                case EventFieldEncoding.ZStringChar32:
+                case EventFieldEncoding.StringLength16Char8:
+                case EventFieldEncoding.StringLength16Char16:
+                case EventFieldEncoding.StringLength16Char32:
+                    return EventFieldFormat.StringUtf;
+                default:
+                    return EventFieldFormat.Default;
+            }
+        }
     }
 }

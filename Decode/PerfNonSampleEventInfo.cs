@@ -93,12 +93,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         public UInt32 Tid;
 
         /// <summary>
-        /// Returns true if the event data is in big-endian byte order.
+        /// Returns true if the the session's event data is formatted in big-endian
+        /// byte order. (Use ByteReader to do byte-swapping as appropriate.)
         /// </summary>
-        public readonly bool IsBigEndian => this.SessionInfo.IsBigEndian;
+        public readonly bool FromBigEndian => this.SessionInfo.FromBigEndian;
 
         /// <summary>
-        /// Returns ByteReader(IsBigEndian).
+        /// Returns a PerfByteReader configured for the byte order of the events
+        /// in this session, i.e. PerfByteReader(FromBigEndian).
         /// </summary>
         public readonly PerfByteReader ByteReader => this.SessionInfo.ByteReader;
 

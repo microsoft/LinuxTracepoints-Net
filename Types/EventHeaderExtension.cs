@@ -22,9 +22,21 @@ namespace Microsoft.LinuxTracepoints
     [StructLayout(LayoutKind.Sequential)]
     public struct EventHeaderExtension
     {
+        /// <summary>
+        /// The size of this structure in bytes (4).
+        /// </summary>
         public const int SizeOfStruct = 4;
 
+        /// <summary>
+        /// The size of the extension data in bytes.
+        /// The data immediately follows this structure with no padding/alignment.
+        /// </summary>
         public ushort Size;
+
+        /// <summary>
+        /// The kind of extension. This determines the format of the extension data.
+        /// In addition, the Chain flag indicates whether another extension follows.
+        /// </summary>
         public EventHeaderExtensionKind Kind;
 
         // Followed by Size bytes of data. No padding/alignment.

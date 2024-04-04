@@ -6,7 +6,6 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
-    using System.Text;
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
@@ -44,13 +43,13 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// e.g. "__rel_loc char val[]; size:4;".
-        /// Value is (dataLen << 16) | relativeOffset.
+        /// Value is (dataLen LSH 16) | relativeOffset.
         /// </summary>
         RelLoc4,
 
         /// <summary>
         /// e.g. "__data_loc char val[]; size:4;".
-        /// Value is (dataLen << 16) | offset.
+        /// Value is (dataLen LSH 16) | offset.
         /// </summary>
         DataLoc4,
     };
@@ -530,7 +529,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             Debug.Assert(this.Name.Length > 0);
             Debug.Assert(this.Field.Length > 0);
 
-            var encodingValue = this.DeducedEncoding & EventFieldEncoding.ValueMask;
+            var encodingValue = this.DeducedEncoding.BaseEncoding();
             switch (encodingValue)
             {
                 case EventFieldEncoding.Value8:
@@ -820,13 +819,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Given the event's raw data (e.g. PerfSampleEventInfo::RawData), return
         /// this field's raw data. Returns null for out of bounds.
         ///</para><para>
-        /// Does not do any byte-swapping. This method uses fileBigEndian to resolve
+        /// Does not do any byte-swapping. This method uses byteReader to resolve
         /// data_loc and rel_loc references, not to fix up the field data.
         ///</para><para>
         /// Note that in some cases, the size returned by GetFieldBytes may be
         /// different from the value returned by Size():
         /// <list type="bullet"><item>
-        /// If eventRawDataSize < Offset() + Size(), returns {}.
+        /// If eventRawDataSize &lt; Offset() + Size(), returns {}.
         /// </item><item>
         /// If Size() == 0, returns all data from offset to the end of the event,
         /// i.e. it returns eventRawDataSize - Offset() bytes.
@@ -838,11 +837,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public ReadOnlySpan<byte> GetFieldBytes(
             ReadOnlySpan<byte> eventRawData,
-            bool fileBigEndian)
+            PerfByteReader byteReader)
         {
             if (this.Offset + this.Size <= eventRawData.Length)
             {
-                var byteReader = new PerfByteReader(fileBigEndian);
                 int dynOffset, dynSize;
                 switch (this.Array)
                 {
@@ -902,11 +900,16 @@ namespace Microsoft.LinuxTracepoints.Decode
             return default;
         }
 
+        /// <summary>
+        /// Gets the value of this field from the event's raw data.
+        /// </summary>
+        /// <param name="eventRawData"></param>
+        /// <param name="byteReader"></param>
+        /// <returns></returns>
         public PerfValue GetFieldValue(
             ReadOnlySpan<byte> eventRawData,
-            bool fileBigEndian)
+            PerfByteReader byteReader)
         {
-            var byteReader = new PerfByteReader(fileBigEndian);
             bool checkStrLen = this.DeducedEncoding == EventFieldEncoding.ZStringChar8;
             ReadOnlySpan<byte> bytes;
             ushort arrayCount;

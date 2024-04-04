@@ -1,9 +1,7 @@
 ﻿namespace DecodePerf
 {
     using System;
-    using System.Buffers;
     using System.Text.Json;
-    using Microsoft.LinuxTracepoints.Decode;
 
     internal class Program
     {

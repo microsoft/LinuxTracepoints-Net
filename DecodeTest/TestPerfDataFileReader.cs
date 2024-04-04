@@ -31,11 +31,13 @@
             var buffer = new ArrayBufferWriter<byte>();
             using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true, SkipValidation = true }))
             {
-                var decode = new DecodePerf.PerfDataDecode(writer);
-                writer.WriteStartArray();
-                decode.DecodeFile(baseName);
-                writer.WriteEndArray();
-                writer.Flush();
+                using (var decode = new DecodePerf.PerfDataDecode(writer))
+                {
+                    writer.WriteStartArray();
+                    decode.DecodeFile(baseName);
+                    writer.WriteEndArray();
+                    writer.Flush();
+                }
 
                 var writtenBytes = buffer.WrittenSpan;
                 string actual = Encoding.UTF8.GetString(writtenBytes);

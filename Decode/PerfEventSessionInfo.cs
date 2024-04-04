@@ -25,6 +25,10 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.readOnly = true;
         }
 
+        /// <summary>
+        /// Constructs a new PerfEventSessionInfo instance.
+        /// Instances of this class are normally created by the PerfEventReader class.
+        /// </summary>
         public PerfEventSessionInfo(PerfByteReader byteReader)
         {
             this.byteReader = byteReader;
@@ -48,12 +52,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns true if the session data is in big-endian byte order.
+        /// Returns true if the the session's event data is formatted in big-endian
+        /// byte order. (Use ByteReader to do byte-swapping as appropriate.)
         /// </summary>
-        public bool IsBigEndian => this.byteReader.FromBigEndian;
+        public bool FromBigEndian => this.byteReader.FromBigEndian;
 
         /// <summary>
-        /// Returns ByteReader(IsBigEndian).
+        /// Returns a PerfByteReader configured for the byte order of the events
+        /// in this session, i.e. PerfByteReader(FromBigEndian).
         /// </summary>
         public PerfByteReader ByteReader => this.byteReader;
 

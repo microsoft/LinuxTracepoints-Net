@@ -4,17 +4,14 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
-    using Debug = System.Diagnostics.Debug;
     using System.Runtime.InteropServices;
+    using Debug = System.Diagnostics.Debug;
 
     /// <summary>
     /// Helper for decoding EventHeader-encoded tracepoint data.
     /// </summary>
     public class EventHeaderEnumerator
     {
-        private const EventFieldEncoding EncodingCountMask =
-            EventFieldEncoding.VArrayFlag | EventFieldEncoding.CArrayFlag;
-
         private const EventFieldEncoding ReadFieldError = EventFieldEncoding.Invalid;
 
         /// <summary>
@@ -503,8 +500,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.Value_Scalar:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.Value);
-                    Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct);
-                    Debug.Assert((m_fieldType.Encoding & EncodingCountMask) == 0);
+                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct);
+                    Debug.Assert(!m_fieldType.Encoding.IsArray());
                     Debug.Assert(eventDataSpan.Length - m_dataPosRaw >= m_itemSizeRaw);
 
                     m_dataPosRaw += m_itemSizeRaw;
@@ -514,8 +511,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.Value_SimpleArrayElement:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.Value);
-                    Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct);
-                    Debug.Assert((m_fieldType.Encoding & EncodingCountMask) != 0);
+                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.IsArray());
                     Debug.Assert(m_stackTop.ArrayIndex < m_stackTop.ArrayCount);
                     Debug.Assert(m_elementSize != 0); // Eligible for fast path.
                     Debug.Assert(eventDataSpan.Length - m_dataPosRaw >= m_itemSizeRaw);
@@ -540,8 +537,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.Value_ComplexArrayElement:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.Value);
-                    Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct);
-                    Debug.Assert((m_fieldType.Encoding & EncodingCountMask) != 0);
+                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.IsArray());
                     Debug.Assert(m_stackTop.ArrayIndex < m_stackTop.ArrayCount);
                     Debug.Assert(m_elementSize == 0); // Not eligible for fast path.
                     Debug.Assert(eventDataSpan.Length - m_dataPosRaw >= m_itemSizeRaw);
@@ -566,7 +563,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.ArrayBegin:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.ArrayBegin);
-                    Debug.Assert((m_fieldType.Encoding & EncodingCountMask) != 0);
+                    Debug.Assert(m_fieldType.Encoding.IsArray());
                     Debug.Assert(m_stackTop.ArrayIndex == 0);
 
                     if (m_stackTop.ArrayCount == 0)
@@ -578,14 +575,14 @@ namespace Microsoft.LinuxTracepoints.Decode
                     else if (m_elementSize != 0)
                     {
                         // First element of simple array.
-                        Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct);
+                        Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct);
                         m_itemSizeCooked = m_elementSize;
                         m_itemSizeRaw = m_elementSize;
                         SetState(EventHeaderEnumeratorState.Value, SubState.Value_SimpleArrayElement);
                         StartValueSimple();
                         movedToItem = true;
                     }
-                    else if ((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct)
+                    else if (m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct)
                     {
                         // First element of complex array.
                         SetState(EventHeaderEnumeratorState.Value, SubState.Value_ComplexArrayElement);
@@ -603,13 +600,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.ArrayEnd:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.ArrayEnd);
-                    Debug.Assert((m_fieldType.Encoding & EncodingCountMask) != 0);
+                    Debug.Assert(m_fieldType.Encoding.IsArray());
                     Debug.Assert(m_stackTop.ArrayCount == m_stackTop.ArrayIndex);
 
                     // 0-length array of struct means we won't naturally traverse
                     // the child struct's metadata. Since m_stackTop.NextOffset
                     // won't get updated naturally, we need to update it manually.
-                    if ((m_fieldType.Encoding & EventFieldEncoding.ValueMask) == EventFieldEncoding.Struct &&
+                    if (m_fieldType.Encoding.BaseEncoding() == EventFieldEncoding.Struct &&
                         m_stackTop.ArrayCount == 0 &&
                         !SkipStructMetadata(eventDataSpan))
                     {
@@ -645,21 +642,21 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.StructEnd:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.StructEnd);
-                    Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) == EventFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() == EventFieldEncoding.Struct);
                     Debug.Assert(m_itemSizeRaw == 0);
 
                     m_stackTop.ArrayIndex += 1;
 
                     if (m_stackTop.ArrayCount != m_stackTop.ArrayIndex)
                     {
-                        Debug.Assert((m_fieldType.Encoding & EncodingCountMask) != 0);
+                        Debug.Assert(m_fieldType.Encoding.IsArray());
                         Debug.Assert(m_stackTop.ArrayIndex < m_stackTop.ArrayCount);
 
                         // Middle of array - get next element.
                         StartStruct();
                         movedToItem = true;
                     }
-                    else if ((m_fieldType.Encoding & EncodingCountMask) != 0)
+                    else if (m_fieldType.Encoding.IsArray())
                     {
                         // End of array.
                         SetEndState(EventHeaderEnumeratorState.ArrayEnd, SubState.ArrayEnd);
@@ -809,8 +806,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                         {
                             // Array of simple elements - jump directly to next sibling.
                             Debug.Assert(m_subState == SubState.ArrayBegin);
-                            Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct);
-                            Debug.Assert((m_fieldType.Encoding & EncodingCountMask) != 0);
+                            Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct);
+                            Debug.Assert(m_fieldType.Encoding.IsArray());
                             Debug.Assert(m_stackTop.ArrayIndex == 0);
                             m_dataPosRaw += m_stackTop.ArrayCount * m_elementSize;
                             m_moveNextRemaining -= 1;
@@ -919,27 +916,27 @@ namespace Microsoft.LinuxTracepoints.Decode
                     movedToItem = SetErrorState(EventHeaderEnumeratorError.InvalidData);
                 }
                 else if (
-                    EventFieldEncoding.Struct == (m_fieldType.Encoding & EventFieldEncoding.ValueMask) &&
+                    EventFieldEncoding.Struct == m_fieldType.Encoding.BaseEncoding() &&
                     m_fieldType.Format == 0)
                 {
                     // Struct must have at least 1 field (potential for DoS).
                     movedToItem = SetErrorState(EventHeaderEnumeratorError.InvalidData);
                 }
-                else if (0 == (m_fieldType.Encoding & EncodingCountMask))
+                else if (!m_fieldType.Encoding.IsArray())
                 {
                     // Non-array.
 
                     m_stackTop.ArrayCount = 1;
                     movedToItem = true;
                 }
-                else if (EventFieldEncoding.VArrayFlag == (m_fieldType.Encoding & EncodingCountMask))
+                else if (m_fieldType.Encoding.IsVArray())
                 {
                     // Runtime-variable array length.
 
                     m_stackTop.ArrayCount = 0;
                     movedToItem = true;
                 }
-                else if (EventFieldEncoding.CArrayFlag == (m_fieldType.Encoding & EncodingCountMask))
+                else if (m_fieldType.Encoding.IsCArray())
                 {
                     // Compile-time-constant array length.
 
@@ -1126,7 +1123,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private bool SkipStructMetadata(ReadOnlySpan<byte> eventDataSpan)
         {
-            Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) == EventFieldEncoding.Struct);
+            Debug.Assert(m_fieldType.Encoding.BaseEncoding() == EventFieldEncoding.Struct);
 
             bool ok;
             for (uint remainingFieldCount = (byte)m_fieldType.Format; ;
@@ -1151,16 +1148,16 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 }
 
-                if (EventFieldEncoding.Struct == (type.Encoding & EventFieldEncoding.ValueMask))
+                if (EventFieldEncoding.Struct == type.Encoding.BaseEncoding())
                 {
                     remainingFieldCount += (byte)type.Format;
                 }
 
-                if (0 == (type.Encoding & EventFieldEncoding.CArrayFlag))
+                if (!type.Encoding.IsCArray())
                 {
                     // Scalar or runtime length. We're done with the field.
                 }
-                else if (0 == (type.Encoding & EventFieldEncoding.VArrayFlag))
+                else if (!type.Encoding.IsVArray())
                 {
                     // CArrayFlag is set, VArrayFlag is unset.
                     // Compile-time-constant array length.
@@ -1202,7 +1199,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 {
                     movedToItem = SetErrorState(EventHeaderEnumeratorError.InvalidData);
                 }
-                else if (0 == (m_fieldType.Encoding & EncodingCountMask))
+                else if (!m_fieldType.Encoding.IsArray())
                 {
                     // Non-array.
 
@@ -1223,7 +1220,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         movedToItem = true;
                     }
                 }
-                else if (EventFieldEncoding.VArrayFlag == (m_fieldType.Encoding & EncodingCountMask))
+                else if (m_fieldType.Encoding.IsVArray())
                 {
                     // Runtime-variable array length.
 
@@ -1239,7 +1236,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         movedToItem = StartArray(); // StartArray will set Flags.
                     }
                 }
-                else if (EventFieldEncoding.CArrayFlag == (m_fieldType.Encoding & EncodingCountMask))
+                else if (m_fieldType.Encoding.IsCArray())
                 {
                     // Compile-time-constant array length.
 
@@ -1281,7 +1278,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 m_stackTop = stack[m_stackIndex];
 
                 m_fieldType = ReadFieldType(eventDataSpan, m_stackTop.NameOffset + m_stackTop.NameSize + 1);
-                Debug.Assert(EventFieldEncoding.Struct == (m_fieldType.Encoding & EventFieldEncoding.ValueMask));
+                Debug.Assert(EventFieldEncoding.Struct == m_fieldType.Encoding.BaseEncoding());
                 m_elementSize = 0;
 
                 // Unless parent is in the middle of an array, we need to set the
@@ -1355,7 +1352,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             var format = LinuxTracepoints.EventFieldFormat.Default;
             ushort tag = 0;
-            if (0 != (encoding & EventFieldEncoding.ChainFlag))
+            if (encoding.HasChainFlag())
             {
                 if (m_metaEnd == pos)
                 {
@@ -1401,7 +1398,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             // Determine the m_elementSize value.
             bool movedToItem;
-            switch (m_fieldType.Encoding & EventFieldEncoding.ValueMask)
+            switch (m_fieldType.Encoding.BaseEncoding())
             {
                 case EventFieldEncoding.Struct:
                     movedToItem = true;
@@ -1467,7 +1464,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void StartStruct()
         {
-            Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) == EventFieldEncoding.Struct);
+            Debug.Assert(m_fieldType.Encoding.BaseEncoding() == EventFieldEncoding.Struct);
             m_elementSize = 0;
             m_itemSizeRaw = 0;
             m_dataPosCooked = m_dataPosRaw;
@@ -1486,7 +1483,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             m_elementSize = 0;
 
             bool movedToItem;
-            switch (m_fieldType.Encoding & EventFieldEncoding.ValueMask)
+            switch (m_fieldType.Encoding.BaseEncoding())
             {
                 case EventFieldEncoding.Value8:
                     m_itemSizeRaw = m_itemSizeCooked = m_elementSize = 1;
@@ -1560,7 +1557,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventFieldEncoding.Invalid:
                 case EventFieldEncoding.Struct: // Should never happen.
                 default:
-                    Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct);
                     m_itemSizeRaw = m_itemSizeCooked = 0;
                     movedToItem = SetErrorState(EventHeaderEnumeratorError.InvalidData);
                     goto Done;
@@ -1584,8 +1581,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         private void StartValueSimple()
         {
             Debug.Assert(m_stackTop.ArrayIndex < m_stackTop.ArrayCount);
-            Debug.Assert((m_fieldType.Encoding & EncodingCountMask) != 0);
-            Debug.Assert((m_fieldType.Encoding & EventFieldEncoding.ValueMask) != EventFieldEncoding.Struct);
+            Debug.Assert(m_fieldType.Encoding.IsArray());
+            Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventFieldEncoding.Struct);
             Debug.Assert(m_elementSize != 0);
             Debug.Assert(m_itemSizeCooked == m_elementSize);
             Debug.Assert(m_itemSizeRaw == m_elementSize);

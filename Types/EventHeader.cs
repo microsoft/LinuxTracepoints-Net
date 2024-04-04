@@ -194,6 +194,9 @@ namespace Microsoft.LinuxTracepoints
     [StructLayout(LayoutKind.Sequential)]
     public struct EventHeader
     {
+        /// <summary>
+        /// The size of this structure in bytes (8).
+        /// </summary>
         public const int SizeOfStruct = 8;
 
         /// <summary>

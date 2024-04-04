@@ -4,7 +4,6 @@
     using Microsoft.LinuxTracepoints.Decode;
     using System;
     using System.Buffers.Binary;
-    using System.Diagnostics;
     using System.IO;
     using System.Text.Json;
     using CultureInfo = System.Globalization.CultureInfo;

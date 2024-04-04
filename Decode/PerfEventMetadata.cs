@@ -65,7 +65,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public string SystemName => this.systemName;
 
         /// <summary>
-        // Returns the value of the "name:" property, e.g. "my_event".
+        /// Returns the value of the "name:" property, e.g. "my_event".
         /// </summary>
         public string Name => this.name;
 
@@ -75,7 +75,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public string PrintFmt => this.printFmt;
 
         /// <summary>
-        // Returns the fields from the "format:" property.
+        /// Returns the fields from the "format:" property.
         /// </summary>
         public PerfFieldMetadata[] Fields => this.fields;
 
@@ -257,7 +257,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             }
                         }
 
-                        var field = PerfFieldMetadata.Parse(longSize64, str.Slice(iLine, i - iLine));                        
+                        var field = PerfFieldMetadata.Parse(longSize64, str.Slice(iLine, i - iLine));
                         if (field == null)
                         {
                             Debug.WriteLine("Field parse failure");

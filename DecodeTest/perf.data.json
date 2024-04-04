@@ -1821,11 +1821,11 @@
     "Time": "2024-03-28T00:45:12.6409131Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/0",
     "next_pid": "0x11",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1833,11 +1833,11 @@
     "Time": "2024-03-28T00:45:12.6409385Z",
     "prev_comm": "migration/0",
     "prev_pid": "0x11",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/0",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1845,11 +1845,11 @@
     "Time": "2024-03-28T00:45:12.6409824Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/1",
     "next_pid": "0x14",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1857,11 +1857,11 @@
     "Time": "2024-03-28T00:45:12.6409998Z",
     "prev_comm": "migration/1",
     "prev_pid": "0x14",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/1",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1869,11 +1869,11 @@
     "Time": "2024-03-28T00:45:12.6410359Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/2",
     "next_pid": "0x19",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1881,11 +1881,11 @@
     "Time": "2024-03-28T00:45:12.6410513Z",
     "prev_comm": "migration/2",
     "prev_pid": "0x19",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/2",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1893,11 +1893,11 @@
     "Time": "2024-03-28T00:45:12.6410863Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/3",
     "next_pid": "0x1E",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1905,11 +1905,11 @@
     "Time": "2024-03-28T00:45:12.641101Z",
     "prev_comm": "migration/3",
     "prev_pid": "0x1E",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/3",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1917,11 +1917,11 @@
     "Time": "2024-03-28T00:45:12.6411341Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/4",
     "next_pid": "0x23",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1929,11 +1929,11 @@
     "Time": "2024-03-28T00:45:12.6411485Z",
     "prev_comm": "migration/4",
     "prev_pid": "0x23",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1941,11 +1941,11 @@
     "Time": "2024-03-28T00:45:12.6411829Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/5",
     "next_pid": "0x28",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1953,11 +1953,11 @@
     "Time": "2024-03-28T00:45:12.6411975Z",
     "prev_comm": "migration/5",
     "prev_pid": "0x28",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1965,11 +1965,11 @@
     "Time": "2024-03-28T00:45:12.6412307Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/6",
     "next_pid": "0x2D",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1977,11 +1977,11 @@
     "Time": "2024-03-28T00:45:12.6412447Z",
     "prev_comm": "migration/6",
     "prev_pid": "0x2D",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/6",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -1989,11 +1989,11 @@
     "Time": "2024-03-28T00:45:12.6412798Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/7",
     "next_pid": "0x32",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2001,11 +2001,11 @@
     "Time": "2024-03-28T00:45:12.6412939Z",
     "prev_comm": "migration/7",
     "prev_pid": "0x32",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/7",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2013,11 +2013,11 @@
     "Time": "2024-03-28T00:45:12.6413268Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/8",
     "next_pid": "0x37",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2025,11 +2025,11 @@
     "Time": "2024-03-28T00:45:12.6413384Z",
     "prev_comm": "migration/8",
     "prev_pid": "0x37",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/8",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2037,11 +2037,11 @@
     "Time": "2024-03-28T00:45:12.6413702Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/9",
     "next_pid": "0x3C",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2049,11 +2049,11 @@
     "Time": "2024-03-28T00:45:12.6413843Z",
     "prev_comm": "migration/9",
     "prev_pid": "0x3C",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2061,11 +2061,11 @@
     "Time": "2024-03-28T00:45:12.6414175Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/10",
     "next_pid": "0x41",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2073,11 +2073,11 @@
     "Time": "2024-03-28T00:45:12.6414316Z",
     "prev_comm": "migration/10",
     "prev_pid": "0x41",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/10",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2085,11 +2085,11 @@
     "Time": "2024-03-28T00:45:12.6414639Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/11",
     "next_pid": "0x46",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2097,11 +2097,11 @@
     "Time": "2024-03-28T00:45:12.6414778Z",
     "prev_comm": "migration/11",
     "prev_pid": "0x46",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/11",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2109,11 +2109,11 @@
     "Time": "2024-03-28T00:45:12.6415112Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/12",
     "next_pid": "0x4B",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2121,11 +2121,11 @@
     "Time": "2024-03-28T00:45:12.6415254Z",
     "prev_comm": "migration/12",
     "prev_pid": "0x4B",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/12",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2133,11 +2133,11 @@
     "Time": "2024-03-28T00:45:12.6415584Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/13",
     "next_pid": "0x50",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2145,11 +2145,11 @@
     "Time": "2024-03-28T00:45:12.6415725Z",
     "prev_comm": "migration/13",
     "prev_pid": "0x50",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/13",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2157,11 +2157,11 @@
     "Time": "2024-03-28T00:45:12.6416056Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/14",
     "next_pid": "0x55",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2169,11 +2169,11 @@
     "Time": "2024-03-28T00:45:12.6416196Z",
     "prev_comm": "migration/14",
     "prev_pid": "0x55",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2181,11 +2181,11 @@
     "Time": "2024-03-28T00:45:12.6416526Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/15",
     "next_pid": "0x5A",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2193,11 +2193,11 @@
     "Time": "2024-03-28T00:45:12.6416648Z",
     "prev_comm": "migration/15",
     "prev_pid": "0x5A",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/15",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "NonSample": "Fork/dummy:HG",
@@ -2210,11 +2210,11 @@
     "Time": "2024-03-28T00:45:12.6416951Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/16",
     "next_pid": "0x5F",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2222,11 +2222,11 @@
     "Time": "2024-03-28T00:45:12.6417092Z",
     "prev_comm": "migration/16",
     "prev_pid": "0x5F",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2234,11 +2234,11 @@
     "Time": "2024-03-28T00:45:12.6417428Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/17",
     "next_pid": "0x64",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2246,11 +2246,11 @@
     "Time": "2024-03-28T00:45:12.6417565Z",
     "prev_comm": "migration/17",
     "prev_pid": "0x64",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/17",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2258,11 +2258,11 @@
     "Time": "2024-03-28T00:45:12.6417896Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/18",
     "next_pid": "0x69",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2270,11 +2270,11 @@
     "Time": "2024-03-28T00:45:12.6418039Z",
     "prev_comm": "migration/18",
     "prev_pid": "0x69",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/18",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2282,11 +2282,11 @@
     "Time": "2024-03-28T00:45:12.6418369Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/19",
     "next_pid": "0x6E",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2294,11 +2294,11 @@
     "Time": "2024-03-28T00:45:12.6418511Z",
     "prev_comm": "migration/19",
     "prev_pid": "0x6E",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2306,11 +2306,11 @@
     "Time": "2024-03-28T00:45:12.6418838Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/20",
     "next_pid": "0x73",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2318,11 +2318,11 @@
     "Time": "2024-03-28T00:45:12.6418976Z",
     "prev_comm": "migration/20",
     "prev_pid": "0x73",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2330,11 +2330,11 @@
     "Time": "2024-03-28T00:45:12.641931Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/21",
     "next_pid": "0x78",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2342,11 +2342,11 @@
     "Time": "2024-03-28T00:45:12.6419451Z",
     "prev_comm": "migration/21",
     "prev_pid": "0x78",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/21",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2354,11 +2354,11 @@
     "Time": "2024-03-28T00:45:12.6419777Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/22",
     "next_pid": "0x7D",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2366,11 +2366,11 @@
     "Time": "2024-03-28T00:45:12.6419919Z",
     "prev_comm": "migration/22",
     "prev_pid": "0x7D",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/22",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "NonSampleSpecial": "FinishedRound",
@@ -2382,11 +2382,11 @@
     "Time": "2024-03-28T00:45:13.3259311Z",
     "prev_comm": "swapper/0",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/0:2",
     "next_pid": "0xA0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2394,11 +2394,11 @@
     "Time": "2024-03-28T00:45:13.3260884Z",
     "prev_comm": "kworker/0:2",
     "prev_pid": "0xA0",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/0",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2406,11 +2406,11 @@
     "Time": "2024-03-28T00:45:14.475845Z",
     "prev_comm": "swapper/0",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "ksoftirqd/0",
     "next_pid": "0xF",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2418,11 +2418,11 @@
     "Time": "2024-03-28T00:45:14.4758628Z",
     "prev_comm": "ksoftirqd/0",
     "prev_pid": "0xF",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "kworker/0:2",
     "next_pid": "0xA0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2430,11 +2430,11 @@
     "Time": "2024-03-28T00:45:14.4758942Z",
     "prev_comm": "kworker/0:2",
     "prev_pid": "0xA0",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/0",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2442,11 +2442,11 @@
     "Time": "2024-03-28T00:45:16.2683198Z",
     "prev_comm": "swapper/0",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2454,11 +2454,11 @@
     "Time": "2024-03-28T00:45:16.2674595Z",
     "prev_comm": "swapper/1",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(190)",
     "next_pid": "0x1FD",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2466,11 +2466,11 @@
     "Time": "2024-03-28T00:45:16.2675886Z",
     "prev_comm": "Relay(190)",
     "prev_pid": "0x1FD",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/1",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2478,11 +2478,11 @@
     "Time": "2024-03-28T00:45:16.268151Z",
     "prev_comm": "swapper/1",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(190)",
     "next_pid": "0x1FD",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2490,11 +2490,11 @@
     "Time": "2024-03-28T00:45:16.2681975Z",
     "prev_comm": "Relay(190)",
     "prev_pid": "0x1FD",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/1",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2502,11 +2502,11 @@
     "Time": "2024-03-28T00:45:16.2684291Z",
     "prev_comm": "swapper/1",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2514,11 +2514,11 @@
     "Time": "2024-03-28T00:45:15.1259745Z",
     "prev_comm": "swapper/2",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/2:2",
     "next_pid": "0xA2",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2526,11 +2526,11 @@
     "Time": "2024-03-28T00:45:15.1259957Z",
     "prev_comm": "kworker/2:2",
     "prev_pid": "0xA2",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/2",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2538,11 +2538,11 @@
     "Time": "2024-03-28T00:45:16.2686069Z",
     "prev_comm": "swapper/2",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2550,11 +2550,11 @@
     "Time": "2024-03-28T00:45:16.2676816Z",
     "prev_comm": "swapper/3",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "sudo",
     "next_pid": "0x707",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2562,11 +2562,11 @@
     "Time": "2024-03-28T00:45:16.2678283Z",
     "prev_comm": "sudo",
     "prev_pid": "0x707",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/3",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2574,11 +2574,11 @@
     "Time": "2024-03-28T00:45:16.268005Z",
     "prev_comm": "swapper/3",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "sudo",
     "next_pid": "0x707",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2586,11 +2586,11 @@
     "Time": "2024-03-28T00:45:16.2681065Z",
     "prev_comm": "sudo",
     "prev_pid": "0x707",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/3",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2598,11 +2598,11 @@
     "Time": "2024-03-28T00:45:16.268743Z",
     "prev_comm": "swapper/3",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2610,11 +2610,11 @@
     "Time": "2024-03-28T00:45:14.475965Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2622,11 +2622,11 @@
     "Time": "2024-03-28T00:45:14.476033Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2634,11 +2634,11 @@
     "Time": "2024-03-28T00:45:14.4761668Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2646,11 +2646,11 @@
     "Time": "2024-03-28T00:45:14.4762011Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2658,11 +2658,11 @@
     "Time": "2024-03-28T00:45:14.7872415Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2670,11 +2670,11 @@
     "Time": "2024-03-28T00:45:14.7872774Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2682,11 +2682,11 @@
     "Time": "2024-03-28T00:45:14.7873567Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2694,11 +2694,11 @@
     "Time": "2024-03-28T00:45:14.7873801Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2706,11 +2706,11 @@
     "Time": "2024-03-28T00:45:14.7916594Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2718,11 +2718,11 @@
     "Time": "2024-03-28T00:45:14.7916663Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2730,11 +2730,11 @@
     "Time": "2024-03-28T00:45:15.1259867Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2742,11 +2742,11 @@
     "Time": "2024-03-28T00:45:15.1263026Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2754,11 +2754,11 @@
     "Time": "2024-03-28T00:45:15.1329196Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2766,11 +2766,11 @@
     "Time": "2024-03-28T00:45:15.1330281Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2778,11 +2778,11 @@
     "Time": "2024-03-28T00:45:15.3359691Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2790,11 +2790,11 @@
     "Time": "2024-03-28T00:45:15.33611Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2802,11 +2802,11 @@
     "Time": "2024-03-28T00:45:16.2679759Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2814,11 +2814,11 @@
     "Time": "2024-03-28T00:45:16.2679831Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2826,11 +2826,11 @@
     "Time": "2024-03-28T00:45:16.2681047Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:16",
     "next_pid": "0x96",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2838,11 +2838,11 @@
     "Time": "2024-03-28T00:45:16.2681378Z",
     "prev_comm": "kworker/u48:16",
     "prev_pid": "0x96",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/4",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2850,11 +2850,11 @@
     "Time": "2024-03-28T00:45:16.2688669Z",
     "prev_comm": "swapper/4",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2862,11 +2862,11 @@
     "Time": "2024-03-28T00:45:13.2859093Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "khugepaged",
     "next_pid": "0xA7",
-    "next_prio": "139"
+    "next_prio": 139
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2874,11 +2874,11 @@
     "Time": "2024-03-28T00:45:13.2860676Z",
     "prev_comm": "khugepaged",
     "prev_pid": "0xA7",
-    "prev_prio": "139",
-    "prev_state": "2",
+    "prev_prio": 139,
+    "prev_state": 2,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2886,11 +2886,11 @@
     "Time": "2024-03-28T00:45:13.2860842Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "khugepaged",
     "next_pid": "0xA7",
-    "next_prio": "139"
+    "next_prio": 139
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2898,11 +2898,11 @@
     "Time": "2024-03-28T00:45:13.2860913Z",
     "prev_comm": "khugepaged",
     "prev_pid": "0xA7",
-    "prev_prio": "139",
-    "prev_state": "2",
+    "prev_prio": 139,
+    "prev_state": 2,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2910,11 +2910,11 @@
     "Time": "2024-03-28T00:45:13.2861791Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "khugepaged",
     "next_pid": "0xA7",
-    "next_prio": "139"
+    "next_prio": 139
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2922,11 +2922,11 @@
     "Time": "2024-03-28T00:45:13.2862041Z",
     "prev_comm": "khugepaged",
     "prev_pid": "0xA7",
-    "prev_prio": "139",
-    "prev_state": "1",
+    "prev_prio": 139,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2934,11 +2934,11 @@
     "Time": "2024-03-28T00:45:14.4757537Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2946,11 +2946,11 @@
     "Time": "2024-03-28T00:45:14.4759436Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2958,11 +2958,11 @@
     "Time": "2024-03-28T00:45:14.47621Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2970,11 +2970,11 @@
     "Time": "2024-03-28T00:45:14.4762591Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2982,11 +2982,11 @@
     "Time": "2024-03-28T00:45:14.7871481Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -2994,11 +2994,11 @@
     "Time": "2024-03-28T00:45:14.7872324Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3006,11 +3006,11 @@
     "Time": "2024-03-28T00:45:14.78739Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3018,11 +3018,11 @@
     "Time": "2024-03-28T00:45:14.7874318Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3030,11 +3030,11 @@
     "Time": "2024-03-28T00:45:14.7889893Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3042,11 +3042,11 @@
     "Time": "2024-03-28T00:45:14.7890283Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3054,11 +3054,11 @@
     "Time": "2024-03-28T00:45:14.7890608Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3066,11 +3066,11 @@
     "Time": "2024-03-28T00:45:14.7890778Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3078,11 +3078,11 @@
     "Time": "2024-03-28T00:45:14.7895207Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3090,11 +3090,11 @@
     "Time": "2024-03-28T00:45:14.7895462Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3102,11 +3102,11 @@
     "Time": "2024-03-28T00:45:14.7901073Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3114,11 +3114,11 @@
     "Time": "2024-03-28T00:45:14.7901365Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3126,11 +3126,11 @@
     "Time": "2024-03-28T00:45:14.7906108Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3138,11 +3138,11 @@
     "Time": "2024-03-28T00:45:14.7906304Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3150,11 +3150,11 @@
     "Time": "2024-03-28T00:45:14.7913958Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3162,11 +3162,11 @@
     "Time": "2024-03-28T00:45:14.791419Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3174,11 +3174,11 @@
     "Time": "2024-03-28T00:45:14.7916414Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "Relay(1220)",
     "next_pid": "0x629",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3186,11 +3186,11 @@
     "Time": "2024-03-28T00:45:14.7916636Z",
     "prev_comm": "Relay(1220)",
     "prev_pid": "0x629",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/5",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3198,11 +3198,11 @@
     "Time": "2024-03-28T00:45:16.2689607Z",
     "prev_comm": "swapper/5",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3210,11 +3210,11 @@
     "Time": "2024-03-28T00:45:14.5659775Z",
     "prev_comm": "swapper/6",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/6:4",
     "next_pid": "0xE4",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3222,11 +3222,11 @@
     "Time": "2024-03-28T00:45:14.5660097Z",
     "prev_comm": "kworker/6:4",
     "prev_pid": "0xE4",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/6",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3234,11 +3234,11 @@
     "Time": "2024-03-28T00:45:16.2690592Z",
     "prev_comm": "swapper/6",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3246,11 +3246,11 @@
     "Time": "2024-03-28T00:45:13.286025Z",
     "prev_comm": "swapper/7",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/7:2",
     "next_pid": "0x23C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3258,11 +3258,11 @@
     "Time": "2024-03-28T00:45:13.2860567Z",
     "prev_comm": "kworker/7:2",
     "prev_pid": "0x23C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/7",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3270,11 +3270,11 @@
     "Time": "2024-03-28T00:45:16.2691336Z",
     "prev_comm": "swapper/7",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3282,11 +3282,11 @@
     "Time": "2024-03-28T00:45:12.6460288Z",
     "prev_comm": "swapper/8",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/8:1",
     "next_pid": "0xBD",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3294,11 +3294,11 @@
     "Time": "2024-03-28T00:45:12.6460522Z",
     "prev_comm": "kworker/8:1",
     "prev_pid": "0xBD",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/8",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3306,11 +3306,11 @@
     "Time": "2024-03-28T00:45:16.2692088Z",
     "prev_comm": "swapper/8",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3318,11 +3318,11 @@
     "Time": "2024-03-28T00:45:12.6558156Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3330,11 +3330,11 @@
     "Time": "2024-03-28T00:45:12.6558278Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3342,11 +3342,11 @@
     "Time": "2024-03-28T00:45:12.675886Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3354,11 +3354,11 @@
     "Time": "2024-03-28T00:45:12.6758944Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3366,11 +3366,11 @@
     "Time": "2024-03-28T00:45:13.2159534Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3378,11 +3378,11 @@
     "Time": "2024-03-28T00:45:13.2159719Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3390,11 +3390,11 @@
     "Time": "2024-03-28T00:45:13.2359255Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3402,11 +3402,11 @@
     "Time": "2024-03-28T00:45:13.2359637Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3414,11 +3414,11 @@
     "Time": "2024-03-28T00:45:14.2159405Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3426,11 +3426,11 @@
     "Time": "2024-03-28T00:45:14.21596Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3438,11 +3438,11 @@
     "Time": "2024-03-28T00:45:14.2359358Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3450,11 +3450,11 @@
     "Time": "2024-03-28T00:45:14.2359686Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3462,11 +3462,11 @@
     "Time": "2024-03-28T00:45:14.7958869Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3474,11 +3474,11 @@
     "Time": "2024-03-28T00:45:14.7958964Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3486,11 +3486,11 @@
     "Time": "2024-03-28T00:45:14.8158715Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3498,11 +3498,11 @@
     "Time": "2024-03-28T00:45:14.815884Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3510,11 +3510,11 @@
     "Time": "2024-03-28T00:45:14.8458687Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3522,11 +3522,11 @@
     "Time": "2024-03-28T00:45:14.8458932Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3534,11 +3534,11 @@
     "Time": "2024-03-28T00:45:14.8658769Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3546,11 +3546,11 @@
     "Time": "2024-03-28T00:45:14.8658973Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3558,11 +3558,11 @@
     "Time": "2024-03-28T00:45:14.885955Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3570,11 +3570,11 @@
     "Time": "2024-03-28T00:45:14.8859787Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3582,11 +3582,11 @@
     "Time": "2024-03-28T00:45:14.905888Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3594,11 +3594,11 @@
     "Time": "2024-03-28T00:45:14.9059159Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3606,11 +3606,11 @@
     "Time": "2024-03-28T00:45:15.2260807Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3618,11 +3618,11 @@
     "Time": "2024-03-28T00:45:15.2261011Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3630,11 +3630,11 @@
     "Time": "2024-03-28T00:45:15.2461471Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3642,11 +3642,11 @@
     "Time": "2024-03-28T00:45:15.2461895Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3654,11 +3654,11 @@
     "Time": "2024-03-28T00:45:16.2259534Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3666,11 +3666,11 @@
     "Time": "2024-03-28T00:45:16.2259728Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3678,11 +3678,11 @@
     "Time": "2024-03-28T00:45:16.2458812Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "rcu_preempt",
     "next_pid": "0x10",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3690,11 +3690,11 @@
     "Time": "2024-03-28T00:45:16.2459239Z",
     "prev_comm": "rcu_preempt",
     "prev_pid": "0x10",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "hv_balloon",
     "next_pid": "0xDC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3702,11 +3702,11 @@
     "Time": "2024-03-28T00:45:16.2459486Z",
     "prev_comm": "hv_balloon",
     "prev_pid": "0xDC",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/9",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3714,11 +3714,11 @@
     "Time": "2024-03-28T00:45:16.2692735Z",
     "prev_comm": "swapper/9",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3726,11 +3726,11 @@
     "Time": "2024-03-28T00:45:12.6558356Z",
     "prev_comm": "swapper/10",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/10:1",
     "next_pid": "0xAC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3738,11 +3738,11 @@
     "Time": "2024-03-28T00:45:12.7018453Z",
     "prev_comm": "kworker/10:1",
     "prev_pid": "0xAC",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/10",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3750,11 +3750,11 @@
     "Time": "2024-03-28T00:45:13.2059164Z",
     "prev_comm": "swapper/10",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/10:1",
     "next_pid": "0xAC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3762,11 +3762,11 @@
     "Time": "2024-03-28T00:45:13.2059482Z",
     "prev_comm": "kworker/10:1",
     "prev_pid": "0xAC",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/10",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3774,11 +3774,11 @@
     "Time": "2024-03-28T00:45:14.2459317Z",
     "prev_comm": "swapper/10",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/10:1",
     "next_pid": "0xAC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3786,11 +3786,11 @@
     "Time": "2024-03-28T00:45:14.245977Z",
     "prev_comm": "kworker/10:1",
     "prev_pid": "0xAC",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/10",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3798,11 +3798,11 @@
     "Time": "2024-03-28T00:45:15.2859345Z",
     "prev_comm": "swapper/10",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/10:1",
     "next_pid": "0xAC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3810,11 +3810,11 @@
     "Time": "2024-03-28T00:45:15.2859664Z",
     "prev_comm": "kworker/10:1",
     "prev_pid": "0xAC",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/10",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3822,11 +3822,11 @@
     "Time": "2024-03-28T00:45:16.2693703Z",
     "prev_comm": "swapper/10",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3834,11 +3834,11 @@
     "Time": "2024-03-28T00:45:14.7876915Z",
     "prev_comm": "swapper/11",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "init",
     "next_pid": "0xEF",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3846,11 +3846,11 @@
     "Time": "2024-03-28T00:45:14.7877087Z",
     "prev_comm": "init",
     "prev_pid": "0xEF",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/11",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3858,11 +3858,11 @@
     "Time": "2024-03-28T00:45:14.7884109Z",
     "prev_comm": "swapper/11",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "init",
     "next_pid": "0xEF",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3870,11 +3870,11 @@
     "Time": "2024-03-28T00:45:14.7884904Z",
     "prev_comm": "init",
     "prev_pid": "0xEF",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/11",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3882,11 +3882,11 @@
     "Time": "2024-03-28T00:45:14.7914664Z",
     "prev_comm": "swapper/11",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "init",
     "next_pid": "0xEF",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3894,11 +3894,11 @@
     "Time": "2024-03-28T00:45:14.7914792Z",
     "prev_comm": "init",
     "prev_pid": "0xEF",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/11",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3906,11 +3906,11 @@
     "Time": "2024-03-28T00:45:16.2694676Z",
     "prev_comm": "swapper/11",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3918,11 +3918,11 @@
     "Time": "2024-03-28T00:45:13.2127338Z",
     "prev_comm": "swapper/12",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "init",
     "next_pid": "0xED",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3930,11 +3930,11 @@
     "Time": "2024-03-28T00:45:13.2142744Z",
     "prev_comm": "init",
     "prev_pid": "0xED",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/12",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3942,11 +3942,11 @@
     "Time": "2024-03-28T00:45:14.2144562Z",
     "prev_comm": "swapper/12",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "init",
     "next_pid": "0xED",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3954,11 +3954,11 @@
     "Time": "2024-03-28T00:45:14.2162321Z",
     "prev_comm": "init",
     "prev_pid": "0xED",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/12",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3966,11 +3966,11 @@
     "Time": "2024-03-28T00:45:15.21642Z",
     "prev_comm": "swapper/12",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "init",
     "next_pid": "0xED",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3978,11 +3978,11 @@
     "Time": "2024-03-28T00:45:15.2181356Z",
     "prev_comm": "init",
     "prev_pid": "0xED",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/12",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -3990,11 +3990,11 @@
     "Time": "2024-03-28T00:45:16.2183147Z",
     "prev_comm": "swapper/12",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "init",
     "next_pid": "0xED",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4002,11 +4002,11 @@
     "Time": "2024-03-28T00:45:16.2202446Z",
     "prev_comm": "init",
     "prev_pid": "0xED",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/12",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4014,11 +4014,11 @@
     "Time": "2024-03-28T00:45:16.2695453Z",
     "prev_comm": "swapper/12",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4026,11 +4026,11 @@
     "Time": "2024-03-28T00:45:16.2696379Z",
     "prev_comm": "swapper/13",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4038,11 +4038,11 @@
     "Time": "2024-03-28T00:45:13.326042Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/14:2",
     "next_pid": "0xEB",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4050,11 +4050,11 @@
     "Time": "2024-03-28T00:45:13.3260656Z",
     "prev_comm": "kworker/14:2",
     "prev_pid": "0xEB",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4062,11 +4062,11 @@
     "Time": "2024-03-28T00:45:13.605938Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/14:2",
     "next_pid": "0xEB",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4074,11 +4074,11 @@
     "Time": "2024-03-28T00:45:13.60599Z",
     "prev_comm": "kworker/14:2",
     "prev_pid": "0xEB",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4086,11 +4086,11 @@
     "Time": "2024-03-28T00:45:14.4760437Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "bash",
     "next_pid": "0x62D",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4098,11 +4098,11 @@
     "Time": "2024-03-28T00:45:14.4761596Z",
     "prev_comm": "bash",
     "prev_pid": "0x62D",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4110,11 +4110,11 @@
     "Time": "2024-03-28T00:45:14.6459407Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/14:2",
     "next_pid": "0xEB",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4122,11 +4122,11 @@
     "Time": "2024-03-28T00:45:14.6459803Z",
     "prev_comm": "kworker/14:2",
     "prev_pid": "0xEB",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4134,11 +4134,11 @@
     "Time": "2024-03-28T00:45:14.7872956Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "bash",
     "next_pid": "0x62D",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "NonSample": "Fork/dummy:HG",
@@ -4151,11 +4151,11 @@
     "Time": "2024-03-28T00:45:14.7878401Z",
     "prev_comm": "bash",
     "prev_pid": "0x62D",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4163,11 +4163,11 @@
     "Time": "2024-03-28T00:45:14.7914165Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "bash",
     "next_pid": "0x62D",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4175,11 +4175,11 @@
     "Time": "2024-03-28T00:45:14.7916466Z",
     "prev_comm": "bash",
     "prev_pid": "0x62D",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4187,11 +4187,11 @@
     "Time": "2024-03-28T00:45:14.7958502Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/14:2",
     "next_pid": "0xEB",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4199,11 +4199,11 @@
     "Time": "2024-03-28T00:45:14.7958576Z",
     "prev_comm": "kworker/14:2",
     "prev_pid": "0xEB",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4211,11 +4211,11 @@
     "Time": "2024-03-28T00:45:15.6859317Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/14:2",
     "next_pid": "0xEB",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4223,11 +4223,11 @@
     "Time": "2024-03-28T00:45:15.6859623Z",
     "prev_comm": "kworker/14:2",
     "prev_pid": "0xEB",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/14",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4235,11 +4235,11 @@
     "Time": "2024-03-28T00:45:16.2697176Z",
     "prev_comm": "swapper/14",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4247,11 +4247,11 @@
     "Time": "2024-03-28T00:45:16.269792Z",
     "prev_comm": "swapper/15",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4259,11 +4259,11 @@
     "Time": "2024-03-28T00:45:13.1259481Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "hv_balloon",
     "next_pid": "0xDC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4271,11 +4271,11 @@
     "Time": "2024-03-28T00:45:13.1259809Z",
     "prev_comm": "hv_balloon",
     "prev_pid": "0xDC",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4283,11 +4283,11 @@
     "Time": "2024-03-28T00:45:13.2860375Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/16:1",
     "next_pid": "0xAE",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4295,11 +4295,11 @@
     "Time": "2024-03-28T00:45:13.2860804Z",
     "prev_comm": "kworker/16:1",
     "prev_pid": "0xAE",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4307,11 +4307,11 @@
     "Time": "2024-03-28T00:45:13.3260859Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/16:1",
     "next_pid": "0xAE",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4319,11 +4319,11 @@
     "Time": "2024-03-28T00:45:13.3261076Z",
     "prev_comm": "kworker/16:1",
     "prev_pid": "0xAE",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4331,11 +4331,11 @@
     "Time": "2024-03-28T00:45:14.1660037Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "hv_balloon",
     "next_pid": "0xDC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4343,11 +4343,11 @@
     "Time": "2024-03-28T00:45:14.1660509Z",
     "prev_comm": "hv_balloon",
     "prev_pid": "0xDC",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -4355,11 +4355,11 @@
     "Time": "2024-03-28T00:45:14.7877889Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "bash",
     "next_pid": "0x952",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "NonSample": "Comm/dummy:HG",
@@ -4401,7 +4401,7 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0Gmsft",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7895149Z",
-    "enabled": "true",
+    "enabled": true,
     "meta": {
       "provider": "TestProviderC",
       "event": "EventCG",
@@ -4413,7 +4413,7 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0Gmsft",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7895182Z",
-    "enabled": "true",
+    "enabled": true,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "EventCppG",
@@ -4503,8 +4503,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7895826Z",
-    "i8": "100",
-    "(-128)": "-128",
+    "i8": 100,
+    "(-128)": -128,
     "meta": {
       "provider": "TestProviderC",
       "event": "i8",
@@ -4515,8 +4515,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 96,
     "Time": "2024-03-28T00:45:14.789585Z",
-    "u8": "200",
-    "(255)": "255",
+    "u8": 200,
+    "(255)": 255,
     "meta": {
       "provider": "TestProviderC",
       "event": "u8",
@@ -4527,8 +4527,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7895872Z",
-    "i16": "30000",
-    "(-32767-1)": "-32768",
+    "i16": 30000,
+    "(-32767-1)": -32768,
     "meta": {
       "provider": "TestProviderC",
       "event": "i16",
@@ -4539,8 +4539,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7895893Z",
-    "u16": "60000",
-    "(65535)": "65535",
+    "u16": 60000,
+    "(65535)": 65535,
     "meta": {
       "provider": "TestProviderC",
       "event": "u16",
@@ -4551,8 +4551,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7895915Z",
-    "i32": "2000000000",
-    "(-2147483647-1)": "-2147483648",
+    "i32": 2000000000,
+    "(-2147483647-1)": -2147483648,
     "meta": {
       "provider": "TestProviderC",
       "event": "i32",
@@ -4563,8 +4563,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7895937Z",
-    "u32": "4000000000",
-    "(4294967295U)": "4294967295",
+    "u32": 4000000000,
+    "(4294967295U)": 4294967295,
     "meta": {
       "provider": "TestProviderC",
       "event": "u32",
@@ -4575,8 +4575,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7895958Z",
-    "i64": "9000000000000000000",
-    "(-9223372036854775807L-1)": "-9223372036854775808",
+    "i64": 9000000000000000000,
+    "(-9223372036854775807L-1)": -9223372036854775808,
     "meta": {
       "provider": "TestProviderC",
       "event": "i64",
@@ -4587,8 +4587,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7895982Z",
-    "u64": "18000000000000000000",
-    "(18446744073709551615UL)": "18446744073709551615",
+    "u64": 18000000000000000000,
+    "(18446744073709551615UL)": 18446744073709551615,
     "meta": {
       "provider": "TestProviderC",
       "event": "u64",
@@ -4599,8 +4599,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7896007Z",
-    "iptr": "1234",
-    "(-9223372036854775807L-1)": "-9223372036854775808",
+    "iptr": 1234,
+    "(-9223372036854775807L-1)": -9223372036854775808,
     "meta": {
       "provider": "TestProviderC",
       "event": "iptr",
@@ -4611,8 +4611,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7896028Z",
-    "uptr": "4321",
-    "(18446744073709551615UL)": "18446744073709551615",
+    "uptr": 4321,
+    "(18446744073709551615UL)": 18446744073709551615,
     "meta": {
       "provider": "TestProviderC",
       "event": "uptr",
@@ -4623,8 +4623,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7896049Z",
-    "iL": "2000000000",
-    "(-0x7fffffffffffffffL - 1L)": "-9223372036854775808",
+    "iL": 2000000000,
+    "(-0x7fffffffffffffffL - 1L)": -9223372036854775808,
     "meta": {
       "provider": "TestProviderC",
       "event": "iL",
@@ -4635,8 +4635,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 144,
     "Time": "2024-03-28T00:45:14.7896074Z",
-    "uL": "4000000000",
-    "(0x7fffffffffffffffL * 2UL \u002B 1UL)": "18446744073709551615",
+    "uL": 4000000000,
+    "(0x7fffffffffffffffL * 2UL \u002B 1UL)": 18446744073709551615,
     "meta": {
       "provider": "TestProviderC",
       "event": "uL",
@@ -4791,8 +4791,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.7896354Z",
-    "f32": "3.14",
-    "1/3": "0.33333334",
+    "f32": 3.14,
+    "1/3": 0.33333334,
     "NaN": "NaN",
     "-Inf": "-Infinity",
     "meta": {
@@ -4805,8 +4805,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 144,
     "Time": "2024-03-28T00:45:14.7896375Z",
-    "f64": "6.28",
-    "1/3": "0.3333333333333333",
+    "f64": 6.28,
+    "1/3": 0.3333333333333333,
     "NaN": "NaN",
     "-Inf": "-Infinity",
     "meta": {
@@ -4819,9 +4819,9 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7896396Z",
-    "b0": "false",
-    "b1": "true",
-    "(255)": "255",
+    "b0": false,
+    "b1": true,
+    "(255)": 255,
     "meta": {
       "provider": "TestProviderC",
       "event": "b8",
@@ -4832,9 +4832,9 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.7896419Z",
-    "b0": "false",
-    "b1": "true",
-    "(-2147483647-1)": "-2147483648",
+    "b0": false,
+    "b1": true,
+    "(-2147483647-1)": -2147483648,
     "meta": {
       "provider": "TestProviderC",
       "event": "b32",
@@ -4909,8 +4909,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7896548Z",
-    "i32": "2000000000",
-    "(2147483647)": "2147483647",
+    "i32": 2000000000,
+    "(2147483647)": 2147483647,
     "meta": {
       "provider": "TestProviderC",
       "event": "pid",
@@ -4921,8 +4921,8 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7896568Z",
-    "port80": "80",
-    "(65535)": "65535",
+    "port80": 80,
+    "(65535)": 65535,
     "meta": {
       "provider": "TestProviderC",
       "event": "port",
@@ -4933,7 +4933,7 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.789659Z",
-    "(-2147483647-1)": "ERRNO(-2147483648)",
+    "(-2147483647-1)": -2147483648,
     "1": "EPERM(1)",
     "131": "ENOTRECOVERABLE(131)",
     "meta": {
@@ -4946,10 +4946,10 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 144,
     "Time": "2024-03-28T00:45:14.7896612Z",
-    "i32": "2033-05-18T03:33:20",
-    "(-2147483647-1)": "1901-12-13T20:45:52",
-    "(2147483647)": "2038-01-19T03:14:07",
-    "0": "1970-01-01T00:00:00",
+    "i32": "2033-05-18T03:33:20Z",
+    "(-2147483647-1)": "1901-12-13T20:45:52Z",
+    "(2147483647)": "2038-01-19T03:14:07Z",
+    "0": "1970-01-01T00:00:00Z",
     "meta": {
       "provider": "TestProviderC",
       "event": "t32",
@@ -4960,14 +4960,14 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 272,
     "Time": "2024-03-28T00:45:14.789665Z",
-    "i64": "TIME(9000000000000000000)",
-    "(-9223372036854775807L-1)": "TIME(-9223372036854775808)",
-    "(9223372036854775807L)": "TIME(9223372036854775807)",
-    "0": "1970-01-01T00:00:00",
-    "-11644473600": "1601-01-01T00:00:00",
-    "-11644473601": "1600-12-31T23:59:59",
-    "910692730085": "TIME(910692730085)",
-    "910692730086": "TIME(910692730086)",
+    "i64": 9000000000000000000,
+    "(-9223372036854775807L-1)": -9223372036854775808,
+    "(9223372036854775807L)": 9223372036854775807,
+    "0": "1970-01-01T00:00:00Z",
+    "-11644473600": "1601-01-01T00:00:00Z",
+    "-11644473601": "1600-12-31T23:59:59Z",
+    "910692730085": 910692730085,
+    "910692730086": 910692730086,
     "meta": {
       "provider": "TestProviderC",
       "event": "t64",
@@ -5146,10 +5146,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7897009Z",
     "a1": [
-      "100"
+      100
     ],
     "s": [
-      "100"
+      100
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5162,10 +5162,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7897031Z",
     "a1": [
-      "200"
+      200
     ],
     "s": [
-      "200"
+      200
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5178,10 +5178,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7897053Z",
     "a1": [
-      "30000"
+      30000
     ],
     "s": [
-      "30000"
+      30000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5194,10 +5194,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7897074Z",
     "a1": [
-      "60000"
+      60000
     ],
     "s": [
-      "60000"
+      60000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5210,10 +5210,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7897097Z",
     "a1": [
-      "2000000000"
+      2000000000
     ],
     "s": [
-      "2000000000"
+      2000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5226,10 +5226,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7897119Z",
     "a1": [
-      "4000000000"
+      4000000000
     ],
     "s": [
-      "4000000000"
+      4000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5242,10 +5242,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7897146Z",
     "a1": [
-      "9000000000000000000"
+      9000000000000000000
     ],
     "s": [
-      "9000000000000000000"
+      9000000000000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5258,10 +5258,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7897169Z",
     "a1": [
-      "18000000000000000000"
+      18000000000000000000
     ],
     "s": [
-      "18000000000000000000"
+      18000000000000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5274,10 +5274,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7897193Z",
     "a1": [
-      "1234"
+      1234
     ],
     "s": [
-      "1234"
+      1234
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5290,10 +5290,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7897216Z",
     "a1": [
-      "4321"
+      4321
     ],
     "s": [
-      "4321"
+      4321
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5306,10 +5306,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7897239Z",
     "a1": [
-      "2000000000"
+      2000000000
     ],
     "s": [
-      "2000000000"
+      2000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5322,10 +5322,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.789726Z",
     "a1": [
-      "4000000000"
+      4000000000
     ],
     "s": [
-      "4000000000"
+      4000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5530,10 +5530,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7897558Z",
     "a1": [
-      "3.14"
+      3.14
     ],
     "s": [
-      "3.14"
+      3.14
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5546,10 +5546,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7897582Z",
     "a1": [
-      "6.28"
+      6.28
     ],
     "s": [
-      "6.28"
+      6.28
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5562,10 +5562,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7897603Z",
     "a1": [
-      "true"
+      true
     ],
     "s": [
-      "true"
+      true
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5578,10 +5578,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7897625Z",
     "a1": [
-      "true"
+      true
     ],
     "s": [
-      "true"
+      true
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5702,10 +5702,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7897769Z",
     "a1": [
-      "2000000000"
+      2000000000
     ],
     "s": [
-      "2000000000"
+      2000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5718,10 +5718,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.789779Z",
     "a1": [
-      "24810"
+      24810
     ],
     "s": [
-      "24810"
+      24810
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5734,10 +5734,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7897813Z",
     "a1": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "s": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5750,10 +5750,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7897834Z",
     "a1": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "s": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5766,10 +5766,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7897858Z",
     "a1": [
-      "TIME(9000000000000000000)"
+      9000000000000000000
     ],
     "s": [
-      "TIME(9000000000000000000)"
+      9000000000000000000
     ],
     "meta": {
       "provider": "TestProviderC",
@@ -5781,10 +5781,10 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 272,
     "Time": "2024-03-28T00:45:14.7897899Z",
-    "V8": "200",
-    "V16": "60000",
-    "V32": "4000000000",
-    "V64": "18000000000000000000",
+    "V8": 200,
+    "V16": 60000,
+    "V32": 4000000000,
+    "V64": 18000000000000000000,
     "V128": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
     "NChar8": "hjkl",
     "NChar16": "hjkl",
@@ -5823,10 +5823,10 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.7897965Z",
-    "false16": "false",
-    "true16": "true",
-    "u16": "60000",
-    "i16": "30000",
+    "false16": false,
+    "true16": true,
+    "u16": 60000,
+    "i16": 30000,
     "meta": {
       "provider": "TestProviderC",
       "event": "Bool16",
@@ -5997,7 +5997,7 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 216,
     "Time": "2024-03-28T00:45:14.7898344Z",
-    "five": "5",
+    "five": 5,
     "Struct1": {
       "NChar8": "hjkl"
     },
@@ -6021,7 +6021,7 @@
         }
       }
     ],
-    "five": "5",
+    "five": 5,
     "meta": {
       "provider": "TestProviderC",
       "event": "Packed",
@@ -6032,12 +6032,12 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0",
     "Size": 176,
     "Time": "2024-03-28T00:45:14.7898368Z",
-    "five": "5",
+    "five": 5,
     "Struct1": {
       "NChar8": "hjkl"
     },
     "StructArray": [],
-    "five": "5",
+    "five": 5,
     "meta": {
       "provider": "TestProviderC",
       "event": "Packed0",
@@ -6048,7 +6048,7 @@
     "SampleEH": "Sample/user_events:TestProviderC_L5K0Gmsft",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7906422Z",
-    "enabled": "true",
+    "enabled": true,
     "meta": {
       "provider": "TestProviderC",
       "event": "EventCG",
@@ -6060,7 +6060,7 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0Gmsft",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7906447Z",
-    "enabled": "true",
+    "enabled": true,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "EventCppG",
@@ -6150,8 +6150,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7906949Z",
-    "i8": "100",
-    "(-128)": "-128",
+    "i8": 100,
+    "(-128)": -128,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "i8",
@@ -6162,8 +6162,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 96,
     "Time": "2024-03-28T00:45:14.7906971Z",
-    "u8": "200",
-    "(255)": "255",
+    "u8": 200,
+    "(255)": 255,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "u8",
@@ -6174,8 +6174,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7906993Z",
-    "i16": "30000",
-    "(-32767-1)": "-32768",
+    "i16": 30000,
+    "(-32767-1)": -32768,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "i16",
@@ -6186,8 +6186,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7907014Z",
-    "u16": "60000",
-    "(65535)": "65535",
+    "u16": 60000,
+    "(65535)": 65535,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "u16",
@@ -6198,8 +6198,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7907036Z",
-    "i32": "2000000000",
-    "(-2147483647-1)": "-2147483648",
+    "i32": 2000000000,
+    "(-2147483647-1)": -2147483648,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "i32",
@@ -6210,8 +6210,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7907059Z",
-    "u32": "4000000000",
-    "(4294967295U)": "4294967295",
+    "u32": 4000000000,
+    "(4294967295U)": 4294967295,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "u32",
@@ -6222,8 +6222,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.790708Z",
-    "i64": "9000000000000000000",
-    "(-9223372036854775807L-1)": "-9223372036854775808",
+    "i64": 9000000000000000000,
+    "(-9223372036854775807L-1)": -9223372036854775808,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "i64",
@@ -6234,8 +6234,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7907105Z",
-    "u64": "18000000000000000000",
-    "(18446744073709551615UL)": "18446744073709551615",
+    "u64": 18000000000000000000,
+    "(18446744073709551615UL)": 18446744073709551615,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "u64",
@@ -6246,8 +6246,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7907129Z",
-    "iptr": "1234",
-    "(-9223372036854775807L-1)": "-9223372036854775808",
+    "iptr": 1234,
+    "(-9223372036854775807L-1)": -9223372036854775808,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "iptr",
@@ -6258,8 +6258,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7907151Z",
-    "uptr": "4321",
-    "(18446744073709551615UL)": "18446744073709551615",
+    "uptr": 4321,
+    "(18446744073709551615UL)": 18446744073709551615,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "uptr",
@@ -6270,8 +6270,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 136,
     "Time": "2024-03-28T00:45:14.7907172Z",
-    "iL": "2000000000",
-    "(-0x7fffffffffffffffL - 1L)": "-9223372036854775808",
+    "iL": 2000000000,
+    "(-0x7fffffffffffffffL - 1L)": -9223372036854775808,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "iL",
@@ -6282,8 +6282,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 144,
     "Time": "2024-03-28T00:45:14.7907196Z",
-    "uL": "4000000000",
-    "(0x7fffffffffffffffL * 2UL \u002B 1UL)": "18446744073709551615",
+    "uL": 4000000000,
+    "(0x7fffffffffffffffL * 2UL \u002B 1UL)": 18446744073709551615,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "uL",
@@ -6438,8 +6438,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.790748Z",
-    "f32": "3.14",
-    "1/3": "0.33333334",
+    "f32": 3.14,
+    "1/3": 0.33333334,
     "NaN": "NaN",
     "-Inf": "-Infinity",
     "meta": {
@@ -6452,8 +6452,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 144,
     "Time": "2024-03-28T00:45:14.7907503Z",
-    "f64": "6.28",
-    "1/3": "0.3333333333333333",
+    "f64": 6.28,
+    "1/3": 0.3333333333333333,
     "NaN": "NaN",
     "-Inf": "-Infinity",
     "meta": {
@@ -6466,9 +6466,9 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7907525Z",
-    "b0": "false",
-    "b1": "true",
-    "(255)": "255",
+    "b0": false,
+    "b1": true,
+    "(255)": 255,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "b8",
@@ -6479,9 +6479,9 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.7907548Z",
-    "b0": "false",
-    "b1": "true",
-    "(-2147483647-1)": "-2147483648",
+    "b0": false,
+    "b1": true,
+    "(-2147483647-1)": -2147483648,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "b32",
@@ -6556,8 +6556,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7907678Z",
-    "i32": "2000000000",
-    "(2147483647)": "2147483647",
+    "i32": 2000000000,
+    "(2147483647)": 2147483647,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "pid",
@@ -6568,8 +6568,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7907699Z",
-    "port80": "80",
-    "(65535)": "65535",
+    "port80": 80,
+    "(65535)": 65535,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "port",
@@ -6580,7 +6580,7 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.7907722Z",
-    "(-2147483647-1)": "ERRNO(-2147483648)",
+    "(-2147483647-1)": -2147483648,
     "1": "EPERM(1)",
     "131": "ENOTRECOVERABLE(131)",
     "meta": {
@@ -6593,10 +6593,10 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 144,
     "Time": "2024-03-28T00:45:14.7907745Z",
-    "i32": "2033-05-18T03:33:20",
-    "(-2147483647-1)": "1901-12-13T20:45:52",
-    "(2147483647)": "2038-01-19T03:14:07",
-    "0": "1970-01-01T00:00:00",
+    "i32": "2033-05-18T03:33:20Z",
+    "(-2147483647-1)": "1901-12-13T20:45:52Z",
+    "(2147483647)": "2038-01-19T03:14:07Z",
+    "0": "1970-01-01T00:00:00Z",
     "meta": {
       "provider": "TestProviderCpp",
       "event": "t32",
@@ -6607,14 +6607,14 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 272,
     "Time": "2024-03-28T00:45:14.7907773Z",
-    "i64": "TIME(9000000000000000000)",
-    "(-9223372036854775807L-1)": "TIME(-9223372036854775808)",
-    "(9223372036854775807L)": "TIME(9223372036854775807)",
-    "0": "1970-01-01T00:00:00",
-    "-11644473600": "1601-01-01T00:00:00",
-    "-11644473601": "1600-12-31T23:59:59",
-    "910692730085": "TIME(910692730085)",
-    "910692730086": "TIME(910692730086)",
+    "i64": 9000000000000000000,
+    "(-9223372036854775807L-1)": -9223372036854775808,
+    "(9223372036854775807L)": 9223372036854775807,
+    "0": "1970-01-01T00:00:00Z",
+    "-11644473600": "1601-01-01T00:00:00Z",
+    "-11644473601": "1600-12-31T23:59:59Z",
+    "910692730085": 910692730085,
+    "910692730086": 910692730086,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "t64",
@@ -6793,10 +6793,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7908126Z",
     "a1": [
-      "100"
+      100
     ],
     "s": [
-      "100"
+      100
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6809,10 +6809,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7908147Z",
     "a1": [
-      "200"
+      200
     ],
     "s": [
-      "200"
+      200
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6825,10 +6825,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7908171Z",
     "a1": [
-      "30000"
+      30000
     ],
     "s": [
-      "30000"
+      30000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6841,10 +6841,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7908193Z",
     "a1": [
-      "60000"
+      60000
     ],
     "s": [
-      "60000"
+      60000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6857,10 +6857,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7908216Z",
     "a1": [
-      "2000000000"
+      2000000000
     ],
     "s": [
-      "2000000000"
+      2000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6873,10 +6873,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7908239Z",
     "a1": [
-      "4000000000"
+      4000000000
     ],
     "s": [
-      "4000000000"
+      4000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6889,10 +6889,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7908266Z",
     "a1": [
-      "9000000000000000000"
+      9000000000000000000
     ],
     "s": [
-      "9000000000000000000"
+      9000000000000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6905,10 +6905,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.790829Z",
     "a1": [
-      "18000000000000000000"
+      18000000000000000000
     ],
     "s": [
-      "18000000000000000000"
+      18000000000000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6921,10 +6921,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7908314Z",
     "a1": [
-      "1234"
+      1234
     ],
     "s": [
-      "1234"
+      1234
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6937,10 +6937,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7908337Z",
     "a1": [
-      "4321"
+      4321
     ],
     "s": [
-      "4321"
+      4321
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6953,10 +6953,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.790836Z",
     "a1": [
-      "2000000000"
+      2000000000
     ],
     "s": [
-      "2000000000"
+      2000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -6969,10 +6969,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7908381Z",
     "a1": [
-      "4000000000"
+      4000000000
     ],
     "s": [
-      "4000000000"
+      4000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7177,10 +7177,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.790868Z",
     "a1": [
-      "3.14"
+      3.14
     ],
     "s": [
-      "3.14"
+      3.14
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7193,10 +7193,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7908705Z",
     "a1": [
-      "6.28"
+      6.28
     ],
     "s": [
-      "6.28"
+      6.28
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7209,10 +7209,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7908726Z",
     "a1": [
-      "true"
+      true
     ],
     "s": [
-      "true"
+      true
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7225,10 +7225,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7908748Z",
     "a1": [
-      "true"
+      true
     ],
     "s": [
-      "true"
+      true
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7349,10 +7349,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7908894Z",
     "a1": [
-      "2000000000"
+      2000000000
     ],
     "s": [
-      "2000000000"
+      2000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7365,10 +7365,10 @@
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7908916Z",
     "a1": [
-      "24810"
+      24810
     ],
     "s": [
-      "24810"
+      24810
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7381,10 +7381,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7908939Z",
     "a1": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "s": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7397,10 +7397,10 @@
     "Size": 112,
     "Time": "2024-03-28T00:45:14.790896Z",
     "a1": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "s": [
-      "2033-05-18T03:33:20"
+      "2033-05-18T03:33:20Z"
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7413,10 +7413,10 @@
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7908984Z",
     "a1": [
-      "TIME(9000000000000000000)"
+      9000000000000000000
     ],
     "s": [
-      "TIME(9000000000000000000)"
+      9000000000000000000
     ],
     "meta": {
       "provider": "TestProviderCpp",
@@ -7428,10 +7428,10 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 272,
     "Time": "2024-03-28T00:45:14.7909022Z",
-    "V8": "200",
-    "V16": "60000",
-    "V32": "4000000000",
-    "V64": "18000000000000000000",
+    "V8": 200,
+    "V16": 60000,
+    "V32": 4000000000,
+    "V64": 18000000000000000000,
     "V128": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
     "NChar8": "hjkl",
     "NChar16": "hjkl",
@@ -7470,10 +7470,10 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 128,
     "Time": "2024-03-28T00:45:14.7909087Z",
-    "false16": "false",
-    "true16": "true",
-    "u16": "60000",
-    "i16": "30000",
+    "false16": false,
+    "true16": true,
+    "u16": 60000,
+    "i16": 30000,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Bool16",
@@ -7644,7 +7644,7 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 216,
     "Time": "2024-03-28T00:45:14.7909467Z",
-    "five": "5",
+    "five": 5,
     "Struct1": {
       "NChar8": "hjkl"
     },
@@ -7668,7 +7668,7 @@
         }
       }
     ],
-    "five": "5",
+    "five": 5,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Packed",
@@ -7679,12 +7679,12 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 176,
     "Time": "2024-03-28T00:45:14.7909491Z",
-    "five": "5",
+    "five": 5,
     "Struct1": {
       "NChar8": "hjkl"
     },
     "StructArray": [],
-    "five": "5",
+    "five": 5,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Packed0",
@@ -7695,8 +7695,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7909514Z",
-    "false;tag=0x1234": "false",
-    "true": "true",
+    "false;tag=0x1234": false,
+    "true": true,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:bool",
@@ -7755,8 +7755,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7909622Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:schar",
@@ -7767,8 +7767,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7909643Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:uchar",
@@ -7779,8 +7779,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7909665Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:sshort",
@@ -7791,8 +7791,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 104,
     "Time": "2024-03-28T00:45:14.7909685Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:ushort",
@@ -7803,8 +7803,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7909706Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:sint",
@@ -7815,8 +7815,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7909728Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:uint",
@@ -7827,8 +7827,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7909749Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:slong",
@@ -7839,8 +7839,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7909775Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:ulong",
@@ -7851,8 +7851,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7909799Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:slonglong",
@@ -7863,8 +7863,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7909821Z",
-    "0": "0",
-    "A": "65",
+    "0": 0,
+    "A": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:ulonglong",
@@ -7875,8 +7875,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 112,
     "Time": "2024-03-28T00:45:14.7909842Z",
-    "0": "0",
-    "65": "65",
+    "0": 0,
+    "65": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:float",
@@ -7887,8 +7887,8 @@
     "SampleEH": "Sample/user_events:TestProviderCpp_L5K0",
     "Size": 120,
     "Time": "2024-03-28T00:45:14.7909863Z",
-    "0": "0",
-    "65": "65",
+    "0": 0,
+    "65": 65,
     "meta": {
       "provider": "TestProviderCpp",
       "event": "Value:double",
@@ -8026,11 +8026,11 @@
     "Time": "2024-03-28T00:45:14.7914344Z",
     "prev_comm": "eventheader-tra",
     "prev_pid": "0x952",
-    "prev_prio": "120",
-    "prev_state": "16",
+    "prev_prio": 120,
+    "prev_state": 16,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8038,11 +8038,11 @@
     "Time": "2024-03-28T00:45:14.795903Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/16:1",
     "next_pid": "0xAE",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8050,11 +8050,11 @@
     "Time": "2024-03-28T00:45:14.7959114Z",
     "prev_comm": "kworker/16:1",
     "prev_pid": "0xAE",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8062,11 +8062,11 @@
     "Time": "2024-03-28T00:45:14.8759135Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "ksoftirqd/16",
     "next_pid": "0x60",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8074,11 +8074,11 @@
     "Time": "2024-03-28T00:45:14.8759303Z",
     "prev_comm": "ksoftirqd/16",
     "prev_pid": "0x60",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "kworker/16:1",
     "next_pid": "0xAE",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8086,11 +8086,11 @@
     "Time": "2024-03-28T00:45:14.8759464Z",
     "prev_comm": "kworker/16:1",
     "prev_pid": "0xAE",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8098,11 +8098,11 @@
     "Time": "2024-03-28T00:45:15.2060519Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "hv_balloon",
     "next_pid": "0xDC",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8110,11 +8110,11 @@
     "Time": "2024-03-28T00:45:15.2061046Z",
     "prev_comm": "hv_balloon",
     "prev_pid": "0xDC",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8122,11 +8122,11 @@
     "Time": "2024-03-28T00:45:16.2459083Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/16:1",
     "next_pid": "0xAE",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8134,11 +8134,11 @@
     "Time": "2024-03-28T00:45:16.2459345Z",
     "prev_comm": "kworker/16:1",
     "prev_pid": "0xAE",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/16",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8146,11 +8146,11 @@
     "Time": "2024-03-28T00:45:16.2698531Z",
     "prev_comm": "swapper/16",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8158,11 +8158,11 @@
     "Time": "2024-03-28T00:45:16.2699274Z",
     "prev_comm": "swapper/17",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8170,11 +8170,11 @@
     "Time": "2024-03-28T00:45:13.286123Z",
     "prev_comm": "swapper/18",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/18:1",
     "next_pid": "0xB1",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8182,11 +8182,11 @@
     "Time": "2024-03-28T00:45:13.2861636Z",
     "prev_comm": "kworker/18:1",
     "prev_pid": "0xB1",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/18",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8194,11 +8194,11 @@
     "Time": "2024-03-28T00:45:13.3261183Z",
     "prev_comm": "swapper/18",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/18:1",
     "next_pid": "0xB1",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8206,11 +8206,11 @@
     "Time": "2024-03-28T00:45:13.3261387Z",
     "prev_comm": "kworker/18:1",
     "prev_pid": "0xB1",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/18",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8218,11 +8218,11 @@
     "Time": "2024-03-28T00:45:13.601533Z",
     "prev_comm": "swapper/18",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x951",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8230,11 +8230,11 @@
     "Time": "2024-03-28T00:45:13.6018634Z",
     "prev_comm": "perf",
     "prev_pid": "0x951",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/18",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8242,11 +8242,11 @@
     "Time": "2024-03-28T00:45:14.6030475Z",
     "prev_comm": "swapper/18",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x951",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8254,11 +8254,11 @@
     "Time": "2024-03-28T00:45:14.6031938Z",
     "prev_comm": "perf",
     "prev_pid": "0x951",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/18",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8266,11 +8266,11 @@
     "Time": "2024-03-28T00:45:15.6042842Z",
     "prev_comm": "swapper/18",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x951",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8278,11 +8278,11 @@
     "Time": "2024-03-28T00:45:15.6044229Z",
     "prev_comm": "perf",
     "prev_pid": "0x951",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/18",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8290,11 +8290,11 @@
     "Time": "2024-03-28T00:45:15.6059715Z",
     "prev_comm": "swapper/18",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/18:1",
     "next_pid": "0xB1",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8302,11 +8302,11 @@
     "Time": "2024-03-28T00:45:15.605996Z",
     "prev_comm": "kworker/18:1",
     "prev_pid": "0xB1",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/18",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8314,11 +8314,11 @@
     "Time": "2024-03-28T00:45:16.2699906Z",
     "prev_comm": "swapper/18",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8326,11 +8326,11 @@
     "Time": "2024-03-28T00:45:14.7874043Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8338,11 +8338,11 @@
     "Time": "2024-03-28T00:45:14.7874116Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8350,11 +8350,11 @@
     "Time": "2024-03-28T00:45:14.7889434Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8362,11 +8362,11 @@
     "Time": "2024-03-28T00:45:14.7889735Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8374,11 +8374,11 @@
     "Time": "2024-03-28T00:45:14.7890226Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8386,11 +8386,11 @@
     "Time": "2024-03-28T00:45:14.7890558Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8398,11 +8398,11 @@
     "Time": "2024-03-28T00:45:14.7894511Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8410,11 +8410,11 @@
     "Time": "2024-03-28T00:45:14.789524Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8422,11 +8422,11 @@
     "Time": "2024-03-28T00:45:14.7900707Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8434,11 +8434,11 @@
     "Time": "2024-03-28T00:45:14.7900925Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8446,11 +8446,11 @@
     "Time": "2024-03-28T00:45:14.7905833Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8458,11 +8458,11 @@
     "Time": "2024-03-28T00:45:14.7906032Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8470,11 +8470,11 @@
     "Time": "2024-03-28T00:45:14.7913349Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8482,11 +8482,11 @@
     "Time": "2024-03-28T00:45:14.7913528Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8494,11 +8494,11 @@
     "Time": "2024-03-28T00:45:14.7916101Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8506,11 +8506,11 @@
     "Time": "2024-03-28T00:45:14.7916396Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8518,11 +8518,11 @@
     "Time": "2024-03-28T00:45:15.3361177Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8530,11 +8530,11 @@
     "Time": "2024-03-28T00:45:15.3361438Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8542,11 +8542,11 @@
     "Time": "2024-03-28T00:45:16.267594Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8554,11 +8554,11 @@
     "Time": "2024-03-28T00:45:16.2676517Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8566,11 +8566,11 @@
     "Time": "2024-03-28T00:45:16.2678503Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/u48:1",
     "next_pid": "0x71C",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8578,11 +8578,11 @@
     "Time": "2024-03-28T00:45:16.2679794Z",
     "prev_comm": "kworker/u48:1",
     "prev_pid": "0x71C",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/19",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8590,11 +8590,11 @@
     "Time": "2024-03-28T00:45:16.2700488Z",
     "prev_comm": "swapper/19",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8602,11 +8602,11 @@
     "Time": "2024-03-28T00:45:13.035954Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kcompactd0",
     "next_pid": "0xA5",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8614,11 +8614,11 @@
     "Time": "2024-03-28T00:45:13.035982Z",
     "prev_comm": "kcompactd0",
     "prev_pid": "0xA5",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8626,11 +8626,11 @@
     "Time": "2024-03-28T00:45:13.5458894Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kcompactd0",
     "next_pid": "0xA5",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8638,11 +8638,11 @@
     "Time": "2024-03-28T00:45:13.5459095Z",
     "prev_comm": "kcompactd0",
     "prev_pid": "0xA5",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8650,11 +8650,11 @@
     "Time": "2024-03-28T00:45:14.0559308Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kcompactd0",
     "next_pid": "0xA5",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8662,11 +8662,11 @@
     "Time": "2024-03-28T00:45:14.0559562Z",
     "prev_comm": "kcompactd0",
     "prev_pid": "0xA5",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8674,11 +8674,11 @@
     "Time": "2024-03-28T00:45:14.5659924Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kcompactd0",
     "next_pid": "0xA5",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8686,11 +8686,11 @@
     "Time": "2024-03-28T00:45:14.5660237Z",
     "prev_comm": "kcompactd0",
     "prev_pid": "0xA5",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8698,11 +8698,11 @@
     "Time": "2024-03-28T00:45:15.0759762Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kcompactd0",
     "next_pid": "0xA5",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8710,11 +8710,11 @@
     "Time": "2024-03-28T00:45:15.0760033Z",
     "prev_comm": "kcompactd0",
     "prev_pid": "0xA5",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8722,11 +8722,11 @@
     "Time": "2024-03-28T00:45:15.5860073Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kcompactd0",
     "next_pid": "0xA5",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8734,11 +8734,11 @@
     "Time": "2024-03-28T00:45:15.5860426Z",
     "prev_comm": "kcompactd0",
     "prev_pid": "0xA5",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8746,11 +8746,11 @@
     "Time": "2024-03-28T00:45:16.0959688Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kcompactd0",
     "next_pid": "0xA5",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8758,11 +8758,11 @@
     "Time": "2024-03-28T00:45:16.0960001Z",
     "prev_comm": "kcompactd0",
     "prev_pid": "0xA5",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/20",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8770,11 +8770,11 @@
     "Time": "2024-03-28T00:45:16.2701112Z",
     "prev_comm": "swapper/20",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8782,11 +8782,11 @@
     "Time": "2024-03-28T00:45:16.2701737Z",
     "prev_comm": "swapper/21",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8794,11 +8794,11 @@
     "Time": "2024-03-28T00:45:16.2702354Z",
     "prev_comm": "swapper/22",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8806,11 +8806,11 @@
     "Time": "2024-03-28T00:45:12.6424029Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "1",
+    "prev_prio": 120,
+    "prev_state": 1,
     "next_comm": "swapper/23",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8818,11 +8818,11 @@
     "Time": "2024-03-28T00:45:13.2861517Z",
     "prev_comm": "swapper/23",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/23:2",
     "next_pid": "0x23D",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8830,11 +8830,11 @@
     "Time": "2024-03-28T00:45:13.2861739Z",
     "prev_comm": "kworker/23:2",
     "prev_pid": "0x23D",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/23",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8842,11 +8842,11 @@
     "Time": "2024-03-28T00:45:13.3261254Z",
     "prev_comm": "swapper/23",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "kworker/23:2",
     "next_pid": "0x23D",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8854,11 +8854,11 @@
     "Time": "2024-03-28T00:45:13.3261361Z",
     "prev_comm": "kworker/23:2",
     "prev_pid": "0x23D",
-    "prev_prio": "120",
-    "prev_state": "128",
+    "prev_prio": 120,
+    "prev_state": 128,
     "next_comm": "swapper/23",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8866,11 +8866,11 @@
     "Time": "2024-03-28T00:45:16.2679347Z",
     "prev_comm": "swapper/23",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8878,11 +8878,11 @@
     "Time": "2024-03-28T00:45:16.2682722Z",
     "prev_comm": "perf",
     "prev_pid": "0x950",
-    "prev_prio": "120",
-    "prev_state": "2",
+    "prev_prio": 120,
+    "prev_state": 2,
     "next_comm": "migration/23",
     "next_pid": "0x82",
-    "next_prio": "0"
+    "next_prio": 0
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8890,11 +8890,11 @@
     "Time": "2024-03-28T00:45:16.2683159Z",
     "prev_comm": "migration/23",
     "prev_pid": "0x82",
-    "prev_prio": "0",
-    "prev_state": "1",
+    "prev_prio": 0,
+    "prev_state": 1,
     "next_comm": "swapper/23",
     "next_pid": "0x0",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "Sample": "Sample/sched:sched_switch",
@@ -8902,11 +8902,11 @@
     "Time": "2024-03-28T00:45:16.270294Z",
     "prev_comm": "swapper/23",
     "prev_pid": "0x0",
-    "prev_prio": "120",
-    "prev_state": "0",
+    "prev_prio": 120,
+    "prev_state": 0,
     "next_comm": "perf",
     "next_pid": "0x950",
-    "next_prio": "120"
+    "next_prio": 120
   },
   {
     "NonSampleSpecial": "FinishedRound",

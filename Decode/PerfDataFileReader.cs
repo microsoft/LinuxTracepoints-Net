@@ -132,6 +132,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         private ReadOnlyMemory<byte> m_printk; // Points into m_headers.
         private ReadOnlyMemory<byte> m_cmdline; // Points into m_headers.
 
+        /// <summary>
+        /// Constructs a new PerfDataFileReader.
+        /// </summary>
         public PerfDataFileReader()
         {
             Debug.Assert(ClockData.SizeOfStruct == Marshal.SizeOf<ClockData>());
@@ -152,12 +155,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns true if the currently-opened file is big-endian.
+        /// Returns true if the the currently-opened file's event data is formatted in
+        /// big-endian byte order. (Use ByteReader to do byte-swapping as appropriate.)
         /// </summary>
-        public bool FileIsBigEndian => m_byteReader.FromBigEndian;
+        public bool FromBigEndian => m_byteReader.FromBigEndian;
 
         /// <summary>
-        /// Returns ByteReader(FileIsBigEndian).
+        /// Returns a PerfByteReader configured for the byte order of the events
+        /// in the currently-opened file, i.e. PerfByteReader(FromBigEndian).
         /// </summary>
         public PerfByteReader ByteReader => m_byteReader;
 
@@ -243,6 +248,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns the raw data from the specified header. Data is in file-endian
         /// byte order (use ByteReader to do byte-swapping as appropriate).
         /// Returns empty if the requested header was not loaded from the file.
+        /// </summary>
         public ReadOnlyMemory<byte> Header(PerfHeaderIndex headerIndex)
         {
             return (int)headerIndex < m_headers.Length
@@ -983,7 +989,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// it may succeed but return incorrect information. In general:
         /// <list type="bullet"><item>
         /// Only use this on events where perfEventData.Type != PERF_RECORD_SAMPLE
-        /// and perfEventData.Type < PERF_RECORD_USER_TYPE_START.
+        /// and perfEventData.Type &lt; PERF_RECORD_USER_TYPE_START.
         /// </item><item>
         /// Only use this on events that come after the PERF_RECORD_FINISHED_INIT
         /// event.
@@ -1436,8 +1442,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     return; // Unexpected.
                 }
 
-                var dataIsBigEndian = data[pos] != 0;
-                var dataByteReader = new PerfByteReader(dataIsBigEndian);
+                var dataByteReader = new PerfByteReader(data[pos] != 0);
                 pos += 1;
 
                 m_tracingDataLongSize = data[pos];

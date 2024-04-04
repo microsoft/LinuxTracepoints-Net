@@ -21,6 +21,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public readonly uint TvNsec;
 
+        /// <summary>
+        /// Initializes a new instance of the PerfEventTimeSpec struct.
+        /// </summary>
+        /// <param name="tvSec">Signed value indicating seconds since 1970.</param>
+        /// <param name="tvNsec">Nanoseconds.</param>
         public PerfEventTimeSpec(long tvSec, uint tvNsec)
         {
             this.TvSec = tvSec;

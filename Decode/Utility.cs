@@ -4,11 +4,10 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+    using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
     using NumberStyles = System.Globalization.NumberStyles;
-    using CultureInfo = System.Globalization.CultureInfo;
-    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
-    using Text = System.Text;
 
     internal static class Utility
     {
@@ -16,21 +15,18 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         public static Guid ReadGuidBigEndian(ReadOnlySpan<byte> bytes)
         {
-            unchecked
-            {
-                return new Guid(
-                    BinaryPrimitives.ReadUInt32BigEndian(bytes),
-                    BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(4)),
-                    BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(6)),
-                    bytes[8],
-                    bytes[9],
-                    bytes[10],
-                    bytes[11],
-                    bytes[12],
-                    bytes[13],
-                    bytes[14],
-                    bytes[15]);
-            }
+            return new Guid(
+                BinaryPrimitives.ReadUInt32BigEndian(bytes),
+                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(4)),
+                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(6)),
+                bytes[8],
+                bytes[9],
+                bytes[10],
+                bytes[11],
+                bytes[12],
+                bytes[13],
+                bytes[14],
+                bytes[15]);
         }
 
         public static bool IsSpaceOrTab(char ch)
