@@ -818,7 +818,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                     else
                     {
-                        if (m_nonSampleTimeOffset < sizeof(UInt64) ||
+                        if (bytes.Header.Type >= PerfEventHeaderType.UserTypeStart ||
+                            m_nonSampleTimeOffset < sizeof(UInt64) ||
                             m_nonSampleTimeOffset > bytesLength)
                         {
                             entry.time = 0;
@@ -837,6 +838,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     if (bytes.Header.Type == PerfEventHeaderType.FinishedRound ||
                         bytes.Header.Type == PerfEventHeaderType.FinishedInit)
                     {
+                        entry.time = UInt64.MaxValue;
                         break;
                     }
                 }

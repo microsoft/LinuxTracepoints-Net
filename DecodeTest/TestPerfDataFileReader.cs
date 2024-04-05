@@ -18,9 +18,15 @@
                 using (var decode = new DecodePerf.PerfDataDecode(writer))
                 {
                     writer.WriteStartArray();
+                    writer.WriteCommentValue(" Events in File order ");
                     decode.DecodeFile(
                         Path.Combine(TestContext.TestDeploymentDir, "input", inputName),
                         PerfDataFileEventOrder.File);
+
+                    writer.WriteCommentValue(" Events in Time order ");
+                    decode.DecodeFile(
+                        Path.Combine(TestContext.TestDeploymentDir, "input", inputName),
+                        PerfDataFileEventOrder.Time);
                     writer.WriteEndArray();
                 }
             }

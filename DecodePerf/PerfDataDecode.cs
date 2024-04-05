@@ -167,16 +167,16 @@
                         var firstField = this.Meta.HasFlag(PerfDataMeta.Common) ? 0 : infoFormat.CommonFieldCount;
                         for (int i = firstField; i < infoFormat.Fields.Length; i++)
                         {
-                            var fieldMeta = infoFormat.Fields[i];
-                            var fieldValue = fieldMeta.GetFieldValue(info.RawDataSpan, byteReader);
+                            var fieldFormat = infoFormat.Fields[i];
+                            var fieldValue = fieldFormat.GetFieldValue(info.RawDataSpan, byteReader);
                             if (!fieldValue.IsArray)
                             {
-                                writer.WritePropertyName(fieldMeta.Name);
+                                writer.WritePropertyName(fieldFormat.Name);
                                 this.WriteValue(fieldValue, ref charBuf);
                             }
                             else
                             {
-                                writer.WriteStartArray(fieldMeta.Name);
+                                writer.WriteStartArray(fieldFormat.Name);
                                 WriteSimpleArrayValues(fieldValue, ref charBuf);
                                 writer.WriteEndArray();
                             }
