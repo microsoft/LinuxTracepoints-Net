@@ -55,15 +55,15 @@
 
         public PerfDataMeta Meta { get; set; }
 
-        public void DecodeFile(string fileName)
+        public void DecodeFile(string fileName, PerfDataFileEventOrder eventOrder)
         {
-            reader.OpenFile(fileName);
+            reader.OpenFile(fileName, eventOrder);
             this.Decode();
         }
 
-        public void DecodeStream(Stream stream, bool leaveOpen = false)
+        public void DecodeStream(Stream stream, PerfDataFileEventOrder eventOrder, bool leaveOpen = false)
         {
-            reader.OpenStream(stream, leaveOpen);
+            reader.OpenStream(stream, eventOrder, leaveOpen);
             this.Decode();
         }
 
@@ -78,7 +78,7 @@
             bool finishedInit = false;
             var byteReader = reader.ByteReader;
             PerfDataFileResult result;
-            PerfEvent e;
+            PerfEventBytes eventBytes;
 
             // We assume charBuf is large enough for all fixed-length fields.
             // The long ones are Value128.HexBytes (needs 47) and Value128.IPv6 (needs 45).
@@ -87,7 +87,7 @@
 
             while (true)
             {
-                result = reader.ReadEvent(out e);
+                result = reader.ReadEvent(out eventBytes);
                 if (result != PerfDataFileResult.Ok)
                 {
                     if (result != PerfDataFileResult.EndOfFile)
@@ -97,83 +97,74 @@
                     break;
                 }
 
-                if (e.Header.Type != PerfEventHeaderType.Sample)
-                {
-                    finishedInit |= e.Header.Type == PerfEventHeaderType.FinishedInit;
+                writer.WriteStartObject(); // event
 
-                    if (e.Header.Type >= PerfEventHeaderType.UserTypeStart)
+                if (eventBytes.Header.Type != PerfEventHeaderType.Sample)
+                {
+                    finishedInit |= eventBytes.Header.Type == PerfEventHeaderType.FinishedInit;
+
+                    PerfNonSampleEventInfo info;
+                    if (eventBytes.Header.Type >= PerfEventHeaderType.UserTypeStart)
                     {
-                        // Synthetic events, injected by the trace collection tool.
-                        writer.WriteStartObject();
-                        writer.WriteString("nsSynth", e.Header.Type.ToString()); // Garbage.
-                        writer.WriteNumber("size", e.Bytes.Length);
-                        writer.WriteEndObject();
-                    }
-                    else if (!finishedInit)
-                    {
-                        // Non-sample events before FinishedInit.
-                        // Since we haven't seen FinishedInit, we can't get attributes for them.
-                        // Typically these are system-configuration events with well-known formats
-                        // like Mmap, Ksymbol, Fork.
-                        writer.WriteStartObject();
-                        writer.WriteString("ns", e.Header.Type.ToString()); // Garbage.
-                        writer.WriteNumber("size", e.Bytes.Length);
-                        writer.WriteEndObject();
+                        // Synthetic events, no attributes.
+                        info = default;
+                        result = PerfDataFileResult.NoData;
                     }
                     else
                     {
-                        // Non-sample events after FinishedInit.
                         // Attributes are expected to be available for these events.
-                        PerfNonSampleEventInfo info;
-                        result = reader.GetNonSampleEventInfo(e, out info);
+                        result = reader.GetNonSampleEventInfo(eventBytes, out info);
                         if (result != PerfDataFileResult.Ok)
                         {
-                            writer.WriteCommentValue($"Pos {reader.FilePos}: GetNonSampleEventInfo {result}"); // Garbage.
-                        }
-                        else
-                        {
-                            writer.WriteStartObject();
-                            writer.WriteString("ns", $"{e.Header.Type}/{info.Name}"); // Garbage.
-                            writer.WriteNumber("size", e.Bytes.Length);
-
-                            if (this.Meta.HasFlag(PerfDataMeta.Time))
+                            // Attributes not available.
+                            // If we haven't seen FinishedInit, IdNotFound is expected.
+                            if (finishedInit || result != PerfDataFileResult.IdNotFound)
                             {
-                                writer.WriteString("time", info.DateTime);
+                                writer.WriteCommentValue($"Pos {reader.FilePos}: GetNonSampleEventInfo {result}"); // Garbage.
                             }
-
-                            writer.WriteEndObject();
                         }
+                    }
+
+                    writer.WriteString("ns", // Garbage.
+                        result != PerfDataFileResult.Ok
+                        ? eventBytes.Header.Type.ToString()
+                        : $"{eventBytes.Header.Type}/{info.Name}");
+                    writer.WriteNumber("size", eventBytes.Memory.Length);
+
+                    if (result == PerfDataFileResult.Ok)
+                    {
+                        WriteNonSampleMeta(info);
                     }
                 }
                 else
                 {
                     PerfSampleEventInfo info;
-                    result = reader.GetSampleEventInfo(e, out info);
+                    result = reader.GetSampleEventInfo(eventBytes, out info);
                     if (result != PerfDataFileResult.Ok)
                     {
+                        // Unable to lookup attributes for event. Unexpected.
                         writer.WriteCommentValue($"Pos {reader.FilePos}: GetSampleEventInfo {result}"); // Garbage.
+                        writer.WriteNull("n");
+                        writer.WriteNumber("size", eventBytes.Memory.Length);
                     }
                     else if (!(info.Format is PerfEventFormat infoFormat))
                     {
                         // No TraceFS format for this event. Unexpected.
-                        writer.WriteStartObject();
-                        writer.WriteNull("sNoMeta");
-                        writer.WriteNumber("size", e.Bytes.Length);
-                        writer.WriteEndObject();
+                        writer.WriteString("n", info.Name);
+                        writer.WriteNumber("size", eventBytes.Memory.Length);
                     }
-                    else if (infoFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader)
+                    else if (infoFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
+                        !this.enumerator.StartEvent(infoFormat.Name, info.UserData))
                     {
-                        // TraceFS format present. Not an EventHeader event.
-                        writer.WriteStartObject();
+                        // Non-EventHeader decoding.
 
                         if (this.Meta.HasFlag(PerfDataMeta.N))
                         {
                             writer.WriteString("n", info.Name);
                         }
 
-                        // Skip the common fields by default.
+                        // Write the event fields. Skip the common fields by default.
                         var firstField = this.Meta.HasFlag(PerfDataMeta.Common) ? 0 : infoFormat.CommonFieldCount;
-
                         for (int i = firstField; i < infoFormat.Fields.Length; i++)
                         {
                             var fieldMeta = infoFormat.Fields[i];
@@ -197,34 +188,17 @@
                             WriteSampleMeta(info, true);
                             writer.WriteEndObject(); // meta
                         }
-
-                        writer.WriteEndObject();
-                    }
-                    else if (!this.enumerator.StartEvent(infoFormat.Name, info.UserData))
-                    {
-                        writer.WriteStartObject();
-                        writer.WriteString("nEventHeaderBad", info.Name);
-                        writer.WriteNumber("size", e.Bytes.Length);
-
-                        if (0 != (this.Meta & ~PerfDataMeta.N))
-                        {
-                            writer.WriteStartObject("meta");
-                            WriteSampleMeta(info, true);
-                            writer.WriteEndObject(); // meta
-                        }
-
-                        writer.WriteEndObject();
                     }
                     else
                     {
-                        var ei = this.enumerator.GetEventInfo();
-                        writer.WriteStartObject();
+                        // EventHeader decoding.
 
+                        var ei = this.enumerator.GetEventInfo();
                         if (this.Meta.HasFlag(PerfDataMeta.N))
                         {
                             writer.WriteString("n", // Garbage
                                 infoFormat.SystemName == "user_events"
-                                ? $"{new string(ei.ProviderName)}:{ei.NameAsString}"
+                                ? $"{ei.ProviderName.ToString()}:{ei.NameAsString}"
                                 : $"{infoFormat.SystemName}:{ei.ProviderName.ToString()}:{ei.NameAsString}");
                         }
 
@@ -334,7 +308,7 @@
                             {
                                 this.writer.WriteString("activity", aid);
                             }
-                            
+
                             if (this.Meta.HasFlag(PerfDataMeta.RelatedActivity) && ei.RelatedActivityId is Guid rid)
                             {
                                 this.writer.WriteString("relatedActivity", rid);
@@ -352,10 +326,10 @@
 
                             this.writer.WriteEndObject(); // meta
                         }
-
-                        this.writer.WriteEndObject(); // event
                     }
                 }
+
+                writer.WriteEndObject(); // event
             }
         }
 
@@ -394,6 +368,68 @@
             }
 
             if (showProviderEvent && 0 != (this.Meta & (PerfDataMeta.Provider | PerfDataMeta.Event)))
+            {
+                var name = info.Name.AsSpan();
+                var colonPos = name.IndexOf(':');
+                ReadOnlySpan<char> providerName, eventName;
+                if (colonPos < 0)
+                {
+                    providerName = default;
+                    eventName = name;
+                }
+                else
+                {
+                    providerName = name.Slice(0, colonPos);
+                    eventName = name.Slice(colonPos + 1);
+                }
+
+                if (this.Meta.HasFlag(PerfDataMeta.Provider) && !providerName.IsEmpty)
+                {
+                    writer.WriteString("provider", providerName);
+                }
+
+                if (this.Meta.HasFlag(PerfDataMeta.Event) && !eventName.IsEmpty)
+                {
+                    writer.WriteString("event", eventName);
+                }
+            }
+        }
+
+        private void WriteNonSampleMeta(in PerfNonSampleEventInfo info)
+        {
+            var sampleType = info.SampleType;
+
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(PerfDataMeta.Time))
+            {
+                if (info.SessionInfo.ClockOffsetKnown)
+                {
+                    writer.WriteString("time", info.DateTime);
+                }
+                else
+                {
+                    writer.WriteNumber("time", info.Time / 1000000000.0);
+                }
+            }
+
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(PerfDataMeta.Cpu))
+            {
+                writer.WriteNumber("cpu", info.Cpu);
+            }
+
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
+            {
+                if (this.Meta.HasFlag(PerfDataMeta.Pid))
+                {
+                    writer.WriteNumber("pid", info.Pid);
+                }
+
+                if (this.Meta.HasFlag(PerfDataMeta.Tid))
+                {
+                    writer.WriteNumber("tid", info.Tid);
+                }
+            }
+
+            if (0 != (this.Meta & (PerfDataMeta.Provider | PerfDataMeta.Event)))
             {
                 var name = info.Name.AsSpan();
                 var colonPos = name.IndexOf(':');

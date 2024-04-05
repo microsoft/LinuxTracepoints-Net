@@ -3,6 +3,7 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System.IO;
     using System.Text.Json;
+    using PerfDataFileEventOrder = Microsoft.LinuxTracepoints.Decode.PerfDataFileEventOrder;
 
     [TestClass]
     public class TestPerfDataFileReader
@@ -17,7 +18,9 @@
                 using (var decode = new DecodePerf.PerfDataDecode(writer))
                 {
                     writer.WriteStartArray();
-                    decode.DecodeFile(Path.Combine(TestContext.TestDeploymentDir, "input", inputName));
+                    decode.DecodeFile(
+                        Path.Combine(TestContext.TestDeploymentDir, "input", inputName),
+                        PerfDataFileEventOrder.File);
                     writer.WriteEndArray();
                 }
             }

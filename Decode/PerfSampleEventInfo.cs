@@ -20,9 +20,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
         /// The format of the data depends on this.Header.Type.
         /// </para><para>
-        /// This is the same as Bytes, i.e. this.BytesSpan == this.Bytes.Span. This field
-        /// is provided as an optimization to avoid the overhead of redundant calls to
-        /// Bytes.Span.
+        /// This is the same as BytesMemory, i.e. this.BytesSpan == this.BytesMemory.Span.
+        /// This field is provided as an optimization to avoid the overhead of redundant calls
+        /// to BytesMemory.Span.
         /// </para><para>
         /// This field points into the PerfDataFileReader's data buffer. The referenced data
         /// is only valid until the next call to ReadEvent.
@@ -41,7 +41,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// is only valid until the next call to ReadEvent.
         /// </para>
         /// </summary>
-        public ReadOnlyMemory<byte> Bytes;
+        public ReadOnlyMemory<byte> BytesMemory;
 
         /// <summary>
         /// Valid if GetSampleEventInfo() succeeded.
@@ -109,7 +109,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Valid if SampleType contains Read.
-        /// Offset into Bytes where ReadValues begins.
+        /// Offset into BytesMemory where ReadValues begins.
         /// </summary>
         public int ReadStart;
 
@@ -121,7 +121,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Valid if SampleType contains Callchain.
-        /// Offset into Bytes where Callchain begins.
+        /// Offset into BytesMemory where Callchain begins.
         /// </summary>
         public int CallchainStart;
 
@@ -133,7 +133,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Valid if SampleType contains Raw.
-        /// Offset into Bytes where RawData begins.
+        /// Offset into BytesMemory where RawData begins.
         /// </summary>
         public int RawDataStart;
 
@@ -204,7 +204,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Valid if SampleType contains Read.
         /// </summary>
         public readonly ReadOnlyMemory<byte> ReadValues =>
-            this.Bytes.Slice(this.ReadStart, this.ReadLength);
+            this.BytesMemory.Slice(this.ReadStart, this.ReadLength);
 
         /// <summary>
         /// Gets the read_format data from the event in event-endian byte order.
@@ -218,7 +218,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Valid if SampleType contains Callchain.
         /// </summary>
         public readonly ReadOnlyMemory<byte> Callchain =>
-            this.Bytes.Slice(this.CallchainStart, this.CallchainLength);
+            this.BytesMemory.Slice(this.CallchainStart, this.CallchainLength);
 
         /// <summary>
         /// Gets the callchain data from the event in event-endian byte order.
@@ -233,7 +233,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Valid if SampleType contains Raw.
         /// </summary>
         public readonly ReadOnlyMemory<byte> RawData =>
-            this.Bytes.Slice(this.RawDataStart, this.RawDataLength);
+            this.BytesMemory.Slice(this.RawDataStart, this.RawDataLength);
 
         /// <summary>
         /// Gets the raw field data from the event in event-endian byte order.
@@ -255,7 +255,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var format = this.EventDesc.Format;
                 return format == null || format.CommonFieldsSize > this.RawDataLength
                     ? default
-                    : this.Bytes.Slice(
+                    : this.BytesMemory.Slice(
                         this.RawDataStart + format.CommonFieldsSize,
                         this.RawDataLength - format.CommonFieldsSize);
 

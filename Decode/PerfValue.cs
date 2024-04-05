@@ -16,16 +16,16 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// <list type="bullet">
     /// <item>
     /// Element (non-array field, or one element of an array):
-    /// Bytes contains the element value in event-endian byte order.
+    /// Memory contains the element value in event-endian byte order.
     /// ArrayCount is 1.
-    /// ElementSize is the fixed size of the element's type (Bytes.Length == ElementSize),
+    /// ElementSize is the fixed size of the element's type (Memory.Length == ElementSize),
     /// or 0 if the type is variable-size (e.g. a string).
     /// Format is significant.
     /// StructFieldCount should be ignored.
     /// </item>
     /// <item>
     /// The beginning or end of a structure (single struct, or element of an array of struct):
-    /// Bytes is empty (the structure's fields are accessed via the event enumerator).
+    /// Memory is empty (the structure's fields are accessed via the event enumerator).
     /// ArrayCount is 1.
     /// ElementSize is 0.
     /// Format should be ignored.
@@ -33,7 +33,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </item>
     /// <item>
     /// The beginning of an array of simple type (non-struct, element's type is fixed-size):
-    /// Bytes contains the element values in event-endian byte order (Length = ArrayCount * ElementSize).
+    /// Memory contains the element values in event-endian byte order (Length = ArrayCount * ElementSize).
     /// ArrayCount is the number of elements.
     /// ElementSize is the size of the element's type.
     /// Format is significant.
@@ -41,7 +41,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </item>
     /// <item>
     /// The end of an array of simple elements:
-    /// Bytes is empty.
+    /// Memory is empty.
     /// ArrayCount is the number of elements.
     /// ElementSize is the size of the element's type.
     /// Format is significant.
@@ -49,7 +49,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </item>
     /// <item>
     /// The beginning or end of an array of complex elements:
-    /// Bytes is empty (array elements are accessed via the event enumerator).
+    /// Memory is empty (array elements are accessed via the event enumerator).
     /// ArrayCount is the number of elements.
     /// ElementSize is 0.
     /// Either Format or StructFieldCount is significant, depending on whether the Encoding is Struct.

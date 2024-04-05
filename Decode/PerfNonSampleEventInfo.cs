@@ -20,9 +20,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// The bytes consist of the 8-byte header followed by the data, both in event byte order.
         /// The format of the data depends on this.Header.Type.
         /// </para><para>
-        /// This is the same as Bytes, i.e. this.BytesSpan == this.Bytes.Span. This field
+        /// This is the same as BytesMemory, i.e. this.BytesSpan == this.BytesMemory.Span. This field
         /// is provided as an optimization to avoid the overhead of redundant calls to
-        /// Bytes.Span.
+        /// BytesMemory.Span.
         /// </para><para>
         /// This field points into the PerfDataFileReader's data buffer. The referenced data
         /// is only valid until the next call to ReadEvent.
@@ -41,7 +41,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// is only valid until the next call to ReadEvent.
         /// </para>
         /// </summary>
-        public ReadOnlyMemory<byte> Bytes;
+        public ReadOnlyMemory<byte> BytesMemory;
 
         /// <summary>
         /// Valid if GetNonSampleEventInfo() succeeded.

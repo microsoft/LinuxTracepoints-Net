@@ -1,134 +1,134 @@
 ﻿[
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderAttr",
+    "ns": "HeaderAttr",
     "size": 336
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 84
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 84
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 84
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 84
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 24
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 84
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 84
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 24
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 1076
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 4616
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 1268
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 524
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 32
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 24
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 20
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 20
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 20
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 40
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 20
   },
   {
-    "nsSynth": "HeaderFeature",
+    "ns": "HeaderFeature",
     "size": 16
   },
   {
-    "nsSynth": "HeaderTracingData",
+    "ns": "HeaderTracingData",
     "size": 11708
   },
   {
-    "nsSynth": "IdIndex",
+    "ns": "IdIndex",
     "size": 8464
   },
   {
@@ -136,55 +136,55 @@
     "size": 96
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 296
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 88
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 72
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 72
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 80
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 88
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 80
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 80
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 80
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 64
   },
   {
-    "nsSynth": "EventUpdate",
+    "ns": "EventUpdate",
     "size": 56
   },
   {
-    "nsSynth": "ThreadMap",
+    "ns": "ThreadMap",
     "size": 40
   },
   {
-    "nsSynth": "CpuMap",
+    "ns": "CpuMap",
     "size": 16
   },
   {
@@ -1984,7 +1984,7 @@
     "size": 56
   },
   {
-    "nsSynth": "FinishedInit",
+    "ns": "FinishedInit",
     "size": 8
   },
   {
@@ -2502,7 +2502,10 @@
   {
     "ns": "Fork/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:29.3471124Z"
+    "time": "2024-03-28T00:45:29.3471124Z",
+    "cpu": 16,
+    "pid": 2006,
+    "tid": 258794252
   },
   {
     "n": "sched:sched_switch",
@@ -2729,7 +2732,7 @@
     }
   },
   {
-    "nsSynth": "FinishedRound",
+    "ns": "FinishedRound",
     "size": 8
   },
   {
@@ -4991,7 +4994,10 @@
   {
     "ns": "Fork/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:32.0632188Z"
+    "time": "2024-03-28T00:45:32.0632188Z",
+    "cpu": 14,
+    "pid": 1220,
+    "tid": 2974900625
   },
   {
     "n": "sched:sched_switch",
@@ -5252,27 +5258,42 @@
   {
     "ns": "Comm/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:32.0636972Z"
+    "time": "2024-03-28T00:45:32.0636972Z",
+    "cpu": 16,
+    "pid": 2008,
+    "tid": 2975379084
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 192,
-    "time": "2024-03-28T00:45:32.0637303Z"
+    "time": "2024-03-28T00:45:32.0637303Z",
+    "cpu": 16,
+    "pid": 2008,
+    "tid": 2975412157
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 152,
-    "time": "2024-03-28T00:45:32.0638081Z"
+    "time": "2024-03-28T00:45:32.0638081Z",
+    "cpu": 16,
+    "pid": 2008,
+    "tid": 2975489959
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 112,
-    "time": "2024-03-28T00:45:32.0638255Z"
+    "time": "2024-03-28T00:45:32.0638255Z",
+    "cpu": 16,
+    "pid": 2008,
+    "tid": 2975507368
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 144,
-    "time": "2024-03-28T00:45:32.0639967Z"
+    "time": "2024-03-28T00:45:32.0639967Z",
+    "cpu": 16,
+    "pid": 2008,
+    "tid": 2975678575
   },
   {
     "n": "Long_Provider_Name_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX0123456789:LongProviderEvent",
@@ -8933,7 +8954,10 @@
   {
     "ns": "Exit/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:32.0658383Z"
+    "time": "2024-03-28T00:45:32.0658383Z",
+    "cpu": 16,
+    "pid": 2008,
+    "tid": 2977520169
   },
   {
     "n": "sched:sched_switch",
@@ -10408,7 +10432,7 @@
     }
   },
   {
-    "nsSynth": "FinishedRound",
+    "ns": "FinishedRound",
     "size": 8
   }
 ]

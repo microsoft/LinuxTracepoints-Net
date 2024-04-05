@@ -434,12 +434,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
         public bool MoveNext()
         {
-            if (m_state < EventHeaderEnumeratorState.BeforeFirstItem)
-            {
-                throw new InvalidOperationException(); // PRECONDITION
-            }
-
-            return this.MoveNextImpl(m_eventData.Span);
+            return this.MoveNext(m_eventData.Span);
         }
 
         /// <summary>
@@ -461,17 +456,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public bool MoveNext(ReadOnlySpan<byte> eventDataSpan)
         {
+            Debug.Assert(m_eventData.Length == eventDataSpan.Length);
+
             if (m_state < EventHeaderEnumeratorState.BeforeFirstItem)
             {
                 throw new InvalidOperationException(); // PRECONDITION
             }
-
-            return this.MoveNextImpl(eventDataSpan);
-        }
-
-        private bool MoveNextImpl(ReadOnlySpan<byte> eventDataSpan)
-        {
-            Debug.Assert(m_eventData.Length == eventDataSpan.Length);
 
             if (m_moveNextRemaining == 0)
             {
@@ -816,7 +806,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
                 }
 
-                movedToItem = MoveNextImpl(eventDataSpan);
+                movedToItem = MoveNext(eventDataSpan);
             } while (movedToItem && depth > 0);
 
             return movedToItem;

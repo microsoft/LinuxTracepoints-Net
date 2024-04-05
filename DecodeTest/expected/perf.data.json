@@ -1,6 +1,6 @@
 ﻿[
   {
-    "nsSynth": "IdIndex",
+    "ns": "IdIndex",
     "size": 8464
   },
   {
@@ -8,11 +8,11 @@
     "size": 96
   },
   {
-    "nsSynth": "ThreadMap",
+    "ns": "ThreadMap",
     "size": 40
   },
   {
-    "nsSynth": "CpuMap",
+    "ns": "CpuMap",
     "size": 16
   },
   {
@@ -1812,7 +1812,7 @@
     "size": 56
   },
   {
-    "nsSynth": "FinishedInit",
+    "ns": "FinishedInit",
     "size": 8
   },
   {
@@ -2330,7 +2330,10 @@
   {
     "ns": "Fork/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:12.600304Z"
+    "time": "2024-03-28T00:45:12.600304Z",
+    "cpu": 16,
+    "pid": 2002,
+    "tid": 691854456
   },
   {
     "n": "sched:sched_switch",
@@ -2557,7 +2560,7 @@
     }
   },
   {
-    "nsSynth": "FinishedRound",
+    "ns": "FinishedRound",
     "size": 8
   },
   {
@@ -4915,7 +4918,10 @@
   {
     "ns": "Fork/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:14.7876837Z"
+    "time": "2024-03-28T00:45:14.7876837Z",
+    "cpu": 14,
+    "pid": 1220,
+    "tid": 2879234103
   },
   {
     "n": "sched:sched_switch",
@@ -5208,27 +5214,42 @@
   {
     "ns": "Comm/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:14.7882375Z"
+    "time": "2024-03-28T00:45:14.7882375Z",
+    "cpu": 16,
+    "pid": 2004,
+    "tid": 2879787941
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 192,
-    "time": "2024-03-28T00:45:14.7882823Z"
+    "time": "2024-03-28T00:45:14.7882823Z",
+    "cpu": 16,
+    "pid": 2004,
+    "tid": 2879832715
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 152,
-    "time": "2024-03-28T00:45:14.7883218Z"
+    "time": "2024-03-28T00:45:14.7883218Z",
+    "cpu": 16,
+    "pid": 2004,
+    "tid": 2879872187
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 112,
-    "time": "2024-03-28T00:45:14.7883448Z"
+    "time": "2024-03-28T00:45:14.7883448Z",
+    "cpu": 16,
+    "pid": 2004,
+    "tid": 2879895209
   },
   {
     "ns": "Mmap2/dummy:HG",
     "size": 144,
-    "time": "2024-03-28T00:45:14.7885835Z"
+    "time": "2024-03-28T00:45:14.7885835Z",
+    "cpu": 16,
+    "pid": 2004,
+    "tid": 2880133956
   },
   {
     "n": "Long_Provider_Name_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX0123456789:LongProviderEvent",
@@ -8857,7 +8878,10 @@
   {
     "ns": "Exit/dummy:HG",
     "size": 64,
-    "time": "2024-03-28T00:45:14.7913846Z"
+    "time": "2024-03-28T00:45:14.7913846Z",
+    "cpu": 16,
+    "pid": 2004,
+    "tid": 2882935004
   },
   {
     "n": "sched:sched_switch",
@@ -10044,7 +10068,7 @@
     }
   },
   {
-    "nsSynth": "FinishedRound",
+    "ns": "FinishedRound",
     "size": 8
   }
 ]

@@ -2,6 +2,7 @@
 {
     using System;
     using System.Text.Json;
+    using PerfDataFileEventOrder = Microsoft.LinuxTracepoints.Decode.PerfDataFileEventOrder;
 
     internal class Program
     {
@@ -18,7 +19,7 @@
                         writer.WriteStartArray();
                         foreach (var arg in args)
                         {
-                            decode.DecodeFile(arg);
+                            decode.DecodeFile(arg, PerfDataFileEventOrder.File);
                         }
                         writer.WriteEndArray();
                     }
