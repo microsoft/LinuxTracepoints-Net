@@ -10,7 +10,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System.Runtime.InteropServices;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using Debug = System.Diagnostics.Debug;
-    using Encoding = System.Text.Encoding;
 
     /// <summary>
     /// Status returned by ReadEvent, GetSampleEventInfo, and GetNonSampleEventInfo.
@@ -126,39 +125,51 @@ namespace Microsoft.LinuxTracepoints.Decode
         private UInt64 m_fileLen;
         private UInt64 m_dataBeginFilePos;
         private UInt64 m_dataEndFilePos;
+
         private Memory<byte> m_buffer; // Scratch buffer
+
+        private readonly ArrayMemory[] m_headers;
+
+        private readonly List<PerfEventDesc> m_eventDescList;
         private readonly ReadOnlyCollection<PerfEventDesc> m_eventDescListReadOnly;
+        private readonly Dictionary<UInt64, PerfEventDesc> m_eventDescById;
         private readonly ReadOnlyDictionary<UInt64, PerfEventDesc> m_eventDescByIdReadOnly;
-        private readonly List<QueueEntry> m_eventQueue = new List<QueueEntry>();
-        private readonly ArrayMemory[] m_headers = new ArrayMemory[(byte)PerfHeaderIndex.LastFeature];
-        private readonly List<PerfEventDesc> m_eventDescList = new List<PerfEventDesc>();
-        private readonly Dictionary<UInt64, PerfEventDesc> m_eventDescById = new Dictionary<UInt64, PerfEventDesc>();
-        private PerfEventSessionInfo m_sessionInfo = PerfEventSessionInfo.Empty;
-        private Stream m_file = Stream.Null;
+
+        private readonly List<QueueEntry> m_eventQueue;
+        private int m_eventQueueBegin;
+        private int m_eventQueueEnd;
+
+        private PerfEventSessionInfo m_sessionInfo;
+
+        private Stream m_file;
         private bool m_fileShouldBeClosed;
+
         private PerfByteReader m_byteReader;
         private bool m_parsedHeaderEventDesc;
         private PerfDataFileEventOrder m_eventOrder;
         private uint m_roundIndex;
-        private int m_eventQueueBegin;
-        private int m_eventQueueEnd;
         private PerfDataFileResult m_eventQueuePendingResult;
+
         private byte m_commonTypeSize;
         private sbyte m_commonTypeOffset = OffsetUnset; // -1 = unset.
         private sbyte m_sampleIdOffset = OffsetUnset; // -1 = unset, -2 = no id.
         private sbyte m_nonSampleIdOffset = OffsetUnset; // -1 = unset, -2 = no id.
-        private sbyte m_sampleTimeOffset = OffsetUnset; // -1 = unset, -2 = no id.
-        private sbyte m_nonSampleTimeOffset = OffsetUnset; // -1 = unset, -2 = no id.
+        private sbyte m_sampleTimeOffset = OffsetUnset; // -1 = unset, -2 = no time.
+        private sbyte m_nonSampleTimeOffset = OffsetUnset; // -1 = unset, -2 = no time.
 
         // HEADER_TRACING_DATA
+
         private bool m_parsedTracingData;
         private byte m_tracingDataLongSize;
         private int m_tracingDataPageSize;
         private ReadOnlyMemory<byte> m_headerPage; // Points into m_headers.
         private ReadOnlyMemory<byte> m_headerEvent; // Points into m_headers.
-        private readonly List<ReadOnlyMemory<byte>> m_ftraces = new List<ReadOnlyMemory<byte>>(); // Points into m_headers.
+
+        private readonly List<ReadOnlyMemory<byte>> m_ftraces; // Points into m_headers.
         private readonly ReadOnlyCollection<ReadOnlyMemory<byte>> m_ftracesReadOnly;
-        private readonly Dictionary<UInt32, PerfEventFormat> m_formatById = new Dictionary<UInt32, PerfEventFormat>();
+
+        private readonly Dictionary<UInt32, PerfEventFormat> m_formatById;
+
         private ReadOnlyMemory<byte> m_kallsyms; // Points into m_headers.
         private ReadOnlyMemory<byte> m_printk; // Points into m_headers.
         private ReadOnlyMemory<byte> m_cmdline; // Points into m_headers.
@@ -180,9 +191,20 @@ namespace Microsoft.LinuxTracepoints.Decode
             Debug.Assert(EventHeader.SizeOfStruct == Marshal.SizeOf<EventHeader>());
             Debug.Assert(EventHeaderExtension.SizeOfStruct == Marshal.SizeOf<EventHeaderExtension>());
 
+            m_headers = new ArrayMemory[(byte)PerfHeaderIndex.LastFeature];
+
+            m_eventDescList = new List<PerfEventDesc>();
             m_eventDescListReadOnly = m_eventDescList.AsReadOnly();
+            m_eventDescById = new Dictionary<UInt64, PerfEventDesc>();
             m_eventDescByIdReadOnly = new ReadOnlyDictionary<UInt64, PerfEventDesc>(m_eventDescById);
+
+            m_eventQueue = new List<QueueEntry>();
+            m_sessionInfo = PerfEventSessionInfo.Empty;
+            m_file = Stream.Null;
+
+            m_ftraces = new List<ReadOnlyMemory<byte>>();
             m_ftracesReadOnly = m_ftraces.AsReadOnly();
+            m_formatById = new Dictionary<UInt32, PerfEventFormat>();
         }
 
         /// <summary>
@@ -196,13 +218,6 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// in the currently-opened file, i.e. PerfByteReader(FromBigEndian).
         /// </summary>
         public PerfByteReader ByteReader => m_byteReader;
-
-        /// <summary>
-        /// Returns the position within the input file of the event that will be
-        /// read by the next call to ReadEvent().
-        /// Returns UINT64_MAX after end-of-file or file error.
-        /// </summary>
-        public UInt64 FilePos => m_filePos;
 
         /// <summary>
         /// Returns the position within the input file of the first event.
@@ -315,15 +330,20 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             m_eventDescList.Clear();
             m_eventDescById.Clear();
+
+            m_eventQueueBegin = default;
+            m_eventQueueEnd = default;
+
             m_sessionInfo = PerfEventSessionInfo.Empty;
+
             FileClose();
+
             m_byteReader = default;
             m_parsedHeaderEventDesc = default;
             m_eventOrder = default;
             m_roundIndex = default;
-            m_eventQueueBegin = default;
-            m_eventQueueEnd = default;
             m_eventQueuePendingResult = default;
+
             m_commonTypeSize = default;
             m_commonTypeOffset = OffsetUnset;
             m_sampleIdOffset = OffsetUnset;
@@ -337,8 +357,11 @@ namespace Microsoft.LinuxTracepoints.Decode
             m_tracingDataPageSize = default;
             m_headerPage = default;
             m_headerEvent = default;
+
             m_ftraces.Clear();
+
             m_formatById.Clear();
+
             m_kallsyms = default;
             m_printk = default;
             m_cmdline = default;

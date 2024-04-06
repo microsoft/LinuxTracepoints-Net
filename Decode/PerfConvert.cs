@@ -1,4 +1,7 @@
-﻿namespace Microsoft.LinuxTracepoints.Decode
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
     using System.Text;

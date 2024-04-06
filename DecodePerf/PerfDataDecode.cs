@@ -1,4 +1,7 @@
-﻿namespace DecodePerf
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace DecodePerf
 {
     using Microsoft.LinuxTracepoints;
     using Microsoft.LinuxTracepoints.Decode;
@@ -91,7 +94,7 @@
                 {
                     if (result != PerfDataFileResult.EndOfFile)
                     {
-                        writer.WriteCommentValue($"Pos {reader.FilePos}: ReadEvent {result}"); // Garbage.
+                        writer.WriteCommentValue($"ReadEvent {result}"); // Garbage.
                     }
                     break;
                 }
@@ -119,7 +122,7 @@
                             // If we haven't seen FinishedInit, IdNotFound is expected.
                             if (finishedInit || result != PerfDataFileResult.IdNotFound)
                             {
-                                writer.WriteCommentValue($"Pos {reader.FilePos}: GetNonSampleEventInfo {result}"); // Garbage.
+                                writer.WriteCommentValue($"GetNonSampleEventInfo {result}"); // Garbage.
                             }
                         }
                     }
@@ -142,7 +145,7 @@
                     if (result != PerfDataFileResult.Ok)
                     {
                         // Unable to lookup attributes for event. Unexpected.
-                        writer.WriteCommentValue($"Pos {reader.FilePos}: GetSampleEventInfo {result}"); // Garbage.
+                        writer.WriteCommentValue($"GetSampleEventInfo {result}"); // Garbage.
                         writer.WriteNull("n");
                         writer.WriteNumber("size", eventBytes.Memory.Length);
                     }

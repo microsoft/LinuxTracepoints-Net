@@ -5,9 +5,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
     using System.Diagnostics;
-    using System.Text;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
-    using CultureInfo = System.Globalization.CultureInfo;
     using IPAddress = System.Net.IPAddress;
     using Text = System.Text;
 

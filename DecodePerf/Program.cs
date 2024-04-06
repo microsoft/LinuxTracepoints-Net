@@ -1,4 +1,7 @@
-﻿namespace DecodePerf
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace DecodePerf
 {
     using System;
     using System.Text.Json;
