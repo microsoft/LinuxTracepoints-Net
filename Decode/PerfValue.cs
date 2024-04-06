@@ -5,6 +5,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
     using System.Diagnostics;
+    using System.Text;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using CultureInfo = System.Globalization.CultureInfo;
     using IPAddress = System.Net.IPAddress;
@@ -472,6 +473,80 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// Interprets the value as an array of Int32 and returns the first element.
+        /// </summary>
+        public Int32 GetUnixTime32()
+        {
+            return this.ByteReader.ReadI32(this.Bytes);
+        }
+
+        /// <summary>
+        /// Interprets the value as an array of Int32 and returns the element at the specified index.
+        /// </summary>
+        public Int32 GetUnixTime32(int elementIndex)
+        {
+            return this.ByteReader.ReadI32(this.Bytes.Slice(elementIndex * sizeof(Int32)));
+        }
+
+        /// <summary>
+        /// Interprets the value as an array of Int32 and returns the first element,
+        /// converted to a DateTime using PerfConvert.UnixTime32ToDateTime.
+        /// </summary>
+        public DateTime GetUnixTime32AsDateTime()
+        {
+            return PerfConvert.UnixTime32ToDateTime(
+                this.ByteReader.ReadI32(this.Bytes));
+        }
+
+        /// <summary>
+        /// Interprets the value as an array of Int32 and returns the element at the specified index,
+        /// converted to a DateTime using PerfConvert.UnixTime32ToDateTime.
+        /// </summary>
+        public DateTime GetUnixTime32AsDateTime(int elementIndex)
+        {
+            return PerfConvert.UnixTime32ToDateTime(
+                this.ByteReader.ReadI32(this.Bytes.Slice(elementIndex * sizeof(Int32))));
+        }
+
+        /// <summary>
+        /// Interprets the value as an array of Int64 and returns the first element.
+        /// </summary>
+        public Int64 GetUnixTime64()
+        {
+            return this.ByteReader.ReadI64(this.Bytes);
+        }
+
+        /// <summary>
+        /// Interprets the value as an array of Int64 and returns the element at the specified index.
+        /// </summary>
+        public Int64 GetUnixTime64(int elementIndex)
+        {
+            return this.ByteReader.ReadI64(this.Bytes.Slice(elementIndex * sizeof(Int64)));
+        }
+
+        /// <summary>
+        /// Interprets the value as an array of Int64 and returns the first element,
+        /// converted to a DateTime using PerfConvert.UnixTime64ToDateTime.
+        /// Returns null if the value's year is outside the range 0001-9999.
+        /// </summary>
+        public DateTime? GetUnixTime64AsDateTime()
+        {
+            return PerfConvert.UnixTime64ToDateTime(
+                this.ByteReader.ReadI64(this.Bytes));
+        }
+
+        /// <summary>
+        /// Interprets the value as an array of Int64 and returns the element at the specified index,
+        /// converted to a DateTime using PerfConvert.UnixTime64ToDateTime.
+        /// Returns null if the value's year is outside the range 0001-9999.
+        /// </summary>
+        public DateTime? GetUnixTime64AsDateTime(int elementIndex)
+        {
+            return PerfConvert.UnixTime64ToDateTime(
+                this.ByteReader.ReadI64(this.Bytes.Slice(elementIndex * sizeof(Int64))));
+        }
+
+        /// <summary>
         /// Interprets the value as a string and returns the string's encoded bytes and the
         /// encoding to use to convert the bytes to a string. The encoding is determined
         /// based on the field's Encoding, Format, and a BOM (if present) in the value bytes.
@@ -612,7 +687,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU32());
                         case EventHeaderFieldFormat.Float:
-                            return this.GetF32().ToString(CultureInfo.InvariantCulture);
+                            return PerfConvert.Float32G9ToString(this.GetF32());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan32());
                         case EventHeaderFieldFormat.StringUtf:
@@ -633,7 +708,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.Time:
                             return PerfConvert.UnixTime64ToString(this.GetI64());
                         case EventHeaderFieldFormat.Float:
-                            return this.GetF64().ToString(CultureInfo.InvariantCulture);
+                            return PerfConvert.Float64G17ToString(this.GetF64());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan64());
                     }
@@ -788,7 +863,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU32(elementIndex));
                         case EventHeaderFieldFormat.Float:
-                            return this.GetF32().ToString(CultureInfo.InvariantCulture);
+                            return PerfConvert.Float32G9ToString(this.GetF32());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan32(elementIndex));
                         case EventHeaderFieldFormat.StringUtf:
@@ -809,7 +884,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.Time:
                             return PerfConvert.UnixTime64ToString(this.GetI64(elementIndex));
                         case EventHeaderFieldFormat.Float:
-                            return this.GetF64(elementIndex).ToString(CultureInfo.InvariantCulture);
+                            return PerfConvert.Float64G17ToString(this.GetF64());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan64(elementIndex));
                     }
@@ -1040,7 +1115,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                sb.Append(this.GetF32(i));
+                                PerfConvert.Float32G9Append(sb, this.GetF32(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexBytes:
@@ -1114,7 +1189,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                sb.Append(this.GetF64(i));
+                                PerfConvert.Float64G17Append(sb, this.GetF64(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexBytes:
@@ -1173,7 +1248,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             break;
                         case EventHeaderFieldFormat.String8:
                             sb.Append("String8:");
-                            sb.Append(PerfConvert.EncodingLatin1.GetString(this.Bytes));
+                            PerfConvert.StringAppendLatin1(sb, this.Bytes);
                             break;
                         case EventHeaderFieldFormat.StringXml:
                             sb.Append("StringXml8:");
@@ -1189,7 +1264,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto Utf8;
                             }
-                            sb.Append(encodingFromBom.GetString(this.Bytes.Slice(encodingFromBom.Preamble.Length)));
+                            PerfConvert.StringAppend(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
                             break;
                         default:
                             sb.Append(this.Format.ToString());
@@ -1198,7 +1273,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             sb.Append("StringUtf8:");
                         Utf8:
-                            sb.Append(Text.Encoding.UTF8.GetString(this.Bytes));
+                            PerfConvert.StringAppend(sb, this.Bytes, Text.Encoding.UTF8);
                             break;
                     }
                     break;
@@ -1226,7 +1301,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto Utf16;
                             }
-                            sb.Append(encodingFromBom.GetString(this.Bytes.Slice(encodingFromBom.Preamble.Length)));
+                            PerfConvert.StringAppend(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
                             break;
                         default:
                             sb.Append(this.Format.ToString());
@@ -1235,9 +1310,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             sb.Append("StringUtf16:");
                         Utf16:
-                            sb.Append(this.ByteReader.FromBigEndian
-                                ? Text.Encoding.BigEndianUnicode.GetString(this.Bytes)
-                                : Text.Encoding.Unicode.GetString(this.Bytes));
+                            PerfConvert.StringAppend(
+                                sb,
+                                this.Bytes,
+                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode);
                             break;
                     }
                     break;
@@ -1265,7 +1341,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto Utf32;
                             }
-                            sb.Append(encodingFromBom.GetString(this.Bytes.Slice(encodingFromBom.Preamble.Length)));
+                            PerfConvert.StringAppend(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
                             break;
                         default:
                             sb.Append(this.Format.ToString());
@@ -1274,9 +1350,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             sb.Append("StringUtf32:");
                         Utf32:
-                            sb.Append(this.ByteReader.FromBigEndian
-                                ? PerfConvert.EncodingUTF32BE.GetString(this.Bytes)
-                                : Text.Encoding.UTF32.GetString(this.Bytes));
+                            PerfConvert.StringAppend(
+                                sb,
+                                this.Bytes,
+                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32);
                             break;
                     }
                     break;

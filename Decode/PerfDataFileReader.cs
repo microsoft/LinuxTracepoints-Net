@@ -1609,7 +1609,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
 
                 double tracingDataVersion;
-                _ = double.TryParse(Encoding.UTF8.GetString(sectionValue.Slice(data)), out tracingDataVersion);
+                _ = double.TryParse(PerfConvert.EncodingLatin1.GetString(sectionValue.Slice(data)), out tracingDataVersion);
 
                 // Big Endian, LongSize, PageSize
 

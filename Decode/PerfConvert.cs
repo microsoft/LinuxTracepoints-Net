@@ -2,11 +2,13 @@
 {
     using System;
     using System.Text;
+    using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
     using MemoryMarshal = System.Runtime.InteropServices.MemoryMarshal;
 
     /// <summary>
-    /// Helpers for converting raw event element data into types.
+    /// Helpers for converting raw event element data into .NET values such
+    /// as string, DateTime.
     /// </summary>
     public static class PerfConvert
     {
@@ -66,6 +68,30 @@
         /// 18, e.g. "0xFFFFFFFFFFFFFFFF".
         /// </summary>
         public const int HexU64MaxChars = 18;
+
+        /// <summary>
+        /// The maximum number of characters required by Float32Format is
+        /// 14, e.g. "-3.4028235E+38".
+        /// </summary>
+        public const int Float32MaxChars = 14;
+
+        /// <summary>
+        /// The maximum number of characters required by Float64Format is
+        /// 24, e.g. "-1.7976931348623157E+308".
+        /// </summary>
+        public const int Float64MaxChars = 24;
+
+        /// <summary>
+        /// The maximum number of characters required by Float32G9Format is
+        /// 15, e.g. "-3.40282347E+38".
+        /// </summary>
+        public const int Float32G9MaxChars = 15;
+
+        /// <summary>
+        /// The maximum number of characters required by Float64G17Format is
+        /// 24, e.g. "-1.7976931348623157E+308".
+        /// </summary>
+        public const int Float64G17MaxChars = 24;
 
         /// <summary>
         /// The maximum number of characters required by DateTimeFormat is
@@ -490,6 +516,158 @@
         }
 
         /// <summary>
+        /// Formats the provided value as a variable-length float string like
+        /// "-3.4028235E+38" using format "" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float32MaxChars.
+        /// Returns the formatted string (the filled portion of destination).
+        /// </summary>
+        public static Span<char> Float32Format(Span<char> destination, Single value)
+        {
+            var ok = value.TryFormat(destination, out var len, default, CultureInfo.InvariantCulture);
+            if (ok)
+            {
+                return destination.Slice(0, len);
+            }
+            else
+            {
+                Debug.Assert(destination.Length < Float32MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32MaxChars");
+            }
+        }
+
+        /// <summary>
+        /// Formats the provided value as a variable-length double string like
+        /// "-1.7976931348623157E+308" using format "" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float64MaxChars.
+        /// Returns the formatted string (the filled portion of destination).
+        /// </summary>
+        public static Span<char> Float64Format(Span<char> destination, Double value)
+        {
+            var ok = value.TryFormat(destination, out var len, default, CultureInfo.InvariantCulture);
+            if (ok)
+            {
+                return destination.Slice(0, len);
+            }
+            else
+            {
+                Debug.Assert(destination.Length < Float64MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64MaxChars");
+            }
+        }
+
+        /// <summary>
+        /// Formats the provided value as a variable-length float string like
+        /// "-3.40282347E+38" using format "G9" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float32G9MaxChars.
+        /// Returns the formatted string (the filled portion of destination).
+        /// </summary>
+        public static Span<char> Float32G9Format(Span<char> destination, Single value)
+        {
+            var ok = value.TryFormat(destination, out var len, "G9", CultureInfo.InvariantCulture);
+            if (ok)
+            {
+                return destination.Slice(0, len);
+            }
+            else
+            {
+                Debug.Assert(destination.Length < Float32G9MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32G9MaxChars");
+            }
+        }
+
+        /// <summary>
+        /// Formats the provided value as a variable-length double string like
+        /// "-1.7976931348623157E+308" using format "G17" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float64G17MaxChars.
+        /// Returns the formatted string (the filled portion of destination).
+        /// </summary>
+        public static Span<char> Float64G17Format(Span<char> destination, Double value)
+        {
+            var ok = value.TryFormat(destination, out var len, "G17", CultureInfo.InvariantCulture);
+            if (ok)
+            {
+                return destination.Slice(0, len);
+            }
+            else
+            {
+                Debug.Assert(destination.Length < Float64G17MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64G17MaxChars");
+            }
+        }
+
+        /// <summary>
+        /// Returns a new string like "-3.4028235E+38" for the provided value,
+        /// formatted using format "" and InvariantCulture.
+        /// </summary>
+        public static string Float32ToString(Single value)
+        {
+            return new string(Float32Format(stackalloc char[Float32MaxChars], value));
+        }
+
+        /// <summary>
+        /// Returns a new string like "-1.7976931348623157E+308" for the provided value,
+        /// formatted using format "" and InvariantCulture.
+        /// </summary>
+        public static string Float64ToString(Double value)
+        {
+            return new string(Float64Format(stackalloc char[Float64MaxChars], value));
+        }
+
+        /// <summary>
+        /// Returns a new string like "-3.40282347E+38" for the provided value,
+        /// formatted using format "" and InvariantCulture.
+        /// </summary>
+        public static string Float32G9ToString(Single value)
+        {
+            return new string(Float32G9Format(stackalloc char[Float32G9MaxChars], value));
+        }
+
+        /// <summary>
+        /// Returns a new string like "-1.7976931348623157E+308" for the provided value,
+        /// formatted using format "G17" and InvariantCulture.
+        /// </summary>
+        public static string Float64G17ToString(Double value)
+        {
+            return new string(Float64G17Format(stackalloc char[Float64G17MaxChars], value));
+        }
+
+        /// <summary>
+        /// Appends a string like "-3.4028235E+38" for the provided value,
+        /// formatted using format "" and InvariantCulture. Returns sb.
+        /// </summary>
+        public static StringBuilder Float32Append(StringBuilder sb, Single value)
+        {
+            return sb.Append(Float32Format(stackalloc char[Float32MaxChars], value));
+        }
+
+        /// <summary>
+        /// Appends string like "-1.7976931348623157E+308" for the provided value,
+        /// formatted using format "" and InvariantCulture. Returns sb.
+        /// </summary>
+        public static StringBuilder Float64Append(StringBuilder sb, Double value)
+        {
+            return sb.Append(Float64Format(stackalloc char[Float64MaxChars], value));
+        }
+
+        /// <summary>
+        /// Appends a string like "-3.40282347E+38" for the provided value,
+        /// formatted using format "G9" and InvariantCulture. Returns sb.
+        /// </summary>
+        public static StringBuilder Float32G9Append(StringBuilder sb, Single value)
+        {
+            return sb.Append(Float32G9Format(stackalloc char[Float32G9MaxChars], value));
+        }
+
+        /// <summary>
+        /// Appends string like "-1.7976931348623157E+308" for the provided value,
+        /// formatted using format "G17" and InvariantCulture. Returns sb.
+        /// </summary>
+        public static StringBuilder Float64G17Append(StringBuilder sb, Double value)
+        {
+            return sb.Append(Float64G17Format(stackalloc char[Float64G17MaxChars], value));
+        }
+
+        /// <summary>
         /// Returns the number of chars required to format the provided byte array as a string
         /// of hexadecimal bytes (e.g. "0D 0A").
         /// If bytesLength is 0, returns 0. Otherwise returns (3 * bytesLength - 1).
@@ -567,6 +745,57 @@
                 }
 
                 return sb;
+            }
+
+            return sb;
+        }
+
+        /// <summary>
+        /// Uses the provided encoding to convert a byte array to a string and appends it to the
+        /// provided StringBuilder. Returns sb.
+        /// Note that this conversion avoids generating garbage by using a stackalloc buffer.
+        /// For short strings, there will be no garbage. For long strings, this will make one
+        /// call to encoding.GetDecoder() which will allocate a decoder object to be used for
+        /// the conversion.
+        /// </summary>
+        public static StringBuilder StringAppend(StringBuilder sb, ReadOnlySpan<byte> bytes, Encoding encoding)
+        {
+            const int StackAllocCharsMax = 4;
+
+            var bytesLength = bytes.Length;
+            var maxCharCount = encoding.GetMaxCharCount(bytesLength);
+            if (maxCharCount <= StackAllocCharsMax)
+            {
+                Span<char> chars = stackalloc char[maxCharCount];
+                var charCount = encoding.GetChars(bytes, chars);
+                sb.Append(chars.Slice(0, charCount));
+            }
+            else
+            {
+                Span<char> chars = stackalloc char[StackAllocCharsMax];
+                var decoder = encoding.GetDecoder();
+                bool completed;
+                do
+                {
+                    decoder.Convert(bytes, chars, true, out var bytesUsed, out var charsUsed, out completed);
+                    bytes = bytes.Slice(bytesUsed);
+                    sb.Append(chars.Slice(0, charsUsed));
+                }
+                while (!completed);
+            }
+
+            return sb;
+        }
+
+        /// <summary>
+        /// Uses the Latin1 encoding to convert a byte array to a string and appends it to the
+        /// provided StringBuilder. Returns sb.
+        /// </summary>
+        public static StringBuilder StringAppendLatin1(StringBuilder sb, ReadOnlySpan<byte> bytes)
+        {
+            for (var i = 0; i < bytes.Length; i += 1)
+            {
+                sb.Append((char)bytes[i]);
             }
 
             return sb;

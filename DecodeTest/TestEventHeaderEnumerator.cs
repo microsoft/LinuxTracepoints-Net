@@ -3,7 +3,6 @@ namespace DecodeTest
     using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
-    using System.Buffers;
     using System.IO;
     using System.Text.Json;
 

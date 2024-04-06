@@ -86,6 +86,20 @@
             sb.Clear();
             Assert.AreEqual(expected, PerfConvert.HexU64Append(sb, ulong.MaxValue).ToString());
 
+            CheckFloat32(float.MinValue);
+            CheckFloat32(float.MaxValue);
+            CheckFloat32(float.Epsilon);
+            CheckFloat32(float.NaN);
+            CheckFloat32(float.PositiveInfinity);
+            CheckFloat32(float.NegativeInfinity);
+
+            CheckFloat64(double.MinValue);
+            CheckFloat64(double.MaxValue);
+            CheckFloat64(double.Epsilon);
+            CheckFloat64(double.NaN);
+            CheckFloat64(double.PositiveInfinity);
+            CheckFloat64(double.NegativeInfinity);
+
             Assert.AreEqual(0, PerfConvert.HexBytesFormatLength(0));
             Assert.AreEqual(2, PerfConvert.HexBytesFormatLength(1));
             Assert.AreEqual(5, PerfConvert.HexBytesFormatLength(2));
@@ -216,6 +230,36 @@
             CheckBoolOutOfRange(2);
             CheckBoolOutOfRange(int.MinValue);
             CheckBoolOutOfRange(int.MaxValue);
+        }
+
+        private void CheckFloat32(float value)
+        {
+            string expected;
+
+            expected = value.ToString(CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float32ToString(value));
+            sb.Clear();
+            Assert.AreEqual(expected, PerfConvert.Float32Append(sb, value).ToString());
+
+            expected = value.ToString("G9", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float32G9ToString(value));
+            sb.Clear();
+            Assert.AreEqual(expected, PerfConvert.Float32G9Append(sb, value).ToString());
+        }
+
+        private void CheckFloat64(double value)
+        {
+            string expected;
+
+            expected = value.ToString(CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float64ToString(value));
+            sb.Clear();
+            Assert.AreEqual(expected, PerfConvert.Float64Append(sb, value).ToString());
+
+            expected = value.ToString("G17", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float64G17ToString(value));
+            sb.Clear();
+            Assert.AreEqual(expected, PerfConvert.Float64G17Append(sb, value).ToString());
         }
 
         private void CheckUnixTime64OutOfRange(long outOfRange)

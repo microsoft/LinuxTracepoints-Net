@@ -5,10 +5,41 @@
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using System.Text;
+    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+    using IPAddress = System.Net.IPAddress;
 
     [TestClass]
     public class TestPerfValue
     {
+        [TestMethod]
+        public void Conversions()
+        {
+            var rng = new Random();
+            var bytes = new byte[16];
+            CheckIPv6(IPAddress.IPv6Any);
+            CheckIPv6(IPAddress.IPv6Loopback);
+            CheckIPv6(IPAddress.IPv6None);
+            for (int i = 0; i < 10; i += 1)
+            {
+                rng.NextBytes(bytes);
+                CheckIPv6(new IPAddress(bytes));
+            }
+
+            CheckTime32(0);
+            CheckTime32(1);
+            CheckTime32(-1);
+            CheckTime32(int.MinValue);
+            CheckTime32(int.MaxValue);
+
+            CheckTime64(0);
+            CheckTime64(1);
+            CheckTime64(-1);
+            CheckTime64(int.MinValue);
+            CheckTime64(int.MaxValue);
+            CheckTime64(long.MinValue);
+            CheckTime64(long.MaxValue);
+        }
+
         [TestMethod]
         public void Strings()
         {
@@ -155,11 +186,95 @@
             Encoding actual;
             var bytes = value.GetStringBytes(out actual);
             Assert.AreEqual(expected.CodePage, actual.CodePage);
+            Assert.AreEqual("abc", value.GetString());
             Assert.IsTrue(value.Bytes.Slice(bomLength) == bytes);
             if (bomLength != 0)
             {
                 Assert.IsTrue(value.Bytes.Slice(0, bomLength).SequenceEqual(expected.GetPreamble()));
             }
+        }
+
+        private static void CheckIPv6(IPAddress address)
+        {
+            var value = MakeValue(address.GetAddressBytes(), EventHeaderFieldEncoding.Value128, EventHeaderFieldFormat.IPv6);
+            Assert.AreEqual(address, new IPAddress(value.GetIPv6()));
+            Assert.AreEqual(address, new IPAddress(value.GetIPv6(0)));
+            Assert.AreEqual(address.ToString(), value.FormatScalar());
+            Assert.AreEqual(address.ToString(), value.FormatSimpleArrayElement(0));
+        }
+
+        private static void CheckTime32(Int32 time)
+        {
+            Span<byte> bytes = stackalloc byte[4];
+
+            BinaryPrimitives.WriteInt32LittleEndian(bytes, time);
+            var value = MakeValue(bytes, EventHeaderFieldEncoding.Value32, EventHeaderFieldFormat.Time, false);
+            Assert.AreEqual(time, value.GetUnixTime32());
+            Assert.AreEqual(time, value.GetUnixTime32(0));
+            Assert.AreEqual(PerfConvert.UnixTime32ToDateTime(time), value.GetUnixTime32AsDateTime());
+            Assert.AreEqual(PerfConvert.UnixTime32ToDateTime(time), value.GetUnixTime32AsDateTime(0));
+
+            BinaryPrimitives.WriteInt32BigEndian(bytes, time);
+            value = MakeValue(bytes, EventHeaderFieldEncoding.Value32, EventHeaderFieldFormat.Time, true);
+            Assert.AreEqual(time, value.GetUnixTime32());
+            Assert.AreEqual(time, value.GetUnixTime32(0));
+            Assert.AreEqual(PerfConvert.UnixTime32ToDateTime(time), value.GetUnixTime32AsDateTime());
+            Assert.AreEqual(PerfConvert.UnixTime32ToDateTime(time), value.GetUnixTime32AsDateTime(0));
+        }
+
+        private static void CheckTime64(Int64 time)
+        {
+            Span<byte> bytes = stackalloc byte[8];
+
+            BinaryPrimitives.WriteInt64LittleEndian(bytes, time);
+            var value = MakeValue(bytes, EventHeaderFieldEncoding.Value64, EventHeaderFieldFormat.Time, false);
+            Assert.AreEqual(time, value.GetUnixTime64());
+            Assert.AreEqual(time, value.GetUnixTime64(0));
+            Assert.AreEqual(PerfConvert.UnixTime64ToDateTime(time), value.GetUnixTime64AsDateTime());
+            Assert.AreEqual(PerfConvert.UnixTime64ToDateTime(time), value.GetUnixTime64AsDateTime(0));
+
+            BinaryPrimitives.WriteInt64BigEndian(bytes, time);
+            value = MakeValue(bytes, EventHeaderFieldEncoding.Value64, EventHeaderFieldFormat.Time, true);
+            Assert.AreEqual(time, value.GetUnixTime64());
+            Assert.AreEqual(time, value.GetUnixTime64(0));
+            Assert.AreEqual(PerfConvert.UnixTime64ToDateTime(time), value.GetUnixTime64AsDateTime());
+            Assert.AreEqual(PerfConvert.UnixTime64ToDateTime(time), value.GetUnixTime64AsDateTime(0));
+        }
+
+        private static PerfValue MakeValue(
+            Span<byte> bytes,
+            EventHeaderFieldEncoding encoding,
+            EventHeaderFieldFormat format,
+            bool fromBigEndian = false)
+        {
+            byte typeSize;
+            switch (encoding)
+            {
+                case EventHeaderFieldEncoding.Value8:
+                    typeSize = 1;
+                    break;
+                case EventHeaderFieldEncoding.Value16:
+                    typeSize = 2;
+                    break;
+                case EventHeaderFieldEncoding.Value32:
+                    typeSize = 4;
+                    break;
+                case EventHeaderFieldEncoding.Value64:
+                    typeSize = 8;
+                    break;
+                case EventHeaderFieldEncoding.Value128:
+                    typeSize = 16;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(encoding));
+            }
+            return new PerfValue(
+                bytes,
+                new PerfByteReader(fromBigEndian),
+                encoding,
+                format,
+                typeSize,
+                1);
         }
 
         private static PerfValue MakeStringValue(

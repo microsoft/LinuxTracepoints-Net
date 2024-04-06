@@ -56,7 +56,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public StringBuilder AppendAsString(StringBuilder sb)
         {
-            sb.Append(this.NameAsString);
+            PerfConvert.StringAppend(sb, this.NameBytes, Encoding.UTF8);
             sb.Append('=');
             this.Value.AppendAsString(sb);
             return sb;

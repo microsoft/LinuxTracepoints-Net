@@ -2,6 +2,30 @@
 
 .NET library with types used by the `Decode` library.
 
+- `EventHeader` struct - header used at the beginning of each event.
+  Indicates byte order, pointer size, event Level (severity), event Opcode
+  (e.g. activity start, activity stop), event ID/Version (optional
+  manually-assigned stable identifier for event), and event tag
+  (provider-defined 16-bit value).
+
+- `EventHeaderExtension` struct - size and kind of a metadata block in an
+  event.
+
+- `EventHeaderExtensionKind` enum - the kind of a metadata block in an event,
+  e.g. activity ID or decoding information (event name, field names, field
+  types).
+
+- `EventHeaderFieldEncoding` enum - base type of a field in an event, indicating
+  how to determine the field size (e.g. Value8, Value64, ZStringChar8).
+
+- `EventHeaderFieldFormat` enum - extended type of a field in an event, indicating
+  how to interpret the bytes of the field data (e.g. UnsignedInt, Errno, String8,
+  StringUtf).
+
+- `EventHeaderFlags` enum - flags indicating the pointer size (32 or 64 bits),
+  byte order (big-endian or little), and whether any header extensions are
+  present.
+
 ## EventHeader
 
 EventHeader is a tracing convention layered on top of Linux Tracepoints. It
