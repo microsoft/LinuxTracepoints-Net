@@ -2,7 +2,7 @@
 
 This repository contains .NET libraries for parsing `perf.data` files and decoding
 [Linux Tracepoint](https://www.kernel.org/doc/html/latest/trace/tracepoints.html)
-events, including events that use the [EventHeader](Types/README.md) encoding.
+events, including events that use the [EventHeader](Types/README.md#eventheader) encoding.
 
 ## Overview
 

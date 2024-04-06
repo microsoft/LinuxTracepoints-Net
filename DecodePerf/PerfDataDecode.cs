@@ -4,7 +4,6 @@
     using Microsoft.LinuxTracepoints.Decode;
     using System;
     using System.Buffers;
-    using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
     using Encoding = System.Text.Encoding;
     using IPAddress = System.Net.IPAddress;
@@ -981,9 +980,7 @@
             else
             {
                 // Write Infinity, -Infinity, or NaN as a string.
-                var ok = value.TryFormat(charBuf, out var count, default, CultureInfo.InvariantCulture);
-                Debug.Assert(ok);
-                writer.WriteStringValue(charBuf.Slice(0, count));
+                writer.WriteStringValue(PerfConvert.Float32Format(charBuf, value));
             }
         }
 
@@ -996,9 +993,7 @@
             else
             {
                 // Write Infinity, -Infinity, or NaN as a string.
-                var ok = value.TryFormat(charBuf, out var count, default, CultureInfo.InvariantCulture);
-                Debug.Assert(ok);
-                writer.WriteStringValue(charBuf.Slice(0, count));
+                writer.WriteStringValue(PerfConvert.Float64Format(charBuf, value));
             }
         }
 
