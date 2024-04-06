@@ -8,13 +8,16 @@ namespace Microsoft.LinuxTracepoints
     /// </summary>
     public enum EventHeaderExtensionKind : ushort
     {
+        /// <summary>
+        /// Mask for the base extension kind (low 15 bits).
+        /// </summary>
         ValueMask = 0x7fff,
 
         /// <summary>
         /// If not set, this is the last extension block (event payload data follows).
         /// If set, this is not the last extension block (another extension block follows).
         /// </summary>
-        FlagChain = 0x8000,
+        ChainFlag = 0x8000,
 
         /// <summary>
         /// Invalid extension kind.
@@ -90,5 +93,23 @@ namespace Microsoft.LinuxTracepoints
         /// </para>
         /// </summary>
         ActivityId,
+    }
+
+    /// <summary>
+    /// Extension methods for <see cref="EventHeaderExtensionKind"/>.
+    /// </summary>
+    public static class EventHeaderExtensionKindExtensions
+    {
+        /// <summary>
+        /// Returns the format without any flags (format &amp; ValueMask).
+        /// </summary>
+        public static EventHeaderExtensionKind BaseKind(this EventHeaderExtensionKind kind) =>
+            kind & EventHeaderExtensionKind.ValueMask;
+
+        /// <summary>
+        /// Returns true if ChainFlag is present (more extensions are present in event).
+        /// </summary>
+        public static bool HasChainFlag(this EventHeaderExtensionKind kind) =>
+            0 != (kind & EventHeaderExtensionKind.ChainFlag);
     }
 }

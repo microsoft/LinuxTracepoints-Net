@@ -11,8 +11,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public readonly struct PerfByteReader
     {
-        private readonly bool fromBigEndian;
-
         /// <summary>
         /// Initializes a new instance of the ByteReader class for converting data from
         /// the specified endianness to the host endianness.
@@ -22,7 +20,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </param>
         public PerfByteReader(bool fromBigEndian)
         {
-            this.fromBigEndian = fromBigEndian;
+            this.FromBigEndian = fromBigEndian;
         }
 
         /// <summary>
@@ -41,20 +39,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns true if this ByteReader is converting from big-endian to host-endian.
         /// Returns false if this ByteReader is converting from little-endian to host-endian.
         /// </summary>
-        public bool FromBigEndian => this.fromBigEndian;
+        public bool FromBigEndian { get; }
 
         /// <summary>
         /// Returns true if this ByteReader needs to swap bytes to convert input data to
         /// host-endian. Returns false if input data is already in host-endian order.
         /// </summary>
-        public bool ByteSwapNeeded => this.fromBigEndian == BitConverter.IsLittleEndian;
+        public bool ByteSwapNeeded => this.FromBigEndian == BitConverter.IsLittleEndian;
 
         /// <summary>
         /// Reads an Int16 from the specified byte array. Requires bytes.Length >= 2.
         /// </summary>
         public Int16 ReadI16(ReadOnlySpan<byte> bytes)
         {
-            return this.fromBigEndian ? BinaryPrimitives.ReadInt16BigEndian(bytes) : BinaryPrimitives.ReadInt16LittleEndian(bytes);
+            return this.FromBigEndian ? BinaryPrimitives.ReadInt16BigEndian(bytes) : BinaryPrimitives.ReadInt16LittleEndian(bytes);
         }
 
         /// <summary>
@@ -62,7 +60,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public UInt16 ReadU16(ReadOnlySpan<byte> bytes)
         {
-            return this.fromBigEndian ? BinaryPrimitives.ReadUInt16BigEndian(bytes) : BinaryPrimitives.ReadUInt16LittleEndian(bytes);
+            return this.FromBigEndian ? BinaryPrimitives.ReadUInt16BigEndian(bytes) : BinaryPrimitives.ReadUInt16LittleEndian(bytes);
         }
 
         /// <summary>
@@ -70,7 +68,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public Int32 ReadI32(ReadOnlySpan<byte> bytes)
         {
-            return this.fromBigEndian ? BinaryPrimitives.ReadInt32BigEndian(bytes) : BinaryPrimitives.ReadInt32LittleEndian(bytes);
+            return this.FromBigEndian ? BinaryPrimitives.ReadInt32BigEndian(bytes) : BinaryPrimitives.ReadInt32LittleEndian(bytes);
         }
 
         /// <summary>
@@ -78,7 +76,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public UInt32 ReadU32(ReadOnlySpan<byte> bytes)
         {
-            return this.fromBigEndian ? BinaryPrimitives.ReadUInt32BigEndian(bytes) : BinaryPrimitives.ReadUInt32LittleEndian(bytes);
+            return this.FromBigEndian ? BinaryPrimitives.ReadUInt32BigEndian(bytes) : BinaryPrimitives.ReadUInt32LittleEndian(bytes);
         }
 
         /// <summary>
@@ -86,7 +84,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public Single ReadF32(ReadOnlySpan<byte> bytes)
         {
-            var val = this.fromBigEndian ? BinaryPrimitives.ReadInt32BigEndian(bytes) : BinaryPrimitives.ReadInt32LittleEndian(bytes);
+            var val = this.FromBigEndian ? BinaryPrimitives.ReadInt32BigEndian(bytes) : BinaryPrimitives.ReadInt32LittleEndian(bytes);
             return BitConverter.Int32BitsToSingle(val);
         }
 
@@ -95,7 +93,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public Int64 ReadI64(ReadOnlySpan<byte> bytes)
         {
-            return this.fromBigEndian ? BinaryPrimitives.ReadInt64BigEndian(bytes) : BinaryPrimitives.ReadInt64LittleEndian(bytes);
+            return this.FromBigEndian ? BinaryPrimitives.ReadInt64BigEndian(bytes) : BinaryPrimitives.ReadInt64LittleEndian(bytes);
         }
 
         /// <summary>
@@ -103,7 +101,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public UInt64 ReadU64(ReadOnlySpan<byte> bytes)
         {
-            return this.fromBigEndian ? BinaryPrimitives.ReadUInt64BigEndian(bytes) : BinaryPrimitives.ReadUInt64LittleEndian(bytes);
+            return this.FromBigEndian ? BinaryPrimitives.ReadUInt64BigEndian(bytes) : BinaryPrimitives.ReadUInt64LittleEndian(bytes);
         }
 
         /// <summary>
@@ -111,61 +109,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public Double ReadF64(ReadOnlySpan<byte> bytes)
         {
-            var val = this.fromBigEndian ? BinaryPrimitives.ReadInt64BigEndian(bytes) : BinaryPrimitives.ReadInt64LittleEndian(bytes);
+            var val = this.FromBigEndian ? BinaryPrimitives.ReadInt64BigEndian(bytes) : BinaryPrimitives.ReadInt64LittleEndian(bytes);
             return BitConverter.Int64BitsToDouble(val);
-        }
-
-        /// <summary>
-        /// Reads an unsigned integer from the specified byte array.
-        /// If bytes.Length is 1, 2, or 4, the value is read as a byte,
-        /// UInt16, or UInt32, respectively.
-        /// Otherwise, the value is set to 0 and the method returns false.
-        /// </summary>
-        public bool TryReadDynU32(ReadOnlySpan<byte> bytes, out UInt32 value)
-        {
-            switch (bytes.Length)
-            {
-                case 1:
-                    value = bytes[0];
-                    return true;
-                case 2:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt16BigEndian(bytes) : BinaryPrimitives.ReadUInt16LittleEndian(bytes);
-                    return true;
-                case 4:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt32BigEndian(bytes) : BinaryPrimitives.ReadUInt32LittleEndian(bytes);
-                    return true;
-                default:
-                    value = 0;
-                    return false;
-            }
-        }
-
-        /// <summary>
-        /// Reads an unsigned integer from the specified byte array.
-        /// If bytes.Length is 1, 2, 4, or 8, the value is read as a byte,
-        /// UInt16, UInt32, or UInt64, respectively.
-        /// Otherwise, the value is set to 0 and the method returns false.
-        /// </summary>
-        public bool TryReadDynU64(ReadOnlySpan<byte> bytes, out UInt64 value)
-        {
-            switch (bytes.Length)
-            {
-                case 1:
-                    value = bytes[0];
-                    return true;
-                case 2:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt16BigEndian(bytes) : BinaryPrimitives.ReadUInt16LittleEndian(bytes);
-                    return true;
-                case 4:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt32BigEndian(bytes) : BinaryPrimitives.ReadUInt32LittleEndian(bytes);
-                    return true;
-                case 8:
-                    value = this.fromBigEndian ? BinaryPrimitives.ReadUInt64BigEndian(bytes) : BinaryPrimitives.ReadUInt64LittleEndian(bytes);
-                    return true;
-                default:
-                    value = 0;
-                    return false;
-            }
         }
 
         /// <summary>
@@ -173,7 +118,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public UInt16 FixU16(UInt16 value)
         {
-            return this.fromBigEndian == BitConverter.IsLittleEndian
+            return this.FromBigEndian == BitConverter.IsLittleEndian
                 ? BinaryPrimitives.ReverseEndianness(value)
                 : value;
         }
@@ -183,7 +128,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public UInt32 FixU32(UInt32 value)
         {
-            return this.fromBigEndian == BitConverter.IsLittleEndian
+            return this.FromBigEndian == BitConverter.IsLittleEndian
                 ? BinaryPrimitives.ReverseEndianness(value)
                 : value;
         }
@@ -193,9 +138,17 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public UInt64 FixU64(UInt64 value)
         {
-            return this.fromBigEndian == BitConverter.IsLittleEndian
+            return this.FromBigEndian == BitConverter.IsLittleEndian
                 ? BinaryPrimitives.ReverseEndianness(value)
                 : value;
+        }
+
+        /// <summary>
+        /// Returns a string like "FromBigEndian" or "FromLittleEndian".
+        /// </summary>
+        public override string ToString()
+        {
+            return this.FromBigEndian ? "FromBigEndian" : "FromLittleEndian";
         }
     }
 }

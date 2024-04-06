@@ -1,0 +1,206 @@
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace Microsoft.LinuxTracepoints.Decode
+{
+    using System;
+
+    /// <summary>
+    /// Information about a perf event collection session.
+    /// </summary>
+    public class PerfEventSessionInfo
+    {
+        private const uint Billion = 1000000000;
+        private static PerfEventSessionInfo? empty;
+
+        private long clockOffsetSeconds;
+        private uint clockOffsetNanoseconds;
+        private readonly bool readOnly;
+
+        private PerfEventSessionInfo()
+        {
+            this.readOnly = true;
+        }
+
+        /// <summary>
+        /// Constructs a new PerfEventSessionInfo instance.
+        /// Instances of this class are normally created by the PerfEventReader class.
+        /// </summary>
+        internal PerfEventSessionInfo(PerfByteReader byteReader)
+        {
+            this.ByteReader = byteReader;
+        }
+
+        /// <summary>
+        /// Returns the empty PerfEventSessionInfo instance.
+        /// </summary>
+        public static PerfEventSessionInfo Empty
+        {
+            get
+            {
+                var value = empty;
+                if (value == null)
+                {
+                    value = new PerfEventSessionInfo();
+                    empty = value;
+                }
+                return value;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if the the session's event data is formatted in big-endian
+        /// byte order. (Use ByteReader to do byte-swapping as appropriate.)
+        /// </summary>
+        public bool FromBigEndian => this.ByteReader.FromBigEndian;
+
+        /// <summary>
+        /// Returns a PerfByteReader configured for the byte order of the events
+        /// in this session, i.e. PerfByteReader(FromBigEndian).
+        /// </summary>
+        public PerfByteReader ByteReader { get; }
+
+        /// <summary>
+        /// Returns true if session clock offset is known.
+        /// </summary>
+        public bool ClockOffsetKnown { get; private set; }
+
+        /// <summary>
+        /// Returns the CLOCK_REALTIME value that corresponds to an event timestamp of 0
+        /// for this session. Returns 1970 if the session timestamp offset is unknown.
+        /// </summary>
+        public PerfEventTimeSpec ClockOffset =>
+            new PerfEventTimeSpec(this.clockOffsetSeconds, this.clockOffsetNanoseconds);
+
+        /// <summary>
+        /// Returns the clockid of the session timestamp, e.g. CLOCK_MONOTONIC.
+        /// Returns 0xFFFFFFFF if the session timestamp clockid is unknown.
+        /// </summary>
+        public uint ClockId { get; private set; }
+
+        /// <summary>
+        /// From HEADER_CLOCKID. If unknown, use SetClockId(0xFFFFFFFF).
+        /// </summary>
+        public void SetClockId(uint clockid)
+        {
+            if (this.readOnly)
+            {
+                throw new InvalidOperationException("Cannot modify read-only PerfEventSessionInfo.");
+            }
+
+            this.ClockId = clockid;
+        }
+
+        /// <summary>
+        /// From HEADER_CLOCK_DATA. If unknown, use SetClockData(0xFFFFFFFF, 0, 0).
+        /// </summary>
+        public void SetClockData(uint clockid, ulong wallClockNS, ulong clockidTimeNS)
+        {
+            if (this.readOnly)
+            {
+                throw new InvalidOperationException("Cannot modify read-only PerfEventSessionInfo.");
+            }
+            else if (clockid == 0xFFFFFFFF)
+            {
+                // Offset is unspecified.
+
+                this.clockOffsetSeconds = 0;
+                this.clockOffsetNanoseconds = 0;
+                this.ClockId = clockid;
+                this.ClockOffsetKnown = false;
+            }
+            else if (clockidTimeNS <= wallClockNS)
+            {
+                // Offset is positive.
+
+                // wallClockNS = clockidTimeNS + offsetNS
+                // offsetNS = wallClockNS - clockidTimeNS
+                var offsetNS = wallClockNS - clockidTimeNS;
+
+                // offsetNS = sec * Billion + nsec
+
+                // sec = offsetNS / Billion
+                this.clockOffsetSeconds = (long)(offsetNS / Billion);
+
+                // nsec = offsetNS % Billion
+                this.clockOffsetNanoseconds = (uint)(offsetNS % Billion);
+
+                this.ClockId = clockid;
+                this.ClockOffsetKnown = true;
+            }
+            else
+            {
+                // Offset is negative.
+
+                // wallClockNS = clockidTimeNS + offsetNS
+                // offsetNS = wallClockNS - clockidTimeNS
+                // -negOffsetNS = wallClockNS - clockidTimeNS
+                // negOffsetNS = clockidTimeNS - wallClockNS
+                var negOffsetNS = clockidTimeNS - wallClockNS;
+
+                // negOffsetNS = (negOffsetNS / Billion) * Billion + (negOffsetNS % Billion)
+                // negOffsetNS = (negOffsetNS / Billion) * Billion + (negOffsetNS % Billion) - Billion + Billion
+                // negOffsetNS = (negOffsetNS / Billion + 1) * Billion + (negOffsetNS % Billion) - Billion
+
+                // negOffsetNS = negSec * Billion + negNsec
+                // negSec = negOffsetNS / Billion + 1
+                // negNsec = (negOffsetNS % Billion) - Billion
+
+                // sec = -(negOffsetNS / Billion + 1)
+                this.clockOffsetSeconds = -(long)(negOffsetNS / Billion) - 1;
+
+                // nsec = -((negOffsetNS % Billion) - Billion)
+                this.clockOffsetNanoseconds = Billion - (uint)(negOffsetNS % Billion);
+
+                // Fix up case where nsec is too large.
+                if (this.clockOffsetNanoseconds == Billion)
+                {
+                    this.clockOffsetSeconds += 1;
+                    this.clockOffsetNanoseconds -= Billion;
+                }
+
+                this.ClockId = clockid;
+                this.ClockOffsetKnown = true;
+            }
+        }
+
+        /// <summary>
+        /// Gets offset values suitable for use in HEADER_CLOCK_DATA.
+        /// Note: The returned NS values may be normalized relative to the values provided
+        /// to SetClockData, but the difference between them will be the same as the
+        /// difference between the values provided to SetClockData.
+        /// </summary>
+        public void GetClockData(out ulong wallClockNS, out ulong clockidTimeNS)
+        {
+            if (this.clockOffsetSeconds >= 0)
+            {
+                wallClockNS = (ulong)this.clockOffsetSeconds * Billion + this.clockOffsetNanoseconds;
+                clockidTimeNS = 0;
+            }
+            else
+            {
+                wallClockNS = 0;
+                clockidTimeNS = (ulong)(-this.clockOffsetSeconds) * Billion - this.clockOffsetNanoseconds;
+            }
+        }
+
+        /// <summary>
+        /// Converts time from session timestamp to real-time (time since 1970):
+        /// TimeToRealTime = ClockOffset() + time.
+        /// If session clock offset is unknown, assumes 1970.
+        /// </summary>
+        public PerfEventTimeSpec TimeToRealTime(ulong time)
+        {
+            var sec = (long)(time / Billion);
+            var nsec = (uint)(time % Billion);
+            sec += this.clockOffsetSeconds;
+            nsec += this.clockOffsetNanoseconds;
+            if (nsec >= Billion)
+            {
+                sec += 1;
+                nsec -= Billion;
+            }
+            return new PerfEventTimeSpec(sec, nsec);
+        }
+    }
+}

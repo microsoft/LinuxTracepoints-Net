@@ -13,19 +13,23 @@ namespace Microsoft.LinuxTracepoints
     /// In the case of the Struct encoding, the low 7 bits of the Format byte contain
     /// the number of logical fields in the struct (which must not be 0).
     /// </para><para>
-    /// The top bit of the field format byte is the FlagChain. If set, it indicates
+    /// The top bit of the field format byte is the ChainFlag. If set, it indicates
     /// that a field tag (uint16) is present after the format byte. If not set, the
     /// field tag is not present and is assumed to be 0.
     /// </para>
     /// </summary>
-    public enum EventFieldFormat : byte
+    public enum EventHeaderFieldFormat : byte
     {
+        /// <summary>
+        /// Mask for the base format type (low 7 bits).
+        /// </summary>
         ValueMask = 0x7F,
 
         /// <summary>
-        /// A field tag (uint16) follows the Format byte.
+        /// If present in the field, this flag indicates that a uint16
+        /// field tag follows the EventHeaderFieldFormat byte.
         /// </summary>
-        FlagChain = 0x80,
+        ChainFlag = 0x80,
 
         /// <summary>
         /// Use the default format of the encoding.
@@ -84,7 +88,7 @@ namespace Microsoft.LinuxTracepoints
         /// binary, decoded as hex dump of bytes.
         /// Use with any encoding.
         /// </summary>
-        HexBinary,
+        HexBytes,
 
         /// <summary>
         /// 8-bit char string, unspecified character set (usually treated as ISO-8859-1 or CP-1252).
@@ -138,5 +142,23 @@ namespace Microsoft.LinuxTracepoints
         /// IPv6 address, in6_addr layout. Use with Value128 encoding.
         /// </summary>
         IPv6,
+    }
+
+    /// <summary>
+    /// Extension methods for <see cref="EventHeaderFieldFormat"/>.
+    /// </summary>
+    public static class EventHeaderFieldFormatExtensions
+    {
+        /// <summary>
+        /// Returns the format without any flags (format &amp; ValueMask).
+        /// </summary>
+        public static EventHeaderFieldFormat BaseFormat(this EventHeaderFieldFormat format) =>
+            format & EventHeaderFieldFormat.ValueMask;
+
+        /// <summary>
+        /// Returns true if ChainFlag is present (tag present in event).
+        /// </summary>
+        public static bool HasChainFlag(this EventHeaderFieldFormat format) =>
+            0 != (format & EventHeaderFieldFormat.ChainFlag);
     }
 }

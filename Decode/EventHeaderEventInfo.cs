@@ -1,67 +1,22 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-#pragma warning disable CA1051 // Do not declare visible instance fields
-
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
-    using System.Text;
     using Debug = System.Diagnostics.Debug;
+    using Encoding = System.Text.Encoding;
 
     /// <summary>
-    /// Event attributes returned by the GetEventInfo() method of EventEnumerator.
+    /// Event attributes returned by the GetEventInfo() method of EventHeaderEnumerator.
     /// </summary>
-    public ref struct EventInfo
+    public readonly ref struct EventHeaderEventInfo
     {
         /// <summary>
-        /// The Span corresponding to the eventData parameter passed to
-        /// EventEnumerator.StartEvent(). For example, if you called
-        /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
-        /// The NameStart and ActivityIdStart fields are relative to this span.
+        /// Initializes a new instance of the EventHeaderEventInfo struct.
         /// </summary>
-        public ReadOnlySpan<byte> EventData;
-
-        /// <summary>
-        /// Offset into EventData where NameBytes begins.
-        /// </summary>
-        public int NameStart;
-
-        /// <summary>
-        /// Length of NameBytes.
-        /// </summary>
-        public int NameLength;
-
-        /// <summary>
-        /// Offset into EventData where ActivityIdBytes begins.
-        /// </summary>
-        public int ActivityIdStart;
-
-        /// <summary>
-        /// Length of ActivityIdBytes (may be 0, 16, or 32).
-        /// </summary>
-        public int ActivityIdLength;
-
-        /// <summary>
-        /// TracepointName, e.g. "ProviderName_LnKnnnOptions".
-        /// </summary>
-        public string TracepointName;
-
-        /// <summary>
-        /// Flags, Version, Id, Tag, Opcode, Level.
-        /// </summary>
-        public EventHeader Header;
-
-        /// <summary>
-        /// Event category bits.
-        /// </summary>
-        public ulong Keyword;
-
-        /// <summary>
-        /// Initializes a new instance of the EventInfo struct.
-        /// </summary>
-        public EventInfo(
-            ReadOnlySpan<byte> eventData,
+        internal EventHeaderEventInfo(
+            ReadOnlySpan<byte> EventData,
             int nameStart,
             int nameLength,
             int activityIdStart,
@@ -70,7 +25,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             EventHeader header,
             ulong keyword)
         {
-            this.EventData = eventData;
+            this.EventData = EventData;
             this.NameStart = nameStart;
             this.NameLength = nameLength;
             this.ActivityIdStart = activityIdStart;
@@ -81,13 +36,56 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// The Span corresponding to the EventData parameter passed to
+        /// EventHeaderEnumerator.StartEvent(). For example, if you called
+        /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
+        /// The NameStart and ActivityIdStart fields are relative to this span.
+        /// </summary>
+        public ReadOnlySpan<byte> EventData { get; }
+
+        /// <summary>
+        /// Offset into EventData where NameBytes begins.
+        /// </summary>
+        public int NameStart { get; }
+
+        /// <summary>
+        /// Length of NameBytes.
+        /// </summary>
+        public int NameLength { get; }
+
+        /// <summary>
+        /// Offset into EventData where ActivityIdBytes begins.
+        /// </summary>
+        public int ActivityIdStart { get; }
+
+        /// <summary>
+        /// Length of ActivityIdBytes (may be 0, 16, or 32).
+        /// </summary>
+        public int ActivityIdLength { get; }
+
+        /// <summary>
+        /// TracepointName, e.g. "ProviderName_LnKnnnOptions".
+        /// </summary>
+        public string TracepointName { get; }
+
+        /// <summary>
+        /// Flags, Version, Id, Tag, Opcode, Level.
+        /// </summary>
+        public EventHeader Header { get; }
+
+        /// <summary>
+        /// Event category bits.
+        /// </summary>
+        public ulong Keyword { get; }
+
+        /// <summary>
         /// UTF-8 encoded "EventName" followed by 0 or more field attributes.
         /// Each attribute is ";AttribName=AttribValue".
         /// EventName should not contain ';'.
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public readonly ReadOnlySpan<byte> NameBytes =>
+        public ReadOnlySpan<byte> NameBytes =>
             this.EventData.Slice(this.NameStart, this.NameLength);
 
         /// <summary>
@@ -98,7 +96,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public readonly string Name =>
+        public string NameAsString =>
             Encoding.UTF8.GetString(this.EventData.Slice(this.NameStart, this.NameLength));
 
         /// <summary>
@@ -106,7 +104,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// before level and keyword, e.g. if TracepointName is
         /// "ProviderName_LnKnnnOptions", returns "ProviderName".
         /// </summary>
-        public readonly ReadOnlySpan<char> ProviderName =>
+        public ReadOnlySpan<char> ProviderName =>
             this.TracepointName.AsSpan(0, this.TracepointName.LastIndexOf('_'));
 
         /// <summary>
@@ -114,7 +112,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// level and keyword, e.g. if TracepointName is "ProviderName_LnKnnnOptions",
         /// returns "Options".
         /// </summary>
-        public readonly ReadOnlySpan<char> Options
+        public ReadOnlySpan<char> Options
         {
             get
             {
@@ -136,35 +134,43 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Big-endian activity id bytes. 0 bytes for none,
         /// 16 bytes for activity id only, 32 bytes for activity id and related id.
         /// </summary>
-        public readonly ReadOnlySpan<byte> ActivityIdBytes =>
+        public ReadOnlySpan<byte> ActivityIdBytes =>
             this.EventData.Slice(this.ActivityIdStart, this.ActivityIdLength);
 
         /// <summary>
         /// 128-bit activity id decoded from ActivityIdBytes, or NULL if no activity id.
         /// </summary>
-        public readonly Guid? ActivityId
+        public Guid? ActivityId
         {
             get
             {
                 Debug.Assert((this.ActivityIdLength & 0xF) == 0);
                 return this.ActivityIdLength < 16
                     ? new Guid?()
-                    : EventUtility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart));
+                    : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart));
             }
         }
 
         /// <summary>
         /// 128-bit related id decoded from ActivityIdBytes, or NULL if no related id.
         /// </summary>
-        public readonly Guid? RelatedActivityId
+        public Guid? RelatedActivityId
         {
             get
             {
                 Debug.Assert((this.ActivityIdLength & 0xF) == 0);
                 return this.ActivityIdLength < 32
                     ? new Guid?()
-                    : EventUtility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
+                    : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
             }
+        }
+
+        /// <summary>
+        /// Returns TracepointName, or "" if none.
+        /// </summary>
+        public override string ToString()
+        {
+            return this.TracepointName ?? "";
         }
     }
 }

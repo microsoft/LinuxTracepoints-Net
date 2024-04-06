@@ -3,7 +3,7 @@
 
 namespace Microsoft.LinuxTracepoints
 {
-    using InteropServices = System.Runtime.InteropServices;
+    using System.Runtime.InteropServices;
 
     /// <summary>
     /// <para>
@@ -19,10 +19,24 @@ namespace Microsoft.LinuxTracepoints
     /// alignment/padding) by the event payload data.
     /// </para>
     /// </summary>
-    [InteropServices.StructLayout(InteropServices.LayoutKind.Sequential, Size = 4)]
+    [StructLayout(LayoutKind.Sequential)]
     public struct EventHeaderExtension
     {
+        /// <summary>
+        /// The size of this structure in bytes (4).
+        /// </summary>
+        public const int SizeOfStruct = 4;
+
+        /// <summary>
+        /// The size of the extension data in bytes.
+        /// The data immediately follows this structure with no padding/alignment.
+        /// </summary>
         public ushort Size;
+
+        /// <summary>
+        /// The kind of extension. This determines the format of the extension data.
+        /// In addition, the Chain flag indicates whether another extension follows.
+        /// </summary>
         public EventHeaderExtensionKind Kind;
 
         // Followed by Size bytes of data. No padding/alignment.
