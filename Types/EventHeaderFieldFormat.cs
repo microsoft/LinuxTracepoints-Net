@@ -18,7 +18,7 @@ namespace Microsoft.LinuxTracepoints
     /// field tag is not present and is assumed to be 0.
     /// </para>
     /// </summary>
-    public enum EventFieldFormat : byte
+    public enum EventHeaderFieldFormat : byte
     {
         /// <summary>
         /// Mask for the base format type (low 7 bits).
@@ -27,7 +27,7 @@ namespace Microsoft.LinuxTracepoints
 
         /// <summary>
         /// If present in the field, this flag indicates that a uint16
-        /// field tag follows the EventFieldFormat byte.
+        /// field tag follows the EventHeaderFieldFormat byte.
         /// </summary>
         ChainFlag = 0x80,
 
@@ -145,20 +145,20 @@ namespace Microsoft.LinuxTracepoints
     }
 
     /// <summary>
-    /// Extension methods for <see cref="EventFieldFormat"/>.
+    /// Extension methods for <see cref="EventHeaderFieldFormat"/>.
     /// </summary>
-    public static class EventFieldFormatExtensions
+    public static class EventHeaderFieldFormatExtensions
     {
         /// <summary>
         /// Returns the format without any flags (format &amp; ValueMask).
         /// </summary>
-        public static EventFieldFormat BaseFormat(this EventFieldFormat format) =>
-            format & EventFieldFormat.ValueMask;
+        public static EventHeaderFieldFormat BaseFormat(this EventHeaderFieldFormat format) =>
+            format & EventHeaderFieldFormat.ValueMask;
 
         /// <summary>
         /// Returns true if ChainFlag is present (tag present in event).
         /// </summary>
-        public static bool HasChainFlag(this EventFieldFormat format) =>
-            0 != (format & EventFieldFormat.ChainFlag);
+        public static bool HasChainFlag(this EventHeaderFieldFormat format) =>
+            0 != (format & EventHeaderFieldFormat.ChainFlag);
     }
 }

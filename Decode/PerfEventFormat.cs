@@ -5,6 +5,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
@@ -30,15 +31,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public class PerfEventFormat
     {
-        private readonly string systemName;
-        private readonly string name;
-        private readonly string printFmt;
-        private readonly PerfFieldFormat[] fields;
-        private readonly uint id; // From common_type; not the same as the perf_event_attr::id or PerfSampleEventInfo::id.
-        private readonly ushort commonFieldCount; // fields[common_field_count] is the first user field.
-        private readonly ushort commonFieldsSize; // Offset of the end of the last common field
-        private readonly PerfEventDecodingStyle decodingStyle;
-
         private PerfEventFormat(
             string systemName,
             string name,
@@ -49,60 +41,60 @@ namespace Microsoft.LinuxTracepoints.Decode
             ushort commonFieldsSize,
             PerfEventDecodingStyle decodingStyle)
         {
-            this.systemName = systemName;
-            this.name = name;
-            this.printFmt = printFmt;
-            this.fields = fields;
-            this.id = id;
-            this.commonFieldCount = commonFieldCount;
-            this.commonFieldsSize = commonFieldsSize;
-            this.decodingStyle = decodingStyle;
+            this.SystemName = systemName;
+            this.Name = name;
+            this.PrintFmt = printFmt;
+            this.Fields = new ReadOnlyCollection<PerfFieldFormat>(fields);
+            this.Id = id;
+            this.CommonFieldCount = commonFieldCount;
+            this.CommonFieldsSize = commonFieldsSize;
+            this.DecodingStyle = decodingStyle;
         }
 
         /// <summary>
         /// Returns the value of the systemName parameter, e.g. "user_events".
         /// </summary>
-        public string SystemName => this.systemName;
+        public string SystemName { get; }
 
         /// <summary>
         /// Returns the value of the "name:" property, e.g. "my_event".
         /// </summary>
-        public string Name => this.name;
+        public string Name { get; }
 
         /// <summary>
         /// Returns the value of the "print fmt:" property.
         /// </summary>
-        public string PrintFmt => this.printFmt;
+        public string PrintFmt { get; }
 
         /// <summary>
         /// Returns the fields from the "format:" property.
         /// </summary>
-        public PerfFieldFormat[] Fields => this.fields;
+        public ReadOnlyCollection<PerfFieldFormat> Fields { get; }
 
         /// <summary>
         /// Returns the value of the "ID:" property. Note that this value gets
         /// matched against the "common_type" field of an event, not the id field
         /// of perf_event_attr or PerfSampleEventInfo.
         /// </summary>
-        public uint Id => this.id;
+        public uint Id { get; }
 
         /// <summary>
         /// Returns the number of "common_*" fields at the start of the event.
         /// User fields start at this index. At present, there are 4 common fields:
         /// common_type, common_flags, common_preempt_count, common_pid.
         /// </summary>
-        public ushort CommonFieldCount => this.commonFieldCount;
+        public ushort CommonFieldCount { get; }
 
         /// <summary>
         /// Returns the offset of the end of the last "common_*" field.
         /// This is the start of the first user field.
         /// </summary>
-        public ushort CommonFieldsSize => this.commonFieldsSize;
+        public ushort CommonFieldsSize { get; }
 
         /// <summary>
         /// Returns the detected event decoding system - Normal or EventHeader.
         /// </summary>
-        public PerfEventDecodingStyle DecodingStyle => this.decodingStyle;
+        public PerfEventDecodingStyle DecodingStyle { get; }
 
         /// <summary>
         /// Parses an event's "format" file and sets the fields of this object based
@@ -311,6 +303,14 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// Returns a string like "SystemName:Name".
+        /// </summary>
+        public override string ToString()
+        {
+            return this.SystemName + ':' + this.Name;
         }
     }
 }

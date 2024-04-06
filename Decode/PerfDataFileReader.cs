@@ -282,8 +282,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public ReadOnlyMemory<byte> Header(PerfHeaderIndex headerIndex)
         {
-            return (int)headerIndex < m_headers.Length
-                ? m_headers[(int)headerIndex].Memory
+            return (uint)headerIndex < (uint)m_headers.Length
+                ? m_headers[(uint)headerIndex].Memory
                 : default;
         }
 

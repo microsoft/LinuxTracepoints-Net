@@ -42,6 +42,9 @@
     <None Update="input\EventHeaderInterceptorLE64.dat">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="input\formats0.zip">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="input\perf.data">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

@@ -144,7 +144,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         break;
 
                     case TokenKind.Brackets:
-                        // [] or [ArrayCount]
+                        // [] or [ElementCount]
                         foundArray = true;
 
                         var arrayCount = tokenizer.Value;
@@ -222,38 +222,38 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (foundPointer)
             {
-                this.SpecifiedFormat = EventFieldFormat.HexInt;
-                this.SpecifiedEncoding = longSize64 ? EventFieldEncoding.Value64 : EventFieldEncoding.Value32;
+                this.SpecifiedFormat = EventHeaderFieldFormat.HexInt;
+                this.SpecifiedEncoding = longSize64 ? EventHeaderFieldEncoding.Value64 : EventHeaderFieldEncoding.Value32;
             }
             else if (foundStruct)
             {
-                this.SpecifiedFormat = EventFieldFormat.HexBytes; // SPECIAL
-                this.SpecifiedEncoding = EventFieldEncoding.Struct; // SPECIAL
+                this.SpecifiedFormat = EventHeaderFieldFormat.HexBytes; // SPECIAL
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Struct; // SPECIAL
             }
             else if (baseType.IsEmpty || baseType.SequenceEqual("int"))
             {
                 this.SpecifiedFormat = foundUnsigned
-                    ? EventFieldFormat.UnsignedInt
-                    : EventFieldFormat.SignedInt;
+                    ? EventHeaderFieldFormat.UnsignedInt
+                    : EventHeaderFieldFormat.SignedInt;
                 if (foundLongLong)
                 {
-                    this.SpecifiedEncoding = EventFieldEncoding.Value64;
+                    this.SpecifiedEncoding = EventHeaderFieldEncoding.Value64;
                 }
                 else if (foundLong)
                 {
-                    this.SpecifiedEncoding = longSize64 ? EventFieldEncoding.Value64 : EventFieldEncoding.Value32;
+                    this.SpecifiedEncoding = longSize64 ? EventHeaderFieldEncoding.Value64 : EventHeaderFieldEncoding.Value32;
                     if (foundUnsigned)
                     {
-                        this.SpecifiedFormat = EventFieldFormat.HexInt; // Use hex for unsigned long.
+                        this.SpecifiedFormat = EventHeaderFieldFormat.HexInt; // Use hex for unsigned long.
                     }
                 }
                 else if (foundShort)
                 {
-                    this.SpecifiedEncoding = EventFieldEncoding.Value16;
+                    this.SpecifiedEncoding = EventHeaderFieldEncoding.Value16;
                 }
                 else
                 {
-                    this.SpecifiedEncoding = EventFieldEncoding.Value32; // "unsigned" or "signed" means "int".
+                    this.SpecifiedEncoding = EventHeaderFieldEncoding.Value32; // "unsigned" or "signed" means "int".
                     if (baseType.IsEmpty && !foundUnsigned && !foundSigned)
                     {
                         // Unexpected.
@@ -265,56 +265,56 @@ namespace Microsoft.LinuxTracepoints.Decode
             else if (baseType.SequenceEqual("char"))
             {
                 this.SpecifiedFormat = foundUnsigned
-                    ? EventFieldFormat.UnsignedInt
+                    ? EventHeaderFieldFormat.UnsignedInt
                     : foundSigned
-                    ? EventFieldFormat.SignedInt
-                    : EventFieldFormat.String8; // SPECIAL
-                this.SpecifiedEncoding = EventFieldEncoding.Value8;
+                    ? EventHeaderFieldFormat.SignedInt
+                    : EventHeaderFieldFormat.String8; // SPECIAL
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value8;
             }
             else if (baseType.SequenceEqual("u8") || baseType.SequenceEqual("__u8") || baseType.SequenceEqual("uint8_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value8;
+                this.SpecifiedFormat = EventHeaderFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value8;
             }
             else if (baseType.SequenceEqual("s8") || baseType.SequenceEqual("__s8") || baseType.SequenceEqual("int8_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.SignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value8;
+                this.SpecifiedFormat = EventHeaderFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value8;
             }
             else if (baseType.SequenceEqual("u16") || baseType.SequenceEqual("__u16") || baseType.SequenceEqual("uint16_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value16;
+                this.SpecifiedFormat = EventHeaderFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value16;
             }
             else if (baseType.SequenceEqual("s16") || baseType.SequenceEqual("__s16") || baseType.SequenceEqual("int16_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.SignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value16;
+                this.SpecifiedFormat = EventHeaderFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value16;
             }
             else if (baseType.SequenceEqual("u32") || baseType.SequenceEqual("__u32") || baseType.SequenceEqual("uint32_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value32;
+                this.SpecifiedFormat = EventHeaderFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value32;
             }
             else if (baseType.SequenceEqual("s32") || baseType.SequenceEqual("__s32") || baseType.SequenceEqual("int32_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.SignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value32;
+                this.SpecifiedFormat = EventHeaderFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value32;
             }
             else if (baseType.SequenceEqual("u64") || baseType.SequenceEqual("__u64") || baseType.SequenceEqual("uint64_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.UnsignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value64;
+                this.SpecifiedFormat = EventHeaderFieldFormat.UnsignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value64;
             }
             else if (baseType.SequenceEqual("s64") || baseType.SequenceEqual("__s64") || baseType.SequenceEqual("int64_t"))
             {
-                this.SpecifiedFormat = EventFieldFormat.SignedInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Value64;
+                this.SpecifiedFormat = EventHeaderFieldFormat.SignedInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Value64;
             }
             else
             {
-                this.SpecifiedFormat = EventFieldFormat.HexInt;
-                this.SpecifiedEncoding = EventFieldEncoding.Invalid; // SPECIAL
+                this.SpecifiedFormat = EventHeaderFieldFormat.HexInt;
+                this.SpecifiedEncoding = EventHeaderFieldEncoding.Invalid; // SPECIAL
             }
 
             // PARSE: Array
@@ -351,15 +351,15 @@ namespace Microsoft.LinuxTracepoints.Decode
             // DEDUCE: DeducedFormat.
 
             // Apply the "signed:" property if specified.
-            if (this.SpecifiedFormat == EventFieldFormat.UnsignedInt ||
-                this.SpecifiedFormat == EventFieldFormat.SignedInt)
+            if (this.SpecifiedFormat == EventHeaderFieldFormat.UnsignedInt ||
+                this.SpecifiedFormat == EventHeaderFieldFormat.SignedInt)
             {
                 // If valid, signed overrides baseType.
                 switch (signed)
                 {
                     default: this.DeducedFormat = this.SpecifiedFormat; break; // signed == null
-                    case false: this.DeducedFormat = EventFieldFormat.UnsignedInt; break;
-                    case true: this.DeducedFormat = EventFieldFormat.SignedInt; break;
+                    case false: this.DeducedFormat = EventHeaderFieldFormat.UnsignedInt; break;
+                    case true: this.DeducedFormat = EventHeaderFieldFormat.SignedInt; break;
                 }
             }
             else
@@ -369,17 +369,17 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             // DEDUCE: DeducedEncoding, DeducedArrayCount, ElementSizeShift.
 
-            if (this.SpecifiedFormat == EventFieldFormat.String8)
+            if (this.SpecifiedFormat == EventHeaderFieldFormat.String8)
             {
-                Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Value8);
-                this.DeducedEncoding = this.Size == 1 ? EventFieldEncoding.Value8 : EventFieldEncoding.ZStringChar8;
+                Debug.Assert(this.SpecifiedEncoding == EventHeaderFieldEncoding.Value8);
+                this.DeducedEncoding = this.Size == 1 ? EventHeaderFieldEncoding.Value8 : EventHeaderFieldEncoding.ZStringChar8;
                 this.DeducedArrayCount = 1;
-                this.ElementSizeShift = byte.MaxValue;
+                this.ElementSizeShift = this.Size == 1 ? (byte)0 : byte.MaxValue;
             }
-            else if (this.SpecifiedFormat == EventFieldFormat.HexBytes)
+            else if (this.SpecifiedFormat == EventHeaderFieldFormat.HexBytes)
             {
-                Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Struct);
-                this.DeducedEncoding = this.Size == 1 ? EventFieldEncoding.Value8 : EventFieldEncoding.StringLength16Char8;
+                Debug.Assert(this.SpecifiedEncoding == EventHeaderFieldEncoding.Struct);
+                this.DeducedEncoding = this.Size == 1 ? EventHeaderFieldEncoding.Value8 : EventHeaderFieldEncoding.StringLength16Char8;
                 this.DeducedArrayCount = 1;
                 this.ElementSizeShift = byte.MaxValue;
             }
@@ -393,19 +393,19 @@ namespace Microsoft.LinuxTracepoints.Decode
                         switch (this.Size)
                         {
                             case 1:
-                                this.DeducedEncoding = EventFieldEncoding.Value8;
+                                this.DeducedEncoding = EventHeaderFieldEncoding.Value8;
                                 this.ElementSizeShift = 0;
                                 break;
                             case 2:
-                                this.DeducedEncoding = EventFieldEncoding.Value16;
+                                this.DeducedEncoding = EventHeaderFieldEncoding.Value16;
                                 this.ElementSizeShift = 1;
                                 break;
                             case 4:
-                                this.DeducedEncoding = EventFieldEncoding.Value32;
+                                this.DeducedEncoding = EventHeaderFieldEncoding.Value32;
                                 this.ElementSizeShift = 2;
                                 break;
                             case 8:
-                                this.DeducedEncoding = EventFieldEncoding.Value64;
+                                this.DeducedEncoding = EventHeaderFieldEncoding.Value64;
                                 this.ElementSizeShift = 3;
                                 break;
                             default:
@@ -419,14 +419,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                         if (this.SpecifiedArrayCount == 0)
                         {
-                            this.DeducedEncoding = this.SpecifiedEncoding | EventFieldEncoding.CArrayFlag;
+                            this.DeducedEncoding = this.SpecifiedEncoding | EventHeaderFieldEncoding.CArrayFlag;
                             switch (this.SpecifiedEncoding)
                             {
-                                case EventFieldEncoding.Value8:
+                                case EventHeaderFieldEncoding.Value8:
                                     this.DeducedArrayCount = this.Size;
                                     this.ElementSizeShift = 0;
                                     break;
-                                case EventFieldEncoding.Value16:
+                                case EventHeaderFieldEncoding.Value16:
                                     if (this.Size % sizeof(UInt16) != 0)
                                     {
                                         goto DoHexDump;
@@ -434,7 +434,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                                     this.DeducedArrayCount = (ushort)(this.Size / sizeof(UInt16));
                                     this.ElementSizeShift = 1;
                                     break;
-                                case EventFieldEncoding.Value32:
+                                case EventHeaderFieldEncoding.Value32:
                                     if (this.Size % sizeof(UInt32) != 0)
                                     {
                                         goto DoHexDump;
@@ -442,7 +442,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                                     this.DeducedArrayCount = (ushort)(this.Size / sizeof(UInt32));
                                     this.ElementSizeShift = 2;
                                     break;
-                                case EventFieldEncoding.Value64:
+                                case EventHeaderFieldEncoding.Value64:
                                     if (this.Size % sizeof(UInt64) != 0)
                                     {
                                         goto DoHexDump;
@@ -451,7 +451,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                                     this.ElementSizeShift = 3;
                                     break;
                                 default:
-                                    Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Invalid);
+                                    Debug.Assert(this.SpecifiedEncoding == EventHeaderFieldEncoding.Invalid);
                                     goto DoHexDump;
                             }
                         }
@@ -465,19 +465,19 @@ namespace Microsoft.LinuxTracepoints.Decode
                             switch (this.Size / this.SpecifiedArrayCount)
                             {
                                 case 1:
-                                    this.DeducedEncoding = EventFieldEncoding.Value8 | EventFieldEncoding.CArrayFlag;
+                                    this.DeducedEncoding = EventHeaderFieldEncoding.Value8 | EventHeaderFieldEncoding.CArrayFlag;
                                     this.ElementSizeShift = 0;
                                     break;
                                 case 2:
-                                    this.DeducedEncoding = EventFieldEncoding.Value16 | EventFieldEncoding.CArrayFlag;
+                                    this.DeducedEncoding = EventHeaderFieldEncoding.Value16 | EventHeaderFieldEncoding.CArrayFlag;
                                     this.ElementSizeShift = 1;
                                     break;
                                 case 4:
-                                    this.DeducedEncoding = EventFieldEncoding.Value32 | EventFieldEncoding.CArrayFlag;
+                                    this.DeducedEncoding = EventHeaderFieldEncoding.Value32 | EventHeaderFieldEncoding.CArrayFlag;
                                     this.ElementSizeShift = 2;
                                     break;
                                 case 8:
-                                    this.DeducedEncoding = EventFieldEncoding.Value64 | EventFieldEncoding.CArrayFlag;
+                                    this.DeducedEncoding = EventHeaderFieldEncoding.Value64 | EventHeaderFieldEncoding.CArrayFlag;
                                     this.ElementSizeShift = 3;
                                     break;
                                 default:
@@ -494,31 +494,31 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                         switch (this.SpecifiedEncoding)
                         {
-                            case EventFieldEncoding.Value8:
+                            case EventHeaderFieldEncoding.Value8:
                                 this.ElementSizeShift = 0;
                                 break;
-                            case EventFieldEncoding.Value16:
+                            case EventHeaderFieldEncoding.Value16:
                                 this.ElementSizeShift = 1;
                                 break;
-                            case EventFieldEncoding.Value32:
+                            case EventHeaderFieldEncoding.Value32:
                                 this.ElementSizeShift = 2;
                                 break;
-                            case EventFieldEncoding.Value64:
+                            case EventHeaderFieldEncoding.Value64:
                                 this.ElementSizeShift = 3;
                                 break;
                             default:
-                                Debug.Assert(this.SpecifiedEncoding == EventFieldEncoding.Invalid);
+                                Debug.Assert(this.SpecifiedEncoding == EventHeaderFieldEncoding.Invalid);
                                 goto DoHexDump;
                         }
 
-                        this.DeducedEncoding = this.SpecifiedEncoding | EventFieldEncoding.VArrayFlag;
+                        this.DeducedEncoding = this.SpecifiedEncoding | EventHeaderFieldEncoding.VArrayFlag;
                         this.DeducedArrayCount = 0;
                         break;
 
                     DoHexDump:
 
-                        this.DeducedEncoding = EventFieldEncoding.StringLength16Char8;
-                        this.DeducedFormat = EventFieldFormat.HexBytes;
+                        this.DeducedEncoding = EventHeaderFieldEncoding.StringLength16Char8;
+                        this.DeducedFormat = EventHeaderFieldFormat.HexBytes;
                         this.DeducedArrayCount = 1;
                         this.ElementSizeShift = byte.MaxValue;
                         break;
@@ -532,44 +532,44 @@ namespace Microsoft.LinuxTracepoints.Decode
             var encodingValue = this.DeducedEncoding.BaseEncoding();
             switch (encodingValue)
             {
-                case EventFieldEncoding.Value8:
+                case EventHeaderFieldEncoding.Value8:
                     if (this.DeducedArrayCount != 0)
                     {
                         Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(byte));
                     }
                     Debug.Assert(this.ElementSizeShift == 0);
                     break;
-                case EventFieldEncoding.Value16:
+                case EventHeaderFieldEncoding.Value16:
                     if (this.DeducedArrayCount != 0)
                     {
                         Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(UInt16));
                     }
                     Debug.Assert(this.ElementSizeShift == 1);
                     break;
-                case EventFieldEncoding.Value32:
+                case EventHeaderFieldEncoding.Value32:
                     if (this.DeducedArrayCount != 0)
                     {
                         Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(UInt32));
                     }
                     Debug.Assert(this.ElementSizeShift == 2);
                     break;
-                case EventFieldEncoding.Value64:
+                case EventHeaderFieldEncoding.Value64:
                     if (this.DeducedArrayCount != 0)
                     {
                         Debug.Assert(this.Size == this.DeducedArrayCount * sizeof(UInt64));
                     }
                     Debug.Assert(this.ElementSizeShift == 3);
                     break;
-                case EventFieldEncoding.StringLength16Char8:
+                case EventHeaderFieldEncoding.StringLength16Char8:
                     Debug.Assert(this.DeducedArrayCount == 1);
-                    Debug.Assert((this.DeducedEncoding & EventFieldEncoding.FlagMask) == 0);
-                    Debug.Assert(this.DeducedFormat == EventFieldFormat.HexBytes);
+                    Debug.Assert((this.DeducedEncoding & EventHeaderFieldEncoding.FlagMask) == 0);
+                    Debug.Assert(this.DeducedFormat == EventHeaderFieldFormat.HexBytes);
                     Debug.Assert(this.ElementSizeShift == byte.MaxValue);
                     break;
-                case EventFieldEncoding.ZStringChar8:
+                case EventHeaderFieldEncoding.ZStringChar8:
                     Debug.Assert(this.DeducedArrayCount == 1);
-                    Debug.Assert((this.DeducedEncoding & EventFieldEncoding.FlagMask) == 0);
-                    Debug.Assert(this.DeducedFormat == EventFieldFormat.String8);
+                    Debug.Assert((this.DeducedEncoding & EventHeaderFieldEncoding.FlagMask) == 0);
+                    Debug.Assert(this.DeducedFormat == EventHeaderFieldFormat.String8);
                     Debug.Assert(this.ElementSizeShift == byte.MaxValue);
                     break;
                 default:
@@ -577,16 +577,16 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
             }
 
-            var encodingFlags = this.DeducedEncoding & EventFieldEncoding.FlagMask;
+            var encodingFlags = this.DeducedEncoding & EventHeaderFieldEncoding.FlagMask;
             switch (encodingFlags)
             {
                 case 0:
                     Debug.Assert(this.DeducedArrayCount == 1);
                     break;
-                case EventFieldEncoding.VArrayFlag:
+                case EventHeaderFieldEncoding.VArrayFlag:
                     Debug.Assert(this.DeducedArrayCount == 0);
                     break;
-                case EventFieldEncoding.CArrayFlag:
+                case EventHeaderFieldEncoding.CArrayFlag:
                     Debug.Assert(this.DeducedArrayCount >= 1);
                     break;
                 default:
@@ -596,17 +596,19 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             switch (this.DeducedFormat)
             {
-                case EventFieldFormat.UnsignedInt:
-                case EventFieldFormat.SignedInt:
-                case EventFieldFormat.HexInt:
-                    Debug.Assert(encodingValue >= EventFieldEncoding.Value8);
-                    Debug.Assert(encodingValue <= EventFieldEncoding.Value64);
+                case EventHeaderFieldFormat.UnsignedInt:
+                case EventHeaderFieldFormat.SignedInt:
+                case EventHeaderFieldFormat.HexInt:
+                    Debug.Assert(encodingValue >= EventHeaderFieldEncoding.Value8);
+                    Debug.Assert(encodingValue <= EventHeaderFieldEncoding.Value64);
                     break;
-                case EventFieldFormat.HexBytes:
-                    Debug.Assert(encodingValue == EventFieldEncoding.StringLength16Char8);
+                case EventHeaderFieldFormat.HexBytes:
+                    Debug.Assert(encodingValue == EventHeaderFieldEncoding.StringLength16Char8);
                     break;
-                case EventFieldFormat.String8:
-                    Debug.Assert(encodingValue == EventFieldEncoding.ZStringChar8);
+                case EventHeaderFieldFormat.String8:
+                    Debug.Assert(
+                        encodingValue == EventHeaderFieldEncoding.Value8 ||
+                        encodingValue == EventHeaderFieldEncoding.ZStringChar8);
                     break;
                 default:
                     Debug.Fail("Unexpected DeducedFormat type");
@@ -669,7 +671,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// (Parsed from Field, e.g. if Field = "char my_field[8]" then base type is
         /// "char" so Encoding = "Value8".)
         /// </summary>
-        public EventFieldEncoding SpecifiedEncoding { get; }
+        public EventHeaderFieldEncoding SpecifiedEncoding { get; }
 
         /// <summary>
         /// The encoding of the field's base type, as deduced from field and size.
@@ -678,7 +680,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// The VArrayFlag flag or the CArrayFlag flag may be set for Value8,
         /// Value16, Value32, and Value64.
         /// </summary>
-        public EventFieldEncoding DeducedEncoding { get; }
+        public EventHeaderFieldEncoding DeducedEncoding { get; }
 
         /// <summary>
         /// The format of the field's base type, as specified by the field and signed properties.
@@ -686,12 +688,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// (Parsed from Field, e.g. if Field = "char my_field[8]" then base type is
         /// "char" so Format = "String8".)
         /// </summary>
-        public EventFieldFormat SpecifiedFormat { get; }
+        public EventHeaderFieldFormat SpecifiedFormat { get; }
 
         /// <summary>
         /// The format of the field's base type, as deduced from field, size, and signed.
         /// </summary>
-        public EventFieldFormat DeducedFormat { get; }
+        public EventHeaderFieldFormat DeducedFormat { get; }
 
         /// <summary>
         /// The kind of array this field is, as specified in the field property.
@@ -913,7 +915,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             ReadOnlySpan<byte> eventRawData,
             PerfByteReader byteReader)
         {
-            bool checkStrLen = this.DeducedEncoding == EventFieldEncoding.ZStringChar8;
+            bool checkStrLen = this.DeducedEncoding == EventHeaderFieldEncoding.ZStringChar8;
             ReadOnlySpan<byte> bytes;
             ushort arrayCount;
 
@@ -1013,6 +1015,14 @@ namespace Microsoft.LinuxTracepoints.Decode
                 this.DeducedFormat,
                 unchecked((byte)(1 << this.ElementSizeShift)),
                 arrayCount);
+        }
+
+        /// <summary>
+        /// Returns this.Field.
+        /// </summary>
+        public override string ToString()
+        {
+            return this.Field;
         }
 
         private static ReadOnlySpan<byte> UntilFirstNul(ReadOnlySpan<byte> bytes)

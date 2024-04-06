@@ -4,6 +4,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
@@ -69,5 +70,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </para>
         /// </summary>
         public ReadOnlyMemory<byte> Memory { get; }
+
+        /// <summary>
+        /// Gets a string with Header.Type and Header.Size like "Sample(64)".
+        /// </summary>
+        /// <returns></returns>
+        public override string ToString()
+        {
+            return this.Header.Type.ToString() + '(' + this.Header.Size.ToString(CultureInfo.InvariantCulture) + ')';
+        }
     }
 }

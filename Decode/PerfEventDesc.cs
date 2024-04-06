@@ -71,5 +71,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                 return value;
             }
         }
+
+        /// <summary>
+        /// Returns this.Name.
+        /// </summary>
+        public override string ToString()
+        {
+            return this.Name;
+        }
     }
 }

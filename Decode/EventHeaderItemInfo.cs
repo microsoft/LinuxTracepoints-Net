@@ -5,6 +5,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
     using Encoding = System.Text.Encoding;
+    using StringBuilder = System.Text.StringBuilder;
 
     /// <summary>
     /// Event item attributes (attributes of a value, array, or structure within the event)
@@ -48,5 +49,25 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
         public string NameAsString => Encoding.UTF8.GetString(this.NameBytes);
+
+        /// <summary>
+        /// Appends a string representation of this value like "Name=Type:Value" or "Name=Type:Value1,Value2".
+        /// Returns sb.
+        /// </summary>
+        public StringBuilder AppendAsString(StringBuilder sb)
+        {
+            sb.Append(this.NameAsString);
+            sb.Append('=');
+            this.Value.AppendAsString(sb);
+            return sb;
+        }
+
+        /// <summary>
+        /// Returns a string representation of this value like "Name=Type:Value" or "Name=Type:Value1,Value2".
+        /// </summary>
+        public override string ToString()
+        {
+            return this.AppendAsString(new StringBuilder()).ToString();
+        }
     }
 }

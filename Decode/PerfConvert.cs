@@ -502,9 +502,16 @@
         /// Requires appropriately-sized destination buffer, Length >= HexBytesFormatLength(bytes.Length).
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">bytes.Length > 715827882</exception>"
         public static Span<char> HexBytesFormat(Span<char> destination, ReadOnlySpan<byte> bytes)
         {
             var bytesLength = bytes.Length;
+
+            if (bytesLength > int.MaxValue / 3)
+            {
+                throw new ArgumentOutOfRangeException(nameof(bytes), "Length > 715827882");
+            }
+
             if (0 < bytesLength)
             {
                 var b = bytes[0];

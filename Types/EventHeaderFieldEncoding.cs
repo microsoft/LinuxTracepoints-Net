@@ -28,7 +28,7 @@ namespace Microsoft.LinuxTracepoints
     /// Setting both CArray and VArray is invalid (reserved).
     /// </para>
     /// </summary>
-    public enum EventFieldEncoding : byte
+    public enum EventHeaderFieldEncoding : byte
     {
         /// <summary>
         /// Mask for the base encoding type (low 5 bits).
@@ -51,8 +51,8 @@ namespace Microsoft.LinuxTracepoints
         VArrayFlag = 0x40,
 
         /// <summary>
-        /// If present in the field, this flag indicates that an EventFieldFormat
-        /// byte follows the EventFieldEncoding byte.
+        /// If present in the field, this flag indicates that an EventHeaderFieldFormat
+        /// byte follows the EventHeaderFieldEncoding byte.
         /// </summary>
         ChainFlag = 0x80,
 
@@ -129,48 +129,48 @@ namespace Microsoft.LinuxTracepoints
     }
 
     /// <summary>
-    /// Extension methods for <see cref="EventFieldEncoding"/>.
+    /// Extension methods for <see cref="EventHeaderFieldEncoding"/>.
     /// </summary>
-    public static class EventFieldEncodingExtensions
+    public static class EventHeaderFieldEncodingExtensions
     {
         /// <summary>
         /// Returns the encoding without any flags (encoding &amp; ValueMask).
         /// </summary>
-        public static EventFieldEncoding BaseEncoding(this EventFieldEncoding encoding) =>
-            encoding & EventFieldEncoding.ValueMask;
+        public static EventHeaderFieldEncoding BaseEncoding(this EventHeaderFieldEncoding encoding) =>
+            encoding & EventHeaderFieldEncoding.ValueMask;
 
         /// <summary>
         /// Returns the array flags of the encoding (VArrayFlag or CArrayFlag, if set).
         /// </summary>
-        public static EventFieldEncoding ArrayFlags(this EventFieldEncoding encoding) =>
-            encoding & (EventFieldEncoding.VArrayFlag | EventFieldEncoding.CArrayFlag);
+        public static EventHeaderFieldEncoding ArrayFlags(this EventHeaderFieldEncoding encoding) =>
+            encoding & (EventHeaderFieldEncoding.VArrayFlag | EventHeaderFieldEncoding.CArrayFlag);
 
         /// <summary>
         /// Returns true if any ArrayFlag is present (constant-length or variable-length array).
         /// </summary>
-        public static bool IsArray(this EventFieldEncoding encoding) =>
-            0 != (encoding & (EventFieldEncoding.VArrayFlag | EventFieldEncoding.CArrayFlag));
+        public static bool IsArray(this EventHeaderFieldEncoding encoding) =>
+            0 != (encoding & (EventHeaderFieldEncoding.VArrayFlag | EventHeaderFieldEncoding.CArrayFlag));
 
         /// <summary>
         /// Returns true if CArrayFlag is present (constant-length array).
         /// </summary>
-        public static bool IsCArray(this EventFieldEncoding encoding) =>
-            0 != (encoding & EventFieldEncoding.CArrayFlag);
+        public static bool IsCArray(this EventHeaderFieldEncoding encoding) =>
+            0 != (encoding & EventHeaderFieldEncoding.CArrayFlag);
 
         /// <summary>
         /// Returns true if VArrayFlag is present (variable-length array).
         /// </summary>
-        public static bool IsVArray(this EventFieldEncoding encoding) =>
-            0 != (encoding & EventFieldEncoding.VArrayFlag);
+        public static bool IsVArray(this EventHeaderFieldEncoding encoding) =>
+            0 != (encoding & EventHeaderFieldEncoding.VArrayFlag);
 
         /// <summary>
         /// Returns true if ChainFlag is present (format byte is present in event).
         /// </summary>
-        public static bool HasChainFlag(this EventFieldEncoding encoding) =>
-            0 != (encoding & EventFieldEncoding.ChainFlag);
+        public static bool HasChainFlag(this EventHeaderFieldEncoding encoding) =>
+            0 != (encoding & EventHeaderFieldEncoding.ChainFlag);
 
         /// <summary>
-        /// Gets the default format for the encoding, or EventFieldFormat.Default if the encoding is invalid.
+        /// Gets the default format for the encoding, or EventHeaderFieldFormat.Default if the encoding is invalid.
         /// <list type="bullet"><item>
         /// Value8, Value16, Value32, Value64: UnsignedInt.
         /// </item><item>
@@ -181,26 +181,26 @@ namespace Microsoft.LinuxTracepoints
         /// Other: Default.
         /// </item></list>
         /// </summary>
-        public static EventFieldFormat DefaultFormat(this EventFieldEncoding encoding)
+        public static EventHeaderFieldFormat DefaultFormat(this EventHeaderFieldEncoding encoding)
         {
-            switch (encoding & EventFieldEncoding.ValueMask)
+            switch (encoding & EventHeaderFieldEncoding.ValueMask)
             {
-                case EventFieldEncoding.Value8:
-                case EventFieldEncoding.Value16:
-                case EventFieldEncoding.Value32:
-                case EventFieldEncoding.Value64:
-                    return EventFieldFormat.UnsignedInt;
-                case EventFieldEncoding.Value128:
-                    return EventFieldFormat.HexBytes;
-                case EventFieldEncoding.ZStringChar8:
-                case EventFieldEncoding.ZStringChar16:
-                case EventFieldEncoding.ZStringChar32:
-                case EventFieldEncoding.StringLength16Char8:
-                case EventFieldEncoding.StringLength16Char16:
-                case EventFieldEncoding.StringLength16Char32:
-                    return EventFieldFormat.StringUtf;
+                case EventHeaderFieldEncoding.Value8:
+                case EventHeaderFieldEncoding.Value16:
+                case EventHeaderFieldEncoding.Value32:
+                case EventHeaderFieldEncoding.Value64:
+                    return EventHeaderFieldFormat.UnsignedInt;
+                case EventHeaderFieldEncoding.Value128:
+                    return EventHeaderFieldFormat.HexBytes;
+                case EventHeaderFieldEncoding.ZStringChar8:
+                case EventHeaderFieldEncoding.ZStringChar16:
+                case EventHeaderFieldEncoding.ZStringChar32:
+                case EventHeaderFieldEncoding.StringLength16Char8:
+                case EventHeaderFieldEncoding.StringLength16Char16:
+                case EventHeaderFieldEncoding.StringLength16Char32:
+                    return EventHeaderFieldFormat.StringUtf;
                 default:
-                    return EventFieldFormat.Default;
+                    return EventHeaderFieldFormat.Default;
             }
         }
     }

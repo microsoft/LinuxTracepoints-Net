@@ -164,5 +164,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                     : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
             }
         }
+
+        /// <summary>
+        /// Returns TracepointName, or "" if none.
+        /// </summary>
+        public override string ToString()
+        {
+            return this.TracepointName ?? "";
+        }
     }
 }

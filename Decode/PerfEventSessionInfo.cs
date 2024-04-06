@@ -15,9 +15,6 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private long clockOffsetSeconds;
         private uint clockOffsetNanoseconds;
-        private uint clockid = 0xFFFFFFFF;
-        bool clockOffsetKnown;
-        private readonly PerfByteReader byteReader;
         private readonly bool readOnly;
 
         private PerfEventSessionInfo()
@@ -31,7 +28,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         internal PerfEventSessionInfo(PerfByteReader byteReader)
         {
-            this.byteReader = byteReader;
+            this.ByteReader = byteReader;
         }
 
         /// <summary>
@@ -55,24 +52,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns true if the the session's event data is formatted in big-endian
         /// byte order. (Use ByteReader to do byte-swapping as appropriate.)
         /// </summary>
-        public bool FromBigEndian => this.byteReader.FromBigEndian;
+        public bool FromBigEndian => this.ByteReader.FromBigEndian;
 
         /// <summary>
         /// Returns a PerfByteReader configured for the byte order of the events
         /// in this session, i.e. PerfByteReader(FromBigEndian).
         /// </summary>
-        public PerfByteReader ByteReader => this.byteReader;
-
-        /// <summary>
-        /// Returns the clockid of the session timestamp, e.g. CLOCK_MONOTONIC.
-        /// Returns 0xFFFFFFFF if the session timestamp clockid is unknown.
-        /// </summary>
-        public uint ClockId => this.clockid;
+        public PerfByteReader ByteReader { get; }
 
         /// <summary>
         /// Returns true if session clock offset is known.
         /// </summary>
-        public bool ClockOffsetKnown => this.clockOffsetKnown;
+        public bool ClockOffsetKnown { get; private set; }
 
         /// <summary>
         /// Returns the CLOCK_REALTIME value that corresponds to an event timestamp of 0
@@ -80,6 +71,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public PerfEventTimeSpec ClockOffset =>
             new PerfEventTimeSpec(this.clockOffsetSeconds, this.clockOffsetNanoseconds);
+
+        /// <summary>
+        /// Returns the clockid of the session timestamp, e.g. CLOCK_MONOTONIC.
+        /// Returns 0xFFFFFFFF if the session timestamp clockid is unknown.
+        /// </summary>
+        public uint ClockId { get; private set; }
 
         /// <summary>
         /// From HEADER_CLOCKID. If unknown, use SetClockId(0xFFFFFFFF).
@@ -91,7 +88,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 throw new InvalidOperationException("Cannot modify read-only PerfEventSessionInfo.");
             }
 
-            this.clockid = clockid;
+            this.ClockId = clockid;
         }
 
         /// <summary>
@@ -109,8 +106,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                 this.clockOffsetSeconds = 0;
                 this.clockOffsetNanoseconds = 0;
-                this.clockid = clockid;
-                this.clockOffsetKnown = false;
+                this.ClockId = clockid;
+                this.ClockOffsetKnown = false;
             }
             else if (clockidTimeNS <= wallClockNS)
             {
@@ -128,8 +125,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 // nsec = offsetNS % Billion
                 this.clockOffsetNanoseconds = (uint)(offsetNS % Billion);
 
-                this.clockid = clockid;
-                this.clockOffsetKnown = true;
+                this.ClockId = clockid;
+                this.ClockOffsetKnown = true;
             }
             else
             {
@@ -162,8 +159,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                     this.clockOffsetNanoseconds -= Billion;
                 }
 
-                this.clockid = clockid;
-                this.clockOffsetKnown = true;
+                this.ClockId = clockid;
+                this.ClockOffsetKnown = true;
             }
         }
 

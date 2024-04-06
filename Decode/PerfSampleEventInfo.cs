@@ -279,5 +279,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                         this.RawDataLength - format.CommonFieldsSize);
             }
         }
+
+        /// <summary>
+        /// Returns name of the event, or "" if not available.
+        /// </summary>
+        public readonly override string ToString()
+        {
+            return this.EventDesc == null ? "" : this.EventDesc.Name;
+        }
     }
 }
