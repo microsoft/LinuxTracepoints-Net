@@ -53,7 +53,7 @@
                         Assert.AreEqual(entryLength, charsRead);
                     }
 
-                    var format = PerfEventFormat.Parse(IntPtr.Size == 8, systemName, formatCharsSpan.Slice(0, entryLength));
+                    var format = PerfEventFormat.Parse(false, systemName, formatCharsSpan.Slice(0, entryLength));
                     Assert.IsNotNull(format);
                     Assert.AreEqual(systemName, format.SystemName);
                     Assert.AreEqual(eventName, format.Name);

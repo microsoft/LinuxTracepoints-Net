@@ -88,6 +88,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         private const sbyte OffsetUnset = -1;
         private const sbyte OffsetNotPresent = -2;
         private const int BufferInitialSize = 0x10000;
+        private const int TrimBufferLargerThan = BufferInitialSize * 2;
+        private const int TrimHeaderLargerThan = 0x10000;
+        private const int TrimQueueEntryLargerThan = 1024;
 
         /// <summary>
         /// "\x17\x08\x44tracing"
@@ -126,7 +129,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         private UInt64 m_dataBeginFilePos;
         private UInt64 m_dataEndFilePos;
 
-        private Memory<byte> m_buffer; // Scratch buffer
+        private ArrayMemory m_buffer; // Scratch buffer
 
         private readonly ArrayMemory[] m_headers;
 
@@ -135,6 +138,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         private readonly Dictionary<UInt64, PerfEventDesc> m_eventDescById;
         private readonly ReadOnlyDictionary<UInt64, PerfEventDesc> m_eventDescByIdReadOnly;
 
+        // TODO: This isn't optimal. Better would be to use one buffer for many
+        // events, and have entries that reference the big buffer.
         private readonly List<QueueEntry> m_eventQueue;
         private int m_eventQueueBegin;
         private int m_eventQueueEnd;
@@ -309,6 +314,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             GC.SuppressFinalize(this);
             FileClose();
+            
+            m_buffer.Dispose();
+
+            for (var i = 0; i < m_headers.Length; i += 1)
+            {
+                m_headers[i].Dispose();
+            }
+
+            foreach (var item in m_eventQueue)
+            {
+                item.Dispose();
+            }
         }
 
         /// <summary>
@@ -321,15 +338,20 @@ namespace Microsoft.LinuxTracepoints.Decode
             m_dataBeginFilePos = default;
             m_dataEndFilePos = default;
 
-            // m_buffer: keep our scratch buffer allocation.
+            m_buffer.SetSizeTo0AndTrim(TrimBufferLargerThan);
 
             for (int i = 0; i < m_headers.Length; i++)
             {
-                m_headers[i].Clear();
+                m_headers[i].SetSizeTo0AndTrim(TrimHeaderLargerThan);
             }
 
             m_eventDescList.Clear();
             m_eventDescById.Clear();
+
+            foreach (var item in m_eventQueue)
+            {
+                item.SetSizeTo0AndTrim();
+            }
 
             m_eventQueueBegin = default;
             m_eventQueueEnd = default;
@@ -509,10 +531,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 return false;
             }
 
-            if (m_buffer.Length < BufferInitialSize)
-            {
-                BufferResize(BufferInitialSize, 0);
-            }
+            m_buffer.SetSize(BufferInitialSize, 0);
 
             if (headerSize == perf_pipe_header.SizeOfStruct)
             {
@@ -615,8 +634,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 goto ErrorOrEof;
             }
 
-            Debug.Assert(m_buffer.Length >= BufferInitialSize); // Should be resized during Open().
-            var bufferSpan = m_buffer.Span;
+            Debug.Assert(m_buffer.Memory.Length >= BufferInitialSize); // Should be resized during Open().
+            var bufferSpan = m_buffer.Memory.Span;
 
             if (!FileRead(bufferSpan.Slice(0, PerfEventHeader.SizeOfStruct)))
             {
@@ -762,10 +781,10 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             Debug.Assert(eventData.StartPos == eventDataStartPos);
-            Debug.Assert(m_buffer.Length == bufferSpan.Length); // m_buffer and bufferSpan must be kept in sync.
+            Debug.Assert(m_buffer.Memory.Length == bufferSpan.Length); // m_buffer and bufferSpan must be kept in sync.
             eventBytes = new PerfEventBytes(
                 eventHeader,
-                m_buffer.Slice(0, eventData.EndPos),
+                m_buffer.Memory.Slice(0, eventData.EndPos),
                 bufferSpan.Slice(0, eventData.EndPos));
             return PerfDataFileResult.Ok;
 
@@ -796,6 +815,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     m_eventQueuePendingResult = PerfDataFileResult.Ok;
                     eventBytes = default;
                     return eventQueuePendingResult;
+                }
+
+                for (int i = 0; i < m_eventQueueBegin; i += 1)
+                {
+                    m_eventQueue[i].SetSizeTo0AndTrim();
                 }
 
                 m_roundIndex = 0;
@@ -855,7 +879,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                     entry.index = m_roundIndex;
                     entry.header = bytes.Header;
-                    bytes.Span.CopyTo(entry.bytes.SetSize(bytesLength).Span);
+                    bytes.Span.CopyTo(entry.bytes.SetSize(bytesLength, 0).Span);
                     m_roundIndex += 1;
 
                     if (bytes.Header.Type == PerfEventHeaderType.FinishedRound ||
@@ -1445,15 +1469,15 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             var dataSize = (UInt32)dataSize64;
 
-            if ((UInt32)eventData.EndPos + dataSize > (UInt32)m_buffer.Length)
+            if ((UInt32)eventData.EndPos + dataSize > (UInt32)m_buffer.Memory.Length)
             {
                 if ((UInt32)eventData.EndPos + dataSize >= 0x80000000)
                 {
                     return false;
                 }
 
-                BufferResize(eventData.EndPos + (int)dataSize, eventData.EndPos);
-                buffer = m_buffer.Span;
+                m_buffer.SetSize(eventData.EndPos + (int)dataSize, eventData.EndPos);
+                buffer = m_buffer.Memory.Span;
             }
 
             if (!FileRead(buffer.Slice(eventData.EndPos, (int)dataSize)))
@@ -1467,7 +1491,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private ReadOnlySpan<byte> SetHeader(PerfHeaderIndex headerIndex, ReadOnlySpan<byte> value)
         {
-            var headerSpan = m_headers[(byte)headerIndex].SetSize(value.Length).Span;
+            var headerSpan = m_headers[(byte)headerIndex].SetSize(value.Length, 0).Span;
             value.CopyTo(headerSpan);
             return headerSpan;
         }
@@ -1530,12 +1554,12 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
 
                     var sectionSize = (int)section.size;
-                    if (m_buffer.Length < sectionSize)
+                    if (m_buffer.Memory.Length < sectionSize)
                     {
-                        BufferResize(sectionSize, 0);
+                        m_buffer.SetSize(sectionSize, 0);
                     }
 
-                    var sectionData = m_buffer.Span.Slice(0, sectionSize);
+                    var sectionData = m_buffer.Memory.Span.Slice(0, sectionSize);
                     if (!FileSeekAndRead(section.offset, sectionData))
                     {
                         ok = false; // EOF in the middle of expected data.
@@ -1580,7 +1604,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         break;
                     }
 
-                    var headerSpan = m_headers[headerIndex].SetSize((int)section.size).Span;
+                    var headerSpan = m_headers[headerIndex].SetSize((int)section.size, 0).Span;
                     if (!FileSeekAndRead(section.offset, headerSpan))
                     {
                         ok = false; // EOF in the middle of expected data.
@@ -1731,10 +1755,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                         }
 
                         var formatFileContents = PerfConvert.EncodingLatin1.GetString(sectionValue.Slice(data));
-                        var longSize64 = m_tracingDataLongSize == 0
-                            ? IntPtr.Size == sizeof(UInt64)
-                            : m_tracingDataLongSize == sizeof(UInt64);
-                        var eventFormat = PerfEventFormat.Parse(longSize64, systemName, formatFileContents);
+                        var longSizeIs64 = m_tracingDataLongSize != sizeof(UInt32);
+                        var eventFormat = PerfEventFormat.Parse(longSizeIs64, systemName, formatFileContents);
                         if (eventFormat != null)
                         {
                             sbyte commonTypeOffset = OffsetUnset;
@@ -2068,20 +2090,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             return true;
         }
 
-        private void BufferResize(int minSize, int preserveSize)
-        {
-            Debug.Assert(minSize > m_buffer.Length);
-            Debug.Assert(preserveSize <= m_buffer.Length);
-
-            var oldBuffer = m_buffer;
-            m_buffer = new byte[minSize];
-
-            if (preserveSize > 0)
-            {
-                oldBuffer.Slice(0, preserveSize).CopyTo(m_buffer);
-            }
-        }
-
         private bool SectionValid(in perf_file_section section)
         {
             var endOffset = section.offset + section.size;
@@ -2159,7 +2167,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             return FileSeek(offset) && FileRead(buffer);
         }
 
-        private sealed class QueueEntry : IComparable<QueueEntry>
+        private sealed class QueueEntry : IComparable<QueueEntry>, IDisposable
         {
             public ulong time;
             public uint index;
@@ -2176,41 +2184,15 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                 return compare;
             }
-        }
 
-        private struct ArrayMemory
-        {
-            private Memory<byte> memory;
-            private byte[]? array;
-
-            public Memory<byte> Memory => this.memory;
-
-            public void Clear()
+            public void Dispose()
             {
-                this.memory = default;
+                this.bytes.Dispose();
             }
 
-            public Memory<byte> SetSize(int size)
+            public void SetSizeTo0AndTrim()
             {
-                if ((uint)size > 0x40000000)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(size));
-                }
-
-                if ((this.array == null || this.array.Length < size) &&
-                    size != 0)
-                {
-                    int capacity = 8;
-                    while (capacity < size)
-                    {
-                        capacity *= 2;
-                    }
-
-                    this.array = new byte[capacity];
-                }
-
-                this.memory = new Memory<byte>(this.array, 0, size);
-                return this.memory;
+                this.bytes.SetSizeTo0AndTrim(TrimQueueEntryLargerThan);
             }
         }
 
