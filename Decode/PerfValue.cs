@@ -636,11 +636,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU32ToString(this.GetU8());
+                            return PerfConvert.UInt32DecimalToString(this.GetU8());
                         case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.DecimalI32ToString(this.GetI8());
+                            return PerfConvert.Int32DecimalToString(this.GetI8());
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU32ToString(this.GetU8());
+                            return PerfConvert.UInt32HexToString(this.GetU8());
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU8());
                         case EventHeaderFieldFormat.HexBytes:
@@ -653,11 +653,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU32ToString(this.GetU16());
+                            return PerfConvert.UInt32DecimalToString(this.GetU16());
                         case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.DecimalI32ToString(this.GetI16());
+                            return PerfConvert.Int32DecimalToString(this.GetI16());
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU32ToString(this.GetU16());
+                            return PerfConvert.UInt32HexToString(this.GetU16());
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU16());
                         case EventHeaderFieldFormat.HexBytes:
@@ -665,19 +665,19 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             return ((char)this.GetU16()).ToString();
                         case EventHeaderFieldFormat.Port:
-                            return PerfConvert.DecimalU32ToString(this.GetPort());
+                            return PerfConvert.UInt32DecimalToString(this.GetPort());
                     }
                 case EventHeaderFieldEncoding.Value32:
                     switch (this.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU32ToString(this.GetU32());
+                            return PerfConvert.UInt32DecimalToString(this.GetU32());
                         case EventHeaderFieldFormat.SignedInt:
                         case EventHeaderFieldFormat.Pid:
-                            return PerfConvert.DecimalI32ToString(this.GetI32());
+                            return PerfConvert.Int32DecimalToString(this.GetI32());
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU32ToString(this.GetU32());
+                            return PerfConvert.UInt32HexToString(this.GetU32());
                         case EventHeaderFieldFormat.Errno:
                             return PerfConvert.ErrnoToString(this.GetI32());
                         case EventHeaderFieldFormat.Time:
@@ -685,11 +685,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU32());
                         case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float32G9ToString(this.GetF32());
+                            return PerfConvert.Float32g9ToString(this.GetF32());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan32());
                         case EventHeaderFieldFormat.StringUtf:
-                            return PerfConvert.Utf32ToString(this.GetU32());
+                            return PerfConvert.Char32ToString(this.GetU32());
                         case EventHeaderFieldFormat.IPv4:
                             return PerfConvert.IPv4ToString(this.GetIPv4());
                     }
@@ -698,15 +698,15 @@ namespace Microsoft.LinuxTracepoints.Decode
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU64ToString(this.GetU64());
+                            return PerfConvert.UInt64DecimalToString(this.GetU64());
                         case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.DecimalI64ToString(this.GetI64());
+                            return PerfConvert.Int64DecimalToString(this.GetI64());
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU64ToString(this.GetU64());
+                            return PerfConvert.UInt64HexToString(this.GetU64());
                         case EventHeaderFieldFormat.Time:
                             return PerfConvert.UnixTime64ToString(this.GetI64());
                         case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float64G17ToString(this.GetF64());
+                            return PerfConvert.Float64g17ToString(this.GetF64());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan64());
                     }
@@ -812,11 +812,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU32ToString(this.GetU8(elementIndex));
+                            return PerfConvert.UInt32DecimalToString(this.GetU8(elementIndex));
                         case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.DecimalI32ToString(this.GetI8(elementIndex));
+                            return PerfConvert.Int32DecimalToString(this.GetI8(elementIndex));
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU32ToString(this.GetU8(elementIndex));
+                            return PerfConvert.UInt32HexToString(this.GetU8(elementIndex));
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU8(elementIndex));
                         case EventHeaderFieldFormat.HexBytes:
@@ -829,11 +829,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU32ToString(this.GetU16(elementIndex));
+                            return PerfConvert.UInt32DecimalToString(this.GetU16(elementIndex));
                         case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.DecimalI32ToString(this.GetI16(elementIndex));
+                            return PerfConvert.Int32DecimalToString(this.GetI16(elementIndex));
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU32ToString(this.GetU16(elementIndex));
+                            return PerfConvert.UInt32HexToString(this.GetU16(elementIndex));
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU16(elementIndex));
                         case EventHeaderFieldFormat.HexBytes:
@@ -841,19 +841,19 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             return ((char)this.GetU16(elementIndex)).ToString();
                         case EventHeaderFieldFormat.Port:
-                            return PerfConvert.DecimalU32ToString(this.GetPort(elementIndex));
+                            return PerfConvert.UInt32DecimalToString(this.GetPort(elementIndex));
                     }
                 case EventHeaderFieldEncoding.Value32:
                     switch (this.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU32ToString(this.GetU32(elementIndex));
+                            return PerfConvert.UInt32DecimalToString(this.GetU32(elementIndex));
                         case EventHeaderFieldFormat.SignedInt:
                         case EventHeaderFieldFormat.Pid:
-                            return PerfConvert.DecimalI32ToString(this.GetI32(elementIndex));
+                            return PerfConvert.Int32DecimalToString(this.GetI32(elementIndex));
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU32ToString(this.GetU32(elementIndex));
+                            return PerfConvert.UInt32HexToString(this.GetU32(elementIndex));
                         case EventHeaderFieldFormat.Errno:
                             return PerfConvert.ErrnoToString(this.GetI32(elementIndex));
                         case EventHeaderFieldFormat.Time:
@@ -861,11 +861,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.Boolean:
                             return PerfConvert.BooleanToString(this.GetU32(elementIndex));
                         case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float32G9ToString(this.GetF32());
+                            return PerfConvert.Float32g9ToString(this.GetF32());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan32(elementIndex));
                         case EventHeaderFieldFormat.StringUtf:
-                            return PerfConvert.Utf32ToString(this.GetU32(elementIndex));
+                            return PerfConvert.Char32ToString(this.GetU32(elementIndex));
                         case EventHeaderFieldFormat.IPv4:
                             return PerfConvert.IPv4ToString(this.GetIPv4(elementIndex));
                     }
@@ -874,15 +874,15 @@ namespace Microsoft.LinuxTracepoints.Decode
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.DecimalU64ToString(this.GetU64(elementIndex));
+                            return PerfConvert.UInt64DecimalToString(this.GetU64(elementIndex));
                         case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.DecimalI64ToString(this.GetI64(elementIndex));
+                            return PerfConvert.Int64DecimalToString(this.GetI64(elementIndex));
                         case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.HexU64ToString(this.GetU64(elementIndex));
+                            return PerfConvert.UInt64HexToString(this.GetU64(elementIndex));
                         case EventHeaderFieldFormat.Time:
                             return PerfConvert.UnixTime64ToString(this.GetI64(elementIndex));
                         case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float64G17ToString(this.GetF64());
+                            return PerfConvert.Float64g17ToString(this.GetF64());
                         case EventHeaderFieldFormat.HexBytes:
                             return PerfConvert.HexBytesToString(this.GetSpan64(elementIndex));
                     }
@@ -937,7 +937,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalU32Append(sb, this.GetU8(i));
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetU8(i));
                             }
                             break;
                         case EventHeaderFieldFormat.SignedInt:
@@ -945,7 +945,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalI32Append(sb, this.GetI8(i));
+                                PerfConvert.Int32DecimalAppend(sb, this.GetI8(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexInt:
@@ -953,7 +953,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexU32Append(sb, this.GetU8(i));
+                                PerfConvert.UInt32HexAppend(sb, this.GetU8(i));
                             }
                             break;
                         case EventHeaderFieldFormat.Boolean:
@@ -995,7 +995,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalU32Append(sb, this.GetU16(i));
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetU16(i));
                             }
                             break;
                         case EventHeaderFieldFormat.SignedInt:
@@ -1003,7 +1003,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalI32Append(sb, this.GetI16(i));
+                                PerfConvert.Int32DecimalAppend(sb, this.GetI16(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexInt:
@@ -1011,7 +1011,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexU32Append(sb, this.GetU16(i));
+                                PerfConvert.UInt32HexAppend(sb, this.GetU16(i));
                             }
                             break;
                         case EventHeaderFieldFormat.Boolean:
@@ -1043,7 +1043,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalU32Append(sb, this.GetPort(i));
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetPort(i));
                             }
                             break;
                     }
@@ -1061,7 +1061,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalU32Append(sb, this.GetU32(i));
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetU32(i));
                             }
                             break;
                         case EventHeaderFieldFormat.Pid:
@@ -1073,7 +1073,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalI32Append(sb, this.GetI32(i));
+                                PerfConvert.Int32DecimalAppend(sb, this.GetI32(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexInt:
@@ -1081,7 +1081,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexU32Append(sb, this.GetU32(i));
+                                PerfConvert.UInt32HexAppend(sb, this.GetU32(i));
                             }
                             break;
                         case EventHeaderFieldFormat.Errno:
@@ -1113,7 +1113,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.Float32G9Append(sb, this.GetF32(i));
+                                PerfConvert.Float32g9Append(sb, this.GetF32(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexBytes:
@@ -1129,7 +1129,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.Utf32Append(sb, this.GetU32(i));
+                                PerfConvert.Char32Append(sb, this.GetU32(i));
                             }
                             break;
                         case EventHeaderFieldFormat.IPv4:
@@ -1155,7 +1155,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalU64Append(sb, this.GetU64(i));
+                                PerfConvert.UInt64DecimalAppend(sb, this.GetU64(i));
                             }
                             break;
                         case EventHeaderFieldFormat.SignedInt:
@@ -1163,7 +1163,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.DecimalI64Append(sb, this.GetI64(i));
+                                PerfConvert.Int64DecimalAppend(sb, this.GetI64(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexInt:
@@ -1171,7 +1171,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexU64Append(sb, this.GetU64(i));
+                                PerfConvert.UInt64HexAppend(sb, this.GetU64(i));
                             }
                             break;
                         case EventHeaderFieldFormat.Time:
@@ -1187,7 +1187,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                PerfConvert.Float64G17Append(sb, this.GetF64(i));
+                                PerfConvert.Float64g17Append(sb, this.GetF64(i));
                             }
                             break;
                         case EventHeaderFieldFormat.HexBytes:

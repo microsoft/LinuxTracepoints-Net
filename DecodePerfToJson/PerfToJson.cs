@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-namespace DecodePerf
+namespace DecodePerfToJson
 {
     using Microsoft.LinuxTracepoints;
     using Microsoft.LinuxTracepoints.Decode;
@@ -15,7 +15,7 @@ namespace DecodePerf
     using Utf8JsonWriter = System.Text.Json.Utf8JsonWriter;
 
     [Flags]
-    internal enum PerfDataMeta
+    internal enum DecodePerfMeta
     {
         None = 0,           // disable the "meta" suffix.
         N = 0x1,            // "n":"provider:event" before the user fields (not in the suffix).
@@ -40,7 +40,7 @@ namespace DecodePerf
         All = ~0
     }
 
-    internal sealed class PerfDataDecode : IDisposable
+    internal sealed class DecodePerfJsonWriter : IDisposable
     {
         private readonly PerfDataFileReader reader = new PerfDataFileReader();
         private readonly EventHeaderEnumerator enumerator = new EventHeaderEnumerator();
@@ -49,24 +49,24 @@ namespace DecodePerf
         // Scratch buffer for formatting strings.
         private readonly ArrayBufferWriter<char> charBufStorage = new ArrayBufferWriter<char>();
 
-        public PerfDataDecode(Utf8JsonWriter writer, PerfDataMeta meta = PerfDataMeta.Default)
+        public DecodePerfJsonWriter(Utf8JsonWriter writer, DecodePerfMeta meta = DecodePerfMeta.Default)
         {
             this.writer = writer;
             this.Meta = meta;
         }
 
-        public PerfDataMeta Meta { get; set; }
+        public DecodePerfMeta Meta { get; set; }
 
-        public void DecodeFile(string fileName, PerfDataFileEventOrder eventOrder)
+        public void WriteFile(string fileName, PerfDataFileEventOrder eventOrder)
         {
             reader.OpenFile(fileName, eventOrder);
-            this.Decode();
+            this.WriteFromReader();
         }
 
-        public void DecodeStream(Stream stream, PerfDataFileEventOrder eventOrder, bool leaveOpen = false)
+        public void WriteFile(Stream stream, PerfDataFileEventOrder eventOrder, bool leaveOpen = false)
         {
             reader.OpenStream(stream, eventOrder, leaveOpen);
-            this.Decode();
+            this.WriteFromReader();
         }
 
         public void Dispose()
@@ -75,7 +75,7 @@ namespace DecodePerf
             writer.Dispose();
         }
 
-        private void Decode()
+        private void WriteFromReader()
         {
             bool finishedInit = false;
             var byteReader = reader.ByteReader;
@@ -160,13 +160,13 @@ namespace DecodePerf
                     {
                         // Non-EventHeader decoding.
 
-                        if (this.Meta.HasFlag(PerfDataMeta.N))
+                        if (this.Meta.HasFlag(DecodePerfMeta.N))
                         {
                             writer.WriteString("n", info.Name);
                         }
 
                         // Write the event fields. Skip the common fields by default.
-                        var firstField = this.Meta.HasFlag(PerfDataMeta.Common) ? 0 : infoFormat.CommonFieldCount;
+                        var firstField = this.Meta.HasFlag(DecodePerfMeta.Common) ? 0 : infoFormat.CommonFieldCount;
                         for (int i = firstField; i < infoFormat.Fields.Count; i++)
                         {
                             var fieldFormat = infoFormat.Fields[i];
@@ -184,7 +184,7 @@ namespace DecodePerf
                             }
                         }
 
-                        if (0 != (this.Meta & ~PerfDataMeta.N))
+                        if (0 != (this.Meta & ~DecodePerfMeta.N))
                         {
                             writer.WriteStartObject("meta");
                             WriteSampleMeta(info, true);
@@ -196,7 +196,7 @@ namespace DecodePerf
                         // EventHeader decoding.
 
                         var ei = this.enumerator.GetEventInfo();
-                        if (this.Meta.HasFlag(PerfDataMeta.N))
+                        if (this.Meta.HasFlag(DecodePerfMeta.N))
                         {
                             writer.WriteString("n", // Garbage
                                 infoFormat.SystemName == "user_events"
@@ -260,70 +260,70 @@ namespace DecodePerf
 
                     EventDone:
 
-                        if (0 != (this.Meta & ~PerfDataMeta.N))
+                        if (0 != (this.Meta & ~DecodePerfMeta.N))
                         {
                             writer.WriteStartObject("meta");
 
                             WriteSampleMeta(info, false);
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Provider))
+                            if (this.Meta.HasFlag(DecodePerfMeta.Provider))
                             {
                                 writer.WriteString("provider", ei.ProviderName);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Event))
+                            if (this.Meta.HasFlag(DecodePerfMeta.Event))
                             {
                                 writer.WriteString("event", ei.NameBytes);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Id) && ei.Header.Id != 0)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Id) && ei.Header.Id != 0)
                             {
                                 this.writer.WriteNumber("id", ei.Header.Id);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Version) && ei.Header.Version != 0)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Version) && ei.Header.Version != 0)
                             {
                                 this.writer.WriteNumber("version", ei.Header.Version);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Level) && ei.Header.Level != 0)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Level) && ei.Header.Level != 0)
                             {
                                 this.writer.WriteNumber("level", (byte)ei.Header.Level);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Keyword) && ei.Keyword != 0)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Keyword) && ei.Keyword != 0)
                             {
-                                this.writer.WriteString("keyword", PerfConvert.HexU64FormatAtEnd(charBuf, ei.Keyword));
+                                this.writer.WriteString("keyword", PerfConvert.UInt64HexFormatAtEnd(charBuf, ei.Keyword));
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Opcode) && ei.Header.Opcode != 0)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Opcode) && ei.Header.Opcode != 0)
                             {
                                 this.writer.WriteNumber("opcode", (byte)ei.Header.Opcode);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Tag) && ei.Header.Tag != 0)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Tag) && ei.Header.Tag != 0)
                             {
-                                this.writer.WriteString("tag", PerfConvert.HexU32FormatAtEnd(charBuf, ei.Header.Tag));
+                                this.writer.WriteString("tag", PerfConvert.UInt32HexFormatAtEnd(charBuf, ei.Header.Tag));
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Activity) && ei.ActivityId is Guid aid)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Activity) && ei.ActivityId is Guid aid)
                             {
                                 this.writer.WriteString("activity", aid);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.RelatedActivity) && ei.RelatedActivityId is Guid rid)
+                            if (this.Meta.HasFlag(DecodePerfMeta.RelatedActivity) && ei.RelatedActivityId is Guid rid)
                             {
                                 this.writer.WriteString("relatedActivity", rid);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Options) && !ei.Options.IsEmpty)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Options) && !ei.Options.IsEmpty)
                             {
                                 this.writer.WriteString("options", ei.Options);
                             }
 
-                            if (this.Meta.HasFlag(PerfDataMeta.Flags) && ei.Header.Flags != 0)
+                            if (this.Meta.HasFlag(DecodePerfMeta.Flags) && ei.Header.Flags != 0)
                             {
-                                this.writer.WriteString("flags", PerfConvert.HexU32FormatAtEnd(charBuf, (uint)ei.Header.Flags));
+                                this.writer.WriteString("flags", PerfConvert.UInt32HexFormatAtEnd(charBuf, (uint)ei.Header.Flags));
                             }
 
                             this.writer.WriteEndObject(); // meta
@@ -339,7 +339,7 @@ namespace DecodePerf
         {
             var sampleType = info.SampleType;
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(PerfDataMeta.Time))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(DecodePerfMeta.Time))
             {
                 if (info.SessionInfo.ClockOffsetKnown)
                 {
@@ -351,25 +351,25 @@ namespace DecodePerf
                 }
             }
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(PerfDataMeta.Cpu))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(DecodePerfMeta.Cpu))
             {
                 writer.WriteNumber("cpu", info.Cpu);
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
             {
-                if (this.Meta.HasFlag(PerfDataMeta.Pid))
+                if (this.Meta.HasFlag(DecodePerfMeta.Pid))
                 {
                     writer.WriteNumber("pid", info.Pid);
                 }
 
-                if (this.Meta.HasFlag(PerfDataMeta.Tid))
+                if (this.Meta.HasFlag(DecodePerfMeta.Tid))
                 {
                     writer.WriteNumber("tid", info.Tid);
                 }
             }
 
-            if (showProviderEvent && 0 != (this.Meta & (PerfDataMeta.Provider | PerfDataMeta.Event)))
+            if (showProviderEvent && 0 != (this.Meta & (DecodePerfMeta.Provider | DecodePerfMeta.Event)))
             {
                 var name = info.Name.AsSpan();
                 var colonPos = name.IndexOf(':');
@@ -385,12 +385,12 @@ namespace DecodePerf
                     eventName = name.Slice(colonPos + 1);
                 }
 
-                if (this.Meta.HasFlag(PerfDataMeta.Provider) && !providerName.IsEmpty)
+                if (this.Meta.HasFlag(DecodePerfMeta.Provider) && !providerName.IsEmpty)
                 {
                     writer.WriteString("provider", providerName);
                 }
 
-                if (this.Meta.HasFlag(PerfDataMeta.Event) && !eventName.IsEmpty)
+                if (this.Meta.HasFlag(DecodePerfMeta.Event) && !eventName.IsEmpty)
                 {
                     writer.WriteString("event", eventName);
                 }
@@ -401,7 +401,7 @@ namespace DecodePerf
         {
             var sampleType = info.SampleType;
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(PerfDataMeta.Time))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(DecodePerfMeta.Time))
             {
                 if (info.SessionInfo.ClockOffsetKnown)
                 {
@@ -413,25 +413,25 @@ namespace DecodePerf
                 }
             }
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(PerfDataMeta.Cpu))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(DecodePerfMeta.Cpu))
             {
                 writer.WriteNumber("cpu", info.Cpu);
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
             {
-                if (this.Meta.HasFlag(PerfDataMeta.Pid))
+                if (this.Meta.HasFlag(DecodePerfMeta.Pid))
                 {
                     writer.WriteNumber("pid", info.Pid);
                 }
 
-                if (this.Meta.HasFlag(PerfDataMeta.Tid))
+                if (this.Meta.HasFlag(DecodePerfMeta.Tid))
                 {
                     writer.WriteNumber("tid", info.Tid);
                 }
             }
 
-            if (0 != (this.Meta & (PerfDataMeta.Provider | PerfDataMeta.Event)))
+            if (0 != (this.Meta & (DecodePerfMeta.Provider | DecodePerfMeta.Event)))
             {
                 var name = info.Name.AsSpan();
                 var colonPos = name.IndexOf(':');
@@ -447,12 +447,12 @@ namespace DecodePerf
                     eventName = name.Slice(colonPos + 1);
                 }
 
-                if (this.Meta.HasFlag(PerfDataMeta.Provider) && !providerName.IsEmpty)
+                if (this.Meta.HasFlag(DecodePerfMeta.Provider) && !providerName.IsEmpty)
                 {
                     writer.WriteString("provider", providerName);
                 }
 
-                if (this.Meta.HasFlag(PerfDataMeta.Event) && !eventName.IsEmpty)
+                if (this.Meta.HasFlag(DecodePerfMeta.Event) && !eventName.IsEmpty)
                 {
                     writer.WriteString("event", eventName);
                 }
@@ -481,7 +481,7 @@ namespace DecodePerf
                             writer.WriteNumberValue(item.GetI8());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.HexU32FormatAtEnd(charBuf, item.GetU8()));
+                            writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU8()));
                             return;
                         case EventHeaderFieldFormat.Boolean:
                             this.WriteBooleanValue(item.GetU8());
@@ -505,7 +505,7 @@ namespace DecodePerf
                             writer.WriteNumberValue(item.GetI16());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.HexU32FormatAtEnd(charBuf, item.GetU16()));
+                            writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU16()));
                             return;
                         case EventHeaderFieldFormat.Boolean:
                             this.WriteBooleanValue(item.GetU16());
@@ -533,7 +533,7 @@ namespace DecodePerf
                             writer.WriteNumberValue(item.GetI32());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.HexU32FormatAtEnd(charBuf, item.GetU32()));
+                            writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU32()));
                             return;
                         case EventHeaderFieldFormat.Errno:
                             this.WriteErrnoValue(item.GetI32());
@@ -551,7 +551,7 @@ namespace DecodePerf
                             writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan32()));
                             return;
                         case EventHeaderFieldFormat.StringUtf:
-                            writer.WriteStringValue(PerfConvert.Utf32Format(charBuf, item.GetU32()));
+                            writer.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32()));
                             return;
                         case EventHeaderFieldFormat.IPv4:
                             writer.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4()));
@@ -568,7 +568,7 @@ namespace DecodePerf
                             writer.WriteNumberValue(item.GetI64());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.HexU64FormatAtEnd(charBuf, item.GetU64()));
+                            writer.WriteStringValue(PerfConvert.UInt64HexFormatAtEnd(charBuf, item.GetU64()));
                             return;
                         case EventHeaderFieldFormat.Time:
                             this.WriteUnixTime64Value(item.GetI64());
@@ -718,7 +718,7 @@ namespace DecodePerf
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexU32FormatAtEnd(charBuf, item.GetU8(i)));
+                                writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU8(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.Boolean:
@@ -761,7 +761,7 @@ namespace DecodePerf
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexU32FormatAtEnd(charBuf, item.GetU16(i)));
+                                writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU16(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.Boolean:
@@ -811,7 +811,7 @@ namespace DecodePerf
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexU32FormatAtEnd(charBuf, item.GetU32(i)));
+                                writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU32(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.Errno:
@@ -847,7 +847,7 @@ namespace DecodePerf
                         case EventHeaderFieldFormat.StringUtf:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.Utf32Format(charBuf, item.GetU32(i)));
+                                writer.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.IPv4:
@@ -876,7 +876,7 @@ namespace DecodePerf
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexU64FormatAtEnd(charBuf, item.GetU64(i)));
+                                writer.WriteStringValue(PerfConvert.UInt64HexFormatAtEnd(charBuf, item.GetU64(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.Time:
@@ -970,7 +970,7 @@ namespace DecodePerf
 
         private void WriteHexBytesValue(ReadOnlySpan<byte> bytes, ref Span<char> charBuf)
         {
-            EnsureSpan(PerfConvert.HexBytesFormatLength(bytes.Length), ref charBuf);
+            EnsureSpan(PerfConvert.HexBytesLength(bytes.Length), ref charBuf);
             writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, bytes));
         }
 
@@ -983,7 +983,7 @@ namespace DecodePerf
             else
             {
                 // Write Infinity, -Infinity, or NaN as a string.
-                writer.WriteStringValue(PerfConvert.Float32Format(charBuf, value));
+                writer.WriteStringValue(PerfConvert.Float32gFormat(charBuf, value));
             }
         }
 
@@ -996,7 +996,7 @@ namespace DecodePerf
             else
             {
                 // Write Infinity, -Infinity, or NaN as a string.
-                writer.WriteStringValue(PerfConvert.Float64Format(charBuf, value));
+                writer.WriteStringValue(PerfConvert.Float64gFormat(charBuf, value));
             }
         }
 

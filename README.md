@@ -9,8 +9,9 @@ events, including events that use the [EventHeader](Types/README.md#eventheader)
 - [Decode](Decode) - library for parsing `perf.data` files and decoding tracepoint
   events.
 
-- [DecodePerf](DecodePerf) - tool that converts `perf.data` files into JSON. Demonstrates
-  advanced use of the `Decode` library for custom formatting and minimizing allocations.
+- [DecodePerfToJson](DecodePerfToJson) - tool that converts `perf.data` files
+  into JSON. Demonstrates advanced use of the `Decode` library for custom
+  formatting and minimizing allocations.
 
 - [Types](Types) - library with types used by the `Decode` library. This includes the
   definitions for the `EventHeader` encoding.

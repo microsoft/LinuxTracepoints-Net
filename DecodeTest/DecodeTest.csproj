@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="..\DecodePerf\PerfDataDecode.cs" Link="PerfDataDecode.cs" />
+    <Compile Include="..\DecodePerfToJson\PerfToJson.cs" Link="PerfToJson.cs" />
   </ItemGroup>
 
   <ItemGroup>

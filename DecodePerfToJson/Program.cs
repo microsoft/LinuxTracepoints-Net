@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-namespace DecodePerf
+namespace DecodePerfToJson
 {
     using System;
     using System.Text.Json;
@@ -18,11 +18,11 @@ namespace DecodePerf
                 {
                     using (var writer = new Utf8JsonWriter(output, new JsonWriterOptions { Indented = true, SkipValidation = true }))
                     {
-                        var decode = new PerfDataDecode(writer);
+                        var decode = new DecodePerfJsonWriter(writer);
                         writer.WriteStartArray();
                         foreach (var arg in args)
                         {
-                            decode.DecodeFile(arg, PerfDataFileEventOrder.File);
+                            decode.WriteFile(arg, PerfDataFileEventOrder.File);
                         }
                         writer.WriteEndArray();
                     }

@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Decode", "Decode\Decode.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodeTest", "DecodeTest\DecodeTest.csproj", "{0FEF60BB-5A34-45CE-93F1-B0FE3C8B708F}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodePerf", "DecodePerf\DecodePerf.csproj", "{312CAED2-D193-45EB-AE79-30F563C2D319}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodePerfToJson", "DecodePerfToJson\DecodePerfToJson.csproj", "{312CAED2-D193-45EB-AE79-30F563C2D319}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E801E2DB-6215-4552-B70D-53005449B7E1}"
 	ProjectSection(SolutionItems) = preProject

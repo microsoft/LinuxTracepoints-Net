@@ -25,10 +25,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         private static string[]? errnoStrings;
 
         /// <summary>
-        /// The maximum number of characters required by Utf32Format is
+        /// The maximum number of characters required by Char32Format is
         /// 2, i.e. the high and low surrogate pair.
         /// </summary>
-        public const int Utf32MaxChars = 2;
+        public const int Char32MaxChars = 2;
 
         /// <summary>
         /// The maximum number of characters required by IPv4Format is
@@ -37,64 +37,64 @@ namespace Microsoft.LinuxTracepoints.Decode
         public const int IPv4MaxChars = 15;
 
         /// <summary>
-        /// The maximum number of characters required by DecimalU32Format is
+        /// The maximum number of characters required by UInt32DecimalFormat is
         /// 10, e.g. "4294967295".
         /// </summary>
-        public const int DecimalU32MaxChars = 10;
+        public const int UInt32DecimalMaxChars = 10;
 
         /// <summary>
-        /// The maximum number of characters required by DecimalU64Format is
+        /// The maximum number of characters required by UInt64DecimalFormat is
         /// 20, e.g. "18446744073709551615".
         /// </summary>
-        public const int DecimalU64MaxChars = 20;
+        public const int UInt64DecimalMaxChars = 20;
 
         /// <summary>
-        /// The maximum number of characters required by DecimalI32Format is
+        /// The maximum number of characters required by Int32DecimalFormat is
         /// 11, e.g. "-2147483648".
         /// </summary>
-        public const int DecimalI32MaxChars = 11;
+        public const int Int32DecimalMaxChars = 11;
 
         /// <summary>
-        /// The maximum number of characters required by DecimalI64Format is
+        /// The maximum number of characters required by Int64DecimalFormat is
         /// 20, e.g. "-9223372036854775808".
         /// </summary>
-        public const int DecimalI64MaxChars = 20;
+        public const int Int64DecimalMaxChars = 20;
 
         /// <summary>
-        /// The maximum number of characters required by HexU32Format is
+        /// The maximum number of characters required by UInt32HexFormat is
         /// 10, e.g. "0xFFFFFFFF".
         /// </summary>
-        public const int HexU32MaxChars = 10;
+        public const int UInt32HexMaxChars = 10;
 
         /// <summary>
-        /// The maximum number of characters required by HexU64Format is
+        /// The maximum number of characters required by UInt64HexFormat is
         /// 18, e.g. "0xFFFFFFFFFFFFFFFF".
         /// </summary>
-        public const int HexU64MaxChars = 18;
+        public const int UInt64HexMaxChars = 18;
 
         /// <summary>
-        /// The maximum number of characters required by Float32Format is
+        /// The maximum number of characters required by Float32gFormat is
         /// 14, e.g. "-3.4028235E+38".
         /// </summary>
-        public const int Float32MaxChars = 14;
+        public const int Float32gMaxChars = 14;
 
         /// <summary>
-        /// The maximum number of characters required by Float64Format is
+        /// The maximum number of characters required by Float64gFormat is
         /// 24, e.g. "-1.7976931348623157E+308".
         /// </summary>
-        public const int Float64MaxChars = 24;
+        public const int Float64gMaxChars = 24;
 
         /// <summary>
-        /// The maximum number of characters required by Float32G9Format is
+        /// The maximum number of characters required by Float32g9Format is
         /// 15, e.g. "-3.40282347E+38".
         /// </summary>
-        public const int Float32G9MaxChars = 15;
+        public const int Float32g9MaxChars = 15;
 
         /// <summary>
-        /// The maximum number of characters required by Float64G17Format is
+        /// The maximum number of characters required by Float64g17Format is
         /// 24, e.g. "-1.7976931348623157E+308".
         /// </summary>
-        public const int Float64G17MaxChars = 24;
+        public const int Float64g17MaxChars = 24;
 
         /// <summary>
         /// The maximum number of characters required by DateTimeFormat is
@@ -220,10 +220,10 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Formats the provided integer value as a UTF-32 code point, or as '\uFFFD' if invalid.
-        /// Requires appropriately-sized destination buffer, up to Utf32MaxChars.
+        /// Requires appropriately-sized destination buffer, up to Char32MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> Utf32Format(Span<char> destination, UInt32 utf32codePoint)
+        public static Span<char> Char32Format(Span<char> destination, UInt32 utf32codePoint)
         {
             if (utf32codePoint <= 0xFFFF)
             {
@@ -247,17 +247,17 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns a new string from the provided UTF-32 code point.
         /// </summary>
-        public static string Utf32ToString(UInt32 utf32codePoint)
+        public static string Char32ToString(UInt32 utf32codePoint)
         {
-            return new string(Utf32Format(stackalloc char[Utf32MaxChars], utf32codePoint));
+            return new string(Char32Format(stackalloc char[Char32MaxChars], utf32codePoint));
         }
 
         /// <summary>
         /// Appends the provided UTF-32 code point. Returns sb.
         /// </summary>
-        public static StringBuilder Utf32Append(StringBuilder sb, UInt32 utf32codePoint)
+        public static StringBuilder Char32Append(StringBuilder sb, UInt32 utf32codePoint)
         {
-            return sb.Append(Utf32Format(stackalloc char[Utf32MaxChars], utf32codePoint));
+            return sb.Append(Char32Format(stackalloc char[Char32MaxChars], utf32codePoint));
         }
 
         /// <summary>
@@ -269,14 +269,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             var bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref ipv4, 1));
             var pos = 0;
-            var end = DecimalU32FormatAtEnd(destination.Slice(pos), bytes[0]);
+            var end = UInt32DecimalFormatAtEnd(destination.Slice(pos), bytes[0]);
             end.CopyTo(destination);
             pos += end.Length;
 
             for (var i = 1; i < 4; i += 1)
             {
                 destination[pos++] = '.';
-                end = DecimalU32FormatAtEnd(destination.Slice(pos), bytes[i]);
+                end = UInt32DecimalFormatAtEnd(destination.Slice(pos), bytes[i]);
                 end.CopyTo(destination.Slice(pos));
                 pos += end.Length;
             }
@@ -303,10 +303,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string
         /// like "1234" at the end of the destination buffer.
-        /// Requires appropriately-sized destination buffer, up to DecimalU32MaxChars.
+        /// Requires appropriately-sized destination buffer, up to UInt32DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> DecimalU32FormatAtEnd(Span<char> destination, UInt32 value)
+        public static Span<char> UInt32DecimalFormatAtEnd(Span<char> destination, UInt32 value)
         {
             var pos = destination.Length;
             do
@@ -321,10 +321,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string
         /// like "1234" at the end of the destination buffer.
-        /// Requires appropriately-sized destination buffer, up to DecimalU64MaxChars.
+        /// Requires appropriately-sized destination buffer, up to UInt64DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> DecimalU64FormatAtEnd(Span<char> destination, UInt64 value)
+        public static Span<char> UInt64DecimalFormatAtEnd(Span<char> destination, UInt64 value)
         {
             var pos = destination.Length;
             do
@@ -339,120 +339,120 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
-        public static string DecimalU32ToString(UInt32 value)
+        public static string UInt32DecimalToString(UInt32 value)
         {
-            return new string(DecimalU32FormatAtEnd(stackalloc char[DecimalU32MaxChars], value));
+            return new string(UInt32DecimalFormatAtEnd(stackalloc char[UInt32DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
-        public static string DecimalU64ToString(UInt64 value)
+        public static string UInt64DecimalToString(UInt64 value)
         {
-            return new string(DecimalU64FormatAtEnd(stackalloc char[DecimalU64MaxChars], value));
+            return new string(UInt64DecimalFormatAtEnd(stackalloc char[UInt64DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
-        public static StringBuilder DecimalU32Append(StringBuilder sb, UInt32 value)
+        public static StringBuilder UInt32DecimalAppend(StringBuilder sb, UInt32 value)
         {
-            return sb.Append(DecimalU32FormatAtEnd(stackalloc char[DecimalU32MaxChars], value));
+            return sb.Append(UInt32DecimalFormatAtEnd(stackalloc char[UInt32DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
-        public static StringBuilder DecimalU64Append(StringBuilder sb, UInt64 value)
+        public static StringBuilder UInt64DecimalAppend(StringBuilder sb, UInt64 value)
         {
-            return sb.Append(DecimalU64FormatAtEnd(stackalloc char[DecimalU64MaxChars], value));
+            return sb.Append(UInt64DecimalFormatAtEnd(stackalloc char[UInt64DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string
         /// like "-1234" at the end of the destination buffer.
-        /// Requires appropriately-sized destination buffer, up to DecimalI32MaxChars.
+        /// Requires appropriately-sized destination buffer, up to Int32DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> DecimalI32FormatAtEnd(Span<char> destination, Int32 value)
+        public static Span<char> Int32DecimalFormatAtEnd(Span<char> destination, Int32 value)
         {
             if (value < 0)
             {
-                var len = DecimalU32FormatAtEnd(destination.Slice(1), unchecked((uint)-value)).Length;
+                var len = UInt32DecimalFormatAtEnd(destination.Slice(1), unchecked((uint)-value)).Length;
                 var start = destination.Length - len - 1;
                 destination[start] = '-';
                 return destination.Slice(start);
             }
             else
             {
-                return DecimalU32FormatAtEnd(destination, unchecked((uint)value));
+                return UInt32DecimalFormatAtEnd(destination, unchecked((uint)value));
             }
         }
 
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string
         /// like "-1234" at the end of the destination buffer.
-        /// Requires appropriately-sized destination buffer, up to DecimalI64MaxChars.
+        /// Requires appropriately-sized destination buffer, up to Int64DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> DecimalI64FormatAtEnd(Span<char> destination, Int64 value)
+        public static Span<char> Int64DecimalFormatAtEnd(Span<char> destination, Int64 value)
         {
             if (value < 0)
             {
-                var len = DecimalU64FormatAtEnd(destination.Slice(1), unchecked((ulong)-value)).Length;
+                var len = UInt64DecimalFormatAtEnd(destination.Slice(1), unchecked((ulong)-value)).Length;
                 var start = destination.Length - len - 1;
                 destination[start] = '-';
                 return destination.Slice(start);
             }
             else
             {
-                return DecimalU64FormatAtEnd(destination, unchecked((ulong)value));
+                return UInt64DecimalFormatAtEnd(destination, unchecked((ulong)value));
             }
         }
 
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
-        public static string DecimalI32ToString(Int32 value)
+        public static string Int32DecimalToString(Int32 value)
         {
-            return new string(DecimalI32FormatAtEnd(stackalloc char[DecimalI32MaxChars], value));
+            return new string(Int32DecimalFormatAtEnd(stackalloc char[Int32DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
-        public static string DecimalI64ToString(Int64 value)
+        public static string Int64DecimalToString(Int64 value)
         {
-            return new string(DecimalI64FormatAtEnd(stackalloc char[DecimalI64MaxChars], value));
+            return new string(Int64DecimalFormatAtEnd(stackalloc char[Int64DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
-        public static StringBuilder DecimalI32Append(StringBuilder sb, Int32 value)
+        public static StringBuilder Int32DecimalAppend(StringBuilder sb, Int32 value)
         {
-            return sb.Append(DecimalI32FormatAtEnd(stackalloc char[DecimalI32MaxChars], value));
+            return sb.Append(Int32DecimalFormatAtEnd(stackalloc char[Int32DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
-        public static StringBuilder DecimalI64Append(StringBuilder sb, Int64 value)
+        public static StringBuilder Int64DecimalAppend(StringBuilder sb, Int64 value)
         {
-            return sb.Append(DecimalI64FormatAtEnd(stackalloc char[DecimalI64MaxChars], value));
+            return sb.Append(Int64DecimalFormatAtEnd(stackalloc char[Int64DecimalMaxChars], value));
         }
 
         /// <summary>
         /// Formats the provided integer value as a variable-length hex string like
         /// "0x123ABC" at the end of the destination buffer.
-        /// Requires appropriately-sized destination buffer, up to HexU32MaxChars.
+        /// Requires appropriately-sized destination buffer, up to UInt32HexMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> HexU32FormatAtEnd(Span<char> destination, UInt32 value)
+        public static Span<char> UInt32HexFormatAtEnd(Span<char> destination, UInt32 value)
         {
             var pos = destination.Length;
             do
@@ -469,10 +469,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Formats the provided integer value as a variable-length hex string like
         /// "0x123ABC" at the end of the destination buffer.
-        /// Requires appropriately-sized destination buffer, up to HexU64MaxChars.
+        /// Requires appropriately-sized destination buffer, up to UInt64HexMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> HexU64FormatAtEnd(Span<char> destination, UInt64 value)
+        public static Span<char> UInt64HexFormatAtEnd(Span<char> destination, UInt64 value)
         {
             var pos = destination.Length;
             do
@@ -489,185 +489,185 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns a new string like "0x123ABC" for the provided value.
         /// </summary>
-        public static string HexU32ToString(UInt32 value)
+        public static string UInt32HexToString(UInt32 value)
         {
-            return new string(HexU32FormatAtEnd(stackalloc char[HexU32MaxChars], value));
+            return new string(UInt32HexFormatAtEnd(stackalloc char[UInt32HexMaxChars], value));
         }
 
         /// <summary>
         /// Returns a new string like "0x123ABC" for the provided value.
         /// </summary>
-        public static string HexU64ToString(UInt64 value)
+        public static string UInt64HexToString(UInt64 value)
         {
-            return new string(HexU64FormatAtEnd(stackalloc char[HexU64MaxChars], value));
+            return new string(UInt64HexFormatAtEnd(stackalloc char[UInt64HexMaxChars], value));
         }
 
         /// <summary>
         /// Appends a string like "0x123ABC". Returns sb.
         /// </summary>
-        public static StringBuilder HexU32Append(StringBuilder sb, UInt32 value)
+        public static StringBuilder UInt32HexAppend(StringBuilder sb, UInt32 value)
         {
-            return sb.Append(HexU32FormatAtEnd(stackalloc char[HexU32MaxChars], value));
+            return sb.Append(UInt32HexFormatAtEnd(stackalloc char[UInt32HexMaxChars], value));
         }
 
         /// <summary>
         /// Appends a string like "0x123ABC". Returns sb.
         /// </summary>
-        public static StringBuilder HexU64Append(StringBuilder sb, UInt64 value)
+        public static StringBuilder UInt64HexAppend(StringBuilder sb, UInt64 value)
         {
-            return sb.Append(HexU64FormatAtEnd(stackalloc char[HexU64MaxChars], value));
+            return sb.Append(UInt64HexFormatAtEnd(stackalloc char[UInt64HexMaxChars], value));
         }
 
         /// <summary>
         /// Formats the provided value as a variable-length float string like
-        /// "-3.4028235E+38" using format "" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float32MaxChars.
+        /// "-3.4028235E+38" using format "g" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float32gMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> Float32Format(Span<char> destination, Single value)
+        public static Span<char> Float32gFormat(Span<char> destination, Single value)
         {
-            var ok = value.TryFormat(destination, out var len, default, CultureInfo.InvariantCulture);
+            var ok = value.TryFormat(destination, out var len, "g", CultureInfo.InvariantCulture);
             if (ok)
             {
                 return destination.Slice(0, len);
             }
             else
             {
-                Debug.Assert(destination.Length < Float32MaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32MaxChars");
+                Debug.Assert(destination.Length < Float32gMaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32gMaxChars");
             }
         }
 
         /// <summary>
         /// Formats the provided value as a variable-length double string like
-        /// "-1.7976931348623157E+308" using format "" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float64MaxChars.
+        /// "-1.7976931348623157E+308" using format "g" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float64gMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> Float64Format(Span<char> destination, Double value)
+        public static Span<char> Float64gFormat(Span<char> destination, Double value)
         {
-            var ok = value.TryFormat(destination, out var len, default, CultureInfo.InvariantCulture);
+            var ok = value.TryFormat(destination, out var len, "g", CultureInfo.InvariantCulture);
             if (ok)
             {
                 return destination.Slice(0, len);
             }
             else
             {
-                Debug.Assert(destination.Length < Float64MaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64MaxChars");
+                Debug.Assert(destination.Length < Float64gMaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64gMaxChars");
             }
         }
 
         /// <summary>
         /// Formats the provided value as a variable-length float string like
-        /// "-3.40282347E+38" using format "G9" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float32G9MaxChars.
+        /// "-3.40282347E+38" using format "g9" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float32g9MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> Float32G9Format(Span<char> destination, Single value)
+        public static Span<char> Float32g9Format(Span<char> destination, Single value)
         {
-            var ok = value.TryFormat(destination, out var len, "G9", CultureInfo.InvariantCulture);
+            var ok = value.TryFormat(destination, out var len, "g9", CultureInfo.InvariantCulture);
             if (ok)
             {
                 return destination.Slice(0, len);
             }
             else
             {
-                Debug.Assert(destination.Length < Float32G9MaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32G9MaxChars");
+                Debug.Assert(destination.Length < Float32g9MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32g9MaxChars");
             }
         }
 
         /// <summary>
         /// Formats the provided value as a variable-length double string like
-        /// "-1.7976931348623157E+308" using format "G17" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float64G17MaxChars.
+        /// "-1.7976931348623157E+308" using format "g17" and InvariantCulture.
+        /// Requires appropriately-sized destination buffer, up to Float64g17MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> Float64G17Format(Span<char> destination, Double value)
+        public static Span<char> Float64g17Format(Span<char> destination, Double value)
         {
-            var ok = value.TryFormat(destination, out var len, "G17", CultureInfo.InvariantCulture);
+            var ok = value.TryFormat(destination, out var len, "g17", CultureInfo.InvariantCulture);
             if (ok)
             {
                 return destination.Slice(0, len);
             }
             else
             {
-                Debug.Assert(destination.Length < Float64G17MaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64G17MaxChars");
+                Debug.Assert(destination.Length < Float64g17MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64g17MaxChars");
             }
         }
 
         /// <summary>
         /// Returns a new string like "-3.4028235E+38" for the provided value,
-        /// formatted using format "" and InvariantCulture.
+        /// formatted using format "g" and InvariantCulture.
         /// </summary>
-        public static string Float32ToString(Single value)
+        public static string Float32gToString(Single value)
         {
-            return new string(Float32Format(stackalloc char[Float32MaxChars], value));
+            return new string(Float32gFormat(stackalloc char[Float32gMaxChars], value));
         }
 
         /// <summary>
         /// Returns a new string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using format "" and InvariantCulture.
+        /// formatted using format "g" and InvariantCulture.
         /// </summary>
-        public static string Float64ToString(Double value)
+        public static string Float64gToString(Double value)
         {
-            return new string(Float64Format(stackalloc char[Float64MaxChars], value));
+            return new string(Float64gFormat(stackalloc char[Float64gMaxChars], value));
         }
 
         /// <summary>
         /// Returns a new string like "-3.40282347E+38" for the provided value,
-        /// formatted using format "" and InvariantCulture.
+        /// formatted using format "g" and InvariantCulture.
         /// </summary>
-        public static string Float32G9ToString(Single value)
+        public static string Float32g9ToString(Single value)
         {
-            return new string(Float32G9Format(stackalloc char[Float32G9MaxChars], value));
+            return new string(Float32g9Format(stackalloc char[Float32g9MaxChars], value));
         }
 
         /// <summary>
         /// Returns a new string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using format "G17" and InvariantCulture.
+        /// formatted using format "g17" and InvariantCulture.
         /// </summary>
-        public static string Float64G17ToString(Double value)
+        public static string Float64g17ToString(Double value)
         {
-            return new string(Float64G17Format(stackalloc char[Float64G17MaxChars], value));
+            return new string(Float64g17Format(stackalloc char[Float64g17MaxChars], value));
         }
 
         /// <summary>
         /// Appends a string like "-3.4028235E+38" for the provided value,
-        /// formatted using format "" and InvariantCulture. Returns sb.
+        /// formatted using format "g" and InvariantCulture. Returns sb.
         /// </summary>
-        public static StringBuilder Float32Append(StringBuilder sb, Single value)
+        public static StringBuilder Float32gAppend(StringBuilder sb, Single value)
         {
-            return sb.Append(Float32Format(stackalloc char[Float32MaxChars], value));
+            return sb.Append(Float32gFormat(stackalloc char[Float32gMaxChars], value));
         }
 
         /// <summary>
         /// Appends string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using format "" and InvariantCulture. Returns sb.
+        /// formatted using format "g" and InvariantCulture. Returns sb.
         /// </summary>
-        public static StringBuilder Float64Append(StringBuilder sb, Double value)
+        public static StringBuilder Float64gAppend(StringBuilder sb, Double value)
         {
-            return sb.Append(Float64Format(stackalloc char[Float64MaxChars], value));
+            return sb.Append(Float64gFormat(stackalloc char[Float64gMaxChars], value));
         }
 
         /// <summary>
         /// Appends a string like "-3.40282347E+38" for the provided value,
-        /// formatted using format "G9" and InvariantCulture. Returns sb.
+        /// formatted using format "g9" and InvariantCulture. Returns sb.
         /// </summary>
-        public static StringBuilder Float32G9Append(StringBuilder sb, Single value)
+        public static StringBuilder Float32g9Append(StringBuilder sb, Single value)
         {
-            return sb.Append(Float32G9Format(stackalloc char[Float32G9MaxChars], value));
+            return sb.Append(Float32g9Format(stackalloc char[Float32g9MaxChars], value));
         }
 
         /// <summary>
         /// Appends string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using format "G17" and InvariantCulture. Returns sb.
+        /// formatted using format "g17" and InvariantCulture. Returns sb.
         /// </summary>
-        public static StringBuilder Float64G17Append(StringBuilder sb, Double value)
+        public static StringBuilder Float64g17Append(StringBuilder sb, Double value)
         {
-            return sb.Append(Float64G17Format(stackalloc char[Float64G17MaxChars], value));
+            return sb.Append(Float64g17Format(stackalloc char[Float64g17MaxChars], value));
         }
 
         /// <summary>
@@ -675,12 +675,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// of hexadecimal bytes (e.g. "0D 0A").
         /// If bytesLength is 0, returns 0. Otherwise returns (3 * bytesLength - 1).
         /// </summary>
-        public static int HexBytesFormatLength(int bytesLength) =>
+        public static int HexBytesLength(int bytesLength) =>
             bytesLength <= 0 ? 0 : 3 * bytesLength - 1;
 
         /// <summary>
         /// Formats the provided byte array as a string of hexadecimal bytes (e.g. "0D 0A").
-        /// Requires appropriately-sized destination buffer, Length >= HexBytesFormatLength(bytes.Length).
+        /// Requires appropriately-sized destination buffer, Length >= HexBytesLength(bytes.Length).
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">bytes.Length > 715827882</exception>"
@@ -893,7 +893,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 destination[pos++] = 'M';
                 destination[pos++] = 'E';
                 destination[pos++] = '(';
-                var end = DecimalI64FormatAtEnd(destination.Slice(pos), secondsSince1970);
+                var end = Int64DecimalFormatAtEnd(destination.Slice(pos), secondsSince1970);
                 end.CopyTo(destination.Slice(pos));
                 pos += end.Length;
                 destination[pos++] = ')';
@@ -982,7 +982,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 destination[pos++] = 'N';
                 destination[pos++] = 'O';
                 destination[pos++] = '(';
-                var end = DecimalI32FormatAtEnd(destination.Slice(pos), errno);
+                var end = Int32DecimalFormatAtEnd(destination.Slice(pos), errno);
                 end.CopyTo(destination.Slice(pos));
                 pos += end.Length;
                 destination[pos++] = ')';
@@ -1034,7 +1034,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     destination[pos++] = 'O';
                     destination[pos++] = 'L';
                     destination[pos++] = '(';
-                    var end = DecimalI32FormatAtEnd(destination.Slice(pos), unchecked((int)boolVal));
+                    var end = Int32DecimalFormatAtEnd(destination.Slice(pos), unchecked((int)boolVal));
                     end.CopyTo(destination.Slice(pos));
                     pos += end.Length;
                     destination[pos++] = ')';

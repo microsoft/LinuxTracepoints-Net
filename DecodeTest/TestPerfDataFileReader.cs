@@ -15,16 +15,16 @@
             var buffer = JsonCompare.CreateBuffer();
             using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
             {
-                using (var decode = new DecodePerf.PerfDataDecode(writer))
+                using (var decode = new DecodePerfToJson.DecodePerfJsonWriter(writer))
                 {
                     writer.WriteStartArray();
                     writer.WriteCommentValue(" Events in File order ");
-                    decode.DecodeFile(
+                    decode.WriteFile(
                         Path.Combine(TestContext.TestDeploymentDir, "input", inputName),
                         PerfDataFileEventOrder.File);
 
                     writer.WriteCommentValue(" Events in Time order ");
-                    decode.DecodeFile(
+                    decode.WriteFile(
                         Path.Combine(TestContext.TestDeploymentDir, "input", inputName),
                         PerfDataFileEventOrder.Time);
                     writer.WriteEndArray();

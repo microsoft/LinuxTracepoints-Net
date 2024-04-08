@@ -34,9 +34,9 @@
             {
                 utf32 >>= 4;
                 expected = Encoding.UTF32.GetString(BitConverter.GetBytes(utf32));
-                Assert.AreEqual(expected, PerfConvert.Utf32ToString(utf32));
+                Assert.AreEqual(expected, PerfConvert.Char32ToString(utf32));
                 sb.Clear();
-                Assert.AreEqual(expected, PerfConvert.Utf32Append(sb, utf32).ToString());
+                Assert.AreEqual(expected, PerfConvert.Char32Append(sb, utf32).ToString());
             }
             while (utf32 != 0);
 
@@ -47,44 +47,44 @@
             Assert.AreEqual(expected, PerfConvert.IPv4Append(sb, ipv4).ToString());
 
             expected = uint.MaxValue.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.DecimalU32ToString(uint.MaxValue));
+            Assert.AreEqual(expected, PerfConvert.UInt32DecimalToString(uint.MaxValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DecimalU32Append(sb, uint.MaxValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.UInt32DecimalAppend(sb, uint.MaxValue).ToString());
 
             expected = ulong.MaxValue.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.DecimalU64ToString(ulong.MaxValue));
+            Assert.AreEqual(expected, PerfConvert.UInt64DecimalToString(ulong.MaxValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DecimalU64Append(sb, ulong.MaxValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.UInt64DecimalAppend(sb, ulong.MaxValue).ToString());
 
             expected = int.MaxValue.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.DecimalI32ToString(int.MaxValue));
+            Assert.AreEqual(expected, PerfConvert.Int32DecimalToString(int.MaxValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DecimalI32Append(sb, int.MaxValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.Int32DecimalAppend(sb, int.MaxValue).ToString());
 
             expected = int.MinValue.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.DecimalI32ToString(int.MinValue));
+            Assert.AreEqual(expected, PerfConvert.Int32DecimalToString(int.MinValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DecimalI32Append(sb, int.MinValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.Int32DecimalAppend(sb, int.MinValue).ToString());
 
             expected = long.MaxValue.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.DecimalI64ToString(long.MaxValue));
+            Assert.AreEqual(expected, PerfConvert.Int64DecimalToString(long.MaxValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DecimalI64Append(sb, long.MaxValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.Int64DecimalAppend(sb, long.MaxValue).ToString());
 
             expected = long.MinValue.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.DecimalI64ToString(long.MinValue));
+            Assert.AreEqual(expected, PerfConvert.Int64DecimalToString(long.MinValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DecimalI64Append(sb, long.MinValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.Int64DecimalAppend(sb, long.MinValue).ToString());
 
             expected = string.Format(CultureInfo.InvariantCulture, "0x{0:X}", uint.MaxValue);
-            Assert.AreEqual(expected, PerfConvert.HexU32ToString(uint.MaxValue));
+            Assert.AreEqual(expected, PerfConvert.UInt32HexToString(uint.MaxValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.HexU32Append(sb, uint.MaxValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.UInt32HexAppend(sb, uint.MaxValue).ToString());
 
             expected = string.Format(CultureInfo.InvariantCulture, "0x{0:X}", ulong.MaxValue);
-            Assert.AreEqual(expected, PerfConvert.HexU64ToString(ulong.MaxValue));
+            Assert.AreEqual(expected, PerfConvert.UInt64HexToString(ulong.MaxValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.HexU64Append(sb, ulong.MaxValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.UInt64HexAppend(sb, ulong.MaxValue).ToString());
 
             CheckFloat32(float.MinValue);
             CheckFloat32(float.MaxValue);
@@ -100,10 +100,10 @@
             CheckFloat64(double.PositiveInfinity);
             CheckFloat64(double.NegativeInfinity);
 
-            Assert.AreEqual(0, PerfConvert.HexBytesFormatLength(0));
-            Assert.AreEqual(2, PerfConvert.HexBytesFormatLength(1));
-            Assert.AreEqual(5, PerfConvert.HexBytesFormatLength(2));
-            Assert.AreEqual(2147483645, PerfConvert.HexBytesFormatLength(715827882));
+            Assert.AreEqual(0, PerfConvert.HexBytesLength(0));
+            Assert.AreEqual(2, PerfConvert.HexBytesLength(1));
+            Assert.AreEqual(5, PerfConvert.HexBytesLength(2));
+            Assert.AreEqual(2147483645, PerfConvert.HexBytesLength(715827882));
 
             bytes = Array.Empty<byte>();
             expected = "";
@@ -236,30 +236,30 @@
         {
             string expected;
 
-            expected = value.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float32ToString(value));
+            expected = value.ToString("g", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float32gToString(value));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float32Append(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float32gAppend(sb, value).ToString());
 
-            expected = value.ToString("G9", CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float32G9ToString(value));
+            expected = value.ToString("g9", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float32g9ToString(value));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float32G9Append(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float32g9Append(sb, value).ToString());
         }
 
         private void CheckFloat64(double value)
         {
             string expected;
 
-            expected = value.ToString(CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float64ToString(value));
+            expected = value.ToString("g", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float64gToString(value));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float64Append(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float64gAppend(sb, value).ToString());
 
-            expected = value.ToString("G17", CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float64G17ToString(value));
+            expected = value.ToString("g17", CultureInfo.InvariantCulture);
+            Assert.AreEqual(expected, PerfConvert.Float64g17ToString(value));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float64G17Append(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float64g17Append(sb, value).ToString());
         }
 
         private void CheckUnixTime64OutOfRange(long outOfRange)
