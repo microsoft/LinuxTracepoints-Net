@@ -5,6 +5,7 @@ namespace DecodeSample
 {
     using Microsoft.LinuxTracepoints.Decode;
     using System;
+    using StringBuilder = System.Text.StringBuilder;
 
     /// <summary>
     /// Simple decoding of a perf.data file.
@@ -19,6 +20,7 @@ namespace DecodeSample
                 using (var reader = new PerfDataFileReader())
                 {
                     var enumerator = new EventHeaderEnumerator();
+                    var stringBuilder = new StringBuilder();
                     foreach (var arg in args)
                     {
                         Console.WriteLine($"******* OpenFile: {arg}");
@@ -52,11 +54,11 @@ namespace DecodeSample
                                 if (result == PerfDataFileResult.Ok)
                                 {
                                     // Found event info (attributes).
-                                    Console.WriteLine($"{eventBytes.Header.Type}/{nonSampleEventInfo.Name}: {nonSampleEventInfo.DateTime}");
+                                    Console.WriteLine($"{eventBytes.Header.Type}/{nonSampleEventInfo.Name}: {nonSampleEventInfo.DateTime:s}");
                                 }
                                 else if (result == PerfDataFileResult.IdNotFound)
                                 {
-                                    // Event info not available. This is expected in a many cases, such
+                                    // Event info not available. This is expected in many cases, such
                                     // as when Header.Type >= UserTypeStart or before we've seen the
                                     // FinishedInit event. Event is frequently still usable and the content
                                     // can be decoded based on Type.
@@ -70,8 +72,8 @@ namespace DecodeSample
                             }
                             else
                             {
-                                // Sample event, e.g. tracepoint event. PerfSampleEventInfo metadata may be
-                                // available and is usually needed.
+                                // Sample event, e.g. tracepoint event.
+                                // PerfSampleEventInfo metadata may be available and is usually needed.
                                 result = reader.GetSampleEventInfo(eventBytes, out var sampleEventInfo);
                                 if (result != PerfDataFileResult.Ok)
                                 {
@@ -93,7 +95,7 @@ namespace DecodeSample
                                 {
                                     // TraceFS-based event decoding.
 
-                                    Console.WriteLine($"Sample: TraceFS {eventFormat.SystemName}:{eventFormat.Name} @ {sampleEventInfo.DateTime}");
+                                    Console.WriteLine($"Sample: TraceFS {eventFormat.SystemName}:{eventFormat.Name} @ {sampleEventInfo.DateTime:s}");
 
                                     // Typically the "common" fields are not interesting, so skip them.
                                     var fieldsStart = eventFormat.CommonFieldCount;
@@ -103,8 +105,20 @@ namespace DecodeSample
                                         var fieldFormat = eventFormat.Fields[i];
                                         var fieldValue = fieldFormat.GetFieldValue(sampleEventInfo.RawDataSpan, sampleEventInfo.ByteReader);
 
-                                        // fieldValue has lots of properties for getting its value in different formats.
-                                        Console.WriteLine($"  {fieldFormat.Name}={fieldValue.ToString()}");
+                                        // fieldValue has lots of properties and methods for accessing its data in different
+                                        // formats. TraceFS fields are always scalars or arrays of fixed-size elements, so
+                                        // the following will work to get the data as a JSON value.
+                                        if (fieldValue.IsArrayOrElement)
+                                        {
+                                            fieldValue.AppendJsonSimpleArrayTo(stringBuilder);
+                                        }
+                                        else
+                                        {
+                                            fieldValue.AppendJsonScalarTo(stringBuilder);
+                                        }
+
+                                        Console.WriteLine($"  {fieldFormat.Name} = {stringBuilder}");
+                                        stringBuilder.Clear();
                                     }
                                 }
                                 else
@@ -112,13 +126,35 @@ namespace DecodeSample
                                     // EventHeader-based event decoding.
 
                                     var eventInfo = enumerator.GetEventInfo(); // Information about the event.
-                                    Console.WriteLine($"Sample: EventHeader {eventInfo.NameAsString} @ {sampleEventInfo.DateTime}");
+                                    Console.WriteLine($"Sample: EventHeader {eventInfo.NameAsString} @ {sampleEventInfo.DateTime:s}");
 
-                                    // Skip past BeforeFirstItem.
-                                    while (enumerator.MoveNextSibling())
+                                    // Transition past the initial BeforeFirstItem state.
+                                    enumerator.MoveNext();
+
+                                    // This will loop once for each top-level item in the event.
+                                    while (enumerator.State >= EventHeaderEnumeratorState.BeforeFirstItem)
                                     {
                                         var itemInfo = enumerator.GetItemInfo(); // Information about the item.
-                                        Console.WriteLine($"  {itemInfo.NameAsString}={itemInfo.Value.ToString()}");
+
+                                        // itemInfo.Value has lots of properties and methods for accessing its data in different
+                                        // formats, but they only work for simple values -- scalar, array element, or array of
+                                        // fixed-size elements. For complex values such as structs or arrays of variable-size
+                                        // elements, you need to use the enumerator to access the sub-items. In this example,
+                                        // we use the enumerator to convert the current item to a JSON-formatted string.
+                                        // In the case of a simple item, it will be the same as itemInfo.Value.AppendJsonScalarTo().
+                                        // In the case of a complex item, it will recursively format the item and its sub-items.
+                                        enumerator.AppendJsonItemToAndMoveNextSibling(
+                                            stringBuilder,
+                                            false,
+                                            PerfJsonOptions.Default & ~PerfJsonOptions.RootName); // We don't want a JSON "ItemName": prefix.
+                                        Console.WriteLine($"  {itemInfo.NameAsString} = {stringBuilder}");
+                                        stringBuilder.Clear();
+                                    }
+
+                                    if (enumerator.State == EventHeaderEnumeratorState.Error)
+                                    {
+                                        // Unexpected: Error decoding event.
+                                        Console.WriteLine($"  **{enumerator.LastError}");
                                     }
                                 }
                             }
