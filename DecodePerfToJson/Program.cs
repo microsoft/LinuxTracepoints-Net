@@ -9,7 +9,7 @@ namespace DecodePerfToJson
 
     internal class Program
     {
-        static int Main(string[] args)
+        public static int Main(string[] args)
         {
             int result;
             try
