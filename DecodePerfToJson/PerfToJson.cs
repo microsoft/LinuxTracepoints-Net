@@ -9,36 +9,9 @@ namespace DecodePerfToJson
     using System.Buffers;
     using Debug = System.Diagnostics.Debug;
     using Encoding = System.Text.Encoding;
-    using IPAddress = System.Net.IPAddress;
     using MemoryMarshal = System.Runtime.InteropServices.MemoryMarshal;
     using Stream = System.IO.Stream;
     using Utf8JsonWriter = System.Text.Json.Utf8JsonWriter;
-
-    [Flags]
-    internal enum DecodePerfMeta
-    {
-        None = 0,           // disable the "meta" suffix.
-        N = 0x1,            // "n":"provider:event" before the user fields (not in the suffix).
-        Time = 0x2,         // timestamp (only for sample events).
-        Cpu = 0x4,          // cpu index (only for sample events).
-        Pid = 0x8,          // process id (only for sample events).
-        Tid = 0x10,         // thread id (only for sample events).
-        Id = 0x20,          // eventheader id (decimal integer, omitted if 0).
-        Version = 0x40,     // eventheader version (decimal integer, omitted if 0).
-        Level = 0x80,       // eventheader level (decimal integer, omitted if 0).
-        Keyword = 0x100,    // eventheader keyword (hexadecimal string, omitted if 0).
-        Opcode = 0x200,     // eventheader opcode (decimal integer, omitted if 0).
-        Tag = 0x400,        // eventheader tag (hexadecimal string, omitted if 0).
-        Activity = 0x800,   // eventheader activity ID (UUID string, omitted if 0).
-        RelatedActivity = 0x1000,// eventheader related activity ID (UUID string, omitted if not set).
-        Provider = 0x10000, // provider name or system name (string).
-        Event = 0x20000,    // event name or tracepoint name (string).
-        Options = 0x40000,  // eventheader provider options (string, omitted if none).
-        Flags = 0x80000,    // eventheader flags (hexadecimal string).
-        Common = 0x100000,  // Include the common_* fields before the user fields (only for sample events).
-        Default = 0xffff,   // Include n..relatedActivity.
-        All = ~0
-    }
 
     internal sealed class DecodePerfJsonWriter : IDisposable
     {
@@ -49,13 +22,13 @@ namespace DecodePerfToJson
         // Scratch buffer for formatting strings.
         private readonly ArrayBufferWriter<char> charBufStorage = new ArrayBufferWriter<char>();
 
-        public DecodePerfJsonWriter(Utf8JsonWriter writer, DecodePerfMeta meta = DecodePerfMeta.Default)
+        public DecodePerfJsonWriter(Utf8JsonWriter writer, EventHeaderMetaOptions meta = EventHeaderMetaOptions.Default)
         {
             this.writer = writer;
             this.Meta = meta;
         }
 
-        public DecodePerfMeta Meta { get; set; }
+        public EventHeaderMetaOptions Meta { get; set; }
 
         public void WriteFile(string fileName, PerfDataFileEventOrder eventOrder)
         {
@@ -160,13 +133,13 @@ namespace DecodePerfToJson
                     {
                         // Non-EventHeader decoding.
 
-                        if (this.Meta.HasFlag(DecodePerfMeta.N))
+                        if (this.Meta.HasFlag(EventHeaderMetaOptions.N))
                         {
                             writer.WriteString("n", info.Name);
                         }
 
                         // Write the event fields. Skip the common fields by default.
-                        var firstField = this.Meta.HasFlag(DecodePerfMeta.Common) ? 0 : infoFormat.CommonFieldCount;
+                        var firstField = this.Meta.HasFlag(EventHeaderMetaOptions.Common) ? 0 : infoFormat.CommonFieldCount;
                         for (int i = firstField; i < infoFormat.Fields.Count; i++)
                         {
                             var fieldFormat = infoFormat.Fields[i];
@@ -184,7 +157,7 @@ namespace DecodePerfToJson
                             }
                         }
 
-                        if (0 != (this.Meta & ~DecodePerfMeta.N))
+                        if (0 != (this.Meta & ~EventHeaderMetaOptions.N))
                         {
                             writer.WriteStartObject("meta");
                             WriteSampleMeta(info, true);
@@ -196,7 +169,7 @@ namespace DecodePerfToJson
                         // EventHeader decoding.
 
                         var ei = this.enumerator.GetEventInfo();
-                        if (this.Meta.HasFlag(DecodePerfMeta.N))
+                        if (this.Meta.HasFlag(EventHeaderMetaOptions.N))
                         {
                             writer.WriteString("n", // Garbage
                                 infoFormat.SystemName == "user_events"
@@ -260,68 +233,68 @@ namespace DecodePerfToJson
 
                     EventDone:
 
-                        if (0 != (this.Meta & ~DecodePerfMeta.N))
+                        if (0 != (this.Meta & ~EventHeaderMetaOptions.N))
                         {
                             writer.WriteStartObject("meta");
 
                             WriteSampleMeta(info, false);
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Provider))
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Provider))
                             {
                                 writer.WriteString("provider", ei.ProviderName);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Event))
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Event))
                             {
                                 writer.WriteString("event", ei.NameBytes);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Id) && ei.Header.Id != 0)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Id) && ei.Header.Id != 0)
                             {
                                 this.writer.WriteNumber("id", ei.Header.Id);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Version) && ei.Header.Version != 0)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Version) && ei.Header.Version != 0)
                             {
                                 this.writer.WriteNumber("version", ei.Header.Version);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Level) && ei.Header.Level != 0)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Level) && ei.Header.Level != 0)
                             {
                                 this.writer.WriteNumber("level", (byte)ei.Header.Level);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Keyword) && ei.Keyword != 0)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Keyword) && ei.Keyword != 0)
                             {
                                 this.writer.WriteString("keyword", PerfConvert.UInt64HexFormatAtEnd(charBuf, ei.Keyword));
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Opcode) && ei.Header.Opcode != 0)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Opcode) && ei.Header.Opcode != 0)
                             {
                                 this.writer.WriteNumber("opcode", (byte)ei.Header.Opcode);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Tag) && ei.Header.Tag != 0)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Tag) && ei.Header.Tag != 0)
                             {
                                 this.writer.WriteString("tag", PerfConvert.UInt32HexFormatAtEnd(charBuf, ei.Header.Tag));
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Activity) && ei.ActivityId is Guid aid)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Activity) && ei.ActivityId is Guid aid)
                             {
                                 this.writer.WriteString("activity", aid);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.RelatedActivity) && ei.RelatedActivityId is Guid rid)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.RelatedActivity) && ei.RelatedActivityId is Guid rid)
                             {
                                 this.writer.WriteString("relatedActivity", rid);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Options) && !ei.Options.IsEmpty)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Options) && !ei.Options.IsEmpty)
                             {
                                 this.writer.WriteString("options", ei.Options);
                             }
 
-                            if (this.Meta.HasFlag(DecodePerfMeta.Flags) && ei.Header.Flags != 0)
+                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Flags) && ei.Header.Flags != 0)
                             {
                                 this.writer.WriteString("flags", PerfConvert.UInt32HexFormatAtEnd(charBuf, (uint)ei.Header.Flags));
                             }
@@ -339,7 +312,7 @@ namespace DecodePerfToJson
         {
             var sampleType = info.SampleType;
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(DecodePerfMeta.Time))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(EventHeaderMetaOptions.Time))
             {
                 if (info.SessionInfo.ClockOffsetKnown)
                 {
@@ -351,25 +324,25 @@ namespace DecodePerfToJson
                 }
             }
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(DecodePerfMeta.Cpu))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(EventHeaderMetaOptions.Cpu))
             {
                 writer.WriteNumber("cpu", info.Cpu);
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
             {
-                if (this.Meta.HasFlag(DecodePerfMeta.Pid))
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Pid))
                 {
                     writer.WriteNumber("pid", info.Pid);
                 }
 
-                if (this.Meta.HasFlag(DecodePerfMeta.Tid))
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Tid))
                 {
                     writer.WriteNumber("tid", info.Tid);
                 }
             }
 
-            if (showProviderEvent && 0 != (this.Meta & (DecodePerfMeta.Provider | DecodePerfMeta.Event)))
+            if (showProviderEvent && 0 != (this.Meta & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Event)))
             {
                 var name = info.Name.AsSpan();
                 var colonPos = name.IndexOf(':');
@@ -385,12 +358,12 @@ namespace DecodePerfToJson
                     eventName = name.Slice(colonPos + 1);
                 }
 
-                if (this.Meta.HasFlag(DecodePerfMeta.Provider) && !providerName.IsEmpty)
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Provider) && !providerName.IsEmpty)
                 {
                     writer.WriteString("provider", providerName);
                 }
 
-                if (this.Meta.HasFlag(DecodePerfMeta.Event) && !eventName.IsEmpty)
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Event) && !eventName.IsEmpty)
                 {
                     writer.WriteString("event", eventName);
                 }
@@ -401,7 +374,7 @@ namespace DecodePerfToJson
         {
             var sampleType = info.SampleType;
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(DecodePerfMeta.Time))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(EventHeaderMetaOptions.Time))
             {
                 if (info.SessionInfo.ClockOffsetKnown)
                 {
@@ -413,25 +386,25 @@ namespace DecodePerfToJson
                 }
             }
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(DecodePerfMeta.Cpu))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(EventHeaderMetaOptions.Cpu))
             {
                 writer.WriteNumber("cpu", info.Cpu);
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
             {
-                if (this.Meta.HasFlag(DecodePerfMeta.Pid))
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Pid))
                 {
                     writer.WriteNumber("pid", info.Pid);
                 }
 
-                if (this.Meta.HasFlag(DecodePerfMeta.Tid))
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Tid))
                 {
                     writer.WriteNumber("tid", info.Tid);
                 }
             }
 
-            if (0 != (this.Meta & (DecodePerfMeta.Provider | DecodePerfMeta.Event)))
+            if (0 != (this.Meta & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Event)))
             {
                 var name = info.Name.AsSpan();
                 var colonPos = name.IndexOf(':');
@@ -447,12 +420,12 @@ namespace DecodePerfToJson
                     eventName = name.Slice(colonPos + 1);
                 }
 
-                if (this.Meta.HasFlag(DecodePerfMeta.Provider) && !providerName.IsEmpty)
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Provider) && !providerName.IsEmpty)
                 {
                     writer.WriteString("provider", providerName);
                 }
 
-                if (this.Meta.HasFlag(DecodePerfMeta.Event) && !eventName.IsEmpty)
+                if (this.Meta.HasFlag(EventHeaderMetaOptions.Event) && !eventName.IsEmpty)
                 {
                     writer.WriteString("event", eventName);
                 }
@@ -1002,10 +975,7 @@ namespace DecodePerfToJson
 
         private void WriteIPv6Value(Span<char> charBuf, ReadOnlySpan<byte> value)
         {
-            var addr = new IPAddress(value); // Garbage.
-            var ok = addr.TryFormat(charBuf, out var count);
-            Debug.Assert(ok);
-            writer.WriteStringValue(charBuf.Slice(0, count));
+            writer.WriteStringValue(PerfConvert.IPv6Format(charBuf, value)); // Garbage.
         }
 
         private void WriteUnixTime64Value(Int64 value)

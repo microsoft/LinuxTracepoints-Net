@@ -5,25 +5,23 @@
     using System.IO;
     using Encoding = System.Text.Encoding;
     using Logging = Microsoft.VisualStudio.TestTools.UnitTesting.Logging;
-    using System.Text.Json;
-    using System.Buffers;
 
     internal static class JsonCompare
     {
         private static readonly char[] LineSplitChars = new char[] { '\r', '\n' };
         private static readonly byte[] Utf8Preamble = Encoding.UTF8.GetPreamble();
 
-        public static ArrayBufferWriter<byte> CreateBuffer()
+        public static MemoryStream CreateStream()
         {
-            var buffer = new ArrayBufferWriter<byte>();
-            buffer.Write(Utf8Preamble);
-            return buffer;
+            var stream = new MemoryStream();
+            stream.Write(Utf8Preamble);
+            return stream;
         }
 
         public static void AssertSame(
             TestContext testContext,
             string baseFileName,
-            ArrayBufferWriter<byte> actualBuffer)
+            string actualText)
         {
             var jsonFileName = baseFileName + ".json";
             var actualDirectory = Path.Combine(testContext.DeploymentDirectory, "actual");
@@ -34,12 +32,11 @@
             var expectedLines = expectedText.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);
 
             var actualFileName = Path.Combine(actualDirectory, jsonFileName);
-            var actualText = Encoding.UTF8.GetString(actualBuffer.WrittenSpan.Slice(Utf8Preamble.Length));
-            var actualLines = actualText.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);
+            var actualLines = actualText .Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);
 
-            using (var stream = File.Create(actualFileName))
+            using (var stream = new StreamWriter(actualFileName, false, Encoding.UTF8))
             {
-                stream.Write(actualBuffer.WrittenSpan);
+                stream.Write(actualText);
             }
             testContext.AddResultFile(actualFileName);
 

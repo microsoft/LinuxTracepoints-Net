@@ -1,13 +1,10 @@
 ﻿namespace DecodeTest
 {
-    using System;
-    using System.Buffers.Binary;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
-    using Microsoft.LinuxTracepoints;
     using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System;
+    using System.Globalization;
+    using System.Text;
     using IPAddress = System.Net.IPAddress;
 
     [TestClass]

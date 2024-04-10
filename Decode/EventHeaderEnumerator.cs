@@ -6,6 +6,8 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System;
     using System.Runtime.InteropServices;
     using Debug = System.Diagnostics.Debug;
+    using StringBuilder = System.Text.StringBuilder;
+    using Text = System.Text;
 
     /// <summary>
     /// Helper for decoding EventHeader-encoded tracepoint data.
@@ -1105,6 +1107,334 @@ namespace Microsoft.LinuxTracepoints.Decode
             return m_eventData.Slice(m_dataPosRaw);
         }
 
+        /// <summary>
+        /// <para>
+        /// Appends the current event identity to the provided StringBuilder as a JSON string,
+        /// e.g. "MyProvider:MyEvent" (includes the quotation marks). Returns sb.
+        /// The event identity includes the provider name and event name, e.g. "MyProvider:MyEvent".
+        /// This is commonly used as the value of the "n" property in the JSON rendering of the event.
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para>
+        /// </summary>
+        public StringBuilder AppendJsonEventIdentityTo(StringBuilder sb)
+        {
+            return AppendJsonEventIdentityTo(m_eventData.Span, sb);
+        }
+
+        /// <summary>
+        /// <para>
+        /// Advanced scenarios: This is the same as AppendJsonEventIdentityTo(sb) except that
+        /// it uses the provided eventDataSpan instead of accessing the Span property of a
+        /// ReadOnlyMemory field.
+        /// </para><para>
+        /// This is useful as a performance optimization when you have the eventData span
+        /// available and want to avoid the overhead of repeatedly converting from
+        /// ReadOnlyMemory to ReadOnlySpan.
+        /// </para><para>
+        /// The provided eventDataSpan must be equal to the Span property of the eventData
+        /// parameter that was passed to StartEvent().
+        /// </para><para>
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para>
+        /// </summary>
+        public StringBuilder AppendJsonEventIdentityTo(ReadOnlySpan<byte> eventDataSpan, StringBuilder sb)
+        {
+            Debug.Assert(m_eventData.Length == eventDataSpan.Length);
+
+            sb.Append('"');
+            PerfConvert.AppendEscapedJson(
+                sb,
+                m_tracepointName.AsSpan().Slice(0, m_tracepointName.LastIndexOf('_')));
+            sb.Append(':');
+            PerfConvert.AppendEscapedJson(
+                sb,
+                eventDataSpan.Slice(m_metaBegin, m_eventNameSize),
+                Text.Encoding.UTF8);
+            sb.Append('"');
+            return sb;
+        }
+
+        /// <summary>
+        /// Appends event metadata to the provided StringBuilder as a comma-separated list of
+        /// JSON name-value pairs, e.g. "level": 5, "keyword": 3.
+        /// Returns sb.
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </summary>
+        public StringBuilder AppendJsonEventMetaTo(
+            StringBuilder sb,
+            ref bool addCommaBeforeNextItem,
+            EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
+            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+        {
+            return AppendJsonEventMetaTo(m_eventData.Span, sb, ref addCommaBeforeNextItem, metaOptions, jsonOptions);
+        }
+
+        /// <summary>
+        /// <para>
+        /// Advanced scenarios: This is the same as AppendJsonEventMetaTo(sb, ...) except that
+        /// it uses the provided eventDataSpan instead of accessing the Span property of a
+        /// ReadOnlyMemory field.
+        /// </para><para>
+        /// This is useful as a performance optimization when you have the eventData span
+        /// available and want to avoid the overhead of repeatedly converting from
+        /// ReadOnlyMemory to ReadOnlySpan.
+        /// </para><para>
+        /// The provided eventDataSpan must be equal to the Span property of the eventData
+        /// parameter that was passed to StartEvent().
+        /// </para><para>
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para>
+        /// </summary>
+        public StringBuilder AppendJsonEventMetaTo(
+            ReadOnlySpan<byte> eventDataSpan,
+            StringBuilder sb,
+            ref bool addCommaBeforeNextItem,
+            EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
+            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+        {
+            Debug.Assert(m_eventData.Length == eventDataSpan.Length);
+
+            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
+
+            int providerNameEnd =
+                0 != (metaOptions & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Options))
+                ? m_tracepointName.LastIndexOf('_')
+                : 0;
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Provider))
+            {
+                PerfConvert.StringAppendJson(
+                    w.WriteValueNoEscapeName("provider"),
+                    m_tracepointName.AsSpan().Slice(0, providerNameEnd));
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Event))
+            {
+                PerfConvert.StringAppendJson(
+                    w.WriteValueNoEscapeName("event"),
+                    eventDataSpan.Slice(m_metaBegin, m_eventNameSize),
+                    Text.Encoding.UTF8);
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Id) && m_header.Id != 0)
+            {
+                PerfConvert.UInt32DecimalAppend(
+                    w.WriteValueNoEscapeName("id"),
+                    m_header.Id);
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Version) && m_header.Version != 0)
+            {
+                PerfConvert.UInt32DecimalAppend(
+                    w.WriteValueNoEscapeName("version"),
+                    m_header.Version);
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Level) && m_header.Level != 0)
+            {
+                PerfConvert.UInt32DecimalAppend(
+                    w.WriteValueNoEscapeName("level"),
+                    (byte)m_header.Level);
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Keyword) && m_keyword != 0)
+            {
+                PerfConvert.UInt64HexAppendJson(
+                    w.WriteValueNoEscapeName("keyword"),
+                    m_keyword,
+                    jsonOptions);
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Opcode) && m_header.Opcode != 0)
+            {
+                PerfConvert.UInt32DecimalAppend(
+                    w.WriteValueNoEscapeName("opcode"),
+                    (byte)m_header.Opcode);
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Tag) && m_header.Tag != 0)
+            {
+                PerfConvert.UInt32HexAppendJson(
+                    w.WriteValueNoEscapeName("tag"),
+                    m_header.Tag,
+                    jsonOptions);
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Activity) && m_activityIdSize >= 16)
+            {
+                w.WriteValueNoEscapeName("activity");
+                sb.Append('"');
+                PerfConvert.GuidAppend(
+                    sb,
+                    Utility.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin)));
+                sb.Append('"');
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.RelatedActivity) && m_activityIdSize >= 32)
+            {
+                w.WriteValueNoEscapeName("relatedActivity");
+                sb.Append('"');
+                PerfConvert.GuidAppend(
+                    sb,
+                    Utility.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin + 16)));
+                sb.Append('"');
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Options))
+            {
+                var n = m_tracepointName;
+                for (int i = providerNameEnd + 1; i < n.Length; i += 1)
+                {
+                    var ch = n[i];
+                    if ('A' <= ch && ch <= 'Z' && ch != 'L' && ch != 'K')
+                    {
+                        PerfConvert.StringAppendJson(
+                            w.WriteValueNoEscapeName("options"),
+                            n.AsSpan(i));
+                        break;
+                    }
+                }
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Flags))
+            {
+                PerfConvert.UInt32HexAppendJson(
+                    w.WriteValueNoEscapeName("flags"),
+                    (byte)m_header.Flags,
+                    jsonOptions);
+            }
+
+            addCommaBeforeNextItem = w.Comma;
+            return sb;
+        }
+
+        /// <summary>
+        /// Appends a JSON representation of the current item to the provided StringBuilder,
+        /// e.g. for a string value "My String" (includes the quotation marks), or for an
+        /// array [ 1, 2, 3 ]. Returns true if moved to a valid item.
+        /// Consumes the current item and its descendents as if by a call to MoveNextSibling.
+        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// successful call to StartEvent, until MoveNext returns false.
+        /// </summary>
+        public bool AppendJsonItemToAndMoveNextSibling(
+            StringBuilder sb,
+            ref bool addCommaBeforeNextItem,
+            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+        {
+            return AppendJsonItemToAndMoveNextSibling(m_eventData.Span, sb, ref addCommaBeforeNextItem, jsonOptions);
+        }
+
+        /// <summary>
+        /// <para>
+        /// Advanced scenarios: This is the same as AppendJsonItemToAndMoveNextSibling(sb)
+        /// except that it uses the provided eventDataSpan instead of accessing the Span
+        /// property of a ReadOnlyMemory field.
+        /// </para><para>
+        /// This is useful as a performance optimization when you have the eventData span
+        /// available and want to avoid the overhead of repeatedly converting from
+        /// ReadOnlyMemory to ReadOnlySpan.
+        /// </para><para>
+        /// The provided eventDataSpan must be equal to the Span property of the eventData
+        /// parameter that was passed to StartEvent().
+        /// </para><para>
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para>
+        /// </summary>
+        public bool AppendJsonItemToAndMoveNextSibling(
+            ReadOnlySpan<byte> eventDataSpan,
+            StringBuilder sb,
+            ref bool addCommaBeforeNextItem,
+            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+        {
+            Debug.Assert(m_eventData.Length == eventDataSpan.Length);
+            bool wantName = jsonOptions.HasFlag(PerfJsonOptions.RootName);
+            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
+
+            bool ok;
+            int depth = 0;
+            EventHeaderItemInfo itemInfo;
+
+            do
+            {
+                switch (m_state)
+                {
+                    default:
+                        Debug.Fail("Enumerator in invalid state.");
+                        throw new InvalidOperationException("Enumerator in invalid state.");
+
+                    case EventHeaderEnumeratorState.BeforeFirstItem:
+                        depth += 1;
+                        break;
+
+                    case EventHeaderEnumeratorState.Value:
+
+                        itemInfo = GetItemInfo(eventDataSpan);
+                        if (wantName && !itemInfo.Value.IsArrayOrElement)
+                        {
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                        }
+
+                        itemInfo.Value.AppendJsonScalarTo(w.WriteValue());
+                        break;
+
+                    case EventHeaderEnumeratorState.ArrayBegin:
+
+                        itemInfo = GetItemInfo(eventDataSpan);
+                        if (wantName)
+                        {
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                        }
+
+                        if (itemInfo.Value.TypeSize != 0)
+                        {
+                            itemInfo.Value.AppendJsonSimpleArrayTo(w.WriteValue(), jsonOptions);
+                            ok = MoveNextSibling(eventDataSpan);
+                            continue; // Skip the MoveNext().
+                        }
+
+                        w.WriteStartArray();
+                        depth += 1;
+                        break;
+
+                    case EventHeaderEnumeratorState.ArrayEnd:
+
+                        w.WriteEndArray();
+                        depth -= 1;
+                        break;
+
+                    case EventHeaderEnumeratorState.StructBegin:
+
+                        itemInfo = GetItemInfo(eventDataSpan);
+
+                        if (wantName && !itemInfo.Value.IsArrayOrElement)
+                        {
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                        }
+
+                        w.WriteStartObject();
+                        depth += 1;
+                        break;
+
+                    case EventHeaderEnumeratorState.StructEnd:
+
+                        w.WriteEndObject();
+                        depth -= 1;
+                        break;
+                }
+
+                wantName = true;
+                ok = MoveNext(eventDataSpan);
+            } while (ok && depth > 0);
+
+            addCommaBeforeNextItem = w.Comma;
+            return ok;
+        }
+
         private void ResetImpl(int moveNextLimit)
         {
             m_dataPosRaw = m_dataBegin;
@@ -1702,6 +2032,105 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             return pos;
+        }
+
+        private struct JsonWriter
+        {
+            private StringBuilder builder;
+            private bool comma;
+            private bool currentSpace;
+            private bool nextSpace;
+            private bool wantFieldTag;
+
+            public JsonWriter(StringBuilder builder, PerfJsonOptions options, bool comma)
+            {
+                this.builder = builder;
+                this.comma = comma;
+                this.currentSpace = false;
+                this.nextSpace = options.HasFlag(PerfJsonOptions.Space);
+                this.wantFieldTag = options.HasFlag(PerfJsonOptions.FieldTag);
+            }
+
+            public bool Comma => this.comma;
+
+            public void WritePropertyNameNoEscape(ReadOnlySpan<char> name)
+            {
+                this.CommaSpace();
+                this.builder.Append('"');
+                this.builder.Append(name); // Assume no escaping needed.
+                this.builder.Append("\":");
+                this.comma = false;
+            }
+
+            public void WritePropertyName(ReadOnlySpan<byte> nameUtf8, ushort fieldTag)
+            {
+                this.CommaSpace();
+                this.builder.Append('"');
+
+                PerfConvert.AppendEscapedJson(this.builder, nameUtf8, Text.Encoding.UTF8);
+                if (this.wantFieldTag && fieldTag != 0)
+                {
+                    this.builder.Append(";tag=");
+                    PerfConvert.UInt32HexAppend(this.builder, fieldTag);
+                }
+
+                this.builder.Append("\":");
+                this.comma = false;
+            }
+
+            public void WriteStartObject()
+            {
+                this.CommaSpace();
+                this.builder.Append('{');
+                this.comma = false;
+            }
+
+            public void WriteEndObject()
+            {
+                if (this.currentSpace) this.builder.Append(' ');
+                this.builder.Append('}');
+                this.comma = true;
+            }
+
+            public void WriteStartArray()
+            {
+                this.CommaSpace();
+                this.builder.Append('[');
+                this.comma = false;
+            }
+
+            public void WriteEndArray()
+            {
+                if (this.currentSpace) this.builder.Append(' ');
+                this.builder.Append(']');
+                this.comma = true;
+            }
+
+            public StringBuilder WriteValue()
+            {
+                this.CommaSpace();
+                this.comma = true;
+                return this.builder;
+            }
+
+            public StringBuilder WriteValueNoEscapeName(ReadOnlySpan<char> name)
+            {
+                WritePropertyNameNoEscape(name);
+                if (this.currentSpace) this.builder.Append(' ');
+                this.comma = true;
+                return this.builder;
+            }
+
+            private void CommaSpace()
+            {
+                if (this.comma)
+                {
+                    this.builder.Append(',');
+                }
+
+                if (this.currentSpace) this.builder.Append(' ');
+                this.currentSpace = this.nextSpace;
+            }
         }
     }
 }

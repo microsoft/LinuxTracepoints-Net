@@ -9,7 +9,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// <summary>
     /// Helper for working with data that may be in big or little endian format.
     /// </summary>
-    public readonly struct PerfByteReader
+    public readonly struct PerfByteReader : IEquatable<PerfByteReader>
     {
         /// <summary>
         /// Initializes a new instance of the ByteReader class for converting data from
@@ -46,6 +46,61 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// host-endian. Returns false if input data is already in host-endian order.
         /// </summary>
         public bool ByteSwapNeeded => this.FromBigEndian == BitConverter.IsLittleEndian;
+
+        /// <summary>
+        /// Returns true if left.FromBigEndian == right.FromBigEndian.
+        /// </summary>
+        public static bool operator ==(PerfByteReader left, PerfByteReader right)
+        {
+            return left.FromBigEndian == right.FromBigEndian;
+        }
+
+        /// <summary>
+        /// Returns true if left.FromBigEndian != right.FromBigEndian.
+        /// </summary>
+        public static bool operator !=(PerfByteReader left, PerfByteReader right)
+        {
+            return left.FromBigEndian != right.FromBigEndian;
+        }
+
+        /// <summary>
+        /// Returns true if obj is PerfByteReader and this.FromBigEndian == obj.FromBigEndian.
+        /// </summary>
+        public override bool Equals(object obj)
+        {
+            if (obj is PerfByteReader other)
+            {
+                return this.FromBigEndian == other.FromBigEndian;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Returns true if this.FromBigEndian == other.FromBigEndian.
+        /// </summary>
+        public bool Equals(PerfByteReader other)
+        {
+            return this.FromBigEndian == other.FromBigEndian;
+        }
+
+        /// <summary>
+        /// Gets a hash code for this object. Same as this.FromBigEndian.GetHashCode().
+        /// </summary>
+        public override int GetHashCode()
+        {
+            return this.FromBigEndian.GetHashCode();
+        }
+
+        /// <summary>
+        /// Returns a string like "FromBigEndian" or "FromLittleEndian".
+        /// </summary>
+        public override string ToString()
+        {
+            return this.FromBigEndian ? "FromBigEndian" : "FromLittleEndian";
+        }
 
         /// <summary>
         /// Reads an Int16 from the specified byte array. Requires bytes.Length >= 2.
@@ -141,14 +196,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             return this.FromBigEndian == BitConverter.IsLittleEndian
                 ? BinaryPrimitives.ReverseEndianness(value)
                 : value;
-        }
-
-        /// <summary>
-        /// Returns a string like "FromBigEndian" or "FromLittleEndian".
-        /// </summary>
-        public override string ToString()
-        {
-            return this.FromBigEndian ? "FromBigEndian" : "FromLittleEndian";
         }
     }
 }

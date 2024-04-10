@@ -3,30 +3,30 @@
     using Microsoft.LinuxTracepoints;
     using Microsoft.LinuxTracepoints.Decode;
     using System;
-    using System.Buffers.Binary;
-    using System.IO;
-    using System.Text.Json;
+    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using CultureInfo = System.Globalization.CultureInfo;
     using Encoding = System.Text.Encoding;
+    using File = System.IO.File;
 
     internal sealed class DatDecode
     {
         private readonly EventHeaderEnumerator e = new EventHeaderEnumerator();
-        private readonly Utf8JsonWriter writer;
+        private readonly JsonStringWriter writer;
 
-        public DatDecode(Utf8JsonWriter writer)
+        public DatDecode(JsonStringWriter writer)
         {
             this.writer = writer;
         }
 
-        public void DecodeFile(string fileName, bool moveNextSibling)
+        public void DecodeFile(string fileName)
         {
-            this.DecodeBytes(File.ReadAllBytes(fileName), moveNextSibling);
+            this.DecodeBytes(File.ReadAllBytes(fileName));
         }
 
-        public void DecodeBytes(ReadOnlyMemory<byte> bytes, bool moveNextSibling)
+        public void DecodeBytes(ReadOnlyMemory<byte> bytes)
         {
             var bytesSpan = bytes.Span;
+            bool comma;
 
             var pos = 0;
             while (pos < bytesSpan.Length)
@@ -62,147 +62,45 @@
                 }
                 else
                 {
-                    this.writer.WriteStartObject();
+                    this.writer.WriteStartObjectOnNewLine();
+                    this.writer.WritePropertyNameOnNewLine("n");
+                    e.AppendJsonEventIdentityTo(this.writer.WriteRawValueBuilder());
+                    comma = false;
+
                     if (e.MoveNext())
                     {
                         while (true)
                         {
-                            var item = e.GetItemInfo();
-                            _ = item.ToString(); // Exercise ToString.
-                            switch (e.State)
+                            if (!e.AppendJsonItemToAndMoveNextSibling(this.writer.WriteRawValueBuilderOnNewLine(), ref comma))
                             {
-                                case EventHeaderEnumeratorState.Value:
-                                    if (!item.Value.IsArrayOrElement)
-                                    {
-                                        this.writer.WritePropertyName(MakeName(item.NameAsString, item.Value.FieldTag));
-                                    }
-                                    this.writer.WriteStringValue(item.Value.FormatScalar());
-                                    break;
-                                case EventHeaderEnumeratorState.StructBegin:
-                                    if (!item.Value.IsArrayOrElement)
-                                    {
-                                        this.writer.WritePropertyName(MakeName(item.NameAsString, item.Value.FieldTag));
-                                    }
-                                    this.writer.WriteStartObject();
-                                    break;
-                                case EventHeaderEnumeratorState.StructEnd:
-                                    this.writer.WriteEndObject();
-                                    break;
-                                case EventHeaderEnumeratorState.ArrayBegin:
-                                    this.writer.WriteStartArray(MakeName(item.NameAsString, item.Value.FieldTag));
-
-                                    if (moveNextSibling && item.Value.TypeSize != 0)
-                                    {
-                                        // Process the entire array directly without using the enumerator.
-                                        // Adjust the item.ValueStart and item.ValueLength to point to each element.
-                                        for (int i = 0; i != item.Value.ElementCount; i++)
-                                        {
-                                            this.writer.WriteStringValue(item.Value.FormatSimpleArrayElement(i));
-                                        }
-
-                                        this.writer.WriteEndArray();
-
-                                        // Skip the entire array at once.
-                                        if (!e.MoveNextSibling()) // Instead of MoveNext().
-                                        {
-                                            goto EventDone; // End of event, or error.
-                                        }
-
-                                        continue; // Skip the MoveNext().
-                                    }
-                                    break;
-                                case EventHeaderEnumeratorState.ArrayEnd:
-                                    this.writer.WriteEndArray();
-                                    break;
-                            }
-
-                            if (!e.MoveNext())
-                            {
-                                goto EventDone; // End of event, or error.
+                                break;
                             }
                         }
                     }
 
-                EventDone:
+                    _ = e.GetEventInfo().ToString(); // Ensure ToString doesn't crash or assert.
 
-                    var ei = e.GetEventInfo();
-                    _ = ei.ToString(); // Exercise ToString.
-                    this.writer.WriteStartObject("meta");
-                    this.writer.WriteString("provider", ei.ProviderName);
-                    this.writer.WriteString("event", ei.NameAsString);
+                    this.writer.WritePropertyNameOnNewLine("meta");
+                    this.writer.WriteStartObject();
+                    comma = false;
 
-                    var options = ei.Options;
-                    if (!options.IsEmpty)
-                    {
-                        this.writer.WriteString("options", options);
-                    }
-
-                    if (ei.Header.Id != 0)
-                    {
-                        this.writer.WriteNumber("id", ei.Header.Id);
-                    }
-
-                    if (ei.Header.Version != 0)
-                    {
-                        this.writer.WriteNumber("version", ei.Header.Version);
-                    }
-
-                    if (ei.Header.Level != 0)
-                    {
-                        this.writer.WriteNumber("level", (byte)ei.Header.Level);
-                    }
-
-                    if (ei.Keyword != 0)
-                    {
-                        this.writer.WriteString("keyword", $"0x{ei.Keyword:X}");
-                    }
-
-                    if (ei.Header.Opcode != 0)
-                    {
-                        this.writer.WriteNumber("opcode", (byte)ei.Header.Opcode);
-                    }
-
-                    if (ei.Header.Tag != 0)
-                    {
-                        this.writer.WriteString("tag", $"0x{ei.Header.Tag:X}");
-                    }
-
-                    Guid? g;
-
-                    g = ei.ActivityId;
-                    if (g.HasValue)
-                    {
-                        this.writer.WriteString("activity", g.Value);
-                    }
-
-                    g = ei.RelatedActivityId;
-                    if (g.HasValue)
-                    {
-                        this.writer.WriteString("relatedActivity", g.Value);
-                    }
-
-                    /*
-                    var options = ei.Options;
-                    if (options.Length != 0)
-                    {
-                        WriteJsonItemBegin(comma, "options");
-                        this.output.Write(options);
-                    }
-                    */
+                    e.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), ref comma,
+                        EventHeaderMetaOptions.All & ~EventHeaderMetaOptions.Flags);
 
                     this.writer.WriteEndObject(); // meta
-                    this.writer.WriteEndObject(); // event
+                    this.writer.WriteEndObjectOnNewLine(); // event
 
                     // Show the metadata as well.
 
                     e.Reset();
 
-                    this.writer.WriteStartObject();
+                    this.writer.WriteStartObjectOnNewLine();
                     while (e.MoveNextMetadata())
                     {
                         var item = e.GetItemInfo();
                         _ = item.ToString(); // Exercise ToString.
-                        this.writer.WriteStartObject(MakeName(item.NameAsString, item.Value.FieldTag));
+                        this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                        this.writer.WriteStartObject();
 
                         this.writer.WriteString("Encoding", item.Value.Encoding.ToString());
 
@@ -210,7 +108,7 @@
                         {
                             if (item.Value.Encoding == EventHeaderFieldEncoding.Struct)
                             {
-                                this.writer.WriteNumber("FieldCount", (byte)item.Value.Format);
+                                this.writer.WriteRaw("FieldCount", ((byte)item.Value.Format).ToString(CultureInfo.InvariantCulture));
                             }
                             else
                             {
@@ -220,21 +118,21 @@
 
                         if (item.Value.Bytes.Length != 0)
                         {
-                            this.writer.WriteNumber("BadValueBytes", item.Value.Bytes.Length);
+                           this.writer.WriteRaw("BadValueBytes", item.Value.Bytes.Length.ToString(CultureInfo.InvariantCulture));
                         }
 
                         if (item.Value.TypeSize != 0)
                         {
-                            this.writer.WriteNumber("BadFixedSize", item.Value.TypeSize);
+                            this.writer.WriteRaw("BadFixedSize", item.Value.TypeSize.ToString(CultureInfo.InvariantCulture));
                         }
 
                         if (item.Value.ArrayFlags != 0)
                         {
-                            this.writer.WriteNumber("ElementCount", item.Value.ElementCount);
+                            this.writer.WriteRaw("ElementCount", item.Value.ElementCount.ToString(CultureInfo.InvariantCulture));
                         }
                         else if (item.Value.ElementCount != 1)
                         {
-                            this.writer.WriteNumber("BadElementCount", item.Value.ElementCount);
+                            this.writer.WriteRaw("BadElementCount", item.Value.ElementCount.ToString(CultureInfo.InvariantCulture));
                         }
 
                         this.writer.WriteEndObject();
@@ -244,7 +142,7 @@
                         this.writer.WriteCommentValue($"err: {e.LastError}");
                     }
 
-                    this.writer.WriteEndObject();
+                    this.writer.WriteEndObjectOnNewLine();
                 }
             }
         }

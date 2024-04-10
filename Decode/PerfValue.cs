@@ -5,8 +5,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
     using System.Diagnostics;
+    using System.Text;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
-    using IPAddress = System.Net.IPAddress;
     using Text = System.Text;
 
     /// <summary>
@@ -135,7 +135,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Value's underlying encoding. The encoding indicates how to determine the value's
         /// size. The Encoding also implies a default formatting that should be used if
-        /// the specified format is Default (0), unrecognized, or unsupported. The value
+        /// the specified jsonOptions is Default (0), unrecognized, or unsupported. The value
         /// returned by this property does not include any flags.
         /// </summary>
         public EventHeaderFieldEncoding Encoding =>
@@ -616,119 +616,58 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Interprets the value as a scalar.
-        /// Requires ElementCount >= 0, Encoding != Struct, Encoding &lt; Max.
-        /// Returns the value formatted as a new string based on Encoding and Format.
+        /// Interprets this as a scalar, converts it to a JSON value, and appends it to sb.
+        /// Returns sb.
+        /// <br/>
+        /// Requires TypeSize &lt;= Bytes.Length, Encoding != Struct, Encoding &lt; Max.
+        /// <br/>
+        /// For example:
+        /// <list type="bullet"><item>
+        /// If the value is a decimal integer or a finite float, appends a JSON number 123 or -123.456.
+        /// </item><item>
+        /// If the value is a boolean false or true, appends a JSON bool false or true.
+        /// </item><item>
+        /// If the value is a string, appends an escaped JSON string like "abc\u000Axyz".
+        /// </item></list>
         /// </summary>
-        public string FormatScalar()
+        public StringBuilder AppendJsonScalarTo(StringBuilder sb, PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
+            Debug.Assert(this.TypeSize <= this.Bytes.Length);
             Text.Encoding? encodingFromBom;
             switch (this.EncodingAndArrayFlags.BaseEncoding())
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
                 case EventHeaderFieldEncoding.Struct:
-                    throw new InvalidOperationException("Invalid encoding for FormatScalar.");
+                    throw new InvalidOperationException("Invalid encoding for AppendJsonScalarTo.");
                 case EventHeaderFieldEncoding.Invalid:
-                    return "null";
+                    sb.Append("null");
+                    break;
                 case EventHeaderFieldEncoding.Value8:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt32DecimalToString(this.GetU8());
-                        case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.Int32DecimalToString(this.GetI8());
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt32HexToString(this.GetU8());
-                        case EventHeaderFieldFormat.Boolean:
-                            return PerfConvert.BooleanToString(this.GetU8());
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan8());
-                        case EventHeaderFieldFormat.String8:
-                            return ((char)this.GetU8()).ToString();
-                    }
+                    Value8AppendJson(sb, 0, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value16:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt32DecimalToString(this.GetU16());
-                        case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.Int32DecimalToString(this.GetI16());
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt32HexToString(this.GetU16());
-                        case EventHeaderFieldFormat.Boolean:
-                            return PerfConvert.BooleanToString(this.GetU16());
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan16());
-                        case EventHeaderFieldFormat.StringUtf:
-                            return ((char)this.GetU16()).ToString();
-                        case EventHeaderFieldFormat.Port:
-                            return PerfConvert.UInt32DecimalToString(this.GetPort());
-                    }
+                    Value16AppendJson(sb, 0, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value32:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt32DecimalToString(this.GetU32());
-                        case EventHeaderFieldFormat.SignedInt:
-                        case EventHeaderFieldFormat.Pid:
-                            return PerfConvert.Int32DecimalToString(this.GetI32());
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt32HexToString(this.GetU32());
-                        case EventHeaderFieldFormat.Errno:
-                            return PerfConvert.ErrnoToString(this.GetI32());
-                        case EventHeaderFieldFormat.Time:
-                            return PerfConvert.UnixTime32ToString(this.GetI32());
-                        case EventHeaderFieldFormat.Boolean:
-                            return PerfConvert.BooleanToString(this.GetU32());
-                        case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float32g9ToString(this.GetF32());
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan32());
-                        case EventHeaderFieldFormat.StringUtf:
-                            return PerfConvert.Char32ToString(this.GetU32());
-                        case EventHeaderFieldFormat.IPv4:
-                            return PerfConvert.IPv4ToString(this.GetIPv4());
-                    }
+                    Value32AppendJson(sb, 0, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value64:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt64DecimalToString(this.GetU64());
-                        case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.Int64DecimalToString(this.GetI64());
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt64HexToString(this.GetU64());
-                        case EventHeaderFieldFormat.Time:
-                            return PerfConvert.UnixTime64ToString(this.GetI64());
-                        case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float64g17ToString(this.GetF64());
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan64());
-                    }
+                    Value64AppendJson(sb, 0, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value128:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan128());
-                        case EventHeaderFieldFormat.Uuid:
-                            return this.GetGuid().ToString();
-                        case EventHeaderFieldFormat.IPv6:
-                            return new IPAddress(this.GetSpan128()).ToString();
-                    }
+                    Value128AppendJson(sb, 0);
+                    break;
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.StringLength16Char8:
                     switch (this.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.Bytes);
+                            HexBytesAppendJson(sb, this.Bytes);
+                            break;
                         case EventHeaderFieldFormat.String8:
-                            return PerfConvert.EncodingLatin1.GetString(this.Bytes);
+                            PerfConvert.StringLatin1AppendJson(sb, this.Bytes);
+                            break;
                         case EventHeaderFieldFormat.StringUtfBom:
                         case EventHeaderFieldFormat.StringXml:
                         case EventHeaderFieldFormat.StringJson:
@@ -737,17 +676,21 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
-                            return encodingFromBom.GetString(this.Bytes.Slice(encodingFromBom.Preamble.Length));
+                            PerfConvert.StringAppendJson(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            break;
                         default:
                         case EventHeaderFieldFormat.StringUtf:
-                            return Text.Encoding.UTF8.GetString(this.Bytes);
+                            PerfConvert.StringAppendJson(sb, this.Bytes, Text.Encoding.UTF8);
+                            break;
                     }
+                    break;
                 case EventHeaderFieldEncoding.ZStringChar16:
                 case EventHeaderFieldEncoding.StringLength16Char16:
                     switch (this.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.Bytes);
+                            HexBytesAppendJson(sb, this.Bytes);
+                            break;
                         case EventHeaderFieldFormat.StringUtfBom:
                         case EventHeaderFieldFormat.StringXml:
                         case EventHeaderFieldFormat.StringJson:
@@ -756,19 +699,24 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
-                            return encodingFromBom.GetString(this.Bytes.Slice(encodingFromBom.Preamble.Length));
+                            PerfConvert.StringAppendJson(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            break;
                         default:
                         case EventHeaderFieldFormat.StringUtf:
-                            return this.ByteReader.FromBigEndian
-                                ? Text.Encoding.BigEndianUnicode.GetString(this.Bytes)
-                                : Text.Encoding.Unicode.GetString(this.Bytes);
+                            PerfConvert.StringAppendJson(
+                                sb,
+                                this.Bytes,
+                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode);
+                            break;
                     }
+                    break;
                 case EventHeaderFieldEncoding.ZStringChar32:
                 case EventHeaderFieldEncoding.StringLength16Char32:
                     switch (this.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.Bytes);
+                            HexBytesAppendJson(sb, this.Bytes);
+                            break;
                         case EventHeaderFieldFormat.StringUtfBom:
                         case EventHeaderFieldFormat.StringXml:
                         case EventHeaderFieldFormat.StringJson:
@@ -777,134 +725,409 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
-                            return encodingFromBom.GetString(this.Bytes.Slice(encodingFromBom.Preamble.Length));
+                            PerfConvert.StringAppendJson(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            break;
                         default:
                         case EventHeaderFieldFormat.StringUtf:
-                            return this.ByteReader.FromBigEndian
-                                ? PerfConvert.EncodingUTF32BE.GetString(this.Bytes)
-                                : Text.Encoding.UTF32.GetString(this.Bytes);
+                            PerfConvert.StringAppendJson(
+                                sb,
+                                this.Bytes,
+                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32);
+                            break;
                     }
+                    break;
             }
+
+            return sb;
         }
 
         /// <summary>
-        /// Interprets the value as the beginning of a simple array.
-        /// Requires elementIndex &lt; ElementCount, TypeSize != 0.
-        /// Returns one element of the array formatted as a new string based on Encoding and Format.
+        /// Interprets this as the beginning of an array of simple type.
+        /// Converts the specified element to a JSON value and appends it to sb.
+        /// Returns sb.
+        /// <br/>
+        /// Requires TypeSize != 0, (elementIndex + 1) * TypeSize &lt;= Bytes.Length.
+        /// <br/>
+        /// The element is formatted as described for AppendJsonScalarTo.
         /// </summary>
-        public string FormatSimpleArrayElement(int elementIndex)
+        public StringBuilder AppendJsonSimpleElementTo(
+            StringBuilder sb,
+            int elementIndex,
+            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
             switch (this.EncodingAndArrayFlags.BaseEncoding())
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
-                case EventHeaderFieldEncoding.Invalid:
                 case EventHeaderFieldEncoding.Struct:
                 case EventHeaderFieldEncoding.ZStringChar8:
-                case EventHeaderFieldEncoding.StringLength16Char8:
                 case EventHeaderFieldEncoding.ZStringChar16:
-                case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.ZStringChar32:
+                case EventHeaderFieldEncoding.StringLength16Char8:
+                case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    throw new InvalidOperationException("Invalid encoding for FormatSimpleArrayElement.");
+                    throw new InvalidOperationException("Invalid encoding for AppendJsonSimpleElementTo.");
+                case EventHeaderFieldEncoding.Invalid:
+                    sb.Append("null");
+                    break;
                 case EventHeaderFieldEncoding.Value8:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt32DecimalToString(this.GetU8(elementIndex));
-                        case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.Int32DecimalToString(this.GetI8(elementIndex));
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt32HexToString(this.GetU8(elementIndex));
-                        case EventHeaderFieldFormat.Boolean:
-                            return PerfConvert.BooleanToString(this.GetU8(elementIndex));
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan8(elementIndex));
-                        case EventHeaderFieldFormat.String8:
-                            return ((char)this.GetU8(elementIndex)).ToString();
-                    }
+                    Value8AppendJson(sb, elementIndex, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value16:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt32DecimalToString(this.GetU16(elementIndex));
-                        case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.Int32DecimalToString(this.GetI16(elementIndex));
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt32HexToString(this.GetU16(elementIndex));
-                        case EventHeaderFieldFormat.Boolean:
-                            return PerfConvert.BooleanToString(this.GetU16(elementIndex));
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan16(elementIndex));
-                        case EventHeaderFieldFormat.StringUtf:
-                            return ((char)this.GetU16(elementIndex)).ToString();
-                        case EventHeaderFieldFormat.Port:
-                            return PerfConvert.UInt32DecimalToString(this.GetPort(elementIndex));
-                    }
+                    Value16AppendJson(sb, elementIndex, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value32:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt32DecimalToString(this.GetU32(elementIndex));
-                        case EventHeaderFieldFormat.SignedInt:
-                        case EventHeaderFieldFormat.Pid:
-                            return PerfConvert.Int32DecimalToString(this.GetI32(elementIndex));
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt32HexToString(this.GetU32(elementIndex));
-                        case EventHeaderFieldFormat.Errno:
-                            return PerfConvert.ErrnoToString(this.GetI32(elementIndex));
-                        case EventHeaderFieldFormat.Time:
-                            return PerfConvert.UnixTime32ToString(this.GetI32(elementIndex));
-                        case EventHeaderFieldFormat.Boolean:
-                            return PerfConvert.BooleanToString(this.GetU32(elementIndex));
-                        case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float32g9ToString(this.GetF32());
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan32(elementIndex));
-                        case EventHeaderFieldFormat.StringUtf:
-                            return PerfConvert.Char32ToString(this.GetU32(elementIndex));
-                        case EventHeaderFieldFormat.IPv4:
-                            return PerfConvert.IPv4ToString(this.GetIPv4(elementIndex));
-                    }
+                    Value32AppendJson(sb, elementIndex, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value64:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            return PerfConvert.UInt64DecimalToString(this.GetU64(elementIndex));
-                        case EventHeaderFieldFormat.SignedInt:
-                            return PerfConvert.Int64DecimalToString(this.GetI64(elementIndex));
-                        case EventHeaderFieldFormat.HexInt:
-                            return PerfConvert.UInt64HexToString(this.GetU64(elementIndex));
-                        case EventHeaderFieldFormat.Time:
-                            return PerfConvert.UnixTime64ToString(this.GetI64(elementIndex));
-                        case EventHeaderFieldFormat.Float:
-                            return PerfConvert.Float64g17ToString(this.GetF64());
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan64(elementIndex));
-                    }
+                    Value64AppendJson(sb, elementIndex, jsonOptions);
+                    break;
                 case EventHeaderFieldEncoding.Value128:
-                    switch (this.Format)
-                    {
-                        default:
-                        case EventHeaderFieldFormat.HexBytes:
-                            return PerfConvert.HexBytesToString(this.GetSpan128(elementIndex));
-                        case EventHeaderFieldFormat.Uuid:
-                            return this.GetGuid(elementIndex).ToString();
-                        case EventHeaderFieldFormat.IPv6:
-                            return new IPAddress(this.GetSpan128(elementIndex)).ToString();
-                    }
+                    Value128AppendJson(sb, elementIndex);
+                    break;
             }
+
+            return sb;
         }
 
         /// <summary>
-        /// Appends a string representation of this value like "Type:Value" or "Type:Value1,Value2".
+        /// Interprets this as the beginning of an array of simple type.
+        /// Converts this to a JSON array and appends it to sb.
+        /// Returns sb.
+        /// <br/>
+        /// Requires TypeSize != 0.
+        /// <br/>
+        /// Each array element is formatted as described for AppendJsonScalarTo.
+        /// </summary>
+        public StringBuilder AppendJsonSimpleArrayTo(
+            StringBuilder sb,
+            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+        {
+            Debug.Assert(this.TypeSize > 0);
+            bool space = jsonOptions.HasFlag(PerfJsonOptions.Space);
+
+            int count;
+            switch (this.EncodingAndArrayFlags.BaseEncoding())
+            {
+                default:
+                    throw new NotSupportedException("Unknown encoding.");
+                case EventHeaderFieldEncoding.Struct:
+                case EventHeaderFieldEncoding.ZStringChar8:
+                case EventHeaderFieldEncoding.ZStringChar16:
+                case EventHeaderFieldEncoding.ZStringChar32:
+                case EventHeaderFieldEncoding.StringLength16Char8:
+                case EventHeaderFieldEncoding.StringLength16Char16:
+                case EventHeaderFieldEncoding.StringLength16Char32:
+                    throw new InvalidOperationException("Invalid encoding for AppendJsonSimpleArrayTo.");
+                case EventHeaderFieldEncoding.Value8:
+                    sb.Append('[');
+                    count = this.Bytes.Length;
+                    switch (this.Format)
+                    {
+                        default:
+                        case EventHeaderFieldFormat.UnsignedInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetU8(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.SignedInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.Int32DecimalAppend(sb, this.GetI8(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt32HexAppendJson(sb, this.GetU8(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Boolean:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.BooleanAppendJson(sb, this.GetU8(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexBytes:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                HexBytesAppendJson(sb, this.GetSpan8(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.String8:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                Char16AppendJson(sb, this.GetU8(i));
+                            }
+                            break;
+                    }
+                    break;
+                case EventHeaderFieldEncoding.Value16:
+                    sb.Append('[');
+                    count = this.Bytes.Length / sizeof(UInt16);
+                    switch (this.Format)
+                    {
+                        default:
+                        case EventHeaderFieldFormat.UnsignedInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetU16(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.SignedInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.Int32DecimalAppend(sb, this.GetI16(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt32HexAppendJson(sb, this.GetU16(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Boolean:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.BooleanAppendJson(sb, this.GetU16(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexBytes:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                HexBytesAppendJson(sb, this.GetSpan16(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.StringUtf:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                Char16AppendJson(sb, this.GetU16(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Port:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetPort(i));
+                            }
+                            break;
+                    }
+                    break;
+                case EventHeaderFieldEncoding.Value32:
+                    sb.Append('[');
+                    count = this.Bytes.Length / sizeof(UInt32);
+                    switch (this.Format)
+                    {
+                        default:
+                        case EventHeaderFieldFormat.UnsignedInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt32DecimalAppend(sb, this.GetU32(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.SignedInt:
+                        case EventHeaderFieldFormat.Pid:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.Int32DecimalAppend(sb, this.GetI32(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt32HexAppendJson(sb, this.GetU32(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Errno:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.ErrnoAppendJson(sb, this.GetI32(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Time:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UnixTime32AppendJson(sb, this.GetI32(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Boolean:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.BooleanAppendJson(sb, this.GetU32(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Float:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.Float32AppendJson(sb, this.GetF32(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexBytes:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                HexBytesAppendJson(sb, this.GetSpan32(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.StringUtf:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                Char32AppendJson(sb, this.GetU32(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.IPv4:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                IPv4AppendJson(sb, this.GetIPv4(i));
+                            }
+                            break;
+                    }
+                    break;
+                case EventHeaderFieldEncoding.Value64:
+                    sb.Append('[');
+                    count = this.Bytes.Length / sizeof(UInt64);
+                    switch (this.Format)
+                    {
+                        default:
+                        case EventHeaderFieldFormat.UnsignedInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt64DecimalAppend(sb, this.GetU64(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.SignedInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.Int64DecimalAppend(sb, this.GetI64(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexInt:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UInt64HexAppendJson(sb, this.GetU64(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Time:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.UnixTime64AppendJson(sb, this.GetI64(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Float:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                PerfConvert.Float64AppendJson(sb, this.GetF64(i), jsonOptions);
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexBytes:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                HexBytesAppendJson(sb, this.GetSpan64(i));
+                            }
+                            break;
+                    }
+                    break;
+                case EventHeaderFieldEncoding.Value128:
+                    sb.Append('[');
+                    count = this.Bytes.Length / 16;
+                    switch (this.Format)
+                    {
+                        default:
+                        case EventHeaderFieldFormat.HexBytes:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                HexBytesAppendJson(sb, this.GetSpan128(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Uuid:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                GuidAppendJson(sb, this.GetGuid(i));
+                            }
+                            break;
+                        case EventHeaderFieldFormat.IPv6:
+                            for (int i = 0; i < count; i += 1)
+                            {
+                                if (i != 0) sb.Append(',');
+                                if (space) sb.Append(' ');
+                                IPv6AppendJson(sb, this.GetIPv6(i));
+                            }
+                            break;
+                    }
+                    break;
+            }
+
+            if (space) sb.Append(' ');
+            return sb.Append(']');
+        }
+
+        /// <summary>
+        /// Appends a string representation of this value suitable for diagnostic use like
+        /// "Type:Value" or "Type:Value1,Value2". Result is the same as from this.ToString().
         /// Returns sb.
         /// </summary>
-        public Text.StringBuilder AppendAsString(Text.StringBuilder sb)
+        public Text.StringBuilder AppendTo(Text.StringBuilder sb)
         {
             const char Separator = ',';
             int count;
@@ -1229,7 +1452,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                sb.Append(new IPAddress(this.GetSpan128(i)).ToString());
+                                PerfConvert.IPv6Append(sb, this.GetSpan128(i));
                             }
                             break;
                     }
@@ -1246,7 +1469,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             break;
                         case EventHeaderFieldFormat.String8:
                             sb.Append("String8:");
-                            PerfConvert.StringAppendLatin1(sb, this.Bytes);
+                            PerfConvert.StringLatin1Append(sb, this.Bytes);
                             break;
                         case EventHeaderFieldFormat.StringXml:
                             sb.Append("StringXml8:");
@@ -1361,11 +1584,187 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns a string representation of this value like "Type:Value" or "Type:Value1,Value2".
+        /// Returns a string representation of this value suitable for diagnostic use like
+        /// "Type:Value" or "Type:Value1,Value2". Result is the same as from this.AppendTo().
         /// </summary>
         public override string ToString()
         {
-            return this.AppendAsString(new Text.StringBuilder()).ToString();
+            return this.AppendTo(new Text.StringBuilder()).ToString();
+        }
+
+        private void Value8AppendJson(StringBuilder sb, int elementIndex, PerfJsonOptions jsonOptions)
+        {
+            switch (this.Format)
+            {
+                default:
+                case EventHeaderFieldFormat.UnsignedInt:
+                    PerfConvert.UInt32DecimalAppend(sb, this.GetU8(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.SignedInt:
+                    PerfConvert.Int32DecimalAppend(sb, this.GetI8(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.HexInt:
+                    PerfConvert.UInt32HexAppendJson(sb, this.GetU8(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Boolean:
+                    PerfConvert.BooleanAppendJson(sb, this.GetU8(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.HexBytes:
+                    HexBytesAppendJson(sb, this.GetSpan8(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.String8:
+                    Char16AppendJson(sb, this.GetU8(elementIndex));
+                    break;
+            }
+        }
+
+        private void Value16AppendJson(StringBuilder sb, int elementIndex, PerfJsonOptions jsonOptions)
+        {
+            switch (this.Format)
+            {
+                default:
+                case EventHeaderFieldFormat.UnsignedInt:
+                    PerfConvert.UInt32DecimalAppend(sb, this.GetU16(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.SignedInt:
+                    PerfConvert.Int32DecimalAppend(sb, this.GetI16(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.HexInt:
+                    PerfConvert.UInt32HexAppendJson(sb, this.GetU16(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Boolean:
+                    PerfConvert.BooleanAppendJson(sb, this.GetU16(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.HexBytes:
+                    HexBytesAppendJson(sb, this.GetSpan16(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.StringUtf:
+                    Char16AppendJson(sb, this.GetU16(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.Port:
+                    PerfConvert.UInt32DecimalAppend(sb, this.GetPort(elementIndex));
+                    break;
+            }
+        }
+
+        private void Value32AppendJson(StringBuilder sb, int elementIndex, PerfJsonOptions jsonOptions)
+        {
+            switch (this.Format)
+            {
+                default:
+                case EventHeaderFieldFormat.UnsignedInt:
+                    PerfConvert.UInt32DecimalAppend(sb, this.GetU32(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.SignedInt:
+                case EventHeaderFieldFormat.Pid:
+                    PerfConvert.Int32DecimalAppend(sb, this.GetI32(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.HexInt:
+                    PerfConvert.UInt32HexAppendJson(sb, this.GetU32(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Errno:
+                    PerfConvert.ErrnoAppendJson(sb, this.GetI32(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Time:
+                    PerfConvert.UnixTime32AppendJson(sb, this.GetI32(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Boolean:
+                    PerfConvert.BooleanAppendJson(sb, this.GetU32(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Float:
+                    PerfConvert.Float32AppendJson(sb, this.GetF32(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.HexBytes:
+                    HexBytesAppendJson(sb, this.GetSpan32(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.StringUtf:
+                    Char32AppendJson(sb, this.GetU32(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.IPv4:
+                    IPv4AppendJson(sb, this.GetIPv4(elementIndex));
+                    break;
+            }
+        }
+
+        private void Value64AppendJson(StringBuilder sb, int elementIndex, PerfJsonOptions jsonOptions)
+        {
+            switch (this.Format)
+            {
+                default:
+                case EventHeaderFieldFormat.UnsignedInt:
+                    PerfConvert.UInt64DecimalAppend(sb, this.GetU64(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.SignedInt:
+                    PerfConvert.Int64DecimalAppend(sb, this.GetI64(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.HexInt:
+                    PerfConvert.UInt64HexAppendJson(sb, this.GetU64(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Time:
+                    PerfConvert.UnixTime64AppendJson(sb, this.GetI64(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.Float:
+                    PerfConvert.Float64AppendJson(sb, this.GetF64(elementIndex), jsonOptions);
+                    break;
+                case EventHeaderFieldFormat.HexBytes:
+                    HexBytesAppendJson(sb, this.GetSpan64(elementIndex));
+                    break;
+            }
+        }
+
+        private void Value128AppendJson(StringBuilder sb, int elementIndex)
+        {
+            switch (this.Format)
+            {
+                default:
+                case EventHeaderFieldFormat.HexBytes:
+                    HexBytesAppendJson(sb, this.GetSpan128(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.Uuid:
+                    GuidAppendJson(sb, this.GetGuid(elementIndex));
+                    break;
+                case EventHeaderFieldFormat.IPv6:
+                    IPv6AppendJson(sb, this.GetIPv6(elementIndex));
+                    break;
+            }
+        }
+
+        private static void GuidAppendJson(StringBuilder sb, in Guid value)
+        {
+            sb.Append('"');
+            PerfConvert.GuidAppend(sb, value);
+            sb.Append('"');
+        }
+
+        private static void IPv6AppendJson(StringBuilder sb, ReadOnlySpan<byte> bytes)
+        {
+            sb.Append('"');
+            PerfConvert.IPv6Append(sb, bytes);
+            sb.Append('"');
+        }
+
+        private static void HexBytesAppendJson(StringBuilder sb, ReadOnlySpan<byte> bytes)
+        {
+            sb.Append('"');
+            PerfConvert.HexBytesAppend(sb, bytes);
+            sb.Append('"');
+        }
+
+        private static void IPv4AppendJson(StringBuilder sb, UInt32 value)
+        {
+            sb.Append('"');
+            PerfConvert.IPv4Append(sb, value);
+            sb.Append('"');
+        }
+
+        private static void Char16AppendJson(StringBuilder sb, UInt16 value)
+        {
+            PerfConvert.StringAppendJson(sb, stackalloc char[1] { (char)value });
+        }
+
+        private static void Char32AppendJson(StringBuilder sb, UInt32 value)
+        {
+            PerfConvert.StringAppendJson(sb, PerfConvert.Char32Format(stackalloc char[2], value));
         }
     }
 }
