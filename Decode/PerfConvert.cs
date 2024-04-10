@@ -1215,7 +1215,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                return UInt32HexAppend(sb, value);
+                return UInt32DecimalAppend(sb, value);
             }
         }
 
@@ -1269,7 +1269,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                return UInt64HexAppend(sb, value);
+                return UInt64DecimalAppend(sb, value);
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿namespace DecodeTest
 {
+    using Microsoft.LinuxTracepoints.Decode;
     using System;
     using System.Text;
 
@@ -17,6 +18,8 @@
             this.indentLevel = 0;
             this.comma = false;
         }
+        
+        public StringBuilder Builder => this.builder;
 
         public void Reset()
         {
@@ -32,9 +35,17 @@
 
         public void WriteCommentValue(ReadOnlySpan<char> value)
         {
+            if (this.comma)
+            {
+                this.builder.Append(',');
+            }
+
+            this.builder.AppendLine();
+            this.builder.Append(' ', this.indentLevel * this.spacesPerIndent);
             this.builder.Append("/*");
             this.builder.Append(value);
             this.builder.Append("*/");
+            this.comma = false;
         }
 
         public void WritePropertyName(ReadOnlySpan<char> name)
@@ -174,9 +185,8 @@
             this.comma = true;
         }
 
-        public void WriteString(ReadOnlySpan<char> name, ReadOnlySpan<char> value)
+        public void WriteStringValue(ReadOnlySpan<char> value)
         {
-            WritePropertyName(name);
             this.builder.Append(' ');
             StringValueNoComma(value);
             this.comma = true;
@@ -192,9 +202,7 @@
 
         private void StringValueNoComma(ReadOnlySpan<char> value)
         {
-            this.builder.Append('"');
-            this.builder.Append(value);
-            this.builder.Append('"');
+            PerfConvert.StringAppendJson(this.builder, value);
         }
 
         private void RawValueNoComma(ReadOnlySpan<char> value)

@@ -2,6 +2,7 @@
 {
     using Microsoft.LinuxTracepoints;
     using Microsoft.LinuxTracepoints.Decode;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using CultureInfo = System.Globalization.CultureInfo;
@@ -26,7 +27,6 @@
         public void DecodeBytes(ReadOnlyMemory<byte> bytes)
         {
             var bytesSpan = bytes.Span;
-            bool comma;
 
             var pos = 0;
             while (pos < bytesSpan.Length)
@@ -62,39 +62,13 @@
                 }
                 else
                 {
+                    this.writer.WriteCommentValue(" " + e.GetEventInfo().ToString() + " ");
                     this.writer.WriteStartObjectOnNewLine();
-                    this.writer.WritePropertyNameOnNewLine("n");
-                    e.AppendJsonEventIdentityTo(this.writer.WriteRawValueBuilder());
-                    comma = false;
 
-                    if (e.MoveNext())
-                    {
-                        while (true)
-                        {
-                            if (!e.AppendJsonItemToAndMoveNextSibling(this.writer.WriteRawValueBuilderOnNewLine(), ref comma))
-                            {
-                                break;
-                            }
-                        }
-                    }
+                    // Metadata enumeration
 
-                    _ = e.GetEventInfo().ToString(); // Ensure ToString doesn't crash or assert.
-
-                    this.writer.WritePropertyNameOnNewLine("meta");
-                    this.writer.WriteStartObject();
-                    comma = false;
-
-                    e.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), ref comma,
-                        EventHeaderMetaOptions.All & ~EventHeaderMetaOptions.Flags);
-
-                    this.writer.WriteEndObject(); // meta
-                    this.writer.WriteEndObjectOnNewLine(); // event
-
-                    // Show the metadata as well.
-
-                    e.Reset();
-
-                    this.writer.WriteStartObjectOnNewLine();
+                    this.writer.WritePropertyNameOnNewLine("MoveNextMetadata");
+                    this.writer.WriteStartObject(); // MoveNextMetadata
                     while (e.MoveNextMetadata())
                     {
                         var item = e.GetItemInfo();
@@ -102,7 +76,8 @@
                         this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
                         this.writer.WriteStartObject();
 
-                        this.writer.WriteString("Encoding", item.Value.Encoding.ToString());
+                        this.writer.WritePropertyName("Encoding");
+                        this.writer.WriteStringValue(item.Value.Encoding.ToString());
 
                         if (item.Value.Format != 0)
                         {
@@ -112,13 +87,14 @@
                             }
                             else
                             {
-                                this.writer.WriteString("Format", item.Value.Format.ToString());
+                                this.writer.WritePropertyName("Format");
+                                this.writer.WriteStringValue(item.Value.Format.ToString());
                             }
                         }
 
                         if (item.Value.Bytes.Length != 0)
                         {
-                           this.writer.WriteRaw("BadValueBytes", item.Value.Bytes.Length.ToString(CultureInfo.InvariantCulture));
+                            this.writer.WriteRaw("BadValueBytes", item.Value.Bytes.Length.ToString(CultureInfo.InvariantCulture));
                         }
 
                         if (item.Value.TypeSize != 0)
@@ -142,7 +118,216 @@
                         this.writer.WriteCommentValue($"err: {e.LastError}");
                     }
 
+                    this.writer.WriteEndObjectOnNewLine(); // MoveNextMetadata
+
+                    // AppendJsonItemToAndMoveNextSibling on values:
+
+                    e.Reset();
+                    this.writer.WritePropertyNameOnNewLine("AppendJsonItemN");
+                    this.writer.WriteStartObject(); // AppendJsonItemN
+
+                    this.writer.WritePropertyNameOnNewLine("n");
+                    e.AppendJsonEventIdentityTo(this.writer.WriteRawValueBuilder());
+
+                    e.MoveNext(); // Move past BeforeFirstItem.
+                    while (e.State >= EventHeaderEnumeratorState.BeforeFirstItem)
+                    {
+                        var sb = this.writer.WriteRawValueBuilderOnNewLine();
+                        e.AppendJsonItemToAndMoveNextSibling(sb, false, PerfJsonOptions.All);
+                    }
+
+                    if (e.State != EventHeaderEnumeratorState.AfterLastItem)
+                    {
+                        this.writer.WriteCommentValue($"Pos {pos}: Unexpected state {e.State}.");
+                    }
+
+                    this.writer.WritePropertyNameOnNewLine("meta");
+                    this.writer.WriteStartObject();
+
+                    e.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false, EventHeaderMetaOptions.All, PerfJsonOptions.All);
+
+                    this.writer.WriteEndObject(); // meta
+                    this.writer.WriteEndObjectOnNewLine(); // AppendJsonItemN
+
+                    // AppendJsonItemToAndMoveNextSibling on BeforeFirstItem:
+
+                    e.Reset();
+                    this.writer.WritePropertyNameOnNewLine("AppendJsonItem1");
+                    this.writer.WriteStartObject(); // AppendJsonItem1
+
+                    while (e.State >= EventHeaderEnumeratorState.BeforeFirstItem)
+                    {
+                        var sb = this.writer.WriteRawValueBuilderOnNewLine();
+                        if (!e.AppendJsonItemToAndMoveNextSibling(sb, false, PerfJsonOptions.None))
+                        {
+                            sb.Append("\"\": null"); // No fields.
+                        }
+                    }
+
+                    if (e.State != EventHeaderEnumeratorState.AfterLastItem)
+                    {
+                        this.writer.WriteCommentValue($"Pos {pos}: Unexpected state {e.State}.");
+                    }
+
+                    this.writer.WritePropertyNameOnNewLine("meta");
+                    this.writer.WriteStartObject();
+
+                    e.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false,
+                        EventHeaderMetaOptions.Default & ~EventHeaderMetaOptions.Level,
+                        PerfJsonOptions.None);
+
+                    this.writer.WriteEndObject(); // meta
+                    this.writer.WriteEndObjectOnNewLine(); // AppendJsonItem1
+
+                    // MoveNext
+
+                    int begin;
+
+                    e.Reset();
+                    this.writer.WritePropertyNameOnNewLine("MoveNext");
+                    this.writer.WriteStartObject();
+                    begin = this.writer.Builder.Length;
+                    this.Enumerate(false);
+                    var moveNextText = this.writer.Builder.ToString(begin, this.writer.Builder.Length - begin);
                     this.writer.WriteEndObjectOnNewLine();
+
+                    // MoveNextSibling
+
+                    e.Reset();
+                    this.writer.WritePropertyNameOnNewLine("MoveNextSibling");
+                    this.writer.WriteStartObject();
+                    begin = this.writer.Builder.Length;
+                    this.Enumerate(true);
+                    var moveNextSiblingText = this.writer.Builder.ToString(begin, this.writer.Builder.Length - begin);
+                    this.writer.WriteEndObjectOnNewLine();
+
+                    Assert.AreEqual(moveNextText, moveNextSiblingText, "MoveNext != MoveNextSibling");
+
+                    // ToString
+
+                    e.Reset();
+                    this.writer.WritePropertyNameOnNewLine("ToString");
+                    this.writer.WriteStartObject();
+                    this.EnumerateToString();
+                    this.writer.WriteEndObjectOnNewLine();
+
+                    // End event
+
+                    this.writer.WriteEndObjectOnNewLine(); // event
+                }
+            }
+        }
+
+        private void Enumerate(bool moveNextSibling)
+        {
+            if (e.MoveNext())
+            {
+                while (true)
+                {
+                    var item = e.GetItemInfo();
+                    switch (e.State)
+                    {
+                        case EventHeaderEnumeratorState.Value:
+                            if (!item.Value.IsArrayOrElement)
+                            {
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                            }
+                            item.Value.AppendJsonScalarTo(this.writer.WriteRawValueBuilder());
+                            break;
+                        case EventHeaderEnumeratorState.StructBegin:
+                            if (!item.Value.IsArrayOrElement)
+                            {
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                            }
+                            this.writer.WriteStartObject();
+                            break;
+                        case EventHeaderEnumeratorState.StructEnd:
+                            this.writer.WriteEndObject();
+                            break;
+                        case EventHeaderEnumeratorState.ArrayBegin:
+                            this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+
+                            if (moveNextSibling && item.Value.TypeSize != 0)
+                            {
+                                item.Value.AppendJsonSimpleArrayTo(this.writer.WriteRawValueBuilder());
+
+                                // Skip the entire array at once.
+                                if (!e.MoveNextSibling()) // Instead of MoveNext().
+                                {
+                                    return; // End of event, or error.
+                                }
+
+                                continue; // Skip the MoveNext().
+                            }
+
+                            this.writer.WriteStartArray();
+                            break;
+                        case EventHeaderEnumeratorState.ArrayEnd:
+                            this.writer.WriteEndArray();
+                            break;
+                    }
+
+                    if (!e.MoveNext())
+                    {
+                        return; // End of event, or error.
+                    }
+                }
+            }
+        }
+
+        private void EnumerateToString()
+        {
+            if (e.MoveNext())
+            {
+                while (true)
+                {
+                    var item = e.GetItemInfo();
+                    switch (e.State)
+                    {
+                        case EventHeaderEnumeratorState.Value:
+                            if (!item.Value.IsArrayOrElement)
+                            {
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                            }
+                            this.writer.WriteStringValue(item.Value.ToString());
+                            break;
+                        case EventHeaderEnumeratorState.StructBegin:
+                            if (!item.Value.IsArrayOrElement)
+                            {
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                            }
+                            this.writer.WriteStartObject();
+                            break;
+                        case EventHeaderEnumeratorState.StructEnd:
+                            this.writer.WriteEndObject();
+                            break;
+                        case EventHeaderEnumeratorState.ArrayBegin:
+                            this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+
+                            if (item.Value.TypeSize != 0)
+                            {
+                                this.writer.WriteStringValue(item.Value.ToString());
+
+                                // Skip the entire array at once.
+                                if (!e.MoveNextSibling()) // Instead of MoveNext().
+                                {
+                                    return; // End of event, or error.
+                                }
+
+                                continue; // Skip the MoveNext().
+                            }
+
+                            this.writer.WriteStartArray();
+                            break;
+                        case EventHeaderEnumeratorState.ArrayEnd:
+                            this.writer.WriteEndArray();
+                            break;
+                    }
+
+                    if (!e.MoveNext())
+                    {
+                        return; // End of event, or error.
+                    }
                 }
             }
         }

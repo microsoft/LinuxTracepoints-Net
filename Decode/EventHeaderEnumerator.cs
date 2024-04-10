@@ -155,10 +155,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// <para>
         /// Starts decoding the specified EventHeader event: decodes the header and
         /// positions the enumerator before the first item.
-        /// </para><para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// On success, changes the state to BeforeFirstItem and returns true.
         /// On failure, changes the state to None (not Error) and returns false.
         /// </para><para>
@@ -167,7 +168,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// you are processing the data with this enumerator (i.e. do not overwrite the
         /// buffer until you are done with this event).
         /// </para>
-        /// </summary>
+        /// </remarks>
         /// <param name="tracepointName">
         /// Set to tep_event->name, e.g. "MyProvider_L4K1".
         /// Must follow the tracepoint name rules described in EventHeader.h.
@@ -398,7 +399,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </para><para>
         /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
-        /// </para><para>
+        /// </para></summary>
+        /// <remarks><para>
         /// Typically called in a loop until it returns false, e.g.:
         /// </para><code>
         /// if (!e.StartEvent(...)) return e.LastError;
@@ -426,7 +428,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// }
         /// return e.LastError;
         /// </code>
-        /// </summary>
+        /// </remarks>
         /// <returns>
         /// Returns true if moved to a valid item.
         /// Returns false and sets state to AfterLastItem if no more items.
@@ -445,17 +447,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
+        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// successful call to StartEvent, until MoveNext returns false.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
-        /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
-        /// </summary>
+        /// </remarks>
         public bool MoveNext(ReadOnlySpan<byte> eventDataSpan)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
@@ -671,15 +676,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Moves the enumerator to the next sibling of the current item, or to the end
         /// of the event if no more items. Returns true if moved to a valid item, false
         /// if no more items or decoding error.
-        /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
-        /// successful call to StartEvent, until MoveNext returns false.
-        /// </para><list type="bullet"><item>
+        /// </para>
+        /// <list type="bullet"><item>
         /// If the current item is ArrayBegin or StructBegin, this efficiently moves
         /// enumeration to AFTER the corresponding ArrayEnd or StructEnd.
         /// </item><item>
         /// Otherwise, this is the same as MoveNext.
-        /// </item></list><para>
+        /// </item></list>
+        /// <para>
+        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// successful call to StartEvent, until MoveNext returns false.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// Typical use for this method is to efficiently skip past an array of fixed-size
         /// items (i.e. an array where TypeSize is nonzero) when you process all of the
         /// array items within the ArrayBegin state.
@@ -734,7 +744,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///     }
         /// }
         /// </code>
-        /// </summary>
+        /// </remarks>
         /// <returns>
         /// Returns true if moved to a valid item.
         /// Returns false and sets state to AfterLastItem if no more items.
@@ -753,17 +763,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
+        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// successful call to StartEvent, until MoveNext returns false.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
-        /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
-        /// </summary>
+        /// </remarks>
         public bool MoveNextSibling(ReadOnlySpan<byte> eventDataSpan)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
@@ -823,7 +836,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </para><para>
         /// PRECONDITION: Can be called after a successful call to StartEvent, until
         /// MoveNextMetadata returns false.
-        /// </para><para>
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// Note that metadata enumeration gives a flat view of arrays and structures.
         /// There are only Value and ArrayBegin items, no ArrayEnd, StructBegin, StructEnd.
         /// A struct shows up as a value with Encoding = Struct (Format holds field count).
@@ -847,7 +863,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// }
         /// return e.LastError;
         /// </code>
-        /// </summary>
+        /// </remarks>
         /// <returns>
         /// Returns true if moved to a valid item.
         /// Returns false and sets state to AfterLastItem if no more items.
@@ -865,17 +881,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
+        /// PRECONDITION: Can be called after a successful call to StartEvent, until
+        /// MoveNextMetadata returns false.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called after a successful call to StartEvent, until
-        /// MoveNextMetadata returns false.
         /// </para>
-        /// </summary>
+        /// </remarks>
         public bool MoveNextMetadata(ReadOnlySpan<byte> eventDataSpan)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
@@ -994,17 +1013,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
         /// </para>
-        /// </summary>
+        /// </remarks>
         /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
         public EventHeaderEventInfo GetEventInfo(ReadOnlySpan<byte> eventDataSpan)
         {
@@ -1048,17 +1070,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
+        /// PRECONDITION: Can be called when State > BeforeFirstItem, i.e. after MoveNext
+        /// returns true.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called when State > BeforeFirstItem, i.e. after MoveNext
-        /// returns true.
         /// </para>
-        /// </summary>
+        /// </remarks>
         /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
         public EventHeaderItemInfo GetItemInfo(ReadOnlySpan<byte> eventDataSpan)
         {
@@ -1110,16 +1135,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// <para>
         /// Appends the current event identity to the provided StringBuilder as a JSON string,
-        /// e.g. "MyProvider:MyEvent" (includes the quotation marks). Returns sb.
-        /// The event identity includes the provider name and event name, e.g. "MyProvider:MyEvent".
-        /// This is commonly used as the value of the "n" property in the JSON rendering of the event.
+        /// e.g. <c>"MyProvider:MyEvent"</c> (including the quotation marks).
+        /// </para><para>
         /// PRECONDITION: Can be called when State != None, i.e. at any time after a
         /// successful call to StartEvent, until a call to Clear.
+        /// </para><para>
+        /// The event identity includes the provider name and event name, e.g. "MyProvider:MyEvent".
+        /// This is commonly used as the value of the "n" property in the JSON rendering of the event.
         /// </para>
         /// </summary>
-        public StringBuilder AppendJsonEventIdentityTo(StringBuilder sb)
+        public void AppendJsonEventIdentityTo(StringBuilder sb)
         {
-            return AppendJsonEventIdentityTo(m_eventData.Span, sb);
+            AppendJsonEventIdentityTo(m_eventData.Span, sb);
         }
 
         /// <summary>
@@ -1128,18 +1155,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// it uses the provided eventDataSpan instead of accessing the Span property of a
         /// ReadOnlyMemory field.
         /// </para><para>
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para><para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
         /// </para>
         /// </summary>
-        public StringBuilder AppendJsonEventIdentityTo(ReadOnlySpan<byte> eventDataSpan, StringBuilder sb)
+        public void AppendJsonEventIdentityTo(ReadOnlySpan<byte> eventDataSpan, StringBuilder sb)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
 
@@ -1153,23 +1180,63 @@ namespace Microsoft.LinuxTracepoints.Decode
                 eventDataSpan.Slice(m_metaBegin, m_eventNameSize),
                 Text.Encoding.UTF8);
             sb.Append('"');
-            return sb;
         }
 
         /// <summary>
-        /// Appends event metadata to the provided StringBuilder as a comma-separated list of
-        /// JSON name-value pairs, e.g. "level": 5, "keyword": 3.
-        /// Returns sb.
+        /// <para>
+        /// Appends event metadata to the provided StringBuilder as a comma-separated list
+        /// of 0 or more JSON name-value pairs, e.g. <c>"level": 5, "keyword": 3</c>
+        /// (including the quotation marks).
+        /// </para><para>
         /// PRECONDITION: Can be called when State != None, i.e. at any time after a
         /// successful call to StartEvent, until a call to Clear.
+        /// </para><para>
+        /// One name-value pair is appended for each metadata item that is both requested
+        /// by metaOptions and has a meaningful value available in the event. For example,
+        /// the "id" metadata item is only appended if the event has a non-zero Id value,
+        /// even if the metaOptions parameter includes EventHeaderMetaOptions.Id.
+        /// </para><para>
+        /// The following metadata items are supported:
+        /// <list type="bullet"><item>
+        /// "provider": "MyProviderName"
+        /// </item><item>
+        /// "event": "MyEventName"
+        /// </item><item>
+        /// "id": 123 (omitted if zero)
+        /// </item><item>
+        /// "version": 1 (omitted if zero)
+        /// </item><item>
+        /// "level": 5 (omitted if zero)
+        /// </item><item>
+        /// "keyword": "0x1" (omitted if zero)
+        /// </item><item>
+        /// "opcode": 1 (omitted if zero)
+        /// </item><item>
+        /// "tag": "0x123" (omitted if zero)
+        /// </item><item>
+        /// "activity": "12345678-1234-1234-1234-1234567890AB" (omitted if not present)
+        /// </item><item>
+        /// "relatedActivity": "12345678-1234-1234-1234-1234567890AB" (omitted if not present)
+        /// </item><item>
+        /// "options": "Gmygroup" (omitted if not present)
+        /// </item><item>
+        /// "flags": "0x7" (omitted if zero)
+        /// </item></list>
+        /// "provider": "MyProviderName", event, id, version, level,
+        /// keyword, opcode, tag, activity, relatedActivity, options, flags.
+        /// </para>
         /// </summary>
-        public StringBuilder AppendJsonEventMetaTo(
+        /// <returns>
+        /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
+        /// addCommaBeforeNextItem was true OR if any metadata items were appended.
+        /// </returns>
+        public bool AppendJsonEventMetaTo(
             StringBuilder sb,
-            ref bool addCommaBeforeNextItem,
+            bool addCommaBeforeNextItem = false,
             EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
             PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
-            return AppendJsonEventMetaTo(m_eventData.Span, sb, ref addCommaBeforeNextItem, metaOptions, jsonOptions);
+            return AppendJsonEventMetaTo(m_eventData.Span, sb, addCommaBeforeNextItem, metaOptions, jsonOptions);
         }
 
         /// <summary>
@@ -1178,21 +1245,24 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// it uses the provided eventDataSpan instead of accessing the Span property of a
         /// ReadOnlyMemory field.
         /// </para><para>
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
         /// </para>
-        /// </summary>
-        public StringBuilder AppendJsonEventMetaTo(
+        /// </remarks>
+        public bool AppendJsonEventMetaTo(
             ReadOnlySpan<byte> eventDataSpan,
             StringBuilder sb,
-            ref bool addCommaBeforeNextItem,
+            bool addCommaBeforeNextItem,
             EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
             PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
@@ -1308,24 +1378,61 @@ namespace Microsoft.LinuxTracepoints.Decode
                     jsonOptions);
             }
 
-            addCommaBeforeNextItem = w.Comma;
-            return sb;
+            return w.Comma;
         }
 
         /// <summary>
+        /// <para>
         /// Appends a JSON representation of the current item to the provided StringBuilder,
-        /// e.g. for a string value "My String" (includes the quotation marks), or for an
-        /// array [ 1, 2, 3 ]. Returns true if moved to a valid item.
-        /// Consumes the current item and its descendents as if by a call to MoveNextSibling.
+        /// e.g. for a string Value <c>"MyField": "My Value"</c> (includes the quotation marks),
+        /// or for an ArrayBegin <c>"MyField": [ 1, 2, 3 ]</c>. Consumes the current item and its
+        /// descendents as if by a call to MoveNextSibling.
+        /// </para><para>
         /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
+        /// </para><para>
+        /// After calling this method, check <c>enumerator.State</c> to determine whether the
+        /// enumeration has reached the end of the event or has encountered an error, i.e.
+        /// enumeration should stop if <c>enumerator.State &lt; BeforeFirstItem</c>
+        /// </para>
         /// </summary>
+        /// <remarks>
+        /// The output and the amount consumed depends on the initial state of the enumerator.
+        /// <list type="bullet"><item>
+        /// Value: Appends the current item as a JSON value like <c>123</c> (if jsonOptions omits
+        /// <c>RootName</c> or the item is an element of an array) or a JSON name-value pair like
+        /// <c>"MyField": 123</c> (if jsonOptions includes <c>RootName</c> and item is not an array
+        /// element).. Moves enumeration to the next item.
+        /// </item><item>
+        /// StructBegin: Appends the current item as a JSON object like
+        /// <c>{ "StructField1": 123, "StructField2": "Hello" }</c> (if jsonOptions omits
+        /// <c>RootName</c> or the item is an element of an array) or a JSON name-object pairlike
+        /// <c>"MyStruct": { "StructField1": 123, "StructField2": "Hello" }</c> (if jsonOptions
+        /// includes <c>RootName</c> and item is not an array element). Moves enumeration past the
+        /// end of the item and its descendents, i.e. after the matching StructEnd.
+        /// </item><item>
+        /// ArrayBegin: Appends the current item as a JSON array like
+        /// <c>[ 1, 2, 3 ]</c> (if jsonOptions omits <c>RootName</c>) or a JSON name-array pair like
+        /// <c>"MyArray": [ 1, 2, 3 ]</c> (if jsonOptions includes <c>RootName</c>). Moves enumeration
+        /// past the end of the item and its descendents, i.e. after the matching ArrayEnd.
+        /// </item><item>
+        /// BeforeFirstItem: Appends all items in the current event as a comma-separated list of
+        /// name-value pairs, e.g. <c>"MyField": 123, "MyArray": [ 1, 2, 3 ]</c>. Moves enumeration
+        /// to AfterLastItem.
+        /// </item><item>
+        /// ArrayEnd, StructEnd: Unspecified behavior.
+        /// </item></list>
+        /// </remarks>
+        /// <returns>
+        /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
+        /// addCommaBeforeNextItem was true OR if any metadata items were appended.
+        /// </returns>
         public bool AppendJsonItemToAndMoveNextSibling(
             StringBuilder sb,
-            ref bool addCommaBeforeNextItem,
+            bool addCommaBeforeNextItem = false,
             PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
-            return AppendJsonItemToAndMoveNextSibling(m_eventData.Span, sb, ref addCommaBeforeNextItem, jsonOptions);
+            return AppendJsonItemToAndMoveNextSibling(m_eventData.Span, sb, addCommaBeforeNextItem, jsonOptions);
         }
 
         /// <summary>
@@ -1334,21 +1441,24 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// except that it uses the provided eventDataSpan instead of accessing the Span
         /// property of a ReadOnlyMemory field.
         /// </para><para>
+        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
+        /// successful call to StartEvent, until a call to Clear.
+        /// </para>
+        /// </summary>
+        /// <remarks>
+        /// <para>
         /// This is useful as a performance optimization when you have the eventData span
         /// available and want to avoid the overhead of repeatedly converting from
         /// ReadOnlyMemory to ReadOnlySpan.
         /// </para><para>
         /// The provided eventDataSpan must be equal to the Span property of the eventData
         /// parameter that was passed to StartEvent().
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
         /// </para>
-        /// </summary>
+        /// </remarks>
         public bool AppendJsonItemToAndMoveNextSibling(
             ReadOnlySpan<byte> eventDataSpan,
             StringBuilder sb,
-            ref bool addCommaBeforeNextItem,
+            bool addCommaBeforeNextItem,
             PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
@@ -1431,8 +1541,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 ok = MoveNext(eventDataSpan);
             } while (ok && depth > 0);
 
-            addCommaBeforeNextItem = w.Comma;
-            return ok;
+            return w.Comma;
         }
 
         private void ResetImpl(int moveNextLimit)
