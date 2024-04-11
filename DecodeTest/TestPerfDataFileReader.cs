@@ -1,8 +1,10 @@
 ﻿namespace DecodeTest
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using System.Buffers;
     using System.IO;
     using System.Text.Json;
+    using Encoding = System.Text.Encoding;
     using PerfDataFileEventOrder = Microsoft.LinuxTracepoints.Decode.PerfDataFileEventOrder;
 
     [TestClass]
@@ -12,7 +14,7 @@
 
         private void Decode(string inputName)
         {
-            var buffer = JsonCompare.CreateBuffer();
+            var buffer = new ArrayBufferWriter<byte>();
             using (var writer = new Utf8JsonWriter(buffer, new JsonWriterOptions { Indented = true }))
             {
                 using (var decode = new DecodePerfToJson.DecodePerfJsonWriter(writer))
@@ -31,7 +33,7 @@
                 }
             }
 
-            JsonCompare.AssertSame(TestContext, inputName, buffer);
+            JsonCompare.AssertSame(TestContext, inputName, Encoding.UTF8.GetString(buffer.WrittenSpan));
         }
 
         [TestMethod]

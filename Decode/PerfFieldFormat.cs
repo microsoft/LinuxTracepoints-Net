@@ -908,9 +908,27 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Gets the value of this field from the event's raw data.
         /// </summary>
-        /// <param name="eventRawData"></param>
-        /// <param name="byteReader"></param>
-        /// <returns></returns>
+        /// <param name="sampleEventInfo">
+        /// Event information, used for sampleEventInfo.RawDataSpan and sampleEventInfo.ByteReader.
+        /// </param>
+        /// <returns>
+        /// A PerfValue with the field value, or an empty PerfValue (result.Encoding == Invalid)
+        /// if the event's expected offset exceeds eventRawData.Length.
+        /// </returns>
+        public PerfValue GetFieldValue(in PerfSampleEventInfo sampleEventInfo)
+        {
+            return this.GetFieldValue(sampleEventInfo.RawDataSpan, sampleEventInfo.ByteReader);
+        }
+
+        /// <summary>
+        /// Gets the value of this field from the event's raw data.
+        /// </summary>
+        /// <param name="eventRawData">Event's "raw" section, e.g. sampleEventInfo.RawDataSpan.</param>
+        /// <param name="byteReader">Event's byte order, e.g. sampleEventInfo.ByteReader.</param>
+        /// <returns>
+        /// A PerfValue with the field value, or an empty PerfValue (result.Encoding == Invalid)
+        /// if the event's expected offset exceeds eventRawData.Length.
+        /// </returns>
         public PerfValue GetFieldValue(
             ReadOnlySpan<byte> eventRawData,
             PerfByteReader byteReader)

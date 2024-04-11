@@ -1,6 +1,23 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <PackageId>Microsoft.LinuxTracepoints.Types</PackageId>
+    <VersionPrefix>0.1.0</VersionPrefix>
+    <Title>Microsoft Linux Tracepoints Decode</Title>
+    <Description>Types for Linux Tracepoints and EventHeader events.</Description>
+    <RepositoryUrl>https://github.com/microsoft/LinuxTracepoints-Net</RepositoryUrl>
+    <PackageProjectUrl>https://github.com/microsoft/LinuxTracepoints-Net</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Authors>Microsoft</Authors>
+    <Company>Microsoft</Company>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <IncludeSymbols>False</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
     <AssemblyName>Microsoft.LinuxTracepoints.Types</AssemblyName>
@@ -17,6 +34,8 @@
 
   <ItemGroup>
     <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

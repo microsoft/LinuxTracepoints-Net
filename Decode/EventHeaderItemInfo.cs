@@ -58,7 +58,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             PerfConvert.StringAppend(sb, this.NameBytes, Encoding.UTF8);
             sb.Append('=');
-            this.Value.AppendAsString(sb);
+            this.Value.AppendTo(sb);
             return sb;
         }
 

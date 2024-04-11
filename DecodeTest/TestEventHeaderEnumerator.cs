@@ -2,9 +2,7 @@ namespace DecodeTest
 {
     using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using System;
-    using System.IO;
-    using System.Text.Json;
+    using Path = System.IO.Path;
 
     [TestClass]
     public class TestEventHeaderEnumerator
@@ -13,31 +11,16 @@ namespace DecodeTest
 
         private void Decode(string inputName)
         {
-            var bufferMoveNext = JsonCompare.CreateBuffer();
-            using (var writer = new Utf8JsonWriter(bufferMoveNext, new JsonWriterOptions { Indented = true }))
-            {
-                var decode = new DatDecode(writer);
-                writer.WriteStartArray();
-                decode.DecodeFile(Path.Combine(TestContext.TestDeploymentDir, "input", inputName), false);
-                writer.WriteEndArray();
-            }
+            var writer = new JsonStringWriter(2);
+            var decode = new DatDecode(writer);
 
-            JsonCompare.AssertSame(TestContext, inputName, bufferMoveNext);
+            writer.Reset();
+            writer.WriteStartArray();
+            decode.DecodeFile(Path.Combine(TestContext.TestDeploymentDir, "input", inputName));
+            writer.WriteEndArrayOnNewLine();
 
-            var bufferMoveNextSibling = JsonCompare.CreateBuffer();
-            using (var writer = new Utf8JsonWriter(bufferMoveNextSibling, new JsonWriterOptions { Indented = true }))
-            {
-                var decode = new DatDecode(writer);
-                writer.WriteStartArray();
-                decode.DecodeFile(Path.Combine(TestContext.TestDeploymentDir, "input", inputName), true);
-                writer.WriteEndArray();
-            }
-
-            if (!bufferMoveNext.WrittenSpan.SequenceEqual(bufferMoveNextSibling.WrittenSpan))
-            {
-                // A bit of a hack, but we want to see the differences in the JSON output.
-                JsonCompare.AssertSame(TestContext, inputName, bufferMoveNextSibling);
-            }
+            var result = writer.ToString();
+            JsonCompare.AssertSame(TestContext, inputName, result);
         }
 
         [TestMethod]

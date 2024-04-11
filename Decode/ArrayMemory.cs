@@ -43,14 +43,6 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Sets the size of the memory to 0. Does not free the allocated memory.
-        /// </summary>
-        public void SetSizeTo0()
-        {
-            this.Memory = default;
-        }
-
-        /// <summary>
         /// Sets the size of the memory to the specified size, allocating a new buffer if necessary.
         /// Only the first existingContentSize bytes of the existing buffer are preserved.
         /// Requires existing Memory.Length >= existingContentSize.

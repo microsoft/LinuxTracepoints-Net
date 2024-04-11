@@ -93,6 +93,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         private const int TrimQueueEntryLargerThan = 1024;
 
         /// <summary>
+        /// A valid perf.data file starts with MagicHostEndianPERFILE2
+        /// or MagicSwapEndianPERFILE2.
+        /// </summary>
+        public const UInt64 MagicHostEndianPERFILE2 = 0x32454C4946524550;
+
+        /// <summary>
+        /// A valid perf.data file starts with MagicHostEndianPERFILE2
+        /// or MagicSwapEndianPERFILE2.
+        /// </summary>
+        public const UInt64 MagicSwapEndianPERFILE2 = 0x50455246494C4532;
+
+        /// <summary>
         /// "\x17\x08\x44tracing"
         /// </summary>
         private static readonly byte[] TracingSignature = new byte[] {
@@ -294,6 +306,33 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// or empty if no PERF_HEADER_TRACING_DATA has been parsed.
         /// </summary>
         public ReadOnlyMemory<byte> TracingDataSavedCmdLine => m_cmdline;
+
+        /// <summary>
+        /// Opens the specified file, reads up to 8 bytes, closes it.
+        /// If the file contains at least 8 bytes, returns the first 8 bytes as UInt64.
+        /// Otherwise, returns 0.
+        /// </summary>
+        public static UInt64 ReadMagic(string filename)
+        {
+            Span<byte> bytes = stackalloc byte[8];
+            int len;
+            using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete))
+            {
+                len = stream.Read(bytes);
+            }
+            return len == 8 ? BitConverter.ToUInt64(bytes) : 0;
+        }
+
+        /// <summary>
+        /// Opens the specified file, reads up to 8 bytes, closes it.
+        /// Returns true if the file starts with
+        /// MagicHostEndianPERFILE2 or MagicSwapEndianPERFILE2.
+        /// </summary>
+        public static bool IsPerfDataFile(string filename)
+        {
+            var magic = ReadMagic(filename);
+            return magic == MagicHostEndianPERFILE2 || magic == MagicSwapEndianPERFILE2;
+        }
 
         /// <summary>
         /// Returns the raw data from the specified header. Data is in file-endian
@@ -511,14 +550,16 @@ namespace Microsoft.LinuxTracepoints.Decode
                 return false;
             }
 
+            Debug.Assert(MagicHostEndianPERFILE2 == BinaryPrimitives.ReverseEndianness(MagicSwapEndianPERFILE2));
+
             UInt64 headerSize;
-            if (header.pipe_header.magic == perf_pipe_header.Magic2)
+            if (header.pipe_header.magic == MagicHostEndianPERFILE2)
             {
                 m_byteReader = PerfByteReader.HostEndian;
                 m_sessionInfo = new PerfEventSessionInfo(m_byteReader);
                 headerSize = header.pipe_header.size;
             }
-            else if (header.pipe_header.magic == BinaryPrimitives.ReverseEndianness(perf_pipe_header.Magic2))
+            else if (header.pipe_header.magic == MagicSwapEndianPERFILE2)
             {
                 m_byteReader = PerfByteReader.SwapEndian;
                 m_sessionInfo = new PerfEventSessionInfo(m_byteReader);
@@ -2253,9 +2294,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         private struct perf_pipe_header
         {
             public const int SizeOfStruct = 16;
-            public const UInt64 Magic2 = 0x32454C4946524550; // "PERFILE2"
 
-            public UInt64 magic; // If correctly byte-swapped, this will be equal to Magic2.
+            public UInt64 magic; // If correctly byte-swapped, this will be equal to MagicPERFILE2.
             public UInt64 size;  // Size of the header.
 
             public void ByteSwap()

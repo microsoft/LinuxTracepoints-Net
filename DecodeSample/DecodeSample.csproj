@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -7,11 +7,11 @@
     <BaseOutputPath>..\bin</BaseOutputPath>
     <IntermediateOutputPath>..\obj</IntermediateOutputPath>
     <WarningLevel>9999</WarningLevel>
-    <StartupObject>DecodePerfToJson.Program</StartupObject>
+    <StartupObject>DecodeSample.Program</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Decode\Decode.csproj" />
+      <ProjectReference Include="..\Decode\Decode.csproj" />
   </ItemGroup>
 
 </Project>

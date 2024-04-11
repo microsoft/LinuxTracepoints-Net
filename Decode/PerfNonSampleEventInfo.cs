@@ -6,6 +6,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using StringBuilder = System.Text.StringBuilder;
 
     /// <summary>
     /// Information about a non-sample event, typically returned by
@@ -107,18 +108,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns flags indicating which data was present in the event.
         /// </summary>
-        public readonly PerfEventAttrSampleType SampleType =>
-            this.EventDesc.Attr.SampleType;
+        public readonly PerfEventAttrSampleType SampleType => this.EventDesc.Attr.SampleType;
 
         /// <summary>
-        /// Returns the name of the event, or "" if not available.
+        /// Event's full name (including the system name), e.g. "dummy:HG",
+        /// or "" if not available.
         /// </summary>
         public readonly string Name => this.EventDesc.Name;
-
-        /// <summary>
-        /// Returns the event's tracefs format (decoding information), or null if not available.
-        /// </summary>
-        public readonly PerfEventFormat? Format => this.EventDesc.Format;
 
         /// <summary>
         /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.
@@ -149,11 +145,127 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns name of the event, or "" if not available.
+        /// Returns the full name of the event, e.g. "dummy:HG", or "" if not available.
         /// </summary>
         public readonly override string ToString()
         {
             return this.EventDesc == null ? "" : this.EventDesc.Name;
+        }
+
+        /// <summary>
+        /// <para>
+        /// Appends event metadata to the provided StringBuilder as a comma-separated list
+        /// of 0 or more JSON name-value pairs, e.g. <c>"time": "...", "cpu": 3</c>
+        /// (including the quotation marks).
+        /// </para><para>
+        /// PRECONDITION: Can be called after a successful call to reader.GetSampleEventInfo.
+        /// </para><para>
+        /// One name-value pair is appended for each metadata item that is both requested
+        /// by metaOptions and has a meaningful value available in the event info.
+        /// </para><para>
+        /// The following metadata items are supported:
+        /// <list type="bullet"><item>
+        /// "time": "2024-01-01T23:59:59.123456789Z" if clock offset is known, or a float number of seconds
+        /// (assumes the clock value is in nanoseconds), or omitted if not present.
+        /// </item><item>
+        /// "cpu": 3 (omitted if unavailable)
+        /// </item><item>
+        /// "pid": 123 (omitted if zero or unavailable)
+        /// </item><item>
+        /// "tid": 124 (omitted if zero or unavailable)
+        /// </item><item>
+        /// "provider": "SystemName" (omitted if unavailable)
+        /// </item><item>
+        /// "event": "TracepointName" (omitted if unavailable)
+        /// </item></list>
+        /// </para>
+        /// </summary>
+        /// <returns>
+        /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
+        /// addCommaBeforeNextItem was true OR if any metadata items were appended.
+        /// </returns>
+        public bool AppendJsonEventMetaTo(
+            StringBuilder sb,
+            bool addCommaBeforeNextItem = false,
+            EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
+            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+        {
+            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Time) &&
+                this.SampleType.HasFlag(PerfEventAttrSampleType.Time))
+            {
+                w.WriteValueNoEscapeName("time");
+                if (SessionInfo.ClockOffsetKnown)
+                {
+                    sb.Append('"');
+                    PerfConvert.DateTimeFullAppend(sb, this.DateTime);
+                    sb.Append('"');
+                }
+                else
+                {
+                    PerfConvert.Float64gAppend(sb, this.Time / 1000000000.0);
+                }
+            }
+
+            if (metaOptions.HasFlag(EventHeaderMetaOptions.Cpu) &&
+                this.SampleType.HasFlag(PerfEventAttrSampleType.Cpu))
+            {
+                w.WriteValueNoEscapeName("cpu");
+                PerfConvert.UInt32DecimalAppend(sb, this.Cpu);
+            }
+
+            if (this.SampleType.HasFlag(PerfEventAttrSampleType.Tid))
+            {
+                if (metaOptions.HasFlag(EventHeaderMetaOptions.Pid))
+                {
+                    w.WriteValueNoEscapeName("pid");
+                    PerfConvert.UInt32DecimalAppend(sb, this.Pid);
+                }
+
+                if (metaOptions.HasFlag(EventHeaderMetaOptions.Tid))
+                {
+                    w.WriteValueNoEscapeName("tid");
+                    PerfConvert.UInt32DecimalAppend(sb, this.Tid);
+                }
+            }
+
+            if (0 != (metaOptions & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Event)))
+            {
+                var name = this.Name;
+                if (!string.IsNullOrEmpty(name))
+                {
+                    var nameSpan = name.AsSpan();
+                    var colonPos = nameSpan.IndexOf(':');
+                    ReadOnlySpan<char> providerName, eventName;
+                    if (colonPos < 0)
+                    {
+                        providerName = default;
+                        eventName = nameSpan;
+                    }
+                    else
+                    {
+                        providerName = nameSpan.Slice(0, colonPos);
+                        eventName = nameSpan.Slice(colonPos + 1);
+                    }
+
+                    if (metaOptions.HasFlag(EventHeaderMetaOptions.Provider) &&
+                        !providerName.IsEmpty)
+                    {
+                        w.WriteValueNoEscapeName("provider");
+                        PerfConvert.StringAppendJson(sb, providerName);
+                    }
+
+                    if (metaOptions.HasFlag(EventHeaderMetaOptions.Event) &&
+                        !eventName.IsEmpty)
+                    {
+                        w.WriteValueNoEscapeName("event");
+                        PerfConvert.StringAppendJson(sb, eventName);
+                    }
+                }
+            }
+
+            return w.Comma;
         }
     }
 }
