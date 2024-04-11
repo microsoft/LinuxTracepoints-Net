@@ -427,32 +427,17 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             Debug.Assert(destination.Length >= DateTimeFullMaxChars);
             value.TryFormat(destination, out var pos, "s", null);
+            destination[pos++] = '.';
+
             var ticks = unchecked((uint)(unchecked((ulong)value.Ticks) % 10000000u));
-
-            if (ticks != 0)
+            pos += 7;
+            for (var i = 1; i <= 7; i += 1)
             {
-                int i = 6;
-                destination[pos++] = '.';
-                while (ticks != 0)
-                {
-                    destination[pos + i] = (char)('0' + (ticks % 10));
-                    ticks /= 10;
-                    i -= 1;
-                }
-                while (i >= 0)
-                {
-                    destination[pos + i] = '0';
-                    i -= 1;
-                }
-                pos += 7;
-                while (destination[pos - 1] == '0')
-                {
-                    pos -= 1;
-                }
+                destination[pos - i] = (char)('0' + (ticks % 10));
+                ticks /= 10;
             }
-
             destination[pos++] = 'Z';
-            Debug.Assert(pos <= DateTimeNoSubsecondsMaxChars);
+            Debug.Assert(pos == DateTimeFullMaxChars);
             return destination.Slice(0, pos);
         }
 
@@ -461,7 +446,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static string DateTimeFullToString(DateTime value)
         {
-            return new string(DateTimeNoSubsecondsFormat(stackalloc char[DateTimeFullMaxChars], value));
+            return new string(DateTimeFullFormat(stackalloc char[DateTimeFullMaxChars], value));
         }
 
         /// <summary>
@@ -469,7 +454,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static StringBuilder DateTimeFullAppend(StringBuilder sb, DateTime value)
         {
-            return sb.Append(DateTimeNoSubsecondsFormat(stackalloc char[DateTimeFullMaxChars], value));
+            return sb.Append(DateTimeFullFormat(stackalloc char[DateTimeFullMaxChars], value));
         }
 
         /// <summary>

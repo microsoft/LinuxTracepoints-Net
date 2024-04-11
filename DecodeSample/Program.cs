@@ -49,30 +49,31 @@ namespace DecodeSample
                             if (eventBytes.Header.Type != PerfEventHeaderType.Sample)
                             {
                                 // Non-sample event, typically information about the system or information
-                                // about the trace itself. PerfNonSampleEventInfo metadata may be available.
-                                // Note that PerfNonSampleEventInfo is not always needed and may not always
-                                // be available.
+                                // about the trace itself. PerfNonSampleEventInfo metadata might be available.
+                                // Note that PerfNonSampleEventInfo is not always needed and is not always
+                                // available.
                                 result = eventBytes.GetNonSampleEventInfo(reader, out var nonSampleEventInfo);
                                 if (result != PerfDataFileResult.Ok)
                                 {
+                                    // IdNotFound is an expected result for many non-sample events.
                                     if (result != PerfDataFileResult.IdNotFound)
                                     {
-                                        // Unexpected: Other error getting event info, e.g. unexpected data layout.
+                                        // Unexpected error getting event info, e.g. unexpected data layout.
                                         Console.WriteLine($"{eventBytes.Header.Type}: {result}");
                                         continue;
                                     }
 
-                                    // Event info not available. This is expected in many cases, such
-                                    // as when Header.Type >= UserTypeStart or before we've seen the
-                                    // FinishedInit event. Event is frequently still usable and the content
+                                    // Event info not found. Event is frequently still usable and the content
                                     // can be decoded based on Type, but we don't have access to attributes
-                                    // like timestamp or cpu.
+                                    // like timestamp, cpu, pid, etc.
                                     Console.WriteLine($"{eventBytes.Header.Type}: IdNotFound");
                                 }
                                 else
                                 {
-                                    // Found event info (attributes).
-                                    Console.WriteLine($"{eventBytes.Header.Type}/{nonSampleEventInfo.Name}: {nonSampleEventInfo.DateTime:s}");
+                                    // Found event info (attributes). Include data from it in the output.
+                                    nonSampleEventInfo.AppendJsonEventMetaTo(stringBuilder, false);
+                                    Console.WriteLine($"{eventBytes.Header.Type}: {stringBuilder}");
+                                    stringBuilder.Clear();
                                 }
                             }
                             else
@@ -87,18 +88,21 @@ namespace DecodeSample
                                     continue;
                                 }
 
+                                // Found event info (attributes). Include data from it in the output.
+                                sampleEventInfo.AppendJsonEventMetaTo(stringBuilder, false);
+                                Console.WriteLine($"{eventBytes.Header.Type}/{sampleEventInfo.Name}: {stringBuilder}");
+                                stringBuilder.Clear();
+
                                 var eventFormat = sampleEventInfo.Format;
                                 if (eventFormat == null)
                                 {
                                     // Unexpected: Did not find TraceFS format metadata for this event.
-                                    Console.WriteLine($"Sample: no format");
+                                    Console.WriteLine($"  no format");
                                 }
                                 else if (eventFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
                                     !enumerator.StartEvent(sampleEventInfo))
                                 {
                                     // Decode using TraceFS format metadata.
-
-                                    Console.WriteLine($"Sample/{sampleEventInfo.Name}: {sampleEventInfo.DateTime:s}");
 
                                     // Typically the "common" fields are not interesting, so skip them.
                                     var fieldsStart = eventFormat.CommonFieldCount;
@@ -128,8 +132,18 @@ namespace DecodeSample
                                 {
                                     // Decode using EventHeader metadata.
 
-                                    var eventInfo = enumerator.GetEventInfo(); // Information about the event.
-                                    Console.WriteLine($"Sample/{sampleEventInfo.Name}: {sampleEventInfo.DateTime:s}");
+                                    // eventInfo has a bunch of information about the event.
+                                    // We won't use it in this example, since we get the same information in JSON
+                                    // format from AppendJsonEventMetaTo.
+                                    var eventInfo = enumerator.GetEventInfo();
+
+                                    // Get a JSON representation of the event metadata.
+                                    enumerator.AppendJsonEventMetaTo(stringBuilder, false);
+                                    if (stringBuilder.Length > 0)
+                                    {
+                                        Console.WriteLine($"  meta = {{ {stringBuilder} }}");
+                                        stringBuilder.Clear();
+                                    }
 
                                     // Transition past the initial BeforeFirstItem state.
                                     enumerator.MoveNext();

@@ -45,7 +45,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         public uint TvNsec { get; }
 
         /// <summary>
-        /// If TvSec is representable as a DateTime, returns that DateTime + TvNsec nanoseconds.
+        /// If TvSec is representable as a DateTime, returns that DateTime + TvNsec nanoseconds,
+        /// rounded down to the nearest 100 nanoseconds.
         /// Otherwise returns null.
         /// </summary>
         public DateTime? DateTime

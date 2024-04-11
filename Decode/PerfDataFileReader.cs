@@ -1289,6 +1289,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                 result = PerfDataFileResult.InvalidData;
                 goto Error;
             }
+            else if (eventBytes.Header.Type >= PerfEventHeaderType.UserTypeStart)
+            {
+                result = PerfDataFileResult.IdNotFound;
+                goto Error;
+            }
 
             id = m_byteReader.ReadU64(bytesSpan.Slice(bytesSpan.Length - m_nonSampleIdOffset));
 
