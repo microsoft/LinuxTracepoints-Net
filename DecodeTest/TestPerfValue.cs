@@ -220,7 +220,7 @@
             Span<byte> bytes = stackalloc byte[4];
 
             var dt = PerfConvert.UnixTime32ToDateTime(time);
-            var jsonString = '"' + PerfConvert.DateTimeToString(dt) + '"';
+            var jsonString = '"' + PerfConvert.DateTimeNoSubsecondsToString(dt) + '"';
 
             BinaryPrimitives.WriteInt32LittleEndian(bytes, time);
             var value = MakeValue(bytes, EventHeaderFieldEncoding.Value32, EventHeaderFieldFormat.Time, false);

@@ -46,10 +46,16 @@ namespace Microsoft.LinuxTracepoints.Decode
         public const int Char32MaxChars = 2;
 
         /// <summary>
-        /// The maximum number of characters required by DateTimeFormat is
+        /// The maximum number of characters required by DateTimeNoSubsecondsFormat is
         /// 20, e.g. "2020-02-02T02:02:02Z".
         /// </summary>
-        public const int DateTimeMaxChars = 20;
+        public const int DateTimeNoSubsecondsMaxChars = 20;
+
+        /// <summary>
+        /// The maximum number of characters required by DateTimeFullFormat is
+        /// 28, e.g. "2020-02-02T02:02:02.1234567Z".
+        /// </summary>
+        public const int DateTimeFullMaxChars = 28;
 
         /// <summary>
         /// ErrnoLookup(n) will return a non-null value if
@@ -384,32 +390,86 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02Z".
-        /// Requires appropriately-sized destination buffer, Length >= DateTimeMaxChars chars.
+        /// Requires appropriately-sized destination buffer, Length >= DateTimeNoSubsecondsMaxChars chars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> DateTimeFormat(Span<char> destination, DateTime value)
+        public static Span<char> DateTimeNoSubsecondsFormat(Span<char> destination, DateTime value)
         {
-            Debug.Assert(destination.Length >= 20);
+            Debug.Assert(destination.Length >= DateTimeNoSubsecondsMaxChars);
             value.TryFormat(destination, out var pos, "s", null);
             destination[pos++] = 'Z';
-            Debug.Assert(pos == DateTimeMaxChars);
+            Debug.Assert(pos == DateTimeNoSubsecondsMaxChars);
             return destination.Slice(0, pos);
         }
 
         /// <summary>
         /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02Z".
         /// </summary>
-        public static string DateTimeToString(DateTime value)
+        public static string DateTimeNoSubsecondsToString(DateTime value)
         {
-            return new string(DateTimeFormat(stackalloc char[DateTimeMaxChars], value));
+            return new string(DateTimeNoSubsecondsFormat(stackalloc char[DateTimeNoSubsecondsMaxChars], value));
         }
 
         /// <summary>
         /// Appends the provided DateTime value formatted as a string like "2020-02-02T02:02:02Z".
         /// </summary>
-        public static StringBuilder DateTimeAppend(StringBuilder sb, DateTime value)
+        public static StringBuilder DateTimeNoSubsecondsAppend(StringBuilder sb, DateTime value)
         {
-            return sb.Append(DateTimeFormat(stackalloc char[DateTimeMaxChars], value));
+            return sb.Append(DateTimeNoSubsecondsFormat(stackalloc char[DateTimeNoSubsecondsMaxChars], value));
+        }
+
+        /// <summary>
+        /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02.1234567Z".
+        /// Requires appropriately-sized destination buffer, Length >= DateTimeFullMaxChars chars.
+        /// Returns the formatted string (the filled portion of destination).
+        /// </summary>
+        public static Span<char> DateTimeFullFormat(Span<char> destination, DateTime value)
+        {
+            Debug.Assert(destination.Length >= DateTimeFullMaxChars);
+            value.TryFormat(destination, out var pos, "s", null);
+            var ticks = unchecked((uint)(unchecked((ulong)value.Ticks) % 10000000u));
+
+            if (ticks != 0)
+            {
+                int i = 6;
+                destination[pos++] = '.';
+                while (ticks != 0)
+                {
+                    destination[pos + i] = (char)('0' + (ticks % 10));
+                    ticks /= 10;
+                    i -= 1;
+                }
+                while (i >= 0)
+                {
+                    destination[pos + i] = '0';
+                    i -= 1;
+                }
+                pos += 7;
+                while (destination[pos - 1] == '0')
+                {
+                    pos -= 1;
+                }
+            }
+
+            destination[pos++] = 'Z';
+            Debug.Assert(pos <= DateTimeNoSubsecondsMaxChars);
+            return destination.Slice(0, pos);
+        }
+
+        /// <summary>
+        /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02.1234567Z".
+        /// </summary>
+        public static string DateTimeFullToString(DateTime value)
+        {
+            return new string(DateTimeNoSubsecondsFormat(stackalloc char[DateTimeFullMaxChars], value));
+        }
+
+        /// <summary>
+        /// Appends the provided DateTime value formatted as a string like "2020-02-02T02:02:02.1234567Z".
+        /// </summary>
+        public static StringBuilder DateTimeFullAppend(StringBuilder sb, DateTime value)
+        {
+            return sb.Append(DateTimeNoSubsecondsFormat(stackalloc char[DateTimeFullMaxChars], value));
         }
 
         /// <summary>
@@ -1289,7 +1349,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static Span<char> UnixTime32Format(Span<char> destination, Int32 secondsSince1970)
         {
-            return DateTimeFormat(destination, UnixTime32ToDateTime(secondsSince1970));
+            return DateTimeNoSubsecondsFormat(destination, UnixTime32ToDateTime(secondsSince1970));
         }
 
         /// <summary>
@@ -1356,7 +1416,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             var maybe = UnixTime64ToDateTime(secondsSince1970);
             if (maybe is DateTime value)
             {
-                return DateTimeFormat(destination, value);
+                return DateTimeNoSubsecondsFormat(destination, value);
             }
             else
             {
@@ -1407,7 +1467,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 if (jsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
                 {
                     sb.Append('"');
-                    DateTimeAppend(sb, new DateTime((value + UnixEpochSeconds) * 10000000, DateTimeKind.Utc));
+                    DateTimeNoSubsecondsAppend(sb, new DateTime((value + UnixEpochSeconds) * 10000000, DateTimeKind.Utc));
                     return sb.Append('"');
                 }
             }

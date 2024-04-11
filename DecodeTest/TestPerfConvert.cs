@@ -133,19 +133,19 @@
             Assert.AreEqual(expected, PerfConvert.HexBytesAppend(sb, bytes).ToString());
 
             expected = "1970-01-01T00:00:00Z";
-            Assert.AreEqual(expected, PerfConvert.DateTimeToString(DateTime.UnixEpoch));
+            Assert.AreEqual(expected, PerfConvert.DateTimeNoSubsecondsToString(DateTime.UnixEpoch));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DateTimeAppend(sb, DateTime.UnixEpoch).ToString());
+            Assert.AreEqual(expected, PerfConvert.DateTimeNoSubsecondsAppend(sb, DateTime.UnixEpoch).ToString());
 
             expected = "0001-01-01T00:00:00Z";
-            Assert.AreEqual(expected, PerfConvert.DateTimeToString(DateTime.MinValue));
+            Assert.AreEqual(expected, PerfConvert.DateTimeNoSubsecondsToString(DateTime.MinValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DateTimeAppend(sb, DateTime.MinValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.DateTimeNoSubsecondsAppend(sb, DateTime.MinValue).ToString());
 
             expected = "9999-12-31T23:59:59Z";
-            Assert.AreEqual(expected, PerfConvert.DateTimeToString(DateTime.MaxValue));
+            Assert.AreEqual(expected, PerfConvert.DateTimeNoSubsecondsToString(DateTime.MaxValue));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.DateTimeAppend(sb, DateTime.MaxValue).ToString());
+            Assert.AreEqual(expected, PerfConvert.DateTimeNoSubsecondsAppend(sb, DateTime.MaxValue).ToString());
 
             var expectedDT = DateTime.UnixEpoch;
             Assert.AreEqual(expectedDT, PerfConvert.UnixTime32ToDateTime(0));
