@@ -39,7 +39,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         public ref readonly PerfEventAttr Attr => ref this.attr;
 
         /// <summary>
-        /// Event's name, or "" if not available.
+        /// Event's full name (including the system name), e.g. "sched:sched_switch",
+        /// or "" if not available.
         /// </summary>
         public string Name { get; }
 

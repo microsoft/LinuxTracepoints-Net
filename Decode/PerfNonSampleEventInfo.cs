@@ -107,18 +107,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns flags indicating which data was present in the event.
         /// </summary>
-        public readonly PerfEventAttrSampleType SampleType =>
-            this.EventDesc.Attr.SampleType;
+        public readonly PerfEventAttrSampleType SampleType => this.EventDesc.Attr.SampleType;
 
         /// <summary>
-        /// Returns the name of the event, or "" if not available.
+        /// Event's full name (including the system name), e.g. "dummy:HG",
+        /// or "" if not available.
         /// </summary>
         public readonly string Name => this.EventDesc.Name;
-
-        /// <summary>
-        /// Returns the event's tracefs format (decoding information), or null if not available.
-        /// </summary>
-        public readonly PerfEventFormat? Format => this.EventDesc.Format;
 
         /// <summary>
         /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.

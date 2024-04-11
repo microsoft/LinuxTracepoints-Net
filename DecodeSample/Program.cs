@@ -17,15 +17,16 @@ namespace DecodeSample
             int mainResult;
             try
             {
+                var enumerator = new EventHeaderEnumerator();
+                var stringBuilder = new StringBuilder();
+
                 using (var reader = new PerfDataFileReader())
                 {
-                    var enumerator = new EventHeaderEnumerator();
-                    var stringBuilder = new StringBuilder();
                     foreach (var arg in args)
                     {
                         Console.WriteLine($"******* OpenFile: {arg}");
 
-                        // Open the file. Ask the reader to sort the events by timestamp.
+                        // Open the file. Ask reader to sort the events by timestamp.
                         if (!reader.OpenFile(arg, PerfDataFileEventOrder.Time))
                         {
                             Console.WriteLine("Invalid data.");
@@ -39,6 +40,7 @@ namespace DecodeSample
                             {
                                 if (result != PerfDataFileResult.EndOfFile)
                                 {
+                                    // Unexpected. This usually means a corrupt file.
                                     Console.WriteLine($"ReadEvent error: {result}");
                                 }
                                 break; // No more events.
@@ -48,36 +50,39 @@ namespace DecodeSample
                             {
                                 // Non-sample event, typically information about the system or information
                                 // about the trace itself. PerfNonSampleEventInfo metadata may be available.
-                                // Note that PerfNonSampleEventInfo is not always available and may not be
-                                // needed.
-                                result = reader.GetNonSampleEventInfo(eventBytes, out var nonSampleEventInfo);
-                                if (result == PerfDataFileResult.Ok)
+                                // Note that PerfNonSampleEventInfo is not always needed and may not always
+                                // be available.
+                                result = eventBytes.GetNonSampleEventInfo(reader, out var nonSampleEventInfo);
+                                if (result != PerfDataFileResult.Ok)
                                 {
-                                    // Found event info (attributes).
-                                    Console.WriteLine($"{eventBytes.Header.Type}/{nonSampleEventInfo.Name}: {nonSampleEventInfo.DateTime:s}");
-                                }
-                                else if (result == PerfDataFileResult.IdNotFound)
-                                {
+                                    if (result != PerfDataFileResult.IdNotFound)
+                                    {
+                                        // Unexpected: Other error getting event info, e.g. unexpected data layout.
+                                        Console.WriteLine($"{eventBytes.Header.Type}: {result}");
+                                        continue;
+                                    }
+
                                     // Event info not available. This is expected in many cases, such
                                     // as when Header.Type >= UserTypeStart or before we've seen the
                                     // FinishedInit event. Event is frequently still usable and the content
-                                    // can be decoded based on Type.
+                                    // can be decoded based on Type, but we don't have access to attributes
+                                    // like timestamp or cpu.
                                     Console.WriteLine($"{eventBytes.Header.Type}: IdNotFound");
                                 }
                                 else
                                 {
-                                    // Unexpected: Other error getting event info.
-                                    Console.WriteLine($"{eventBytes.Header.Type}: {result}");
+                                    // Found event info (attributes).
+                                    Console.WriteLine($"{eventBytes.Header.Type}/{nonSampleEventInfo.Name}: {nonSampleEventInfo.DateTime:s}");
                                 }
                             }
                             else
                             {
                                 // Sample event, e.g. tracepoint event.
                                 // PerfSampleEventInfo metadata may be available and is usually needed.
-                                result = reader.GetSampleEventInfo(eventBytes, out var sampleEventInfo);
+                                result = eventBytes.GetSampleEventInfo(reader, out var sampleEventInfo);
                                 if (result != PerfDataFileResult.Ok)
                                 {
-                                    // Unexpected: Error getting sample event info.
+                                    // Unexpected: Error getting event info, e.g. bad id or unexpected data layout.
                                     Console.WriteLine($"Sample: {result}");
                                     continue;
                                 }
@@ -85,17 +90,15 @@ namespace DecodeSample
                                 var eventFormat = sampleEventInfo.Format;
                                 if (eventFormat == null)
                                 {
-                                    // Unexpected: Did not find TraceFS format info for this event. Unexpected.
+                                    // Unexpected: Did not find TraceFS format metadata for this event.
                                     Console.WriteLine($"Sample: no format");
-                                    continue;
                                 }
-
-                                if (eventFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
-                                    !enumerator.StartEvent(eventFormat.Name, sampleEventInfo.UserData))
+                                else if (eventFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
+                                    !enumerator.StartEvent(sampleEventInfo))
                                 {
-                                    // TraceFS-based event decoding.
+                                    // Decode using TraceFS format metadata.
 
-                                    Console.WriteLine($"Sample: TraceFS {eventFormat.SystemName}:{eventFormat.Name} @ {sampleEventInfo.DateTime:s}");
+                                    Console.WriteLine($"Sample/{sampleEventInfo.Name}: {sampleEventInfo.DateTime:s}");
 
                                     // Typically the "common" fields are not interesting, so skip them.
                                     var fieldsStart = eventFormat.CommonFieldCount;
@@ -103,7 +106,7 @@ namespace DecodeSample
                                     for (int i = fieldsStart; i < fieldsEnd; i += 1)
                                     {
                                         var fieldFormat = eventFormat.Fields[i];
-                                        var fieldValue = fieldFormat.GetFieldValue(sampleEventInfo.RawDataSpan, sampleEventInfo.ByteReader);
+                                        var fieldValue = fieldFormat.GetFieldValue(sampleEventInfo);
 
                                         // fieldValue has lots of properties and methods for accessing its data in different
                                         // formats. TraceFS fields are always scalars or arrays of fixed-size elements, so
@@ -123,10 +126,10 @@ namespace DecodeSample
                                 }
                                 else
                                 {
-                                    // EventHeader-based event decoding.
+                                    // Decode using EventHeader metadata.
 
                                     var eventInfo = enumerator.GetEventInfo(); // Information about the event.
-                                    Console.WriteLine($"Sample: EventHeader {eventInfo.NameAsString} @ {sampleEventInfo.DateTime:s}");
+                                    Console.WriteLine($"Sample/{sampleEventInfo.Name}: {sampleEventInfo.DateTime:s}");
 
                                     // Transition past the initial BeforeFirstItem state.
                                     enumerator.MoveNext();

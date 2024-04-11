@@ -8,8 +8,42 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System;
 
     /// <summary>
+    /// <para>
     /// Information about a sample event, typically returned by
     /// PerfDataFileReader.GetSampleEventInfo().
+    /// </para><para>
+    /// If the Format property is non-null, you can use it to access event
+    /// information, including the event's fields.
+    /// <code><![CDATA[
+    /// var eventFormat = sampleEventInfo.Format;
+    /// if (eventFormat == null)
+    /// {
+    ///     // Unexpected: Did not find TraceFS format metadata for this event.
+    /// }
+    /// else if (eventFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
+    ///     !eventHeaderEnumerator.StartEvent(sampleEventInfo))
+    /// {
+    ///     // Decode using TraceFS format metadata.
+    ///     // Typically the "common" fields are not interesting, so skip them.
+    ///     var fieldsStart = eventFormat.CommonFieldCount;
+    ///     var fieldsEnd = eventFormat.Fields.Count;
+    ///     for (int i = fieldsStart; i < fieldsEnd; i += 1)
+    ///     {
+    ///         var fieldFormat = eventFormat.Fields[i];
+    ///         var fieldValue = fieldFormat.GetFieldValue(sampleEventInfo);
+    ///         // ... use fieldFormat and fieldValue to decode the field.
+    ///     }
+    /// }
+    /// else
+    /// {
+    ///     while (eventHeaderEnumerator.MoveNext())
+    ///     {
+    ///         var itemInfo = eventHeaderEnumerator.GetItemInfo();
+    ///         // ... use itemInfo to decode the field.
+    ///     }
+    /// }
+    /// ]]></code>
+    /// </para>
     /// </summary>
     public ref struct PerfSampleEventInfo
     {
@@ -158,16 +192,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns flags indicating which properties were present in the event.
         /// </summary>
-        public readonly PerfEventAttrSampleType SampleType =>
-            this.EventDesc.Attr.SampleType;
+        public readonly PerfEventAttrSampleType SampleType => this.EventDesc.Attr.SampleType;
 
         /// <summary>
-        /// Returns the name of the event, or "" if not available.
+        /// Event's full name (including the system name), e.g. "sched:sched_switch",
+        /// or "" if not available.
         /// </summary>
         public readonly string Name => this.EventDesc.Name;
 
         /// <summary>
         /// Returns the event's tracefs format (decoding information), or null if not available.
+        /// Use this to access this event's field values, i.e.
+        /// <c>sampleEventInfo.Format.Fields[fieldIndex].GetFieldValue(sampleEventInfo)</c>.
         /// </summary>
         public readonly PerfEventFormat? Format => this.EventDesc.Format;
 
@@ -177,7 +213,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public readonly PerfEventTimeSpec TimeSpec => this.SessionInfo.TimeToRealTime(this.Time);
 
         /// <summary>
-        /// Gets the Time as a DateTime, using offset information from SessionInfo.
+        /// Gets the Time property as a DateTime, using offset information from SessionInfo.
         /// If the resulting DateTime is out of range (year before 1 or after 9999),
         /// returns DateTime.MinValue.
         /// </summary>

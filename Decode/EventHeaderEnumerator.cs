@@ -169,9 +169,42 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// buffer until you are done with this event).
         /// </para>
         /// </remarks>
+        /// <param name="sampleEventInfo">
+        /// Info from which to get the tracepoint name (sampleEventInfo.Format.Name) and
+        /// tracepoint user data (sampleEventInfo.UserData).
+        /// Requires sampleEventInfo.Format != null.
+        /// </param>
+        /// <param name="moveNextLimit">
+        /// Set to the maximum number of MoveNext calls to allow when processing this event (to
+        /// guard against DoS attacks from a maliciously-crafted event).
+        /// </param>
+        /// <returns>Returns false for failure. Check LastError for details.</returns>
+        public bool StartEvent(
+            in PerfSampleEventInfo sampleEventInfo,
+            int moveNextLimit = MoveNextLimitDefault)
+        {
+            Debug.Assert(sampleEventInfo.Format != null); // Precondition: not null.
+            return StartEvent(sampleEventInfo.Format!.Name, sampleEventInfo.UserData, moveNextLimit);
+        }
+
+        /// <summary>
+        /// Starts decoding the specified EventHeader event: decodes the header and
+        /// positions the enumerator before the first item.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// On success, changes the state to BeforeFirstItem and returns true.
+        /// On failure, changes the state to None (not Error) and returns false.
+        /// </para><para>
+        /// Note that the enumerator stores a reference to the eventData array but does
+        /// not copy it, so the referenced data must remain valid and unchanged while
+        /// you are processing the data with this enumerator (i.e. do not overwrite the
+        /// buffer until you are done with this event).
+        /// </para>
+        /// </remarks>
         /// <param name="tracepointName">
-        /// Set to tep_event->name, e.g. "MyProvider_L4K1".
-        /// Must follow the tracepoint name rules described in EventHeader.h.
+        /// Set the tracepoint name without the system name, e.g. "MyProvider_L4K1" (not
+        /// "user_events:MyProvider_L4K1"). Typically this will be <c>perfEventFormat.Name</c>.
         /// </param>
         /// <param name="eventData">
         /// Set to the event's user data, starting at the EventHeaderFlags field. Typically

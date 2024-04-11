@@ -6,7 +6,6 @@
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <BaseOutputPath>..\bin</BaseOutputPath>
     <IntermediateOutputPath>..\obj</IntermediateOutputPath>
-    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
     <WarningLevel>9999</WarningLevel>
     <StartupObject>DecodePerfToJson.Program</StartupObject>
   </PropertyGroup>
