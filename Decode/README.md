@@ -5,6 +5,58 @@ includes decoding of `perf.data` files, parsing of tracefs `format` files, forma
 of tracepoint event fields, and decoding of tracepoints that use the `EventHeader`
 decoding system.
 
+## Decoding procedure
+
+For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints-Net/tree/main/DecodeSample).
+
+- Create a file reader: `var reader = new PerfDataFileReader()`.
+
+- If you will be decoding events that use the `EventHeader` decoding system, create an
+  enumerator to use for decoding them:
+  `var eventHeaderEnumerator = reader.GetEventHeaderEnumerator()`.
+
+- Call reader.OpenFile(perfDataFileName, sortOrder) to open the `perf.data` file and read
+  the file header.
+
+  - The `sortOrder` parameter specifies whether the reader should return events in the order
+    they occur in the file (`PerfDataFileEventOrder.File`, less resource-intensive) or in
+    timestamp order (`PerfDataFileEventOrder.Time`).
+
+- Call `reader.ReadEvent(out eventBytes)` to read the header and bytes of the next event.
+
+- Use `eventBytes.Header.Type` to determine the type of event.
+
+- If `Type != Sample`, this is a non-sample event that contains information about the trace
+  or about the system on which the trace was collected. This library provides no support for
+  decoding these events. Refer to `linux/uapi/linux/perf_event.h` for the format of these
+  events.
+
+  - Some of these events may have associated metadata, e.g. timestamp, CPU, pid, tid. This
+    library does provide support for accessing the metadata by calling
+    `reader.GetNonSampleEventInfo(eventBytes, out nonSampleEventInfo)`.
+
+- If `Type == Sample`, this is a sample event, e.g. a tracepoint event.
+
+  - Use `reader.GetSampleEventInfo(eventBytes, out sampleEventInfo)` to look up metadata for
+    the event. If metadata lookup succeeds and `sampleEventInfo.Format` is not `null`, you can
+    use this library to decode the event.
+
+  - If `sampleEventInfo.Format.DecodingStyle` is `TraceEventFormat`, decode the event using
+    `sampleEventInfo.Format.Fields`. Use
+    `sampleEventInfo.Format.Fields[i].GetFieldValue(sampleEventInfo)` to get a `PerfValue` for
+    the field at index `i`. The `PerfValue` has the field's type information and a
+    `ReadOnlySpan<byte>` with the field's value. It also has helper methods for accessing the
+    field's value as a .NET type or as a string. (The first `Format.CommonFieldCount` fields
+    are usually not interesting and are typically skipped.)
+    
+  - If `sampleEventInfo.Format.DecodingStyle` is `EventHeader`, decode the event using
+	`eventHeaderEnumerator`. Start enumeration by calling
+    `eventHeaderEnumerator.StartEvent(sampleEventInfo)`. You can then get EventHeader-specific
+    information about the event from `eventHeaderEnumerator.GetEventInfo()`, and you can iterate
+    through the fields of the event using `eventHeaderEnumerator.MoveNext()`.
+
+## Classes and structs
+
 - `EventHeaderEnumerator` class - provides access to information and field values
   of an event that uses the `EventHeader` decoding format. This can be used in
   combination with the `PerfDataFileReader` class to read and decode events from

@@ -1225,9 +1225,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// successful call to StartEvent, until a call to Clear.
         /// </para><para>
         /// One name-value pair is appended for each metadata item that is both requested
-        /// by metaOptions and has a meaningful value available in the event. For example,
+        /// by infoOptions and has a meaningful value available in the event. For example,
         /// the "id" metadata item is only appended if the event has a non-zero Id value,
-        /// even if the metaOptions parameter includes EventHeaderMetaOptions.Id.
+        /// even if the infoOptions parameter includes PerfInfoOptions.Id.
         /// </para><para>
         /// The following metadata items are supported:
         /// <list type="bullet"><item>
@@ -1261,18 +1261,18 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
         /// addCommaBeforeNextItem was true OR if any metadata items were appended.
         /// </returns>
-        public bool AppendJsonEventMetaTo(
+        public bool AppendJsonEventInfoTo(
             StringBuilder sb,
             bool addCommaBeforeNextItem = false,
-            EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
+            PerfInfoOptions infoOptions = PerfInfoOptions.Default,
             PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
-            return AppendJsonEventMetaTo(m_eventData.Span, sb, addCommaBeforeNextItem, metaOptions, jsonOptions);
+            return AppendJsonEventInfoTo(m_eventData.Span, sb, addCommaBeforeNextItem, infoOptions, jsonOptions);
         }
 
         /// <summary>
         /// <para>
-        /// Advanced scenarios: This is the same as AppendJsonEventMetaTo(sb, ...) except that
+        /// Advanced scenarios: This is the same as AppendJsonEventInfoTo(sb, ...) except that
         /// it uses the provided eventDataSpan instead of accessing the Span property of a
         /// ReadOnlyMemory field.
         /// </para><para>
@@ -1290,11 +1290,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// parameter that was passed to StartEvent().
         /// </para>
         /// </remarks>
-        public bool AppendJsonEventMetaTo(
+        public bool AppendJsonEventInfoTo(
             ReadOnlySpan<byte> eventDataSpan,
             StringBuilder sb,
             bool addCommaBeforeNextItem,
-            EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
+            PerfInfoOptions infoOptions = PerfInfoOptions.Default,
             PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
@@ -1302,18 +1302,18 @@ namespace Microsoft.LinuxTracepoints.Decode
             var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
 
             int providerNameEnd =
-                0 != (metaOptions & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Options))
+                0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Options))
                 ? m_tracepointName.LastIndexOf('_')
                 : 0;
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Provider))
+            if (infoOptions.HasFlag(PerfInfoOptions.Provider))
             {
                 PerfConvert.StringAppendJson(
                     w.WriteValueNoEscapeName("provider"),
                     m_tracepointName.AsSpan().Slice(0, providerNameEnd));
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Event))
+            if (infoOptions.HasFlag(PerfInfoOptions.Event))
             {
                 PerfConvert.StringAppendJson(
                     w.WriteValueNoEscapeName("event"),
@@ -1321,28 +1321,28 @@ namespace Microsoft.LinuxTracepoints.Decode
                     Text.Encoding.UTF8);
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Id) && m_header.Id != 0)
+            if (infoOptions.HasFlag(PerfInfoOptions.Id) && m_header.Id != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("id"),
                     m_header.Id);
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Version) && m_header.Version != 0)
+            if (infoOptions.HasFlag(PerfInfoOptions.Version) && m_header.Version != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("version"),
                     m_header.Version);
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Level) && m_header.Level != 0)
+            if (infoOptions.HasFlag(PerfInfoOptions.Level) && m_header.Level != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("level"),
                     (byte)m_header.Level);
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Keyword) && m_keyword != 0)
+            if (infoOptions.HasFlag(PerfInfoOptions.Keyword) && m_keyword != 0)
             {
                 PerfConvert.UInt64HexAppendJson(
                     w.WriteValueNoEscapeName("keyword"),
@@ -1350,14 +1350,14 @@ namespace Microsoft.LinuxTracepoints.Decode
                     jsonOptions);
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Opcode) && m_header.Opcode != 0)
+            if (infoOptions.HasFlag(PerfInfoOptions.Opcode) && m_header.Opcode != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("opcode"),
                     (byte)m_header.Opcode);
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Tag) && m_header.Tag != 0)
+            if (infoOptions.HasFlag(PerfInfoOptions.Tag) && m_header.Tag != 0)
             {
                 PerfConvert.UInt32HexAppendJson(
                     w.WriteValueNoEscapeName("tag"),
@@ -1365,7 +1365,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     jsonOptions);
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Activity) && m_activityIdSize >= 16)
+            if (infoOptions.HasFlag(PerfInfoOptions.Activity) && m_activityIdSize >= 16)
             {
                 w.WriteValueNoEscapeName("activity");
                 sb.Append('"');
@@ -1375,7 +1375,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.RelatedActivity) && m_activityIdSize >= 32)
+            if (infoOptions.HasFlag(PerfInfoOptions.RelatedActivity) && m_activityIdSize >= 32)
             {
                 w.WriteValueNoEscapeName("relatedActivity");
                 sb.Append('"');
@@ -1385,7 +1385,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Options))
+            if (infoOptions.HasFlag(PerfInfoOptions.Options))
             {
                 var n = m_tracepointName;
                 for (int i = providerNameEnd + 1; i < n.Length; i += 1)
@@ -1401,7 +1401,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Flags))
+            if (infoOptions.HasFlag(PerfInfoOptions.Flags))
             {
                 PerfConvert.UInt32HexAppendJson(
                     w.WriteValueNoEscapeName("flags"),

@@ -5,11 +5,11 @@
     },
     "AppendJsonItemN": {
       "n": "Long_Provider_Name_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX0123456789:LongProviderEvent",
-      "meta": { "provider": "Long_Provider_Name_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX0123456789", "event": "LongProviderEvent", "level": 5, "options": "Gasdf", "flags": "0x7" }
+      "info": { "provider": "Long_Provider_Name_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX0123456789", "event": "LongProviderEvent", "level": 5, "options": "Gasdf", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
     },
@@ -26,11 +26,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderC:EventCG",
       "enabled": true,
-      "meta": { "provider": "TestProviderC", "event": "EventCG", "level": 5, "options": "Gmsft", "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "EventCG", "level": 5, "options": "Gmsft", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "enabled":true,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "enabled": true
@@ -50,11 +50,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderCpp:EventCppG",
       "enabled": true,
-      "meta": { "provider": "TestProviderCpp", "event": "EventCppG", "level": 5, "options": "Gmsft", "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "EventCppG", "level": 5, "options": "Gmsft", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "enabled":true,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "enabled": true
@@ -72,11 +72,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderC:CScalars1",
-      "meta": { "provider": "TestProviderC", "event": "CScalars1", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "CScalars1", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
     },
@@ -91,11 +91,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderC:CScalars2",
-      "meta": { "provider": "TestProviderC", "event": "CScalars2", "level": 1, "keyword": "0xF123456789ABCDEF", "opcode": 2, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "CScalars2", "level": 1, "keyword": "0xF123456789ABCDEF", "opcode": 2, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": { "keyword":17375808098319191535,"opcode":2 }
+      "info": { "keyword":17375808098319191535,"opcode":2 }
     },
     "MoveNext": {
     },
@@ -114,11 +114,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderC:CScalars3",
       "Struct20;tag=0xBEEF": { "hi;tag=0x12": "hi", "ch10;tag=0x10": [ "H", "o", "w" ] },
-      "meta": { "provider": "TestProviderC", "event": "CScalars3", "id": 1000, "version": 11, "level": 4, "keyword": "0x85", "opcode": 3, "tag": "0x1234", "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "CScalars3", "id": 1000, "version": 11, "level": 4, "keyword": "0x85", "opcode": 3, "tag": "0x1234", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "Struct20":{"hi":"hi","ch10":["H","o","w"]},
-      "meta": { "id":1000,"version":11,"keyword":133,"opcode":3,"tag":4660 }
+      "info": { "id":1000,"version":11,"keyword":133,"opcode":3,"tag":4660 }
     },
     "MoveNext": {
       "Struct20;tag=0xBEEF": {
@@ -142,11 +142,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderC:Transfer00",
-      "meta": { "provider": "TestProviderC", "event": "Transfer00", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "Transfer00", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
     },
@@ -161,11 +161,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderC:Transfer10",
-      "meta": { "provider": "TestProviderC", "event": "Transfer10", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "Transfer10", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": { "activity":"01020304-0506-0708-0102-030405060708" }
+      "info": { "activity":"01020304-0506-0708-0102-030405060708" }
     },
     "MoveNext": {
     },
@@ -180,11 +180,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderC:Transfer11",
-      "meta": { "provider": "TestProviderC", "event": "Transfer11", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "relatedActivity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "Transfer11", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "relatedActivity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": { "activity":"01020304-0506-0708-0102-030405060708","relatedActivity":"01020304-0506-0708-0102-030405060708" }
+      "info": { "activity":"01020304-0506-0708-0102-030405060708","relatedActivity":"01020304-0506-0708-0102-030405060708" }
     },
     "MoveNext": {
     },
@@ -203,11 +203,11 @@
       "n": "TestProviderC:i8",
       "i8": 100,
       "(-128)": -128,
-      "meta": { "provider": "TestProviderC", "event": "i8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "i8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i8":100,"(-128)":-128,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i8": 100,
@@ -232,11 +232,11 @@
       "n": "TestProviderC:u8",
       "u8": 200,
       "(255)": 255,
-      "meta": { "provider": "TestProviderC", "event": "u8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "u8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u8":200,"(255)":255,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u8": 200,
@@ -261,11 +261,11 @@
       "n": "TestProviderC:i16",
       "i16": 30000,
       "(-32767-1)": -32768,
-      "meta": { "provider": "TestProviderC", "event": "i16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "i16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i16":30000,"(-32767-1)":-32768,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i16": 30000,
@@ -290,11 +290,11 @@
       "n": "TestProviderC:u16",
       "u16": 60000,
       "(65535)": 65535,
-      "meta": { "provider": "TestProviderC", "event": "u16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "u16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u16":60000,"(65535)":65535,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u16": 60000,
@@ -319,11 +319,11 @@
       "n": "TestProviderC:i32",
       "i32": 2000000000,
       "(-2147483647-1)": -2147483648,
-      "meta": { "provider": "TestProviderC", "event": "i32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "i32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":2000000000,"(-2147483647-1)":-2147483648,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": 2000000000,
@@ -348,11 +348,11 @@
       "n": "TestProviderC:u32",
       "u32": 4000000000,
       "(4294967295U)": 4294967295,
-      "meta": { "provider": "TestProviderC", "event": "u32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "u32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u32":4000000000,"(4294967295U)":4294967295,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u32": 4000000000,
@@ -377,11 +377,11 @@
       "n": "TestProviderC:i64",
       "i64": 9000000000000000000,
       "(-9223372036854775807L-1)": -9223372036854775808,
-      "meta": { "provider": "TestProviderC", "event": "i64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "i64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i64":9000000000000000000,"(-9223372036854775807L-1)":-9223372036854775808,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i64": 9000000000000000000,
@@ -406,11 +406,11 @@
       "n": "TestProviderC:u64",
       "u64": 18000000000000000000,
       "(18446744073709551615UL)": 18446744073709551615,
-      "meta": { "provider": "TestProviderC", "event": "u64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "u64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u64":18000000000000000000,"(18446744073709551615UL)":18446744073709551615,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u64": 18000000000000000000,
@@ -435,11 +435,11 @@
       "n": "TestProviderC:iptr",
       "iptr": 1234,
       "(-9223372036854775807L-1)": -9223372036854775808,
-      "meta": { "provider": "TestProviderC", "event": "iptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "iptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iptr":1234,"(-9223372036854775807L-1)":-9223372036854775808,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iptr": 1234,
@@ -464,11 +464,11 @@
       "n": "TestProviderC:uptr",
       "uptr": 4321,
       "(18446744073709551615UL)": 18446744073709551615,
-      "meta": { "provider": "TestProviderC", "event": "uptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "uptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uptr":4321,"(18446744073709551615UL)":18446744073709551615,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uptr": 4321,
@@ -493,11 +493,11 @@
       "n": "TestProviderC:iL",
       "iL": 2000000000,
       "(-0x7fffffffffffffffL - 1L)": -9223372036854775808,
-      "meta": { "provider": "TestProviderC", "event": "iL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "iL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iL":2000000000,"(-0x7fffffffffffffffL - 1L)":-9223372036854775808,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iL": 2000000000,
@@ -522,11 +522,11 @@
       "n": "TestProviderC:uL",
       "uL": 4000000000,
       "(0x7fffffffffffffffL * 2UL + 1UL)": 18446744073709551615,
-      "meta": { "provider": "TestProviderC", "event": "uL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "uL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uL":4000000000,"(0x7fffffffffffffffL * 2UL + 1UL)":18446744073709551615,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uL": 4000000000,
@@ -551,11 +551,11 @@
       "n": "TestProviderC:hi8",
       "i8": "0x64",
       "(-128)": "0x80",
-      "meta": { "provider": "TestProviderC", "event": "hi8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hi8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i8":"0x64","(-128)":"0x80",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i8": "0x64",
@@ -580,11 +580,11 @@
       "n": "TestProviderC:hu8",
       "u8": "0xC8",
       "(255)": "0xFF",
-      "meta": { "provider": "TestProviderC", "event": "hu8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hu8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u8":"0xC8","(255)":"0xFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u8": "0xC8",
@@ -609,11 +609,11 @@
       "n": "TestProviderC:hi16",
       "i16": "0x7530",
       "(-32767-1)": "0x8000",
-      "meta": { "provider": "TestProviderC", "event": "hi16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hi16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i16":"0x7530","(-32767-1)":"0x8000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i16": "0x7530",
@@ -638,11 +638,11 @@
       "n": "TestProviderC:hu16",
       "u16": "0xEA60",
       "(65535)": "0xFFFF",
-      "meta": { "provider": "TestProviderC", "event": "hu16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hu16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u16":"0xEA60","(65535)":"0xFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u16": "0xEA60",
@@ -667,11 +667,11 @@
       "n": "TestProviderC:hi32",
       "i32": "0x77359400",
       "(-2147483647-1)": "0x80000000",
-      "meta": { "provider": "TestProviderC", "event": "hi32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hi32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":"0x77359400","(-2147483647-1)":"0x80000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": "0x77359400",
@@ -696,11 +696,11 @@
       "n": "TestProviderC:hu32",
       "u32": "0xEE6B2800",
       "(4294967295U)": "0xFFFFFFFF",
-      "meta": { "provider": "TestProviderC", "event": "hu32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hu32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u32":"0xEE6B2800","(4294967295U)":"0xFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u32": "0xEE6B2800",
@@ -725,11 +725,11 @@
       "n": "TestProviderC:hi64",
       "i64": "0x7CE66C50E2840000",
       "(-9223372036854775807L-1)": "0x8000000000000000",
-      "meta": { "provider": "TestProviderC", "event": "hi64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hi64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i64":"0x7CE66C50E2840000","(-9223372036854775807L-1)":"0x8000000000000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i64": "0x7CE66C50E2840000",
@@ -754,11 +754,11 @@
       "n": "TestProviderC:hu64",
       "u64": "0xF9CCD8A1C5080000",
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderC", "event": "hu64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hu64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u64":"0xF9CCD8A1C5080000","(18446744073709551615UL)":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u64": "0xF9CCD8A1C5080000",
@@ -783,11 +783,11 @@
       "n": "TestProviderC:hiptr",
       "iptr": "0x4D2",
       "(-9223372036854775807L-1)": "0x8000000000000000",
-      "meta": { "provider": "TestProviderC", "event": "hiptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hiptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iptr":"0x4D2","(-9223372036854775807L-1)":"0x8000000000000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iptr": "0x4D2",
@@ -812,11 +812,11 @@
       "n": "TestProviderC:huptr",
       "uptr": "0x10E1",
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderC", "event": "huptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "huptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uptr":"0x10E1","(18446744073709551615UL)":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uptr": "0x10E1",
@@ -841,11 +841,11 @@
       "n": "TestProviderC:hiL",
       "iL": "0x77359400",
       "(-0x7fffffffffffffffL - 1L)": "0x8000000000000000",
-      "meta": { "provider": "TestProviderC", "event": "hiL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hiL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iL":"0x77359400","(-0x7fffffffffffffffL - 1L)":"0x8000000000000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iL": "0x77359400",
@@ -870,11 +870,11 @@
       "n": "TestProviderC:huL",
       "uL": "0xEE6B2800",
       "(0x7fffffffffffffffL * 2UL + 1UL)": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderC", "event": "huL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "huL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uL":"0xEE6B2800","(0x7fffffffffffffffL * 2UL + 1UL)":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uL": "0xEE6B2800",
@@ -903,11 +903,11 @@
       "1/3": 0.333333343,
       "NaN": "NaN",
       "-Inf": "-Infinity",
-      "meta": { "provider": "TestProviderC", "event": "f32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "f32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "f32":3.1400001,"1/3":0.333333343,"NaN":"NaN","-Inf":"-Infinity",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "f32": 3.1400001,
@@ -942,11 +942,11 @@
       "1/3": 0.33333333333333331,
       "NaN": "NaN",
       "-Inf": "-Infinity",
-      "meta": { "provider": "TestProviderC", "event": "f64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "f64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "f64":6.2800000000000002,"1/3":0.33333333333333331,"NaN":"NaN","-Inf":"-Infinity",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "f64": 6.2800000000000002,
@@ -978,22 +978,22 @@
       "n": "TestProviderC:b8",
       "b0": false,
       "b1": true,
-      "(255)": 255,
-      "meta": { "provider": "TestProviderC", "event": "b8", "level": 5, "flags": "0x7" }
+      "(255)": "BOOL(255)",
+      "info": { "provider": "TestProviderC", "event": "b8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
-      "b0":false,"b1":true,"(255)":255,
-      "meta": {  }
+      "b0":false,"b1":true,"(255)":"BOOL(255)",
+      "info": {  }
     },
     "MoveNext": {
       "b0": false,
       "b1": true,
-      "(255)": 255
+      "(255)": "BOOL(255)"
     },
     "MoveNextSibling": {
       "b0": false,
       "b1": true,
-      "(255)": 255
+      "(255)": "BOOL(255)"
     },
     "ToString": {
       "b0": "Bool8:false",
@@ -1012,22 +1012,22 @@
       "n": "TestProviderC:b32",
       "b0": false,
       "b1": true,
-      "(-2147483647-1)": -2147483648,
-      "meta": { "provider": "TestProviderC", "event": "b32", "level": 5, "flags": "0x7" }
+      "(-2147483647-1)": "BOOL(-2147483648)",
+      "info": { "provider": "TestProviderC", "event": "b32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
-      "b0":false,"b1":true,"(-2147483647-1)":-2147483648,
-      "meta": {  }
+      "b0":false,"b1":true,"(-2147483647-1)":"BOOL(-2147483648)",
+      "info": {  }
     },
     "MoveNext": {
       "b0": false,
       "b1": true,
-      "(-2147483647-1)": -2147483648
+      "(-2147483647-1)": "BOOL(-2147483648)"
     },
     "MoveNextSibling": {
       "b0": false,
       "b1": true,
-      "(-2147483647-1)": -2147483648
+      "(-2147483647-1)": "BOOL(-2147483648)"
     },
     "ToString": {
       "b0": "Bool32:false",
@@ -1045,11 +1045,11 @@
       "n": "TestProviderC:ch",
       "ch": "A",
       "FE": "þ",
-      "meta": { "provider": "TestProviderC", "event": "ch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "ch":"A","FE":"þ",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "ch": "A",
@@ -1074,11 +1074,11 @@
       "n": "TestProviderC:u16ch",
       "u16ch": "A",
       "FFFE": "￾",
-      "meta": { "provider": "TestProviderC", "event": "u16ch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "u16ch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u16ch":"A","FFFE":"￾",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u16ch": "A",
@@ -1107,11 +1107,11 @@
       "FFFE": "￾",
       "10FFFF": "􏿿",
       "FFFEFDFC": "�",
-      "meta": { "provider": "TestProviderC", "event": "u32ch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "u32ch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u32ch":"A","FFFE":"￾","10FFFF":"􏿿","FFFEFDFC":"�",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u32ch": "A",
@@ -1146,11 +1146,11 @@
       "FFFE": "￾",
       "10FFFF": "􏿿",
       "0x7fffffff": "�",
-      "meta": { "provider": "TestProviderC", "event": "wch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "wch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "wch":"B","FFFE":"￾","10FFFF":"􏿿","0x7fffffff":"�",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "wch": "B",
@@ -1181,11 +1181,11 @@
       "n": "TestProviderC:ptr",
       "pSamplePtr": "0xFFFFFFFFFFFFCFC7",
       "UINTPTR_MAX": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderC", "event": "ptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "pSamplePtr":"0xFFFFFFFFFFFFCFC7","UINTPTR_MAX":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "pSamplePtr": "0xFFFFFFFFFFFFCFC7",
@@ -1210,11 +1210,11 @@
       "n": "TestProviderC:pid",
       "i32": 2000000000,
       "(2147483647)": 2147483647,
-      "meta": { "provider": "TestProviderC", "event": "pid", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "pid", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":2000000000,"(2147483647)":2147483647,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": 2000000000,
@@ -1239,11 +1239,11 @@
       "n": "TestProviderC:port",
       "port80": 80,
       "(65535)": 65535,
-      "meta": { "provider": "TestProviderC", "event": "port", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "port", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "port80":80,"(65535)":65535,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "port80": 80,
@@ -1270,11 +1270,11 @@
       "(-2147483647-1)": "ERRNO(-2147483648)",
       "1": "EPERM(1)",
       "131": "ENOTRECOVERABLE(131)",
-      "meta": { "provider": "TestProviderC", "event": "errno", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "errno", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "(-2147483647-1)":"ERRNO(-2147483648)","1":"EPERM(1)","131":"ENOTRECOVERABLE(131)",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "(-2147483647-1)": "ERRNO(-2147483648)",
@@ -1306,11 +1306,11 @@
       "(-2147483647-1)": "1901-12-13T20:45:52Z",
       "(2147483647)": "2038-01-19T03:14:07Z",
       "0": "1970-01-01T00:00:00Z",
-      "meta": { "provider": "TestProviderC", "event": "t32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "t32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":"2033-05-18T03:33:20Z","(-2147483647-1)":"1901-12-13T20:45:52Z","(2147483647)":"2038-01-19T03:14:07Z","0":"1970-01-01T00:00:00Z",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": "2033-05-18T03:33:20Z",
@@ -1353,11 +1353,11 @@
       "-11644473601": "1600-12-31T23:59:59Z",
       "910692730085": "TIME(910692730085)",
       "910692730086": "TIME(910692730086)",
-      "meta": { "provider": "TestProviderC", "event": "t64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "t64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i64":"TIME(9000000000000000000)","(-9223372036854775807L-1)":"TIME(-9223372036854775808)","(9223372036854775807L)":"TIME(9223372036854775807)","0":"1970-01-01T00:00:00Z","-11644473600":"1601-01-01T00:00:00Z","-11644473601":"1600-12-31T23:59:59Z","910692730085":"TIME(910692730085)","910692730086":"TIME(910692730086)",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i64": "TIME(9000000000000000000)",
@@ -1398,11 +1398,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderC:guid",
       "guid": "01020304-0506-0708-0102-030405060708",
-      "meta": { "provider": "TestProviderC", "event": "guid", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "guid", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "guid":"01020304-0506-0708-0102-030405060708",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "guid": "01020304-0506-0708-0102-030405060708"
@@ -1424,11 +1424,11 @@
       "n": "TestProviderC:sz",
       "NULL": "",
       "ch10": "HowAreU8?",
-      "meta": { "provider": "TestProviderC", "event": "sz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "sz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAreU8?",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1453,11 +1453,11 @@
       "n": "TestProviderC:sz8",
       "NULL": "",
       "ch10": "HowAreU8?",
-      "meta": { "provider": "TestProviderC", "event": "sz8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "sz8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAreU8?",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1482,11 +1482,11 @@
       "n": "TestProviderC:wsz",
       "NULL": "",
       "wch10": "Goodbye!!",
-      "meta": { "provider": "TestProviderC", "event": "wsz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "wsz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","wch10":"Goodbye!!",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1511,11 +1511,11 @@
       "n": "TestProviderC:sz16",
       "NULL": "",
       "u16ch10": "HowAreU16",
-      "meta": { "provider": "TestProviderC", "event": "sz16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "sz16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u16ch10":"HowAreU16",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1540,11 +1540,11 @@
       "n": "TestProviderC:sz32",
       "NULL": "",
       "u32ch10": "HowAreU32",
-      "meta": { "provider": "TestProviderC", "event": "sz32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "sz32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u32ch10":"HowAreU32",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1569,11 +1569,11 @@
       "n": "TestProviderC:csz",
       "NULL": "",
       "ch10": "HowAr",
-      "meta": { "provider": "TestProviderC", "event": "csz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "csz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1598,11 +1598,11 @@
       "n": "TestProviderC:csz8",
       "NULL": "",
       "ch10": "HowAr",
-      "meta": { "provider": "TestProviderC", "event": "csz8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "csz8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1627,11 +1627,11 @@
       "n": "TestProviderC:cwsz",
       "NULL": "",
       "wch10": "Goodb",
-      "meta": { "provider": "TestProviderC", "event": "cwsz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "cwsz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","wch10":"Goodb",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1656,11 +1656,11 @@
       "n": "TestProviderC:csz16",
       "NULL": "",
       "u16ch10": "HowAr",
-      "meta": { "provider": "TestProviderC", "event": "csz16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "csz16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u16ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1685,11 +1685,11 @@
       "n": "TestProviderC:csz32",
       "NULL": "",
       "u32ch10": "HowAr",
-      "meta": { "provider": "TestProviderC", "event": "csz32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "csz32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u32ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1714,11 +1714,11 @@
       "n": "TestProviderC:bin",
       "NULL": "",
       "ch10": "48 6F 77 41 72",
-      "meta": { "provider": "TestProviderC", "event": "bin", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "bin", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"48 6F 77 41 72",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -1743,11 +1743,11 @@
       "n": "TestProviderC:ipV4",
       "ipv4": "127.0.0.1",
       "(4294967295U)": "255.255.255.255",
-      "meta": { "provider": "TestProviderC", "event": "ipV4", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ipV4", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "ipv4":"127.0.0.1","(4294967295U)":"255.255.255.255",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "ipv4": "127.0.0.1",
@@ -1772,11 +1772,11 @@
       "n": "TestProviderC:ipV6",
       "ipv6": "102:304:506:708:90a:b0c:d0e:f10",
       "fefe..fe00": "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00",
-      "meta": { "provider": "TestProviderC", "event": "ipV6", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ipV6", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "ipv6":"102:304:506:708:90a:b0c:d0e:f10","fefe..fe00":"fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "ipv6": "102:304:506:708:90a:b0c:d0e:f10",
@@ -1801,11 +1801,11 @@
       "n": "TestProviderC:ai8",
       "a1": [ 100 ],
       "s": [ 100 ],
-      "meta": { "provider": "TestProviderC", "event": "ai8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ai8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[100],"s":[100],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 100 ],
@@ -1830,11 +1830,11 @@
       "n": "TestProviderC:au8",
       "a1": [ 200 ],
       "s": [ 200 ],
-      "meta": { "provider": "TestProviderC", "event": "au8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "au8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[200],"s":[200],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 200 ],
@@ -1859,11 +1859,11 @@
       "n": "TestProviderC:ai16",
       "a1": [ 30000 ],
       "s": [ 30000 ],
-      "meta": { "provider": "TestProviderC", "event": "ai16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ai16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[30000],"s":[30000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 30000 ],
@@ -1888,11 +1888,11 @@
       "n": "TestProviderC:au16",
       "a1": [ 60000 ],
       "s": [ 60000 ],
-      "meta": { "provider": "TestProviderC", "event": "au16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "au16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[60000],"s":[60000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 60000 ],
@@ -1917,11 +1917,11 @@
       "n": "TestProviderC:ai32",
       "a1": [ 2000000000 ],
       "s": [ 2000000000 ],
-      "meta": { "provider": "TestProviderC", "event": "ai32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ai32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 2000000000 ],
@@ -1946,11 +1946,11 @@
       "n": "TestProviderC:au32",
       "a1": [ 4000000000 ],
       "s": [ 4000000000 ],
-      "meta": { "provider": "TestProviderC", "event": "au32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "au32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 4000000000 ],
@@ -1975,11 +1975,11 @@
       "n": "TestProviderC:ai64",
       "a1": [ 9000000000000000000 ],
       "s": [ 9000000000000000000 ],
-      "meta": { "provider": "TestProviderC", "event": "ai64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ai64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[9000000000000000000],"s":[9000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 9000000000000000000 ],
@@ -2004,11 +2004,11 @@
       "n": "TestProviderC:au64",
       "a1": [ 18000000000000000000 ],
       "s": [ 18000000000000000000 ],
-      "meta": { "provider": "TestProviderC", "event": "au64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "au64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[18000000000000000000],"s":[18000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 18000000000000000000 ],
@@ -2033,11 +2033,11 @@
       "n": "TestProviderC:aiptr",
       "a1": [ 1234 ],
       "s": [ 1234 ],
-      "meta": { "provider": "TestProviderC", "event": "aiptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "aiptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[1234],"s":[1234],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 1234 ],
@@ -2062,11 +2062,11 @@
       "n": "TestProviderC:auptr",
       "a1": [ 4321 ],
       "s": [ 4321 ],
-      "meta": { "provider": "TestProviderC", "event": "auptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "auptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4321],"s":[4321],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 4321 ],
@@ -2091,11 +2091,11 @@
       "n": "TestProviderC:aiL",
       "a1": [ 2000000000 ],
       "s": [ 2000000000 ],
-      "meta": { "provider": "TestProviderC", "event": "aiL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "aiL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 2000000000 ],
@@ -2120,11 +2120,11 @@
       "n": "TestProviderC:auL",
       "a1": [ 4000000000 ],
       "s": [ 4000000000 ],
-      "meta": { "provider": "TestProviderC", "event": "auL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "auL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 4000000000 ],
@@ -2149,11 +2149,11 @@
       "n": "TestProviderC:hai8",
       "a1": [ "0x64" ],
       "s": [ "0x64" ],
-      "meta": { "provider": "TestProviderC", "event": "hai8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hai8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[100],"s":[100],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x64" ],
@@ -2178,11 +2178,11 @@
       "n": "TestProviderC:hau8",
       "a1": [ "0xC8" ],
       "s": [ "0xC8" ],
-      "meta": { "provider": "TestProviderC", "event": "hau8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hau8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[200],"s":[200],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xC8" ],
@@ -2207,11 +2207,11 @@
       "n": "TestProviderC:hai16",
       "a1": [ "0x7530" ],
       "s": [ "0x7530" ],
-      "meta": { "provider": "TestProviderC", "event": "hai16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hai16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[30000],"s":[30000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x7530" ],
@@ -2236,11 +2236,11 @@
       "n": "TestProviderC:hau16",
       "a1": [ "0xEA60" ],
       "s": [ "0xEA60" ],
-      "meta": { "provider": "TestProviderC", "event": "hau16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hau16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[60000],"s":[60000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xEA60" ],
@@ -2265,11 +2265,11 @@
       "n": "TestProviderC:hai32",
       "a1": [ "0x77359400" ],
       "s": [ "0x77359400" ],
-      "meta": { "provider": "TestProviderC", "event": "hai32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hai32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x77359400" ],
@@ -2294,11 +2294,11 @@
       "n": "TestProviderC:hau32",
       "a1": [ "0xEE6B2800" ],
       "s": [ "0xEE6B2800" ],
-      "meta": { "provider": "TestProviderC", "event": "hau32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hau32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xEE6B2800" ],
@@ -2323,11 +2323,11 @@
       "n": "TestProviderC:hai64",
       "a1": [ "0x7CE66C50E2840000" ],
       "s": [ "0x7CE66C50E2840000" ],
-      "meta": { "provider": "TestProviderC", "event": "hai64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hai64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[9000000000000000000],"s":[9000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x7CE66C50E2840000" ],
@@ -2352,11 +2352,11 @@
       "n": "TestProviderC:hau64",
       "a1": [ "0xF9CCD8A1C5080000" ],
       "s": [ "0xF9CCD8A1C5080000" ],
-      "meta": { "provider": "TestProviderC", "event": "hau64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hau64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[18000000000000000000],"s":[18000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xF9CCD8A1C5080000" ],
@@ -2381,11 +2381,11 @@
       "n": "TestProviderC:haiptr",
       "a1": [ "0x4D2" ],
       "s": [ "0x4D2" ],
-      "meta": { "provider": "TestProviderC", "event": "haiptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "haiptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[1234],"s":[1234],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x4D2" ],
@@ -2410,11 +2410,11 @@
       "n": "TestProviderC:hauptr",
       "a1": [ "0x10E1" ],
       "s": [ "0x10E1" ],
-      "meta": { "provider": "TestProviderC", "event": "hauptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hauptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4321],"s":[4321],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x10E1" ],
@@ -2439,11 +2439,11 @@
       "n": "TestProviderC:haiL",
       "a1": [ "0x77359400" ],
       "s": [ "0x77359400" ],
-      "meta": { "provider": "TestProviderC", "event": "haiL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "haiL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x77359400" ],
@@ -2468,11 +2468,11 @@
       "n": "TestProviderC:hauL",
       "a1": [ "0xEE6B2800" ],
       "s": [ "0xEE6B2800" ],
-      "meta": { "provider": "TestProviderC", "event": "hauL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "hauL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xEE6B2800" ],
@@ -2497,11 +2497,11 @@
       "n": "TestProviderC:af32",
       "a1": [ 3.1400001 ],
       "s": [ 3.1400001 ],
-      "meta": { "provider": "TestProviderC", "event": "af32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "af32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[3.14],"s":[3.14],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 3.1400001 ],
@@ -2526,11 +2526,11 @@
       "n": "TestProviderC:af64",
       "a1": [ 6.2800000000000002 ],
       "s": [ 6.2800000000000002 ],
-      "meta": { "provider": "TestProviderC", "event": "af64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "af64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[6.28],"s":[6.28],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 6.2800000000000002 ],
@@ -2555,11 +2555,11 @@
       "n": "TestProviderC:ab8",
       "a1": [ true ],
       "s": [ true ],
-      "meta": { "provider": "TestProviderC", "event": "ab8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ab8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[true],"s":[true],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ true ],
@@ -2584,11 +2584,11 @@
       "n": "TestProviderC:ab32",
       "a1": [ true ],
       "s": [ true ],
-      "meta": { "provider": "TestProviderC", "event": "ab32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ab32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[true],"s":[true],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ true ],
@@ -2613,11 +2613,11 @@
       "n": "TestProviderC:ach",
       "a4": [ "H", "o", "w", "A" ],
       "s5": [ "H", "o", "w", "A", "r" ],
-      "meta": { "provider": "TestProviderC", "event": "ach", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ach", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["H","o","w","A"],"s5":["H","o","w","A","r"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "H", "o", "w", "A" ],
@@ -2642,11 +2642,11 @@
       "n": "TestProviderC:ach16",
       "a4": [ "H", "o", "w", "A" ],
       "s5": [ "H", "o", "w", "A", "r" ],
-      "meta": { "provider": "TestProviderC", "event": "ach16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ach16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["H","o","w","A"],"s5":["H","o","w","A","r"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "H", "o", "w", "A" ],
@@ -2671,11 +2671,11 @@
       "n": "TestProviderC:ach32",
       "a4": [ "H", "o", "w", "A" ],
       "s5": [ "H", "o", "w", "A", "r" ],
-      "meta": { "provider": "TestProviderC", "event": "ach32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ach32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["H","o","w","A"],"s5":["H","o","w","A","r"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "H", "o", "w", "A" ],
@@ -2700,11 +2700,11 @@
       "n": "TestProviderC:awch",
       "a4": [ "G", "o", "o", "d" ],
       "s5": [ "G", "o", "o", "d", "b" ],
-      "meta": { "provider": "TestProviderC", "event": "awch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "awch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["G","o","o","d"],"s5":["G","o","o","d","b"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "G", "o", "o", "d" ],
@@ -2729,11 +2729,11 @@
       "n": "TestProviderC:aptr",
       "a1": [ "0xFFFFFFFFFFFFCFC7" ],
       "s": [ "0xFFFFFFFFFFFFCFC7" ],
-      "meta": { "provider": "TestProviderC", "event": "aptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "aptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[18446744073709539271],"s":[18446744073709539271],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xFFFFFFFFFFFFCFC7" ],
@@ -2758,11 +2758,11 @@
       "n": "TestProviderC:apid",
       "a1": [ 2000000000 ],
       "s": [ 2000000000 ],
-      "meta": { "provider": "TestProviderC", "event": "apid", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "apid", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 2000000000 ],
@@ -2787,11 +2787,11 @@
       "n": "TestProviderC:aport",
       "a1": [ 24810 ],
       "s": [ 24810 ],
-      "meta": { "provider": "TestProviderC", "event": "aport", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "aport", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[24810],"s":[24810],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 24810 ],
@@ -2816,11 +2816,11 @@
       "n": "TestProviderC:aerrno",
       "a1": [ "ERRNO(2000000000)" ],
       "s": [ "ERRNO(2000000000)" ],
-      "meta": { "provider": "TestProviderC", "event": "aerrno", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "aerrno", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "ERRNO(2000000000)" ],
@@ -2845,11 +2845,11 @@
       "n": "TestProviderC:aft",
       "a1": [ "2033-05-18T03:33:20Z" ],
       "s": [ "2033-05-18T03:33:20Z" ],
-      "meta": { "provider": "TestProviderC", "event": "aft", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "aft", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "2033-05-18T03:33:20Z" ],
@@ -2874,11 +2874,11 @@
       "n": "TestProviderC:auft",
       "a1": [ "TIME(9000000000000000000)" ],
       "s": [ "TIME(9000000000000000000)" ],
-      "meta": { "provider": "TestProviderC", "event": "auft", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "auft", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[9000000000000000000],"s":[9000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "TIME(9000000000000000000)" ],
@@ -2903,11 +2903,11 @@
       "n": "TestProviderC:ag",
       "s0": [ ],
       "s1": [ "01020304-0506-0708-0102-030405060708" ],
-      "meta": { "provider": "TestProviderC", "event": "ag", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ag", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "s0":[],"s1":["01020304-0506-0708-0102-030405060708"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "s0": [ ],
@@ -2932,11 +2932,11 @@
       "n": "TestProviderC:ahexbytes",
       "s0": [ ],
       "s1": [ "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08" ],
-      "meta": { "provider": "TestProviderC", "event": "ahexbytes", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "ahexbytes", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "s0":[],"s1":["01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "s0": [ ],
@@ -2979,11 +2979,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "Default", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "Default", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "V8":200,"V16":60000,"V32":4000000000,"V64":18000000000000000000,"V128":"01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08","NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "V8": 200,
@@ -3053,11 +3053,11 @@
       "LChar8": "68 6A 6B 6C",
       "LChar16": "68 00 6A 00 6B 00 6C 00",
       "LChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
-      "meta": { "provider": "TestProviderC", "event": "HexBytes", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "HexBytes", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "V8":"01","V16":"01 02","V32":"01 02 03 04","V64":"01 02 03 04 05 06 07 08","V128":"01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08","NChar8":"68 6A 6B 6C","NChar16":"68 00 6A 00 6B 00 6C 00","NChar32":"68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00","LChar8":"68 6A 6B 6C","LChar16":"68 00 6A 00 6B 00 6C 00","LChar32":"68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "V8": "01",
@@ -3111,25 +3111,25 @@
       "n": "TestProviderC:Bool16",
       "false16": false,
       "true16": true,
-      "u16": 60000,
-      "i16": 30000,
-      "meta": { "provider": "TestProviderC", "event": "Bool16", "level": 5, "flags": "0x7" }
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)",
+      "info": { "provider": "TestProviderC", "event": "Bool16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
-      "false16":false,"true16":true,"u16":60000,"i16":30000,
-      "meta": {  }
+      "false16":false,"true16":true,"u16":"BOOL(60000)","i16":"BOOL(30000)",
+      "info": {  }
     },
     "MoveNext": {
       "false16": false,
       "true16": true,
-      "u16": 60000,
-      "i16": 30000
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)"
     },
     "MoveNextSibling": {
       "false16": false,
       "true16": true,
-      "u16": 60000,
-      "i16": 30000
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)"
     },
     "ToString": {
       "false16": "Bool16:false",
@@ -3156,11 +3156,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringUtf", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringUtf", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3205,11 +3205,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringUtfBom-NoBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringUtfBom-NoBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3254,11 +3254,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringXml-NoBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringXml-NoBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3303,11 +3303,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringJson-NoBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringJson-NoBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3352,11 +3352,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringUtfBom-Bom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringUtfBom-Bom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3401,11 +3401,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringXml-Bom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringXml-Bom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3450,11 +3450,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringJson-Bom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringJson-Bom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3499,11 +3499,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringUtfBom-XBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringUtfBom-XBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3548,11 +3548,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringXml-XBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringXml-XBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3597,11 +3597,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderC", "event": "StringJson-XBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "StringJson-XBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -3646,11 +3646,11 @@
       "Struct1": { "NChar8": "hjkl" },
       "StructArray": [ { "Struct2": { "K": "A", "NChar16": "68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "B", "NChar16": "FF FE 68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "C", "NChar16": "FE FF 00 68 00 6A 00 6B 00 6C" } } ],
       "five": 5,
-      "meta": { "provider": "TestProviderC", "event": "Packed", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "Packed", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "five":5,"Struct1":{"NChar8":"hjkl"},"StructArray":[{"Struct2":{"K":"A","NChar16":"68 00 6A 00 6B 00 6C 00"}},{"Struct2":{"K":"B","NChar16":"FF FE 68 00 6A 00 6B 00 6C 00"}},{"Struct2":{"K":"C","NChar16":"FE FF 00 68 00 6A 00 6B 00 6C"}}],"five":5,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "five": 5,
@@ -3719,11 +3719,11 @@
       "Struct1": { "NChar8": "hjkl" },
       "StructArray": [ ],
       "five": 5,
-      "meta": { "provider": "TestProviderC", "event": "Packed0", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "Packed0", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "five":5,"Struct1":{"NChar8":"hjkl"},"StructArray":[],"five":5,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "five": 5,
@@ -3759,11 +3759,11 @@
       "five": 5,
       "MyStrings3": [ "ABC", "", "XYZ" ],
       "five": 5,
-      "meta": { "provider": "TestProviderC", "event": "PackedComplexArray", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "PackedComplexArray", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "five":5,"MyStrings3":["ABC","","XYZ"],"five":5,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "five": 5,
@@ -3789,11 +3789,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderC:EventCG",
       "enabled": true,
-      "meta": { "provider": "TestProviderC", "event": "EventCG", "level": 5, "options": "Gmsft", "flags": "0x7" }
+      "info": { "provider": "TestProviderC", "event": "EventCG", "level": 5, "options": "Gmsft", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "enabled":true,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "enabled": true
@@ -3813,11 +3813,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderCpp:EventCppG",
       "enabled": true,
-      "meta": { "provider": "TestProviderCpp", "event": "EventCppG", "level": 5, "options": "Gmsft", "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "EventCppG", "level": 5, "options": "Gmsft", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "enabled":true,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "enabled": true
@@ -3835,11 +3835,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderCpp:CScalars1",
-      "meta": { "provider": "TestProviderCpp", "event": "CScalars1", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "CScalars1", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
     },
@@ -3854,11 +3854,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderCpp:CScalars2",
-      "meta": { "provider": "TestProviderCpp", "event": "CScalars2", "level": 1, "keyword": "0xF123456789ABCDEF", "opcode": 2, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "CScalars2", "level": 1, "keyword": "0xF123456789ABCDEF", "opcode": 2, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": { "keyword":17375808098319191535,"opcode":2 }
+      "info": { "keyword":17375808098319191535,"opcode":2 }
     },
     "MoveNext": {
     },
@@ -3877,11 +3877,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderCpp:CScalars3",
       "Struct20;tag=0xBEEF": { "hi;tag=0x12": "hi", "ch10;tag=0x10": [ "H", "o", "w" ] },
-      "meta": { "provider": "TestProviderCpp", "event": "CScalars3", "id": 1000, "version": 11, "level": 4, "keyword": "0x85", "opcode": 3, "tag": "0x1234", "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "CScalars3", "id": 1000, "version": 11, "level": 4, "keyword": "0x85", "opcode": 3, "tag": "0x1234", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "Struct20":{"hi":"hi","ch10":["H","o","w"]},
-      "meta": { "id":1000,"version":11,"keyword":133,"opcode":3,"tag":4660 }
+      "info": { "id":1000,"version":11,"keyword":133,"opcode":3,"tag":4660 }
     },
     "MoveNext": {
       "Struct20;tag=0xBEEF": {
@@ -3905,11 +3905,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderCpp:Transfer00",
-      "meta": { "provider": "TestProviderCpp", "event": "Transfer00", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Transfer00", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
     },
@@ -3924,11 +3924,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderCpp:Transfer10",
-      "meta": { "provider": "TestProviderCpp", "event": "Transfer10", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Transfer10", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": { "activity":"01020304-0506-0708-0102-030405060708" }
+      "info": { "activity":"01020304-0506-0708-0102-030405060708" }
     },
     "MoveNext": {
     },
@@ -3943,11 +3943,11 @@
     },
     "AppendJsonItemN": {
       "n": "TestProviderCpp:Transfer11",
-      "meta": { "provider": "TestProviderCpp", "event": "Transfer11", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "relatedActivity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Transfer11", "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "relatedActivity": "01020304-0506-0708-0102-030405060708", "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "": null,
-      "meta": { "activity":"01020304-0506-0708-0102-030405060708","relatedActivity":"01020304-0506-0708-0102-030405060708" }
+      "info": { "activity":"01020304-0506-0708-0102-030405060708","relatedActivity":"01020304-0506-0708-0102-030405060708" }
     },
     "MoveNext": {
     },
@@ -3966,11 +3966,11 @@
       "n": "TestProviderCpp:i8",
       "i8": 100,
       "(-128)": -128,
-      "meta": { "provider": "TestProviderCpp", "event": "i8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "i8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i8":100,"(-128)":-128,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i8": 100,
@@ -3995,11 +3995,11 @@
       "n": "TestProviderCpp:u8",
       "u8": 200,
       "(255)": 255,
-      "meta": { "provider": "TestProviderCpp", "event": "u8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "u8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u8":200,"(255)":255,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u8": 200,
@@ -4024,11 +4024,11 @@
       "n": "TestProviderCpp:i16",
       "i16": 30000,
       "(-32767-1)": -32768,
-      "meta": { "provider": "TestProviderCpp", "event": "i16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "i16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i16":30000,"(-32767-1)":-32768,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i16": 30000,
@@ -4053,11 +4053,11 @@
       "n": "TestProviderCpp:u16",
       "u16": 60000,
       "(65535)": 65535,
-      "meta": { "provider": "TestProviderCpp", "event": "u16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "u16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u16":60000,"(65535)":65535,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u16": 60000,
@@ -4082,11 +4082,11 @@
       "n": "TestProviderCpp:i32",
       "i32": 2000000000,
       "(-2147483647-1)": -2147483648,
-      "meta": { "provider": "TestProviderCpp", "event": "i32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "i32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":2000000000,"(-2147483647-1)":-2147483648,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": 2000000000,
@@ -4111,11 +4111,11 @@
       "n": "TestProviderCpp:u32",
       "u32": 4000000000,
       "(4294967295U)": 4294967295,
-      "meta": { "provider": "TestProviderCpp", "event": "u32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "u32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u32":4000000000,"(4294967295U)":4294967295,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u32": 4000000000,
@@ -4140,11 +4140,11 @@
       "n": "TestProviderCpp:i64",
       "i64": 9000000000000000000,
       "(-9223372036854775807L-1)": -9223372036854775808,
-      "meta": { "provider": "TestProviderCpp", "event": "i64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "i64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i64":9000000000000000000,"(-9223372036854775807L-1)":-9223372036854775808,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i64": 9000000000000000000,
@@ -4169,11 +4169,11 @@
       "n": "TestProviderCpp:u64",
       "u64": 18000000000000000000,
       "(18446744073709551615UL)": 18446744073709551615,
-      "meta": { "provider": "TestProviderCpp", "event": "u64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "u64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u64":18000000000000000000,"(18446744073709551615UL)":18446744073709551615,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u64": 18000000000000000000,
@@ -4198,11 +4198,11 @@
       "n": "TestProviderCpp:iptr",
       "iptr": 1234,
       "(-9223372036854775807L-1)": -9223372036854775808,
-      "meta": { "provider": "TestProviderCpp", "event": "iptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "iptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iptr":1234,"(-9223372036854775807L-1)":-9223372036854775808,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iptr": 1234,
@@ -4227,11 +4227,11 @@
       "n": "TestProviderCpp:uptr",
       "uptr": 4321,
       "(18446744073709551615UL)": 18446744073709551615,
-      "meta": { "provider": "TestProviderCpp", "event": "uptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "uptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uptr":4321,"(18446744073709551615UL)":18446744073709551615,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uptr": 4321,
@@ -4256,11 +4256,11 @@
       "n": "TestProviderCpp:iL",
       "iL": 2000000000,
       "(-0x7fffffffffffffffL - 1L)": -9223372036854775808,
-      "meta": { "provider": "TestProviderCpp", "event": "iL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "iL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iL":2000000000,"(-0x7fffffffffffffffL - 1L)":-9223372036854775808,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iL": 2000000000,
@@ -4285,11 +4285,11 @@
       "n": "TestProviderCpp:uL",
       "uL": 4000000000,
       "(0x7fffffffffffffffL * 2UL + 1UL)": 18446744073709551615,
-      "meta": { "provider": "TestProviderCpp", "event": "uL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "uL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uL":4000000000,"(0x7fffffffffffffffL * 2UL + 1UL)":18446744073709551615,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uL": 4000000000,
@@ -4314,11 +4314,11 @@
       "n": "TestProviderCpp:hi8",
       "i8": "0x64",
       "(-128)": "0x80",
-      "meta": { "provider": "TestProviderCpp", "event": "hi8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hi8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i8":"0x64","(-128)":"0x80",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i8": "0x64",
@@ -4343,11 +4343,11 @@
       "n": "TestProviderCpp:hu8",
       "u8": "0xC8",
       "(255)": "0xFF",
-      "meta": { "provider": "TestProviderCpp", "event": "hu8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hu8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u8":"0xC8","(255)":"0xFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u8": "0xC8",
@@ -4372,11 +4372,11 @@
       "n": "TestProviderCpp:hi16",
       "i16": "0x7530",
       "(-32767-1)": "0x8000",
-      "meta": { "provider": "TestProviderCpp", "event": "hi16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hi16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i16":"0x7530","(-32767-1)":"0x8000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i16": "0x7530",
@@ -4401,11 +4401,11 @@
       "n": "TestProviderCpp:hu16",
       "u16": "0xEA60",
       "(65535)": "0xFFFF",
-      "meta": { "provider": "TestProviderCpp", "event": "hu16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hu16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u16":"0xEA60","(65535)":"0xFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u16": "0xEA60",
@@ -4430,11 +4430,11 @@
       "n": "TestProviderCpp:hi32",
       "i32": "0x77359400",
       "(-2147483647-1)": "0x80000000",
-      "meta": { "provider": "TestProviderCpp", "event": "hi32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hi32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":"0x77359400","(-2147483647-1)":"0x80000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": "0x77359400",
@@ -4459,11 +4459,11 @@
       "n": "TestProviderCpp:hu32",
       "u32": "0xEE6B2800",
       "(4294967295U)": "0xFFFFFFFF",
-      "meta": { "provider": "TestProviderCpp", "event": "hu32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hu32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u32":"0xEE6B2800","(4294967295U)":"0xFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u32": "0xEE6B2800",
@@ -4488,11 +4488,11 @@
       "n": "TestProviderCpp:hi64",
       "i64": "0x7CE66C50E2840000",
       "(-9223372036854775807L-1)": "0x8000000000000000",
-      "meta": { "provider": "TestProviderCpp", "event": "hi64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hi64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i64":"0x7CE66C50E2840000","(-9223372036854775807L-1)":"0x8000000000000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i64": "0x7CE66C50E2840000",
@@ -4517,11 +4517,11 @@
       "n": "TestProviderCpp:hu64",
       "u64": "0xF9CCD8A1C5080000",
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderCpp", "event": "hu64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hu64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u64":"0xF9CCD8A1C5080000","(18446744073709551615UL)":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u64": "0xF9CCD8A1C5080000",
@@ -4546,11 +4546,11 @@
       "n": "TestProviderCpp:hiptr",
       "iptr": "0x4D2",
       "(-9223372036854775807L-1)": "0x8000000000000000",
-      "meta": { "provider": "TestProviderCpp", "event": "hiptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hiptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iptr":"0x4D2","(-9223372036854775807L-1)":"0x8000000000000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iptr": "0x4D2",
@@ -4575,11 +4575,11 @@
       "n": "TestProviderCpp:huptr",
       "uptr": "0x10E1",
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderCpp", "event": "huptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "huptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uptr":"0x10E1","(18446744073709551615UL)":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uptr": "0x10E1",
@@ -4604,11 +4604,11 @@
       "n": "TestProviderCpp:hiL",
       "iL": "0x77359400",
       "(-0x7fffffffffffffffL - 1L)": "0x8000000000000000",
-      "meta": { "provider": "TestProviderCpp", "event": "hiL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hiL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "iL":"0x77359400","(-0x7fffffffffffffffL - 1L)":"0x8000000000000000",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "iL": "0x77359400",
@@ -4633,11 +4633,11 @@
       "n": "TestProviderCpp:huL",
       "uL": "0xEE6B2800",
       "(0x7fffffffffffffffL * 2UL + 1UL)": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderCpp", "event": "huL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "huL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "uL":"0xEE6B2800","(0x7fffffffffffffffL * 2UL + 1UL)":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "uL": "0xEE6B2800",
@@ -4666,11 +4666,11 @@
       "1/3": 0.333333343,
       "NaN": "NaN",
       "-Inf": "-Infinity",
-      "meta": { "provider": "TestProviderCpp", "event": "f32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "f32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "f32":3.1400001,"1/3":0.333333343,"NaN":"NaN","-Inf":"-Infinity",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "f32": 3.1400001,
@@ -4705,11 +4705,11 @@
       "1/3": 0.33333333333333331,
       "NaN": "NaN",
       "-Inf": "-Infinity",
-      "meta": { "provider": "TestProviderCpp", "event": "f64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "f64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "f64":6.2800000000000002,"1/3":0.33333333333333331,"NaN":"NaN","-Inf":"-Infinity",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "f64": 6.2800000000000002,
@@ -4741,22 +4741,22 @@
       "n": "TestProviderCpp:b8",
       "b0": false,
       "b1": true,
-      "(255)": 255,
-      "meta": { "provider": "TestProviderCpp", "event": "b8", "level": 5, "flags": "0x7" }
+      "(255)": "BOOL(255)",
+      "info": { "provider": "TestProviderCpp", "event": "b8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
-      "b0":false,"b1":true,"(255)":255,
-      "meta": {  }
+      "b0":false,"b1":true,"(255)":"BOOL(255)",
+      "info": {  }
     },
     "MoveNext": {
       "b0": false,
       "b1": true,
-      "(255)": 255
+      "(255)": "BOOL(255)"
     },
     "MoveNextSibling": {
       "b0": false,
       "b1": true,
-      "(255)": 255
+      "(255)": "BOOL(255)"
     },
     "ToString": {
       "b0": "Bool8:false",
@@ -4775,22 +4775,22 @@
       "n": "TestProviderCpp:b32",
       "b0": false,
       "b1": true,
-      "(-2147483647-1)": -2147483648,
-      "meta": { "provider": "TestProviderCpp", "event": "b32", "level": 5, "flags": "0x7" }
+      "(-2147483647-1)": "BOOL(-2147483648)",
+      "info": { "provider": "TestProviderCpp", "event": "b32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
-      "b0":false,"b1":true,"(-2147483647-1)":-2147483648,
-      "meta": {  }
+      "b0":false,"b1":true,"(-2147483647-1)":"BOOL(-2147483648)",
+      "info": {  }
     },
     "MoveNext": {
       "b0": false,
       "b1": true,
-      "(-2147483647-1)": -2147483648
+      "(-2147483647-1)": "BOOL(-2147483648)"
     },
     "MoveNextSibling": {
       "b0": false,
       "b1": true,
-      "(-2147483647-1)": -2147483648
+      "(-2147483647-1)": "BOOL(-2147483648)"
     },
     "ToString": {
       "b0": "Bool32:false",
@@ -4808,11 +4808,11 @@
       "n": "TestProviderCpp:ch",
       "ch": "A",
       "FE": "þ",
-      "meta": { "provider": "TestProviderCpp", "event": "ch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "ch":"A","FE":"þ",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "ch": "A",
@@ -4837,11 +4837,11 @@
       "n": "TestProviderCpp:u16ch",
       "u16ch": "A",
       "FFFE": "￾",
-      "meta": { "provider": "TestProviderCpp", "event": "u16ch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "u16ch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u16ch":"A","FFFE":"￾",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u16ch": "A",
@@ -4870,11 +4870,11 @@
       "FFFE": "￾",
       "10FFFF": "􏿿",
       "FFFEFDFC": "�",
-      "meta": { "provider": "TestProviderCpp", "event": "u32ch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "u32ch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "u32ch":"A","FFFE":"￾","10FFFF":"􏿿","FFFEFDFC":"�",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "u32ch": "A",
@@ -4909,11 +4909,11 @@
       "FFFE": "￾",
       "10FFFF": "􏿿",
       "0x7fffffff": "�",
-      "meta": { "provider": "TestProviderCpp", "event": "wch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "wch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "wch":"B","FFFE":"￾","10FFFF":"􏿿","0x7fffffff":"�",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "wch": "B",
@@ -4944,11 +4944,11 @@
       "n": "TestProviderCpp:ptr",
       "pSamplePtr": "0xFFFFFFFFFFFFCFC7",
       "UINTPTR_MAX": "0xFFFFFFFFFFFFFFFF",
-      "meta": { "provider": "TestProviderCpp", "event": "ptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "pSamplePtr":"0xFFFFFFFFFFFFCFC7","UINTPTR_MAX":"0xFFFFFFFFFFFFFFFF",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "pSamplePtr": "0xFFFFFFFFFFFFCFC7",
@@ -4973,11 +4973,11 @@
       "n": "TestProviderCpp:pid",
       "i32": 2000000000,
       "(2147483647)": 2147483647,
-      "meta": { "provider": "TestProviderCpp", "event": "pid", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "pid", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":2000000000,"(2147483647)":2147483647,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": 2000000000,
@@ -5002,11 +5002,11 @@
       "n": "TestProviderCpp:port",
       "port80": 80,
       "(65535)": 65535,
-      "meta": { "provider": "TestProviderCpp", "event": "port", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "port", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "port80":80,"(65535)":65535,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "port80": 80,
@@ -5033,11 +5033,11 @@
       "(-2147483647-1)": "ERRNO(-2147483648)",
       "1": "EPERM(1)",
       "131": "ENOTRECOVERABLE(131)",
-      "meta": { "provider": "TestProviderCpp", "event": "errno", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "errno", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "(-2147483647-1)":"ERRNO(-2147483648)","1":"EPERM(1)","131":"ENOTRECOVERABLE(131)",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "(-2147483647-1)": "ERRNO(-2147483648)",
@@ -5069,11 +5069,11 @@
       "(-2147483647-1)": "1901-12-13T20:45:52Z",
       "(2147483647)": "2038-01-19T03:14:07Z",
       "0": "1970-01-01T00:00:00Z",
-      "meta": { "provider": "TestProviderCpp", "event": "t32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "t32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i32":"2033-05-18T03:33:20Z","(-2147483647-1)":"1901-12-13T20:45:52Z","(2147483647)":"2038-01-19T03:14:07Z","0":"1970-01-01T00:00:00Z",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i32": "2033-05-18T03:33:20Z",
@@ -5116,11 +5116,11 @@
       "-11644473601": "1600-12-31T23:59:59Z",
       "910692730085": "TIME(910692730085)",
       "910692730086": "TIME(910692730086)",
-      "meta": { "provider": "TestProviderCpp", "event": "t64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "t64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "i64":"TIME(9000000000000000000)","(-9223372036854775807L-1)":"TIME(-9223372036854775808)","(9223372036854775807L)":"TIME(9223372036854775807)","0":"1970-01-01T00:00:00Z","-11644473600":"1601-01-01T00:00:00Z","-11644473601":"1600-12-31T23:59:59Z","910692730085":"TIME(910692730085)","910692730086":"TIME(910692730086)",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "i64": "TIME(9000000000000000000)",
@@ -5161,11 +5161,11 @@
     "AppendJsonItemN": {
       "n": "TestProviderCpp:guid",
       "guid": "01020304-0506-0708-0102-030405060708",
-      "meta": { "provider": "TestProviderCpp", "event": "guid", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "guid", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "guid":"01020304-0506-0708-0102-030405060708",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "guid": "01020304-0506-0708-0102-030405060708"
@@ -5187,11 +5187,11 @@
       "n": "TestProviderCpp:sz",
       "NULL": "",
       "ch10": "HowAreU8?",
-      "meta": { "provider": "TestProviderCpp", "event": "sz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "sz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAreU8?",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5216,11 +5216,11 @@
       "n": "TestProviderCpp:sz8",
       "NULL": "",
       "ch10": "HowAreU8?",
-      "meta": { "provider": "TestProviderCpp", "event": "sz8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "sz8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAreU8?",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5245,11 +5245,11 @@
       "n": "TestProviderCpp:wsz",
       "NULL": "",
       "wch10": "Goodbye!!",
-      "meta": { "provider": "TestProviderCpp", "event": "wsz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "wsz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","wch10":"Goodbye!!",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5274,11 +5274,11 @@
       "n": "TestProviderCpp:sz16",
       "NULL": "",
       "u16ch10": "HowAreU16",
-      "meta": { "provider": "TestProviderCpp", "event": "sz16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "sz16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u16ch10":"HowAreU16",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5303,11 +5303,11 @@
       "n": "TestProviderCpp:sz32",
       "NULL": "",
       "u32ch10": "HowAreU32",
-      "meta": { "provider": "TestProviderCpp", "event": "sz32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "sz32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u32ch10":"HowAreU32",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5332,11 +5332,11 @@
       "n": "TestProviderCpp:csz",
       "NULL": "",
       "ch10": "HowAr",
-      "meta": { "provider": "TestProviderCpp", "event": "csz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "csz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5361,11 +5361,11 @@
       "n": "TestProviderCpp:csz8",
       "NULL": "",
       "ch10": "HowAr",
-      "meta": { "provider": "TestProviderCpp", "event": "csz8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "csz8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5390,11 +5390,11 @@
       "n": "TestProviderCpp:cwsz",
       "NULL": "",
       "wch10": "Goodb",
-      "meta": { "provider": "TestProviderCpp", "event": "cwsz", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "cwsz", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","wch10":"Goodb",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5419,11 +5419,11 @@
       "n": "TestProviderCpp:csz16",
       "NULL": "",
       "u16ch10": "HowAr",
-      "meta": { "provider": "TestProviderCpp", "event": "csz16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "csz16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u16ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5448,11 +5448,11 @@
       "n": "TestProviderCpp:csz32",
       "NULL": "",
       "u32ch10": "HowAr",
-      "meta": { "provider": "TestProviderCpp", "event": "csz32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "csz32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","u32ch10":"HowAr",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5477,11 +5477,11 @@
       "n": "TestProviderCpp:bin",
       "NULL": "",
       "ch10": "48 6F 77 41 72",
-      "meta": { "provider": "TestProviderCpp", "event": "bin", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "bin", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NULL":"","ch10":"48 6F 77 41 72",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NULL": "",
@@ -5506,11 +5506,11 @@
       "n": "TestProviderCpp:ipV4",
       "ipv4": "127.0.0.1",
       "(4294967295U)": "255.255.255.255",
-      "meta": { "provider": "TestProviderCpp", "event": "ipV4", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ipV4", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "ipv4":"127.0.0.1","(4294967295U)":"255.255.255.255",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "ipv4": "127.0.0.1",
@@ -5535,11 +5535,11 @@
       "n": "TestProviderCpp:ipV6",
       "ipv6": "102:304:506:708:90a:b0c:d0e:f10",
       "fefe..fe00": "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00",
-      "meta": { "provider": "TestProviderCpp", "event": "ipV6", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ipV6", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "ipv6":"102:304:506:708:90a:b0c:d0e:f10","fefe..fe00":"fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "ipv6": "102:304:506:708:90a:b0c:d0e:f10",
@@ -5564,11 +5564,11 @@
       "n": "TestProviderCpp:ai8",
       "a1": [ 100 ],
       "s": [ 100 ],
-      "meta": { "provider": "TestProviderCpp", "event": "ai8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ai8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[100],"s":[100],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 100 ],
@@ -5593,11 +5593,11 @@
       "n": "TestProviderCpp:au8",
       "a1": [ 200 ],
       "s": [ 200 ],
-      "meta": { "provider": "TestProviderCpp", "event": "au8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "au8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[200],"s":[200],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 200 ],
@@ -5622,11 +5622,11 @@
       "n": "TestProviderCpp:ai16",
       "a1": [ 30000 ],
       "s": [ 30000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "ai16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ai16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[30000],"s":[30000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 30000 ],
@@ -5651,11 +5651,11 @@
       "n": "TestProviderCpp:au16",
       "a1": [ 60000 ],
       "s": [ 60000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "au16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "au16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[60000],"s":[60000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 60000 ],
@@ -5680,11 +5680,11 @@
       "n": "TestProviderCpp:ai32",
       "a1": [ 2000000000 ],
       "s": [ 2000000000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "ai32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ai32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 2000000000 ],
@@ -5709,11 +5709,11 @@
       "n": "TestProviderCpp:au32",
       "a1": [ 4000000000 ],
       "s": [ 4000000000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "au32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "au32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 4000000000 ],
@@ -5738,11 +5738,11 @@
       "n": "TestProviderCpp:ai64",
       "a1": [ 9000000000000000000 ],
       "s": [ 9000000000000000000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "ai64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ai64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[9000000000000000000],"s":[9000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 9000000000000000000 ],
@@ -5767,11 +5767,11 @@
       "n": "TestProviderCpp:au64",
       "a1": [ 18000000000000000000 ],
       "s": [ 18000000000000000000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "au64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "au64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[18000000000000000000],"s":[18000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 18000000000000000000 ],
@@ -5796,11 +5796,11 @@
       "n": "TestProviderCpp:aiptr",
       "a1": [ 1234 ],
       "s": [ 1234 ],
-      "meta": { "provider": "TestProviderCpp", "event": "aiptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "aiptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[1234],"s":[1234],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 1234 ],
@@ -5825,11 +5825,11 @@
       "n": "TestProviderCpp:auptr",
       "a1": [ 4321 ],
       "s": [ 4321 ],
-      "meta": { "provider": "TestProviderCpp", "event": "auptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "auptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4321],"s":[4321],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 4321 ],
@@ -5854,11 +5854,11 @@
       "n": "TestProviderCpp:aiL",
       "a1": [ 2000000000 ],
       "s": [ 2000000000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "aiL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "aiL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 2000000000 ],
@@ -5883,11 +5883,11 @@
       "n": "TestProviderCpp:auL",
       "a1": [ 4000000000 ],
       "s": [ 4000000000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "auL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "auL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 4000000000 ],
@@ -5912,11 +5912,11 @@
       "n": "TestProviderCpp:hai8",
       "a1": [ "0x64" ],
       "s": [ "0x64" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hai8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hai8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[100],"s":[100],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x64" ],
@@ -5941,11 +5941,11 @@
       "n": "TestProviderCpp:hau8",
       "a1": [ "0xC8" ],
       "s": [ "0xC8" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hau8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hau8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[200],"s":[200],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xC8" ],
@@ -5970,11 +5970,11 @@
       "n": "TestProviderCpp:hai16",
       "a1": [ "0x7530" ],
       "s": [ "0x7530" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hai16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hai16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[30000],"s":[30000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x7530" ],
@@ -5999,11 +5999,11 @@
       "n": "TestProviderCpp:hau16",
       "a1": [ "0xEA60" ],
       "s": [ "0xEA60" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hau16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hau16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[60000],"s":[60000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xEA60" ],
@@ -6028,11 +6028,11 @@
       "n": "TestProviderCpp:hai32",
       "a1": [ "0x77359400" ],
       "s": [ "0x77359400" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hai32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hai32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x77359400" ],
@@ -6057,11 +6057,11 @@
       "n": "TestProviderCpp:hau32",
       "a1": [ "0xEE6B2800" ],
       "s": [ "0xEE6B2800" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hau32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hau32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xEE6B2800" ],
@@ -6086,11 +6086,11 @@
       "n": "TestProviderCpp:hai64",
       "a1": [ "0x7CE66C50E2840000" ],
       "s": [ "0x7CE66C50E2840000" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hai64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hai64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[9000000000000000000],"s":[9000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x7CE66C50E2840000" ],
@@ -6115,11 +6115,11 @@
       "n": "TestProviderCpp:hau64",
       "a1": [ "0xF9CCD8A1C5080000" ],
       "s": [ "0xF9CCD8A1C5080000" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hau64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hau64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[18000000000000000000],"s":[18000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xF9CCD8A1C5080000" ],
@@ -6144,11 +6144,11 @@
       "n": "TestProviderCpp:haiptr",
       "a1": [ "0x4D2" ],
       "s": [ "0x4D2" ],
-      "meta": { "provider": "TestProviderCpp", "event": "haiptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "haiptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[1234],"s":[1234],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x4D2" ],
@@ -6173,11 +6173,11 @@
       "n": "TestProviderCpp:hauptr",
       "a1": [ "0x10E1" ],
       "s": [ "0x10E1" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hauptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hauptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4321],"s":[4321],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x10E1" ],
@@ -6202,11 +6202,11 @@
       "n": "TestProviderCpp:haiL",
       "a1": [ "0x77359400" ],
       "s": [ "0x77359400" ],
-      "meta": { "provider": "TestProviderCpp", "event": "haiL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "haiL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0x77359400" ],
@@ -6231,11 +6231,11 @@
       "n": "TestProviderCpp:hauL",
       "a1": [ "0xEE6B2800" ],
       "s": [ "0xEE6B2800" ],
-      "meta": { "provider": "TestProviderCpp", "event": "hauL", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "hauL", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[4000000000],"s":[4000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xEE6B2800" ],
@@ -6260,11 +6260,11 @@
       "n": "TestProviderCpp:af32",
       "a1": [ 3.1400001 ],
       "s": [ 3.1400001 ],
-      "meta": { "provider": "TestProviderCpp", "event": "af32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "af32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[3.14],"s":[3.14],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 3.1400001 ],
@@ -6289,11 +6289,11 @@
       "n": "TestProviderCpp:af64",
       "a1": [ 6.2800000000000002 ],
       "s": [ 6.2800000000000002 ],
-      "meta": { "provider": "TestProviderCpp", "event": "af64", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "af64", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[6.28],"s":[6.28],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 6.2800000000000002 ],
@@ -6318,11 +6318,11 @@
       "n": "TestProviderCpp:ab8",
       "a1": [ true ],
       "s": [ true ],
-      "meta": { "provider": "TestProviderCpp", "event": "ab8", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ab8", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[true],"s":[true],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ true ],
@@ -6347,11 +6347,11 @@
       "n": "TestProviderCpp:ab32",
       "a1": [ true ],
       "s": [ true ],
-      "meta": { "provider": "TestProviderCpp", "event": "ab32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ab32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[true],"s":[true],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ true ],
@@ -6376,11 +6376,11 @@
       "n": "TestProviderCpp:ach",
       "a4": [ "H", "o", "w", "A" ],
       "s5": [ "H", "o", "w", "A", "r" ],
-      "meta": { "provider": "TestProviderCpp", "event": "ach", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ach", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["H","o","w","A"],"s5":["H","o","w","A","r"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "H", "o", "w", "A" ],
@@ -6405,11 +6405,11 @@
       "n": "TestProviderCpp:ach16",
       "a4": [ "H", "o", "w", "A" ],
       "s5": [ "H", "o", "w", "A", "r" ],
-      "meta": { "provider": "TestProviderCpp", "event": "ach16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ach16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["H","o","w","A"],"s5":["H","o","w","A","r"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "H", "o", "w", "A" ],
@@ -6434,11 +6434,11 @@
       "n": "TestProviderCpp:ach32",
       "a4": [ "H", "o", "w", "A" ],
       "s5": [ "H", "o", "w", "A", "r" ],
-      "meta": { "provider": "TestProviderCpp", "event": "ach32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ach32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["H","o","w","A"],"s5":["H","o","w","A","r"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "H", "o", "w", "A" ],
@@ -6463,11 +6463,11 @@
       "n": "TestProviderCpp:awch",
       "a4": [ "G", "o", "o", "d" ],
       "s5": [ "G", "o", "o", "d", "b" ],
-      "meta": { "provider": "TestProviderCpp", "event": "awch", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "awch", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a4":["G","o","o","d"],"s5":["G","o","o","d","b"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a4": [ "G", "o", "o", "d" ],
@@ -6492,11 +6492,11 @@
       "n": "TestProviderCpp:aptr",
       "a1": [ "0xFFFFFFFFFFFFCFC7" ],
       "s": [ "0xFFFFFFFFFFFFCFC7" ],
-      "meta": { "provider": "TestProviderCpp", "event": "aptr", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "aptr", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[18446744073709539271],"s":[18446744073709539271],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "0xFFFFFFFFFFFFCFC7" ],
@@ -6521,11 +6521,11 @@
       "n": "TestProviderCpp:apid",
       "a1": [ 2000000000 ],
       "s": [ 2000000000 ],
-      "meta": { "provider": "TestProviderCpp", "event": "apid", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "apid", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 2000000000 ],
@@ -6550,11 +6550,11 @@
       "n": "TestProviderCpp:aport",
       "a1": [ 24810 ],
       "s": [ 24810 ],
-      "meta": { "provider": "TestProviderCpp", "event": "aport", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "aport", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[24810],"s":[24810],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ 24810 ],
@@ -6579,11 +6579,11 @@
       "n": "TestProviderCpp:aerrno",
       "a1": [ "ERRNO(2000000000)" ],
       "s": [ "ERRNO(2000000000)" ],
-      "meta": { "provider": "TestProviderCpp", "event": "aerrno", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "aerrno", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "ERRNO(2000000000)" ],
@@ -6608,11 +6608,11 @@
       "n": "TestProviderCpp:aft",
       "a1": [ "2033-05-18T03:33:20Z" ],
       "s": [ "2033-05-18T03:33:20Z" ],
-      "meta": { "provider": "TestProviderCpp", "event": "aft", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "aft", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[2000000000],"s":[2000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "2033-05-18T03:33:20Z" ],
@@ -6637,11 +6637,11 @@
       "n": "TestProviderCpp:auft",
       "a1": [ "TIME(9000000000000000000)" ],
       "s": [ "TIME(9000000000000000000)" ],
-      "meta": { "provider": "TestProviderCpp", "event": "auft", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "auft", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "a1":[9000000000000000000],"s":[9000000000000000000],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "a1": [ "TIME(9000000000000000000)" ],
@@ -6666,11 +6666,11 @@
       "n": "TestProviderCpp:ag",
       "s0": [ ],
       "s1": [ "01020304-0506-0708-0102-030405060708" ],
-      "meta": { "provider": "TestProviderCpp", "event": "ag", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ag", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "s0":[],"s1":["01020304-0506-0708-0102-030405060708"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "s0": [ ],
@@ -6695,11 +6695,11 @@
       "n": "TestProviderCpp:ahexbytes",
       "s0": [ ],
       "s1": [ "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08" ],
-      "meta": { "provider": "TestProviderCpp", "event": "ahexbytes", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "ahexbytes", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "s0":[],"s1":["01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"],
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "s0": [ ],
@@ -6742,11 +6742,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "Default", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Default", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "V8":200,"V16":60000,"V32":4000000000,"V64":18000000000000000000,"V128":"01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08","NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "V8": 200,
@@ -6816,11 +6816,11 @@
       "LChar8": "68 6A 6B 6C",
       "LChar16": "68 00 6A 00 6B 00 6C 00",
       "LChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
-      "meta": { "provider": "TestProviderCpp", "event": "HexBytes", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "HexBytes", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "V8":"01","V16":"01 02","V32":"01 02 03 04","V64":"01 02 03 04 05 06 07 08","V128":"01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08","NChar8":"68 6A 6B 6C","NChar16":"68 00 6A 00 6B 00 6C 00","NChar32":"68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00","LChar8":"68 6A 6B 6C","LChar16":"68 00 6A 00 6B 00 6C 00","LChar32":"68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "V8": "01",
@@ -6874,25 +6874,25 @@
       "n": "TestProviderCpp:Bool16",
       "false16": false,
       "true16": true,
-      "u16": 60000,
-      "i16": 30000,
-      "meta": { "provider": "TestProviderCpp", "event": "Bool16", "level": 5, "flags": "0x7" }
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)",
+      "info": { "provider": "TestProviderCpp", "event": "Bool16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
-      "false16":false,"true16":true,"u16":60000,"i16":30000,
-      "meta": {  }
+      "false16":false,"true16":true,"u16":"BOOL(60000)","i16":"BOOL(30000)",
+      "info": {  }
     },
     "MoveNext": {
       "false16": false,
       "true16": true,
-      "u16": 60000,
-      "i16": 30000
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)"
     },
     "MoveNextSibling": {
       "false16": false,
       "true16": true,
-      "u16": 60000,
-      "i16": 30000
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)"
     },
     "ToString": {
       "false16": "Bool16:false",
@@ -6919,11 +6919,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringUtf", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringUtf", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -6968,11 +6968,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringUtfBom-NoBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringUtfBom-NoBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7017,11 +7017,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringXml-NoBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringXml-NoBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7066,11 +7066,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringJson-NoBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringJson-NoBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7115,11 +7115,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringUtfBom-Bom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringUtfBom-Bom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7164,11 +7164,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringXml-Bom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringXml-Bom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7213,11 +7213,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringJson-Bom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringJson-Bom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7262,11 +7262,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringUtfBom-XBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringUtfBom-XBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7311,11 +7311,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringXml-XBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringXml-XBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7360,11 +7360,11 @@
       "LChar8": "hjkl",
       "LChar16": "hjkl",
       "LChar32": "hjkl",
-      "meta": { "provider": "TestProviderCpp", "event": "StringJson-XBom", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "StringJson-XBom", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "NChar8":"hjkl","NChar16":"hjkl","NChar32":"hjkl","LChar8":"hjkl","LChar16":"hjkl","LChar32":"hjkl",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "NChar8": "hjkl",
@@ -7409,11 +7409,11 @@
       "Struct1": { "NChar8": "hjkl" },
       "StructArray": [ { "Struct2": { "K": "A", "NChar16": "68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "B", "NChar16": "FF FE 68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "C", "NChar16": "FE FF 00 68 00 6A 00 6B 00 6C" } } ],
       "five": 5,
-      "meta": { "provider": "TestProviderCpp", "event": "Packed", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Packed", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "five":5,"Struct1":{"NChar8":"hjkl"},"StructArray":[{"Struct2":{"K":"A","NChar16":"68 00 6A 00 6B 00 6C 00"}},{"Struct2":{"K":"B","NChar16":"FF FE 68 00 6A 00 6B 00 6C 00"}},{"Struct2":{"K":"C","NChar16":"FE FF 00 68 00 6A 00 6B 00 6C"}}],"five":5,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "five": 5,
@@ -7482,11 +7482,11 @@
       "Struct1": { "NChar8": "hjkl" },
       "StructArray": [ ],
       "five": 5,
-      "meta": { "provider": "TestProviderCpp", "event": "Packed0", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Packed0", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "five":5,"Struct1":{"NChar8":"hjkl"},"StructArray":[],"five":5,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "five": 5,
@@ -7522,11 +7522,11 @@
       "five": 5,
       "MyStrings3": [ "ABC", "", "XYZ" ],
       "five": 5,
-      "meta": { "provider": "TestProviderCpp", "event": "PackedComplexArray", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "PackedComplexArray", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "five":5,"MyStrings3":["ABC","","XYZ"],"five":5,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "five": 5,
@@ -7554,11 +7554,11 @@
       "n": "TestProviderCpp:Value:bool",
       "false;tag=0x1234": false,
       "true": true,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:bool", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:bool", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "false":false,"true":true,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "false;tag=0x1234": false,
@@ -7583,11 +7583,11 @@
       "n": "TestProviderCpp:Value:char",
       "0": "\u0000",
       "A": "A",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:char", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:char", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"\u0000","A":"A",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "\u0000",
@@ -7612,11 +7612,11 @@
       "n": "TestProviderCpp:Value:char16",
       "0": "\u0000",
       "A": "A",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:char16", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:char16", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"\u0000","A":"A",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "\u0000",
@@ -7641,11 +7641,11 @@
       "n": "TestProviderCpp:Value:char32",
       "0": "\u0000",
       "A": "A",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:char32", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:char32", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"\u0000","A":"A",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "\u0000",
@@ -7670,11 +7670,11 @@
       "n": "TestProviderCpp:Value:wchar",
       "0": "\u0000",
       "A": "A",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:wchar", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:wchar", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"\u0000","A":"A",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "\u0000",
@@ -7699,11 +7699,11 @@
       "n": "TestProviderCpp:Value:schar",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:schar", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:schar", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7728,11 +7728,11 @@
       "n": "TestProviderCpp:Value:uchar",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:uchar", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:uchar", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7757,11 +7757,11 @@
       "n": "TestProviderCpp:Value:sshort",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:sshort", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:sshort", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7786,11 +7786,11 @@
       "n": "TestProviderCpp:Value:ushort",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:ushort", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:ushort", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7815,11 +7815,11 @@
       "n": "TestProviderCpp:Value:sint",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:sint", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:sint", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7844,11 +7844,11 @@
       "n": "TestProviderCpp:Value:uint",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:uint", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:uint", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7873,11 +7873,11 @@
       "n": "TestProviderCpp:Value:slong",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:slong", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:slong", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7902,11 +7902,11 @@
       "n": "TestProviderCpp:Value:ulong",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:ulong", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:ulong", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7931,11 +7931,11 @@
       "n": "TestProviderCpp:Value:slonglong",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:slonglong", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:slonglong", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7960,11 +7960,11 @@
       "n": "TestProviderCpp:Value:ulonglong",
       "0": 0,
       "A": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:ulonglong", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:ulonglong", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"A":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -7989,11 +7989,11 @@
       "n": "TestProviderCpp:Value:float",
       "0": 0,
       "65": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:float", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:float", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"65":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -8018,11 +8018,11 @@
       "n": "TestProviderCpp:Value:double",
       "0": 0,
       "65": 65,
-      "meta": { "provider": "TestProviderCpp", "event": "Value:double", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:double", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":0,"65":65,
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": 0,
@@ -8047,11 +8047,11 @@
       "n": "TestProviderCpp:Value:void*",
       "0": "0x0",
       "p": "0xFFFFFFFFFFFFCFC7",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:void*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:void*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"0x0","p":"0xFFFFFFFFFFFFCFC7",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "0x0",
@@ -8076,11 +8076,11 @@
       "n": "TestProviderCpp:Value:cvoid*",
       "0": "0x0",
       "p": "0xFFFFFFFFFFFFCFC7",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:cvoid*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:cvoid*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"0x0","p":"0xFFFFFFFFFFFFCFC7",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "0x0",
@@ -8105,11 +8105,11 @@
       "n": "TestProviderCpp:Value:char*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:char*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:char*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",
@@ -8134,11 +8134,11 @@
       "n": "TestProviderCpp:Value:cchar*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:cchar*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:cchar*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",
@@ -8163,11 +8163,11 @@
       "n": "TestProviderCpp:Value:char16_t*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:char16_t*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:char16_t*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",
@@ -8192,11 +8192,11 @@
       "n": "TestProviderCpp:Value:cchar16_t*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:cchar16_t*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:cchar16_t*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",
@@ -8221,11 +8221,11 @@
       "n": "TestProviderCpp:Value:char32_t*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:char32_t*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:char32_t*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",
@@ -8250,11 +8250,11 @@
       "n": "TestProviderCpp:Value:cchar32_t*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:cchar32_t*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:cchar32_t*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",
@@ -8279,11 +8279,11 @@
       "n": "TestProviderCpp:Value:wchar_t*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:wchar_t*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:wchar_t*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",
@@ -8308,11 +8308,11 @@
       "n": "TestProviderCpp:Value:cwchar_t*",
       "0": "",
       "hello": "hello",
-      "meta": { "provider": "TestProviderCpp", "event": "Value:cwchar_t*", "level": 5, "flags": "0x7" }
+      "info": { "provider": "TestProviderCpp", "event": "Value:cwchar_t*", "level": 5, "flags": "0x7" }
     },
     "AppendJsonItem1": {
       "0":"","hello":"hello",
-      "meta": {  }
+      "info": {  }
     },
     "MoveNext": {
       "0": "",

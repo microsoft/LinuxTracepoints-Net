@@ -1,0 +1,5192 @@
+﻿NonSample: IdIndex
+  size = 8464
+NonSample: Mmap
+  size = 96
+NonSample: ThreadMap
+  size = 40
+NonSample: CpuMap
+  size = 16
+NonSample: Ksymbol
+  size = 96
+NonSample: BpfEvent
+  size = 56
+NonSample: Ksymbol
+  size = 96
+NonSample: BpfEvent
+  size = 56
+NonSample: Ksymbol
+  size = 96
+NonSample: BpfEvent
+  size = 56
+NonSample: Ksymbol
+  size = 96
+NonSample: BpfEvent
+  size = 56
+NonSample: Ksymbol
+  size = 96
+NonSample: BpfEvent
+  size = 56
+NonSample: Ksymbol
+  size = 96
+NonSample: BpfEvent
+  size = 56
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 136
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 128
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 128
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 136
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 128
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 128
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 136
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 136
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 168
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 64
+NonSample: Mmap2
+  size = 112
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 136
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 136
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: Mmap2
+  size = 120
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 160
+NonSample: Mmap2
+  size = 144
+NonSample: Mmap2
+  size = 152
+NonSample: Mmap2
+  size = 112
+NonSample: Fork
+  size = 64
+NonSample: Comm
+  size = 56
+NonSample: FinishedInit
+  size = 8
+NonSample: Fork
+  size = 64
+  info = { "time": "2024-03-28T00:45:12.6003040Z", "cpu": 16, "pid": 2002, "tid": 691854456 }
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6409131Z", "cpu": 0, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/0"
+  next_pid = "0x11"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6409385Z", "cpu": 0, "pid": 0 }
+  prev_comm = "migration/0"
+  prev_pid = "0x11"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/0"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6409824Z", "cpu": 1, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/1"
+  next_pid = "0x14"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6409998Z", "cpu": 1, "pid": 0 }
+  prev_comm = "migration/1"
+  prev_pid = "0x14"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/1"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6410359Z", "cpu": 2, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/2"
+  next_pid = "0x19"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6410513Z", "cpu": 2, "pid": 0 }
+  prev_comm = "migration/2"
+  prev_pid = "0x19"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/2"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6410863Z", "cpu": 3, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/3"
+  next_pid = "0x1E"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6411010Z", "cpu": 3, "pid": 0 }
+  prev_comm = "migration/3"
+  prev_pid = "0x1E"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/3"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6411341Z", "cpu": 4, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/4"
+  next_pid = "0x23"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6411485Z", "cpu": 4, "pid": 0 }
+  prev_comm = "migration/4"
+  prev_pid = "0x23"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6411829Z", "cpu": 5, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/5"
+  next_pid = "0x28"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6411975Z", "cpu": 5, "pid": 0 }
+  prev_comm = "migration/5"
+  prev_pid = "0x28"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6412307Z", "cpu": 6, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/6"
+  next_pid = "0x2D"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6412447Z", "cpu": 6, "pid": 0 }
+  prev_comm = "migration/6"
+  prev_pid = "0x2D"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/6"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6412798Z", "cpu": 7, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/7"
+  next_pid = "0x32"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6412939Z", "cpu": 7, "pid": 0 }
+  prev_comm = "migration/7"
+  prev_pid = "0x32"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/7"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6413268Z", "cpu": 8, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/8"
+  next_pid = "0x37"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6413384Z", "cpu": 8, "pid": 0 }
+  prev_comm = "migration/8"
+  prev_pid = "0x37"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/8"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6413702Z", "cpu": 9, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/9"
+  next_pid = "0x3C"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6413843Z", "cpu": 9, "pid": 0 }
+  prev_comm = "migration/9"
+  prev_pid = "0x3C"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6414175Z", "cpu": 10, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/10"
+  next_pid = "0x41"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6414316Z", "cpu": 10, "pid": 0 }
+  prev_comm = "migration/10"
+  prev_pid = "0x41"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/10"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6414639Z", "cpu": 11, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/11"
+  next_pid = "0x46"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6414778Z", "cpu": 11, "pid": 0 }
+  prev_comm = "migration/11"
+  prev_pid = "0x46"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/11"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6415112Z", "cpu": 12, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/12"
+  next_pid = "0x4B"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6415254Z", "cpu": 12, "pid": 0 }
+  prev_comm = "migration/12"
+  prev_pid = "0x4B"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/12"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6415584Z", "cpu": 13, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/13"
+  next_pid = "0x50"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6415725Z", "cpu": 13, "pid": 0 }
+  prev_comm = "migration/13"
+  prev_pid = "0x50"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/13"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6416056Z", "cpu": 14, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/14"
+  next_pid = "0x55"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6416196Z", "cpu": 14, "pid": 0 }
+  prev_comm = "migration/14"
+  prev_pid = "0x55"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6416526Z", "cpu": 15, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/15"
+  next_pid = "0x5A"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6416648Z", "cpu": 15, "pid": 0 }
+  prev_comm = "migration/15"
+  prev_pid = "0x5A"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/15"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6416951Z", "cpu": 16, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/16"
+  next_pid = "0x5F"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6417092Z", "cpu": 16, "pid": 0 }
+  prev_comm = "migration/16"
+  prev_pid = "0x5F"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6417428Z", "cpu": 17, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/17"
+  next_pid = "0x64"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6417565Z", "cpu": 17, "pid": 0 }
+  prev_comm = "migration/17"
+  prev_pid = "0x64"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/17"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6417896Z", "cpu": 18, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/18"
+  next_pid = "0x69"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6418039Z", "cpu": 18, "pid": 0 }
+  prev_comm = "migration/18"
+  prev_pid = "0x69"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/18"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6418369Z", "cpu": 19, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/19"
+  next_pid = "0x6E"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6418511Z", "cpu": 19, "pid": 0 }
+  prev_comm = "migration/19"
+  prev_pid = "0x6E"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6418838Z", "cpu": 20, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/20"
+  next_pid = "0x73"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6418976Z", "cpu": 20, "pid": 0 }
+  prev_comm = "migration/20"
+  prev_pid = "0x73"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6419310Z", "cpu": 21, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/21"
+  next_pid = "0x78"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6419451Z", "cpu": 21, "pid": 0 }
+  prev_comm = "migration/21"
+  prev_pid = "0x78"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/21"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6419777Z", "cpu": 22, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/22"
+  next_pid = "0x7D"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6419919Z", "cpu": 22, "pid": 0 }
+  prev_comm = "migration/22"
+  prev_pid = "0x7D"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/22"
+  next_pid = "0x0"
+  next_prio = 120
+NonSample: FinishedRound
+  size = 8
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6424029Z", "cpu": 23, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/23"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6460288Z", "cpu": 8, "pid": 0 }
+  prev_comm = "swapper/8"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/8:1"
+  next_pid = "0xBD"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6460522Z", "cpu": 8, "pid": 0 }
+  prev_comm = "kworker/8:1"
+  prev_pid = "0xBD"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/8"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6558156Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6558278Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6558356Z", "cpu": 10, "pid": 0 }
+  prev_comm = "swapper/10"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/10:1"
+  next_pid = "0xAC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6758860Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.6758944Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:12.7018453Z", "cpu": 10, "pid": 0 }
+  prev_comm = "kworker/10:1"
+  prev_pid = "0xAC"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/10"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.0359540Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kcompactd0"
+  next_pid = "0xA5"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.0359820Z", "cpu": 20, "pid": 0 }
+  prev_comm = "kcompactd0"
+  prev_pid = "0xA5"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.1259481Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "hv_balloon"
+  next_pid = "0xDC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.1259809Z", "cpu": 16, "pid": 0 }
+  prev_comm = "hv_balloon"
+  prev_pid = "0xDC"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2059164Z", "cpu": 10, "pid": 0 }
+  prev_comm = "swapper/10"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/10:1"
+  next_pid = "0xAC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2059482Z", "cpu": 10, "pid": 0 }
+  prev_comm = "kworker/10:1"
+  prev_pid = "0xAC"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/10"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2127338Z", "cpu": 12, "pid": 0 }
+  prev_comm = "swapper/12"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "init"
+  next_pid = "0xED"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2142744Z", "cpu": 12, "pid": 0 }
+  prev_comm = "init"
+  prev_pid = "0xED"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/12"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2159534Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2159719Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2359255Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2359637Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2859093Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "khugepaged"
+  next_pid = "0xA7"
+  next_prio = 139
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2860250Z", "cpu": 7, "pid": 0 }
+  prev_comm = "swapper/7"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/7:2"
+  next_pid = "0x23C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2860375Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/16:1"
+  next_pid = "0xAE"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2860567Z", "cpu": 7, "pid": 0 }
+  prev_comm = "kworker/7:2"
+  prev_pid = "0x23C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/7"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2860676Z", "cpu": 5, "pid": 0 }
+  prev_comm = "khugepaged"
+  prev_pid = "0xA7"
+  prev_prio = 139
+  prev_state = 2
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2860804Z", "cpu": 16, "pid": 0 }
+  prev_comm = "kworker/16:1"
+  prev_pid = "0xAE"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2860842Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "khugepaged"
+  next_pid = "0xA7"
+  next_prio = 139
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2860913Z", "cpu": 5, "pid": 0 }
+  prev_comm = "khugepaged"
+  prev_pid = "0xA7"
+  prev_prio = 139
+  prev_state = 2
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2861230Z", "cpu": 18, "pid": 0 }
+  prev_comm = "swapper/18"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/18:1"
+  next_pid = "0xB1"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2861517Z", "cpu": 23, "pid": 0 }
+  prev_comm = "swapper/23"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/23:2"
+  next_pid = "0x23D"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2861636Z", "cpu": 18, "pid": 0 }
+  prev_comm = "kworker/18:1"
+  prev_pid = "0xB1"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/18"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2861739Z", "cpu": 23, "pid": 0 }
+  prev_comm = "kworker/23:2"
+  prev_pid = "0x23D"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/23"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2861791Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "khugepaged"
+  next_pid = "0xA7"
+  next_prio = 139
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.2862041Z", "cpu": 5, "pid": 0 }
+  prev_comm = "khugepaged"
+  prev_pid = "0xA7"
+  prev_prio = 139
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3259311Z", "cpu": 0, "pid": 0 }
+  prev_comm = "swapper/0"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/0:2"
+  next_pid = "0xA0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3260420Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/14:2"
+  next_pid = "0xEB"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3260656Z", "cpu": 14, "pid": 0 }
+  prev_comm = "kworker/14:2"
+  prev_pid = "0xEB"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3260859Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/16:1"
+  next_pid = "0xAE"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3260884Z", "cpu": 0, "pid": 0 }
+  prev_comm = "kworker/0:2"
+  prev_pid = "0xA0"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/0"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3261076Z", "cpu": 16, "pid": 0 }
+  prev_comm = "kworker/16:1"
+  prev_pid = "0xAE"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3261183Z", "cpu": 18, "pid": 0 }
+  prev_comm = "swapper/18"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/18:1"
+  next_pid = "0xB1"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3261254Z", "cpu": 23, "pid": 0 }
+  prev_comm = "swapper/23"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/23:2"
+  next_pid = "0x23D"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3261361Z", "cpu": 23, "pid": 0 }
+  prev_comm = "kworker/23:2"
+  prev_pid = "0x23D"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/23"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.3261387Z", "cpu": 18, "pid": 0 }
+  prev_comm = "kworker/18:1"
+  prev_pid = "0xB1"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/18"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.5458894Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kcompactd0"
+  next_pid = "0xA5"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.5459095Z", "cpu": 20, "pid": 0 }
+  prev_comm = "kcompactd0"
+  prev_pid = "0xA5"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.6015330Z", "cpu": 18, "pid": 0 }
+  prev_comm = "swapper/18"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x951"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.6018634Z", "cpu": 18, "pid": 2002, "tid": 2003 }
+  prev_comm = "perf"
+  prev_pid = "0x951"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/18"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.6059380Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/14:2"
+  next_pid = "0xEB"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:13.6059900Z", "cpu": 14, "pid": 0 }
+  prev_comm = "kworker/14:2"
+  prev_pid = "0xEB"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.0559308Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kcompactd0"
+  next_pid = "0xA5"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.0559562Z", "cpu": 20, "pid": 0 }
+  prev_comm = "kcompactd0"
+  prev_pid = "0xA5"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.1660037Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "hv_balloon"
+  next_pid = "0xDC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.1660509Z", "cpu": 16, "pid": 0 }
+  prev_comm = "hv_balloon"
+  prev_pid = "0xDC"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2144562Z", "cpu": 12, "pid": 0 }
+  prev_comm = "swapper/12"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "init"
+  next_pid = "0xED"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2159405Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2159600Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2162321Z", "cpu": 12, "pid": 0 }
+  prev_comm = "init"
+  prev_pid = "0xED"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/12"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2359358Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2359686Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2459317Z", "cpu": 10, "pid": 0 }
+  prev_comm = "swapper/10"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/10:1"
+  next_pid = "0xAC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.2459770Z", "cpu": 10, "pid": 0 }
+  prev_comm = "kworker/10:1"
+  prev_pid = "0xAC"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/10"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4757537Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4758450Z", "cpu": 0, "pid": 0 }
+  prev_comm = "swapper/0"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "ksoftirqd/0"
+  next_pid = "0xF"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4758628Z", "cpu": 0, "pid": 0 }
+  prev_comm = "ksoftirqd/0"
+  prev_pid = "0xF"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "kworker/0:2"
+  next_pid = "0xA0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4758942Z", "cpu": 0, "pid": 0 }
+  prev_comm = "kworker/0:2"
+  prev_pid = "0xA0"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/0"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4759436Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4759650Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4760330Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4760437Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "bash"
+  next_pid = "0x62D"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4761596Z", "cpu": 14, "pid": 1220 }
+  prev_comm = "bash"
+  prev_pid = "0x62D"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4761668Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4762011Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4762100Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.4762591Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.5659775Z", "cpu": 6, "pid": 0 }
+  prev_comm = "swapper/6"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/6:4"
+  next_pid = "0xE4"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.5659924Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kcompactd0"
+  next_pid = "0xA5"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.5660097Z", "cpu": 6, "pid": 0 }
+  prev_comm = "kworker/6:4"
+  prev_pid = "0xE4"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/6"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.5660237Z", "cpu": 20, "pid": 0 }
+  prev_comm = "kcompactd0"
+  prev_pid = "0xA5"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.6030475Z", "cpu": 18, "pid": 0 }
+  prev_comm = "swapper/18"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x951"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.6031938Z", "cpu": 18, "pid": 2002, "tid": 2003 }
+  prev_comm = "perf"
+  prev_pid = "0x951"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/18"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.6459407Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/14:2"
+  next_pid = "0xEB"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.6459803Z", "cpu": 14, "pid": 0 }
+  prev_comm = "kworker/14:2"
+  prev_pid = "0xEB"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7871481Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7872324Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7872415Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7872774Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7872956Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "bash"
+  next_pid = "0x62D"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7873567Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7873801Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7873900Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7874043Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7874116Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7874318Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+NonSample: Fork
+  size = 64
+  info = { "time": "2024-03-28T00:45:14.7876837Z", "cpu": 14, "pid": 1220, "tid": 2879234103 }
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7876915Z", "cpu": 11, "pid": 0 }
+  prev_comm = "swapper/11"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "init"
+  next_pid = "0xEF"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7877087Z", "cpu": 11, "pid": 0 }
+  prev_comm = "init"
+  prev_pid = "0xEF"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/11"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7877889Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "bash"
+  next_pid = "0x952"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7878401Z", "cpu": 14, "pid": 1220 }
+  prev_comm = "bash"
+  prev_pid = "0x62D"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+NonSample: Comm
+  size = 64
+  info = { "time": "2024-03-28T00:45:14.7882375Z", "cpu": 16, "pid": 2004, "tid": 2879787941 }
+NonSample: Mmap2
+  size = 192
+  info = { "time": "2024-03-28T00:45:14.7882823Z", "cpu": 16, "pid": 2004, "tid": 2879832715 }
+NonSample: Mmap2
+  size = 152
+  info = { "time": "2024-03-28T00:45:14.7883218Z", "cpu": 16, "pid": 2004, "tid": 2879872187 }
+NonSample: Mmap2
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7883448Z", "cpu": 16, "pid": 2004, "tid": 2879895209 }
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7884109Z", "cpu": 11, "pid": 0 }
+  prev_comm = "swapper/11"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "init"
+  next_pid = "0xEF"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7884904Z", "cpu": 11, "pid": 0 }
+  prev_comm = "init"
+  prev_pid = "0xEF"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/11"
+  next_pid = "0x0"
+  next_prio = 120
+NonSample: Mmap2
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7885835Z", "cpu": 16, "pid": 2004, "tid": 2880133956 }
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7889434Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7889735Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: user_events:Long_Provider_Name_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX0123456789_L5K0Gasdf
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7889824Z", "cpu": 16, "pid": 2004, "level": 5 }
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7889893Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7890226Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7890283Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7890558Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7890608Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7890778Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7894511Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: user_events:TestProviderC_L5K0Gmsft
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7895149Z", "cpu": 16, "pid": 2004, "level": 5 }
+  enabled = true
+Sample: user_events:TestProviderCpp_L5K0Gmsft
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7895182Z", "cpu": 16, "pid": 2004, "level": 5 }
+  enabled = true
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7895207Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7895240Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7895462Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: user_events:TestProviderC_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7895691Z", "cpu": 16, "pid": 2004, "level": 5 }
+Sample: user_events:TestProviderC_L1Kf123456789abcdef
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7895713Z", "cpu": 16, "pid": 2004, "level": 1, "keyword": "0xF123456789ABCDEF", "opcode": 2 }
+Sample: user_events:TestProviderC_L4K85
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7895739Z", "cpu": 16, "pid": 2004, "id": 1000, "version": 11, "level": 4, "keyword": "0x85", "opcode": 3, "tag": "0x1234" }
+  Struct20 = { "hi;tag=0x12": "hi", "ch10;tag=0x10": [ "H", "o", "w" ] }
+Sample: user_events:TestProviderC_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7895761Z", "cpu": 16, "pid": 2004, "level": 5 }
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7895783Z", "cpu": 16, "pid": 2004, "level": 5, "activity": "01020304-0506-0708-0102-030405060708" }
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7895804Z", "cpu": 16, "pid": 2004, "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "relatedActivity": "01020304-0506-0708-0102-030405060708" }
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7895826Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i8 = 100
+  (-128) = -128
+Sample: user_events:TestProviderC_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7895850Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u8 = 200
+  (255) = 255
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7895872Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i16 = 30000
+  (-32767-1) = -32768
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7895893Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u16 = 60000
+  (65535) = 65535
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7895915Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = 2000000000
+  (-2147483647-1) = -2147483648
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7895937Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u32 = 4000000000
+  (4294967295U) = 4294967295
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7895958Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i64 = 9000000000000000000
+  (-9223372036854775807L-1) = -9223372036854775808
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7895982Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u64 = 18000000000000000000
+  (18446744073709551615UL) = 18446744073709551615
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896007Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iptr = 1234
+  (-9223372036854775807L-1) = -9223372036854775808
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896028Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uptr = 4321
+  (18446744073709551615UL) = 18446744073709551615
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896049Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iL = 2000000000
+  (-0x7fffffffffffffffL - 1L) = -9223372036854775808
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896074Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uL = 4000000000
+  (0x7fffffffffffffffL * 2UL + 1UL) = 18446744073709551615
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7896094Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i8 = "0x64"
+  (-128) = "0x80"
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7896115Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u8 = "0xC8"
+  (255) = "0xFF"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896136Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i16 = "0x7530"
+  (-32767-1) = "0x8000"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896157Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u16 = "0xEA60"
+  (65535) = "0xFFFF"
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7896178Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = "0x77359400"
+  (-2147483647-1) = "0x80000000"
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7896199Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u32 = "0xEE6B2800"
+  (4294967295U) = "0xFFFFFFFF"
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896220Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i64 = "0x7CE66C50E2840000"
+  (-9223372036854775807L-1) = "0x8000000000000000"
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896241Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u64 = "0xF9CCD8A1C5080000"
+  (18446744073709551615UL) = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896264Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iptr = "0x4D2"
+  (-9223372036854775807L-1) = "0x8000000000000000"
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896290Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uptr = "0x10E1"
+  (18446744073709551615UL) = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896311Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iL = "0x77359400"
+  (-0x7fffffffffffffffL - 1L) = "0x8000000000000000"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896332Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uL = "0xEE6B2800"
+  (0x7fffffffffffffffL * 2UL + 1UL) = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7896354Z", "cpu": 16, "pid": 2004, "level": 5 }
+  f32 = 3.1400001
+  1/3 = 0.333333343
+  NaN = "NaN"
+  -Inf = "-Infinity"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896375Z", "cpu": 16, "pid": 2004, "level": 5 }
+  f64 = 6.2800000000000002
+  1/3 = 0.33333333333333331
+  NaN = "NaN"
+  -Inf = "-Infinity"
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7896396Z", "cpu": 16, "pid": 2004, "level": 5 }
+  b0 = false
+  b1 = true
+  (255) = "BOOL(255)"
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7896419Z", "cpu": 16, "pid": 2004, "level": 5 }
+  b0 = false
+  b1 = true
+  (-2147483647-1) = "BOOL(-2147483648)"
+Sample: user_events:TestProviderC_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7896441Z", "cpu": 16, "pid": 2004, "level": 5 }
+  ch = "A"
+  FE = "þ"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896462Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u16ch = "A"
+  FFFE = "￾"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896484Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u32ch = "A"
+  FFFE = "￾"
+  10FFFF = "􏿿"
+  FFFEFDFC = "�"
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7896505Z", "cpu": 16, "pid": 2004, "level": 5 }
+  wch = "B"
+  FFFE = "￾"
+  10FFFF = "􏿿"
+  0x7fffffff = "�"
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7896526Z", "cpu": 16, "pid": 2004, "level": 5 }
+  pSamplePtr = "0xFFFFFFFFFFFFCFC7"
+  UINTPTR_MAX = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7896548Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = 2000000000
+  (2147483647) = 2147483647
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896568Z", "cpu": 16, "pid": 2004, "level": 5 }
+  port80 = 80
+  (65535) = 65535
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7896590Z", "cpu": 16, "pid": 2004, "level": 5 }
+  (-2147483647-1) = "ERRNO(-2147483648)"
+  1 = "EPERM(1)"
+  131 = "ENOTRECOVERABLE(131)"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896612Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = "2033-05-18T03:33:20Z"
+  (-2147483647-1) = "1901-12-13T20:45:52Z"
+  (2147483647) = "2038-01-19T03:14:07Z"
+  0 = "1970-01-01T00:00:00Z"
+Sample: user_events:TestProviderC_L5K0
+  size = 272
+  info = { "time": "2024-03-28T00:45:14.7896650Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i64 = "TIME(9000000000000000000)"
+  (-9223372036854775807L-1) = "TIME(-9223372036854775808)"
+  (9223372036854775807L) = "TIME(9223372036854775807)"
+  0 = "1970-01-01T00:00:00Z"
+  -11644473600 = "1601-01-01T00:00:00Z"
+  -11644473601 = "1600-12-31T23:59:59Z"
+  910692730085 = "TIME(910692730085)"
+  910692730086 = "TIME(910692730086)"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896673Z", "cpu": 16, "pid": 2004, "level": 5 }
+  guid = "01020304-0506-0708-0102-030405060708"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896699Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAreU8?"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896727Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAreU8?"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896753Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  wch10 = "Goodbye!!"
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7896777Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u16ch10 = "HowAreU16"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896803Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u32ch10 = "HowAreU32"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896827Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAr"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896848Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAr"
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7896871Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  wch10 = "Goodb"
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7896894Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u16ch10 = "HowAr"
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7896916Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u32ch10 = "HowAr"
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7896938Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "48 6F 77 41 72"
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7896960Z", "cpu": 16, "pid": 2004, "level": 5 }
+  ipv4 = "127.0.0.1"
+  (4294967295U) = "255.255.255.255"
+Sample: user_events:TestProviderC_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7896988Z", "cpu": 16, "pid": 2004, "level": 5 }
+  ipv6 = "102:304:506:708:90a:b0c:d0e:f10"
+  fefe..fe00 = "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897009Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 100 ]
+  s = [ 100 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897031Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 200 ]
+  s = [ 200 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897053Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 30000 ]
+  s = [ 30000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897074Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 60000 ]
+  s = [ 60000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897097Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 2000000000 ]
+  s = [ 2000000000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897119Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 4000000000 ]
+  s = [ 4000000000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897146Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 9000000000000000000 ]
+  s = [ 9000000000000000000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897169Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 18000000000000000000 ]
+  s = [ 18000000000000000000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897193Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 1234 ]
+  s = [ 1234 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897216Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 4321 ]
+  s = [ 4321 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897239Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 2000000000 ]
+  s = [ 2000000000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897260Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 4000000000 ]
+  s = [ 4000000000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897281Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x64" ]
+  s = [ "0x64" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897302Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xC8" ]
+  s = [ "0xC8" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897325Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x7530" ]
+  s = [ "0x7530" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897346Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xEA60" ]
+  s = [ "0xEA60" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897367Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x77359400" ]
+  s = [ "0x77359400" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897388Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xEE6B2800" ]
+  s = [ "0xEE6B2800" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897412Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x7CE66C50E2840000" ]
+  s = [ "0x7CE66C50E2840000" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897438Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xF9CCD8A1C5080000" ]
+  s = [ "0xF9CCD8A1C5080000" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897462Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x4D2" ]
+  s = [ "0x4D2" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897486Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x10E1" ]
+  s = [ "0x10E1" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897511Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x77359400" ]
+  s = [ "0x77359400" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897535Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xEE6B2800" ]
+  s = [ "0xEE6B2800" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897558Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 3.1400001 ]
+  s = [ 3.1400001 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897582Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 6.2800000000000002 ]
+  s = [ 6.2800000000000002 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897603Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ true ]
+  s = [ true ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897625Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ true ]
+  s = [ true ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897650Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "H", "o", "w", "A" ]
+  s5 = [ "H", "o", "w", "A", "r" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897674Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "H", "o", "w", "A" ]
+  s5 = [ "H", "o", "w", "A", "r" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7897698Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "H", "o", "w", "A" ]
+  s5 = [ "H", "o", "w", "A", "r" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7897723Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "G", "o", "o", "d" ]
+  s5 = [ "G", "o", "o", "d", "b" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897747Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xFFFFFFFFFFFFCFC7" ]
+  s = [ "0xFFFFFFFFFFFFCFC7" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897769Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 2000000000 ]
+  s = [ 2000000000 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7897790Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 24810 ]
+  s = [ 24810 ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897813Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "2033-05-18T03:33:20Z" ]
+  s = [ "2033-05-18T03:33:20Z" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7897834Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "2033-05-18T03:33:20Z" ]
+  s = [ "2033-05-18T03:33:20Z" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7897858Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "TIME(9000000000000000000)" ]
+  s = [ "TIME(9000000000000000000)" ]
+Sample: user_events:TestProviderC_L5K0
+  size = 272
+  info = { "time": "2024-03-28T00:45:14.7897899Z", "cpu": 16, "pid": 2004, "level": 5 }
+  V8 = 200
+  V16 = 60000
+  V32 = 4000000000
+  V64 = 18000000000000000000
+  V128 = "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 280
+  info = { "time": "2024-03-28T00:45:14.7897940Z", "cpu": 16, "pid": 2004, "level": 5 }
+  V8 = "01"
+  V16 = "01 02"
+  V32 = "01 02 03 04"
+  V64 = "01 02 03 04 05 06 07 08"
+  V128 = "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
+  NChar8 = "68 6A 6B 6C"
+  NChar16 = "68 00 6A 00 6B 00 6C 00"
+  NChar32 = "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
+  LChar8 = "68 6A 6B 6C"
+  LChar16 = "68 00 6A 00 6B 00 6C 00"
+  LChar32 = "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
+Sample: user_events:TestProviderC_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7897965Z", "cpu": 16, "pid": 2004, "level": 5 }
+  false16 = false
+  true16 = true
+  u16 = "BOOL(60000)"
+  i16 = "BOOL(30000)"
+Sample: user_events:TestProviderC_L5K0
+  size = 224
+  info = { "time": "2024-03-28T00:45:14.7897997Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 232
+  info = { "time": "2024-03-28T00:45:14.7898031Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 224
+  info = { "time": "2024-03-28T00:45:14.7898066Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 224
+  info = { "time": "2024-03-28T00:45:14.7898099Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 248
+  info = { "time": "2024-03-28T00:45:14.7898134Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 240
+  info = { "time": "2024-03-28T00:45:14.7898168Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 240
+  info = { "time": "2024-03-28T00:45:14.7898203Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 248
+  info = { "time": "2024-03-28T00:45:14.7898238Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 240
+  info = { "time": "2024-03-28T00:45:14.7898274Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 248
+  info = { "time": "2024-03-28T00:45:14.7898309Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderC_L5K0
+  size = 216
+  info = { "time": "2024-03-28T00:45:14.7898344Z", "cpu": 16, "pid": 2004, "level": 5 }
+  five = 5
+  Struct1 = { "NChar8": "hjkl" }
+  StructArray = [ { "Struct2": { "K": "A", "NChar16": "68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "B", "NChar16": "FF FE 68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "C", "NChar16": "FE FF 00 68 00 6A 00 6B 00 6C" } } ]
+  five = 5
+Sample: user_events:TestProviderC_L5K0
+  size = 176
+  info = { "time": "2024-03-28T00:45:14.7898368Z", "cpu": 16, "pid": 2004, "level": 5 }
+  five = 5
+  Struct1 = { "NChar8": "hjkl" }
+  StructArray = [ ]
+  five = 5
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7900707Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7900925Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7901073Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7901365Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7905833Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7906032Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7906108Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7906304Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: user_events:TestProviderC_L5K0Gmsft
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7906422Z", "cpu": 16, "pid": 2004, "level": 5 }
+  enabled = true
+Sample: user_events:TestProviderCpp_L5K0Gmsft
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7906447Z", "cpu": 16, "pid": 2004, "level": 5 }
+  enabled = true
+Sample: user_events:TestProviderCpp_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7906810Z", "cpu": 16, "pid": 2004, "level": 5 }
+Sample: user_events:TestProviderCpp_L1Kf123456789abcdef
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7906832Z", "cpu": 16, "pid": 2004, "level": 1, "keyword": "0xF123456789ABCDEF", "opcode": 2 }
+Sample: user_events:TestProviderCpp_L4K85
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7906862Z", "cpu": 16, "pid": 2004, "id": 1000, "version": 11, "level": 4, "keyword": "0x85", "opcode": 3, "tag": "0x1234" }
+  Struct20 = { "hi;tag=0x12": "hi", "ch10;tag=0x10": [ "H", "o", "w" ] }
+Sample: user_events:TestProviderCpp_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7906883Z", "cpu": 16, "pid": 2004, "level": 5 }
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7906905Z", "cpu": 16, "pid": 2004, "level": 5, "activity": "01020304-0506-0708-0102-030405060708" }
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7906927Z", "cpu": 16, "pid": 2004, "level": 5, "activity": "01020304-0506-0708-0102-030405060708", "relatedActivity": "01020304-0506-0708-0102-030405060708" }
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7906949Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i8 = 100
+  (-128) = -128
+Sample: user_events:TestProviderCpp_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7906971Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u8 = 200
+  (255) = 255
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7906993Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i16 = 30000
+  (-32767-1) = -32768
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7907014Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u16 = 60000
+  (65535) = 65535
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7907036Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = 2000000000
+  (-2147483647-1) = -2147483648
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907059Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u32 = 4000000000
+  (4294967295U) = 4294967295
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907080Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i64 = 9000000000000000000
+  (-9223372036854775807L-1) = -9223372036854775808
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907105Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u64 = 18000000000000000000
+  (18446744073709551615UL) = 18446744073709551615
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907129Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iptr = 1234
+  (-9223372036854775807L-1) = -9223372036854775808
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907151Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uptr = 4321
+  (18446744073709551615UL) = 18446744073709551615
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907172Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iL = 2000000000
+  (-0x7fffffffffffffffL - 1L) = -9223372036854775808
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907196Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uL = 4000000000
+  (0x7fffffffffffffffL * 2UL + 1UL) = 18446744073709551615
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7907217Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i8 = "0x64"
+  (-128) = "0x80"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7907238Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u8 = "0xC8"
+  (255) = "0xFF"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907259Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i16 = "0x7530"
+  (-32767-1) = "0x8000"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907280Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u16 = "0xEA60"
+  (65535) = "0xFFFF"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7907301Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = "0x77359400"
+  (-2147483647-1) = "0x80000000"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7907322Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u32 = "0xEE6B2800"
+  (4294967295U) = "0xFFFFFFFF"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907345Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i64 = "0x7CE66C50E2840000"
+  (-9223372036854775807L-1) = "0x8000000000000000"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907366Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u64 = "0xF9CCD8A1C5080000"
+  (18446744073709551615UL) = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907390Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iptr = "0x4D2"
+  (-9223372036854775807L-1) = "0x8000000000000000"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907415Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uptr = "0x10E1"
+  (18446744073709551615UL) = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907436Z", "cpu": 16, "pid": 2004, "level": 5 }
+  iL = "0x77359400"
+  (-0x7fffffffffffffffL - 1L) = "0x8000000000000000"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907458Z", "cpu": 16, "pid": 2004, "level": 5 }
+  uL = "0xEE6B2800"
+  (0x7fffffffffffffffL * 2UL + 1UL) = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7907480Z", "cpu": 16, "pid": 2004, "level": 5 }
+  f32 = 3.1400001
+  1/3 = 0.333333343
+  NaN = "NaN"
+  -Inf = "-Infinity"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907503Z", "cpu": 16, "pid": 2004, "level": 5 }
+  f64 = 6.2800000000000002
+  1/3 = 0.33333333333333331
+  NaN = "NaN"
+  -Inf = "-Infinity"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7907525Z", "cpu": 16, "pid": 2004, "level": 5 }
+  b0 = false
+  b1 = true
+  (255) = "BOOL(255)"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7907548Z", "cpu": 16, "pid": 2004, "level": 5 }
+  b0 = false
+  b1 = true
+  (-2147483647-1) = "BOOL(-2147483648)"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 96
+  info = { "time": "2024-03-28T00:45:14.7907570Z", "cpu": 16, "pid": 2004, "level": 5 }
+  ch = "A"
+  FE = "þ"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907591Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u16ch = "A"
+  FFFE = "￾"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907613Z", "cpu": 16, "pid": 2004, "level": 5 }
+  u32ch = "A"
+  FFFE = "￾"
+  10FFFF = "􏿿"
+  FFFEFDFC = "�"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7907635Z", "cpu": 16, "pid": 2004, "level": 5 }
+  wch = "B"
+  FFFE = "￾"
+  10FFFF = "􏿿"
+  0x7fffffff = "�"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7907656Z", "cpu": 16, "pid": 2004, "level": 5 }
+  pSamplePtr = "0xFFFFFFFFFFFFCFC7"
+  UINTPTR_MAX = "0xFFFFFFFFFFFFFFFF"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7907678Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = 2000000000
+  (2147483647) = 2147483647
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907699Z", "cpu": 16, "pid": 2004, "level": 5 }
+  port80 = 80
+  (65535) = 65535
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7907722Z", "cpu": 16, "pid": 2004, "level": 5 }
+  (-2147483647-1) = "ERRNO(-2147483648)"
+  1 = "EPERM(1)"
+  131 = "ENOTRECOVERABLE(131)"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907745Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i32 = "2033-05-18T03:33:20Z"
+  (-2147483647-1) = "1901-12-13T20:45:52Z"
+  (2147483647) = "2038-01-19T03:14:07Z"
+  0 = "1970-01-01T00:00:00Z"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 272
+  info = { "time": "2024-03-28T00:45:14.7907773Z", "cpu": 16, "pid": 2004, "level": 5 }
+  i64 = "TIME(9000000000000000000)"
+  (-9223372036854775807L-1) = "TIME(-9223372036854775808)"
+  (9223372036854775807L) = "TIME(9223372036854775807)"
+  0 = "1970-01-01T00:00:00Z"
+  -11644473600 = "1601-01-01T00:00:00Z"
+  -11644473601 = "1600-12-31T23:59:59Z"
+  910692730085 = "TIME(910692730085)"
+  910692730086 = "TIME(910692730086)"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907796Z", "cpu": 16, "pid": 2004, "level": 5 }
+  guid = "01020304-0506-0708-0102-030405060708"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907820Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAreU8?"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907845Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAreU8?"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907868Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  wch10 = "Goodbye!!"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7907894Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u16ch10 = "HowAreU16"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7907918Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u32ch10 = "HowAreU32"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907940Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAr"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7907962Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "HowAr"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7907985Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  wch10 = "Goodb"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908009Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u16ch10 = "HowAr"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7908033Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  u32ch10 = "HowAr"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908055Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NULL = ""
+  ch10 = "48 6F 77 41 72"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908079Z", "cpu": 16, "pid": 2004, "level": 5 }
+  ipv4 = "127.0.0.1"
+  (4294967295U) = "255.255.255.255"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 144
+  info = { "time": "2024-03-28T00:45:14.7908103Z", "cpu": 16, "pid": 2004, "level": 5 }
+  ipv6 = "102:304:506:708:90a:b0c:d0e:f10"
+  fefe..fe00 = "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908126Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 100 ]
+  s = [ 100 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908147Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 200 ]
+  s = [ 200 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908171Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 30000 ]
+  s = [ 30000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908193Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 60000 ]
+  s = [ 60000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908216Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 2000000000 ]
+  s = [ 2000000000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908239Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 4000000000 ]
+  s = [ 4000000000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908266Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 9000000000000000000 ]
+  s = [ 9000000000000000000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908290Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 18000000000000000000 ]
+  s = [ 18000000000000000000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908314Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 1234 ]
+  s = [ 1234 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908337Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 4321 ]
+  s = [ 4321 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908360Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 2000000000 ]
+  s = [ 2000000000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908381Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 4000000000 ]
+  s = [ 4000000000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908403Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x64" ]
+  s = [ "0x64" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908424Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xC8" ]
+  s = [ "0xC8" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908445Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x7530" ]
+  s = [ "0x7530" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908466Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xEA60" ]
+  s = [ "0xEA60" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908488Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x77359400" ]
+  s = [ "0x77359400" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908508Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xEE6B2800" ]
+  s = [ "0xEE6B2800" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908533Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x7CE66C50E2840000" ]
+  s = [ "0x7CE66C50E2840000" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908558Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xF9CCD8A1C5080000" ]
+  s = [ "0xF9CCD8A1C5080000" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908582Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x4D2" ]
+  s = [ "0x4D2" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908606Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x10E1" ]
+  s = [ "0x10E1" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908630Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0x77359400" ]
+  s = [ "0x77359400" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908658Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xEE6B2800" ]
+  s = [ "0xEE6B2800" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908680Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 3.1400001 ]
+  s = [ 3.1400001 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908705Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 6.2800000000000002 ]
+  s = [ 6.2800000000000002 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908726Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ true ]
+  s = [ true ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908748Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ true ]
+  s = [ true ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908771Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "H", "o", "w", "A" ]
+  s5 = [ "H", "o", "w", "A", "r" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908795Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "H", "o", "w", "A" ]
+  s5 = [ "H", "o", "w", "A", "r" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7908820Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "H", "o", "w", "A" ]
+  s5 = [ "H", "o", "w", "A", "r" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7908845Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a4 = [ "G", "o", "o", "d" ]
+  s5 = [ "G", "o", "o", "d", "b" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908872Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "0xFFFFFFFFFFFFCFC7" ]
+  s = [ "0xFFFFFFFFFFFFCFC7" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908894Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 2000000000 ]
+  s = [ 2000000000 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7908916Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ 24810 ]
+  s = [ 24810 ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908939Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "2033-05-18T03:33:20Z" ]
+  s = [ "2033-05-18T03:33:20Z" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7908960Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "2033-05-18T03:33:20Z" ]
+  s = [ "2033-05-18T03:33:20Z" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7908984Z", "cpu": 16, "pid": 2004, "level": 5 }
+  a1 = [ "TIME(9000000000000000000)" ]
+  s = [ "TIME(9000000000000000000)" ]
+Sample: user_events:TestProviderCpp_L5K0
+  size = 272
+  info = { "time": "2024-03-28T00:45:14.7909022Z", "cpu": 16, "pid": 2004, "level": 5 }
+  V8 = 200
+  V16 = 60000
+  V32 = 4000000000
+  V64 = 18000000000000000000
+  V128 = "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 280
+  info = { "time": "2024-03-28T00:45:14.7909064Z", "cpu": 16, "pid": 2004, "level": 5 }
+  V8 = "01"
+  V16 = "01 02"
+  V32 = "01 02 03 04"
+  V64 = "01 02 03 04 05 06 07 08"
+  V128 = "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
+  NChar8 = "68 6A 6B 6C"
+  NChar16 = "68 00 6A 00 6B 00 6C 00"
+  NChar32 = "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
+  LChar8 = "68 6A 6B 6C"
+  LChar16 = "68 00 6A 00 6B 00 6C 00"
+  LChar32 = "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7909087Z", "cpu": 16, "pid": 2004, "level": 5 }
+  false16 = false
+  true16 = true
+  u16 = "BOOL(60000)"
+  i16 = "BOOL(30000)"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 224
+  info = { "time": "2024-03-28T00:45:14.7909119Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 232
+  info = { "time": "2024-03-28T00:45:14.7909152Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 224
+  info = { "time": "2024-03-28T00:45:14.7909187Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 224
+  info = { "time": "2024-03-28T00:45:14.7909220Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 248
+  info = { "time": "2024-03-28T00:45:14.7909256Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 240
+  info = { "time": "2024-03-28T00:45:14.7909290Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 240
+  info = { "time": "2024-03-28T00:45:14.7909326Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 248
+  info = { "time": "2024-03-28T00:45:14.7909360Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 240
+  info = { "time": "2024-03-28T00:45:14.7909396Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 248
+  info = { "time": "2024-03-28T00:45:14.7909431Z", "cpu": 16, "pid": 2004, "level": 5 }
+  NChar8 = "hjkl"
+  NChar16 = "hjkl"
+  NChar32 = "hjkl"
+  LChar8 = "hjkl"
+  LChar16 = "hjkl"
+  LChar32 = "hjkl"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 216
+  info = { "time": "2024-03-28T00:45:14.7909467Z", "cpu": 16, "pid": 2004, "level": 5 }
+  five = 5
+  Struct1 = { "NChar8": "hjkl" }
+  StructArray = [ { "Struct2": { "K": "A", "NChar16": "68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "B", "NChar16": "FF FE 68 00 6A 00 6B 00 6C 00" } }, { "Struct2": { "K": "C", "NChar16": "FE FF 00 68 00 6A 00 6B 00 6C" } } ]
+  five = 5
+Sample: user_events:TestProviderCpp_L5K0
+  size = 176
+  info = { "time": "2024-03-28T00:45:14.7909491Z", "cpu": 16, "pid": 2004, "level": 5 }
+  five = 5
+  Struct1 = { "NChar8": "hjkl" }
+  StructArray = [ ]
+  five = 5
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909514Z", "cpu": 16, "pid": 2004, "level": 5 }
+  false = false
+  true = true
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7909536Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = "\u0000"
+  A = "A"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909557Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = "\u0000"
+  A = "A"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909579Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = "\u0000"
+  A = "A"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909600Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = "\u0000"
+  A = "A"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7909622Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7909643Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909665Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 104
+  info = { "time": "2024-03-28T00:45:14.7909685Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909706Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909728Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909749Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909775Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909799Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909821Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  A = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909842Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  65 = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909863Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = 0
+  65 = 65
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909884Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = "0x0"
+  p = "0xFFFFFFFFFFFFCFC7"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909906Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = "0x0"
+  p = "0xFFFFFFFFFFFFCFC7"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909929Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 112
+  info = { "time": "2024-03-28T00:45:14.7909951Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 120
+  info = { "time": "2024-03-28T00:45:14.7909974Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7909999Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7910022Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7910045Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7910069Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: user_events:TestProviderCpp_L5K0
+  size = 136
+  info = { "time": "2024-03-28T00:45:14.7910091Z", "cpu": 16, "pid": 2004, "level": 5 }
+  0 = ""
+  hello = "hello"
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7913349Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7913528Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+NonSample: Exit
+  size = 64
+  info = { "time": "2024-03-28T00:45:14.7913846Z", "cpu": 16, "pid": 2004, "tid": 2882935004 }
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7913958Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7914165Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "bash"
+  next_pid = "0x62D"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7914190Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7914344Z", "cpu": 16, "pid": 4294967295 }
+  prev_comm = "eventheader-tra"
+  prev_pid = "0x952"
+  prev_prio = 120
+  prev_state = 16
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7914664Z", "cpu": 11, "pid": 0 }
+  prev_comm = "swapper/11"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "init"
+  next_pid = "0xEF"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7914792Z", "cpu": 11, "pid": 0 }
+  prev_comm = "init"
+  prev_pid = "0xEF"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/11"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7916101Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7916396Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7916414Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(1220)"
+  next_pid = "0x629"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7916466Z", "cpu": 14, "pid": 1220 }
+  prev_comm = "bash"
+  prev_pid = "0x62D"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7916594Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7916636Z", "cpu": 5, "pid": 1216 }
+  prev_comm = "Relay(1220)"
+  prev_pid = "0x629"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/5"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7916663Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7958502Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/14:2"
+  next_pid = "0xEB"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7958576Z", "cpu": 14, "pid": 0 }
+  prev_comm = "kworker/14:2"
+  prev_pid = "0xEB"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7958869Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7958964Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7959030Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/16:1"
+  next_pid = "0xAE"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.7959114Z", "cpu": 16, "pid": 0 }
+  prev_comm = "kworker/16:1"
+  prev_pid = "0xAE"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8158715Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8158840Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8458687Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8458932Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8658769Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8658973Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8759135Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "ksoftirqd/16"
+  next_pid = "0x60"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8759303Z", "cpu": 16, "pid": 0 }
+  prev_comm = "ksoftirqd/16"
+  prev_pid = "0x60"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "kworker/16:1"
+  next_pid = "0xAE"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8759464Z", "cpu": 16, "pid": 0 }
+  prev_comm = "kworker/16:1"
+  prev_pid = "0xAE"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8859550Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.8859787Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.9058880Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:14.9059159Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.0759762Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kcompactd0"
+  next_pid = "0xA5"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.0760033Z", "cpu": 20, "pid": 0 }
+  prev_comm = "kcompactd0"
+  prev_pid = "0xA5"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.1259745Z", "cpu": 2, "pid": 0 }
+  prev_comm = "swapper/2"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/2:2"
+  next_pid = "0xA2"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.1259867Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.1259957Z", "cpu": 2, "pid": 0 }
+  prev_comm = "kworker/2:2"
+  prev_pid = "0xA2"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/2"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.1263026Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.1329196Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.1330281Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2060519Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "hv_balloon"
+  next_pid = "0xDC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2061046Z", "cpu": 16, "pid": 0 }
+  prev_comm = "hv_balloon"
+  prev_pid = "0xDC"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2164200Z", "cpu": 12, "pid": 0 }
+  prev_comm = "swapper/12"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "init"
+  next_pid = "0xED"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2181356Z", "cpu": 12, "pid": 0 }
+  prev_comm = "init"
+  prev_pid = "0xED"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/12"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2260807Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2261011Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2461471Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2461895Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2859345Z", "cpu": 10, "pid": 0 }
+  prev_comm = "swapper/10"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/10:1"
+  next_pid = "0xAC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.2859664Z", "cpu": 10, "pid": 0 }
+  prev_comm = "kworker/10:1"
+  prev_pid = "0xAC"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/10"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.3359691Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.3361100Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.3361177Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.3361438Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.5860073Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kcompactd0"
+  next_pid = "0xA5"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.5860426Z", "cpu": 20, "pid": 0 }
+  prev_comm = "kcompactd0"
+  prev_pid = "0xA5"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.6042842Z", "cpu": 18, "pid": 0 }
+  prev_comm = "swapper/18"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x951"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.6044229Z", "cpu": 18, "pid": 2002, "tid": 2003 }
+  prev_comm = "perf"
+  prev_pid = "0x951"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/18"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.6059715Z", "cpu": 18, "pid": 0 }
+  prev_comm = "swapper/18"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/18:1"
+  next_pid = "0xB1"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.6059960Z", "cpu": 18, "pid": 0 }
+  prev_comm = "kworker/18:1"
+  prev_pid = "0xB1"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/18"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.6859317Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/14:2"
+  next_pid = "0xEB"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:15.6859623Z", "cpu": 14, "pid": 0 }
+  prev_comm = "kworker/14:2"
+  prev_pid = "0xEB"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/14"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.0959688Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kcompactd0"
+  next_pid = "0xA5"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.0960001Z", "cpu": 20, "pid": 0 }
+  prev_comm = "kcompactd0"
+  prev_pid = "0xA5"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/20"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2183147Z", "cpu": 12, "pid": 0 }
+  prev_comm = "swapper/12"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "init"
+  next_pid = "0xED"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2202446Z", "cpu": 12, "pid": 0 }
+  prev_comm = "init"
+  prev_pid = "0xED"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/12"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2259534Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2259728Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2458812Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "rcu_preempt"
+  next_pid = "0x10"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2459083Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/16:1"
+  next_pid = "0xAE"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2459239Z", "cpu": 9, "pid": 0 }
+  prev_comm = "rcu_preempt"
+  prev_pid = "0x10"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "hv_balloon"
+  next_pid = "0xDC"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2459345Z", "cpu": 16, "pid": 0 }
+  prev_comm = "kworker/16:1"
+  prev_pid = "0xAE"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/16"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2459486Z", "cpu": 9, "pid": 0 }
+  prev_comm = "hv_balloon"
+  prev_pid = "0xDC"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/9"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2674595Z", "cpu": 1, "pid": 0 }
+  prev_comm = "swapper/1"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(190)"
+  next_pid = "0x1FD"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2675886Z", "cpu": 1, "pid": 189 }
+  prev_comm = "Relay(190)"
+  prev_pid = "0x1FD"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/1"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2675940Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2676517Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2676816Z", "cpu": 3, "pid": 0 }
+  prev_comm = "swapper/3"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "sudo"
+  next_pid = "0x707"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2678283Z", "cpu": 3, "pid": 1424 }
+  prev_comm = "sudo"
+  prev_pid = "0x707"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/3"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2678503Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:1"
+  next_pid = "0x71C"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2679347Z", "cpu": 23, "pid": 0 }
+  prev_comm = "swapper/23"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2679759Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2679794Z", "cpu": 19, "pid": 0 }
+  prev_comm = "kworker/u48:1"
+  prev_pid = "0x71C"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/19"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2679831Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2680050Z", "cpu": 3, "pid": 0 }
+  prev_comm = "swapper/3"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "sudo"
+  next_pid = "0x707"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2681047Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "kworker/u48:16"
+  next_pid = "0x96"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2681065Z", "cpu": 3, "pid": 1424 }
+  prev_comm = "sudo"
+  prev_pid = "0x707"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/3"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2681378Z", "cpu": 4, "pid": 0 }
+  prev_comm = "kworker/u48:16"
+  prev_pid = "0x96"
+  prev_prio = 120
+  prev_state = 128
+  next_comm = "swapper/4"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2681510Z", "cpu": 1, "pid": 0 }
+  prev_comm = "swapper/1"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "Relay(190)"
+  next_pid = "0x1FD"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2681975Z", "cpu": 1, "pid": 189 }
+  prev_comm = "Relay(190)"
+  prev_pid = "0x1FD"
+  prev_prio = 120
+  prev_state = 1
+  next_comm = "swapper/1"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2682722Z", "cpu": 23, "pid": 2002 }
+  prev_comm = "perf"
+  prev_pid = "0x950"
+  prev_prio = 120
+  prev_state = 2
+  next_comm = "migration/23"
+  next_pid = "0x82"
+  next_prio = 0
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2683159Z", "cpu": 23, "pid": 0 }
+  prev_comm = "migration/23"
+  prev_pid = "0x82"
+  prev_prio = 0
+  prev_state = 1
+  next_comm = "swapper/23"
+  next_pid = "0x0"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2683198Z", "cpu": 0, "pid": 0 }
+  prev_comm = "swapper/0"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2684291Z", "cpu": 1, "pid": 0 }
+  prev_comm = "swapper/1"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2686069Z", "cpu": 2, "pid": 0 }
+  prev_comm = "swapper/2"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2687430Z", "cpu": 3, "pid": 0 }
+  prev_comm = "swapper/3"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2688669Z", "cpu": 4, "pid": 0 }
+  prev_comm = "swapper/4"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2689607Z", "cpu": 5, "pid": 0 }
+  prev_comm = "swapper/5"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2690592Z", "cpu": 6, "pid": 0 }
+  prev_comm = "swapper/6"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2691336Z", "cpu": 7, "pid": 0 }
+  prev_comm = "swapper/7"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2692088Z", "cpu": 8, "pid": 0 }
+  prev_comm = "swapper/8"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2692735Z", "cpu": 9, "pid": 0 }
+  prev_comm = "swapper/9"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2693703Z", "cpu": 10, "pid": 0 }
+  prev_comm = "swapper/10"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2694676Z", "cpu": 11, "pid": 0 }
+  prev_comm = "swapper/11"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2695453Z", "cpu": 12, "pid": 0 }
+  prev_comm = "swapper/12"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2696379Z", "cpu": 13, "pid": 0 }
+  prev_comm = "swapper/13"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2697176Z", "cpu": 14, "pid": 0 }
+  prev_comm = "swapper/14"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2697920Z", "cpu": 15, "pid": 0 }
+  prev_comm = "swapper/15"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2698531Z", "cpu": 16, "pid": 0 }
+  prev_comm = "swapper/16"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2699274Z", "cpu": 17, "pid": 0 }
+  prev_comm = "swapper/17"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2699906Z", "cpu": 18, "pid": 0 }
+  prev_comm = "swapper/18"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2700488Z", "cpu": 19, "pid": 0 }
+  prev_comm = "swapper/19"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2701112Z", "cpu": 20, "pid": 0 }
+  prev_comm = "swapper/20"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2701737Z", "cpu": 21, "pid": 0 }
+  prev_comm = "swapper/21"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2702354Z", "cpu": 22, "pid": 0 }
+  prev_comm = "swapper/22"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+Sample: sched:sched_switch
+  size = 128
+  info = { "time": "2024-03-28T00:45:16.2702940Z", "cpu": 23, "pid": 0 }
+  prev_comm = "swapper/23"
+  prev_pid = "0x0"
+  prev_prio = 120
+  prev_state = 0
+  next_comm = "perf"
+  next_pid = "0x950"
+  next_prio = 120
+NonSample: FinishedRound
+  size = 8

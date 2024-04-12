@@ -4,6 +4,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using System.Text;
 
     /// <summary>
     /// Information about a perf event collection session.
@@ -186,10 +187,10 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Converts time from session timestamp to real-time (time since 1970):
-        /// TimeToRealTime = ClockOffset() + time.
+        /// TimeToTimeSpec = ClockOffset() + time.
         /// If session clock offset is unknown, assumes 1970.
         /// </summary>
-        public PerfEventTimeSpec TimeToRealTime(ulong time)
+        public PerfEventTimeSpec TimeToTimeSpec(ulong time)
         {
             var sec = (long)(time / Billion);
             var nsec = (uint)(time % Billion);
@@ -201,6 +202,97 @@ namespace Microsoft.LinuxTracepoints.Decode
                 nsec -= Billion;
             }
             return new PerfEventTimeSpec(sec, nsec);
+        }
+
+        /// <summary>
+        /// Used by PerfSampleEventInfo, PerfNonSampleEventInfo.
+        /// </summary>
+        internal bool AppendJsonEventInfoTo(
+            StringBuilder sb,
+            bool addCommaBeforeNextItem,
+            PerfInfoOptions infoOptions,
+            PerfJsonOptions jsonOptions,
+            PerfEventAttrSampleType sampleType,
+            ulong time,
+            uint cpu,
+            uint pid,
+            uint tid,
+            string name)
+        {
+            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
+
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) &&
+                infoOptions.HasFlag(PerfInfoOptions.Time))
+            {
+                w.WriteValueNoEscapeName("time");
+                if (this.ClockOffsetKnown && this.TimeToTimeSpec(time).DateTime is DateTime dt)
+                {
+                    sb.Append('"');
+                    PerfConvert.DateTimeFullAppend(sb, dt);
+                    sb.Append('"');
+                }
+                else
+                {
+                    PerfConvert.Float64gAppend(sb, time / 1000000000.0);
+                }
+            }
+
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) &&
+                infoOptions.HasFlag(PerfInfoOptions.Cpu))
+            {
+                w.WriteValueNoEscapeName("cpu");
+                PerfConvert.UInt32DecimalAppend(sb, cpu);
+            }
+
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
+            {
+                if (infoOptions.HasFlag(PerfInfoOptions.Pid))
+                {
+                    w.WriteValueNoEscapeName("pid");
+                    PerfConvert.UInt32DecimalAppend(sb, pid);
+                }
+
+                if (infoOptions.HasFlag(PerfInfoOptions.Tid) &&
+                    (pid != tid || !infoOptions.HasFlag(PerfInfoOptions.Pid)))
+                {
+                    w.WriteValueNoEscapeName("tid");
+                    PerfConvert.UInt32DecimalAppend(sb, tid);
+                }
+            }
+
+            if (0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Event)) &&
+                !string.IsNullOrEmpty(name))
+            {
+                var nameSpan = name.AsSpan();
+                var colonPos = nameSpan.IndexOf(':');
+                ReadOnlySpan<char> providerName, eventName;
+                if (colonPos < 0)
+                {
+                    providerName = default;
+                    eventName = nameSpan;
+                }
+                else
+                {
+                    providerName = nameSpan.Slice(0, colonPos);
+                    eventName = nameSpan.Slice(colonPos + 1);
+                }
+
+                if (infoOptions.HasFlag(PerfInfoOptions.Provider) &&
+                    !providerName.IsEmpty)
+                {
+                    w.WriteValueNoEscapeName("provider");
+                    PerfConvert.StringAppendJson(sb, providerName);
+                }
+
+                if (infoOptions.HasFlag(PerfInfoOptions.Event) &&
+                    !eventName.IsEmpty)
+                {
+                    w.WriteValueNoEscapeName("event");
+                    PerfConvert.StringAppendJson(sb, eventName);
+                }
+            }
+
+            return w.Comma;
         }
     }
 }

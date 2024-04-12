@@ -9,6 +9,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System.IO;
     using System.Runtime.InteropServices;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+    using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
 
     /// <summary>
@@ -56,6 +57,29 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// PERF_SAMPLE_IDENTIFIER).
         /// </summary>
         NoData,
+    }
+
+    /// <summary>
+    /// Extension methods for PerfDataFileResult.
+    /// </summary>
+    public static class PerfDataFileResultExtensions
+    {
+        /// <summary>
+        /// Returns a string for the enum value of PerfDataFileResult.
+        /// </summary>
+        public static string AsString(this PerfDataFileResult self)
+        {
+            return self switch
+            {
+                PerfDataFileResult.Ok => "Ok",
+                PerfDataFileResult.EndOfFile => "EndOfFile",
+                PerfDataFileResult.InvalidData => "InvalidData",
+                PerfDataFileResult.IdNotFound => "IdNotFound",
+                PerfDataFileResult.NotSupported => "NotSupported",
+                PerfDataFileResult.NoData => "NoData",
+                _ => unchecked((byte)self).ToString(CultureInfo.InvariantCulture),
+            };
+        }
     }
 
     /// <summary>

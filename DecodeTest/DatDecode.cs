@@ -141,12 +141,12 @@
                         this.writer.WriteCommentValue($"Pos {pos}: Unexpected state {e.State}.");
                     }
 
-                    this.writer.WritePropertyNameOnNewLine("meta");
+                    this.writer.WritePropertyNameOnNewLine("info");
                     this.writer.WriteStartObject();
 
-                    e.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false, EventHeaderMetaOptions.All, PerfJsonOptions.All);
+                    e.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false, PerfInfoOptions.All, PerfJsonOptions.All);
 
-                    this.writer.WriteEndObject(); // meta
+                    this.writer.WriteEndObject(); // info
                     this.writer.WriteEndObjectOnNewLine(); // AppendJsonItemN
 
                     // AppendJsonItemToAndMoveNextSibling on BeforeFirstItem:
@@ -169,14 +169,14 @@
                         this.writer.WriteCommentValue($"Pos {pos}: Unexpected state {e.State}.");
                     }
 
-                    this.writer.WritePropertyNameOnNewLine("meta");
+                    this.writer.WritePropertyNameOnNewLine("info");
                     this.writer.WriteStartObject();
 
-                    e.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false,
-                        EventHeaderMetaOptions.Default & ~EventHeaderMetaOptions.Level,
+                    e.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false,
+                        PerfInfoOptions.Default & ~PerfInfoOptions.Level,
                         PerfJsonOptions.None);
 
-                    this.writer.WriteEndObject(); // meta
+                    this.writer.WriteEndObject(); // info
                     this.writer.WriteEndObjectOnNewLine(); // AppendJsonItem1
 
                     // MoveNext

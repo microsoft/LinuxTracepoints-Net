@@ -29,6 +29,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         private const long SecondsPerDay = 60 * 60 * 24;
         private const long MaxSeconds = DaysToYear10000 * SecondsPerDay - UnixEpochSeconds;
 
+        /// <summary>
+        /// ErrnoLookup(n) will return a non-null value if
+        /// <![CDATA[0 <= n < ErrnoFirstUnknownValue]]>.
+        /// </summary>
+        private const int ErrnoFirstUnknownValue = 134;
+
         private static Encoding? encodingLatin1; // ISO-8859-1
         private static Encoding? encodingUTF32BE;
         private static string[]? errnoStrings;
@@ -56,12 +62,6 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// 28, e.g. "2020-02-02T02:02:02.1234567Z".
         /// </summary>
         public const int DateTimeFullMaxChars = 28;
-
-        /// <summary>
-        /// ErrnoLookup(n) will return a non-null value if
-        /// <![CDATA[0 <= n < ErrnoFirstUnknownValue]]>.
-        /// </summary>
-        public static readonly int ErrnoFirstUnknownValue = 134;
 
         /// <summary>
         /// Maximum number of characters required to jsonOptions an errno value,
@@ -433,9 +433,11 @@ namespace Microsoft.LinuxTracepoints.Decode
             pos += 7;
             for (var i = 1; i <= 7; i += 1)
             {
-                destination[pos - i] = (char)('0' + (ticks % 10));
+                var digit = ticks % 10;
                 ticks /= 10;
+                destination[pos - i] = (char)('0' + digit);
             }
+
             destination[pos++] = 'Z';
             Debug.Assert(pos == DateTimeFullMaxChars);
             return destination.Slice(0, pos);
@@ -455,6 +457,16 @@ namespace Microsoft.LinuxTracepoints.Decode
         public static StringBuilder DateTimeFullAppend(StringBuilder sb, DateTime value)
         {
             return sb.Append(DateTimeFullFormat(stackalloc char[DateTimeFullMaxChars], value));
+        }
+
+        /// <summary>
+        /// Returns true if the provided value is value that will return a non-null
+        /// value from ErrnoLookup. Note that this returns true for 0, even though 0
+        /// is not really a valid error number.
+        /// </summary>
+        public static bool ErrnoKnown(int linuxErrno)
+        {
+            return linuxErrno >= 0 && linuxErrno < ErrnoFirstUnknownValue;
         }
 
         /// <summary>
@@ -534,13 +546,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static StringBuilder ErrnoAppendJson(StringBuilder sb, Int32 value, PerfJsonOptions jsonOptions)
         {
-            if (value >= 0 &&
-                value < ErrnoFirstUnknownValue)
+            if (ErrnoKnown(value))
             {
                 if (jsonOptions.HasFlag(PerfJsonOptions.ErrnoKnownAsString))
                 {
                     sb.Append('"');
-                    sb.Append(ErrnoToString(value));
+                    sb.Append(ErrnoLookup(value));
                     return sb.Append('"');
                 }
             }
@@ -1378,15 +1389,33 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static DateTime? UnixTime64ToDateTime(Int64 secondsSince1970)
         {
-            if (secondsSince1970 < -UnixEpochSeconds ||
-                secondsSince1970 >= MaxSeconds)
+            if (UnixTime64IsInDateTimeRange(secondsSince1970))
             {
-                return null;
+                return UnixTime64ToDateTimeUnchecked(secondsSince1970);
             }
             else
             {
-                return new DateTime((secondsSince1970 + UnixEpochSeconds) * 10000000, DateTimeKind.Utc);
+                return null;
             }
+        }
+
+        /// <summary>
+        /// Returns true if the provided 64-bit Unix time_t (signed seconds since 1970)
+        /// can be converted to a DateTime.
+        /// </summary>
+        public static bool UnixTime64IsInDateTimeRange(Int64 secondsSince1970)
+        {
+            return secondsSince1970 >= -UnixEpochSeconds && secondsSince1970 < MaxSeconds;
+        }
+
+        /// <summary>
+        /// Requires: UnixTime64IsInDateTimeRange(secondsSince1970) is true.
+        /// Returns the DateTime for the provided 64-bit Unix time_t (signed seconds since 1970).
+        /// </summary>
+        public static DateTime UnixTime64ToDateTimeUnchecked(Int64 secondsSince1970)
+        {
+            Debug.Assert(UnixTime64IsInDateTimeRange(secondsSince1970));
+            return new DateTime((secondsSince1970 + UnixEpochSeconds) * 10000000, DateTimeKind.Utc);
         }
 
         /// <summary>
@@ -1446,13 +1475,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static StringBuilder UnixTime64AppendJson(StringBuilder sb, Int64 value, PerfJsonOptions jsonOptions)
         {
-            if (value >= -UnixEpochSeconds &&
-                value < MaxSeconds)
+            if (UnixTime64IsInDateTimeRange(value))
             {
                 if (jsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
                 {
                     sb.Append('"');
-                    DateTimeNoSubsecondsAppend(sb, new DateTime((value + UnixEpochSeconds) * 10000000, DateTimeKind.Utc));
+                    DateTimeNoSubsecondsAppend(sb, UnixTime64ToDateTimeUnchecked(value));
                     return sb.Append('"');
                 }
             }

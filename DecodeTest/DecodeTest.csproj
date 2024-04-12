@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <Compile Include="..\DecodePerfToJson\PerfToJson.cs" Link="PerfToJson.cs" />
+    <Compile Include="..\DecodeSample\DataToWriter.cs" Link="DataToWriter.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,7 +37,13 @@
     <None Update="expected\perf.data.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="expected\perf.data.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="expected\pipe.data.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="expected\pipe.data.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="input\EventHeaderInterceptorLE64.dat">

@@ -7,6 +7,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System;
     using System.Runtime.InteropServices;
     using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+    using CultureInfo = System.Globalization.CultureInfo;
 
     /// <summary>
     /// perf_type_id: uint32 value for PerfEventAttr.Type.
@@ -1449,6 +1450,65 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// host records.
         /// </summary>
         FinishedInit = 82,
+    }
+
+    /// <summary>
+    /// Extension methods for PerfEventHeaderType.
+    /// </summary>
+    public static class PerfEventHeaderTypeExtensions
+    {
+        /// <summary>
+        /// Returns a string representation of the PerfEventHeaderType value.
+        /// </summary>
+        public static string AsString(this PerfEventHeaderType self)
+        {
+            switch (self)
+            {
+                case PerfEventHeaderType.None: return "None";
+                case PerfEventHeaderType.Mmap: return "Mmap";
+                case PerfEventHeaderType.Lost: return "Lost";
+                case PerfEventHeaderType.Comm: return "Comm";
+                case PerfEventHeaderType.Exit: return "Exit";
+                case PerfEventHeaderType.Throttle: return "Throttle";
+                case PerfEventHeaderType.Unthrottle: return "Unthrottle";
+                case PerfEventHeaderType.Fork: return "Fork";
+                case PerfEventHeaderType.Read: return "Read";
+                case PerfEventHeaderType.Sample: return "Sample";
+                case PerfEventHeaderType.Mmap2: return "Mmap2";
+                case PerfEventHeaderType.Aux: return "Aux";
+                case PerfEventHeaderType.ItraceStart: return "ItraceStart";
+                case PerfEventHeaderType.LostSamples: return "LostSamples";
+                case PerfEventHeaderType.Switch: return "Switch";
+                case PerfEventHeaderType.SwitchCpuWide: return "SwitchCpuWide";
+                case PerfEventHeaderType.Namespaces: return "Namespaces";
+                case PerfEventHeaderType.Ksymbol: return "Ksymbol";
+                case PerfEventHeaderType.BpfEvent: return "BpfEvent";
+                case PerfEventHeaderType.Cgroup: return "Cgroup";
+                case PerfEventHeaderType.TextPoke: return "TextPoke";
+                case PerfEventHeaderType.AuxOutputHwId: return "AuxOutputHwId";
+                case PerfEventHeaderType.Max: return "Max";
+                case PerfEventHeaderType.HeaderAttr: return "HeaderAttr";
+                case PerfEventHeaderType.HeaderEventType: return "HeaderEventType";
+                case PerfEventHeaderType.HeaderTracingData: return "HeaderTracingData";
+                case PerfEventHeaderType.HeaderBuildId: return "HeaderBuildId";
+                case PerfEventHeaderType.FinishedRound: return "FinishedRound";
+                case PerfEventHeaderType.IdIndex: return "IdIndex";
+                case PerfEventHeaderType.AuxtraceInfo: return "AuxtraceInfo";
+                case PerfEventHeaderType.Auxtrace: return "Auxtrace";
+                case PerfEventHeaderType.AuxtraceError: return "AuxtraceError";
+                case PerfEventHeaderType.ThreadMap: return "ThreadMap";
+                case PerfEventHeaderType.CpuMap: return "CpuMap";
+                case PerfEventHeaderType.StatConfig: return "StatConfig";
+                case PerfEventHeaderType.Stat: return "Stat";
+                case PerfEventHeaderType.StatRound: return "StatRound";
+                case PerfEventHeaderType.EventUpdate: return "EventUpdate";
+                case PerfEventHeaderType.TimeConv: return "TimeConv";
+                case PerfEventHeaderType.HeaderFeature: return "HeaderFeature";
+                case PerfEventHeaderType.Compressed: return "Compressed";
+                case PerfEventHeaderType.FinishedInit: return "FinishedInit";
+                default: return unchecked((UInt32)self).ToString(CultureInfo.InvariantCulture);
+            }
+        }
     }
 
     /// <summary>

@@ -79,7 +79,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Valid if SampleType contains Time.
-        /// Use SessionInfo.TimeToRealTime() to convert to a TimeSpec.
+        /// Use SessionInfo.TimeToTimeSpec() to convert to a TimeSpec.
         /// </summary>
         public UInt64 Time;
 
@@ -119,30 +119,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.
         /// </summary>
-        public readonly PerfEventTimeSpec TimeSpec => this.SessionInfo.TimeToRealTime(this.Time);
-
-        /// <summary>
-        /// Gets the Time as a DateTime, using offset information from SessionInfo.
-        /// If the resulting DateTime is out of range (year before 1 or after 9999),
-        /// returns DateTime.MinValue.
-        /// </summary>
-        public readonly DateTime DateTime
-        {
-            get
-            {
-                var ts = this.SessionInfo.TimeToRealTime(this.Time);
-                DateTime result;
-                if (PerfConvert.UnixTime64ToDateTime(ts.TvSec) is DateTime seconds)
-                {
-                    result = seconds.AddTicks(ts.TvNsec / 100);
-                }
-                else
-                {
-                    result = default;
-                }
-                return result;
-            }
-        }
+        public readonly PerfEventTimeSpec TimeSpec => this.SessionInfo.TimeToTimeSpec(this.Time);
 
         /// <summary>
         /// Returns the full name of the event, e.g. "dummy:HG", or "" if not available.
@@ -161,7 +138,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// PRECONDITION: Can be called after a successful call to reader.GetSampleEventInfo.
         /// </para><para>
         /// One name-value pair is appended for each metadata item that is both requested
-        /// by metaOptions and has a meaningful value available in the event info.
+        /// by infoOptions and has a meaningful value available in the event info.
         /// </para><para>
         /// The following metadata items are supported:
         /// <list type="bullet"><item>
@@ -184,88 +161,23 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
         /// addCommaBeforeNextItem was true OR if any metadata items were appended.
         /// </returns>
-        public bool AppendJsonEventMetaTo(
+        public readonly bool AppendJsonEventInfoTo(
             StringBuilder sb,
             bool addCommaBeforeNextItem = false,
-            EventHeaderMetaOptions metaOptions = EventHeaderMetaOptions.Default,
+            PerfInfoOptions infoOptions = PerfInfoOptions.Default,
             PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
         {
-            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
-
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Time) &&
-                this.SampleType.HasFlag(PerfEventAttrSampleType.Time))
-            {
-                w.WriteValueNoEscapeName("time");
-                if (SessionInfo.ClockOffsetKnown)
-                {
-                    sb.Append('"');
-                    PerfConvert.DateTimeFullAppend(sb, this.DateTime);
-                    sb.Append('"');
-                }
-                else
-                {
-                    PerfConvert.Float64gAppend(sb, this.Time / 1000000000.0);
-                }
-            }
-
-            if (metaOptions.HasFlag(EventHeaderMetaOptions.Cpu) &&
-                this.SampleType.HasFlag(PerfEventAttrSampleType.Cpu))
-            {
-                w.WriteValueNoEscapeName("cpu");
-                PerfConvert.UInt32DecimalAppend(sb, this.Cpu);
-            }
-
-            if (this.SampleType.HasFlag(PerfEventAttrSampleType.Tid))
-            {
-                if (metaOptions.HasFlag(EventHeaderMetaOptions.Pid))
-                {
-                    w.WriteValueNoEscapeName("pid");
-                    PerfConvert.UInt32DecimalAppend(sb, this.Pid);
-                }
-
-                if (metaOptions.HasFlag(EventHeaderMetaOptions.Tid))
-                {
-                    w.WriteValueNoEscapeName("tid");
-                    PerfConvert.UInt32DecimalAppend(sb, this.Tid);
-                }
-            }
-
-            if (0 != (metaOptions & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Event)))
-            {
-                var name = this.Name;
-                if (!string.IsNullOrEmpty(name))
-                {
-                    var nameSpan = name.AsSpan();
-                    var colonPos = nameSpan.IndexOf(':');
-                    ReadOnlySpan<char> providerName, eventName;
-                    if (colonPos < 0)
-                    {
-                        providerName = default;
-                        eventName = nameSpan;
-                    }
-                    else
-                    {
-                        providerName = nameSpan.Slice(0, colonPos);
-                        eventName = nameSpan.Slice(colonPos + 1);
-                    }
-
-                    if (metaOptions.HasFlag(EventHeaderMetaOptions.Provider) &&
-                        !providerName.IsEmpty)
-                    {
-                        w.WriteValueNoEscapeName("provider");
-                        PerfConvert.StringAppendJson(sb, providerName);
-                    }
-
-                    if (metaOptions.HasFlag(EventHeaderMetaOptions.Event) &&
-                        !eventName.IsEmpty)
-                    {
-                        w.WriteValueNoEscapeName("event");
-                        PerfConvert.StringAppendJson(sb, eventName);
-                    }
-                }
-            }
-
-            return w.Comma;
+            return this.SessionInfo.AppendJsonEventInfoTo(
+                sb,
+                addCommaBeforeNextItem,
+                infoOptions,
+                jsonOptions,
+                this.SampleType,
+                this.Time,
+                this.Cpu,
+                this.Pid,
+                this.Tid,
+                this.Name);
         }
     }
 }

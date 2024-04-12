@@ -4,6 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <Nullable>enable</Nullable>
     <BaseOutputPath>..\bin</BaseOutputPath>
     <IntermediateOutputPath>..\obj</IntermediateOutputPath>
     <WarningLevel>9999</WarningLevel>

@@ -92,6 +92,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             FloatExtraPrecision |
             FloatNonFiniteAsString |
             IntHexAsString |
+            BoolOutOfRangeAsString |
             UnixTimeWithinRangeAsString |
             UnixTimeOutOfRangeAsString |
             ErrnoKnownAsString |

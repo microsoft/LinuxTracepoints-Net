@@ -17,10 +17,11 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         public JsonWriter(StringBuilder builder, PerfJsonOptions options, bool comma)
         {
+            var space = options.HasFlag(PerfJsonOptions.Space);
             this.builder = builder;
             this.comma = comma;
-            this.currentSpace = false;
-            this.nextSpace = options.HasFlag(PerfJsonOptions.Space);
+            this.currentSpace = space && comma; // Space before first item only if after a comma.
+            this.nextSpace = space; // Enable or disable space for subsequent items.
             this.wantFieldTag = options.HasFlag(PerfJsonOptions.FieldTag);
         }
 

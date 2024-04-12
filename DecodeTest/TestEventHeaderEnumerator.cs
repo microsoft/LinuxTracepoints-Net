@@ -20,7 +20,7 @@ namespace DecodeTest
             writer.WriteEndArrayOnNewLine();
 
             var result = writer.ToString();
-            JsonCompare.AssertSame(TestContext, inputName, result);
+            TextCompare.AssertSame(TestContext, inputName + ".json", result);
         }
 
         [TestMethod]

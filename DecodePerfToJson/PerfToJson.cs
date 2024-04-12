@@ -7,51 +7,78 @@ namespace DecodePerfToJson
     using Microsoft.LinuxTracepoints.Decode;
     using System;
     using System.Buffers;
+    using System.Text.Json;
     using Debug = System.Diagnostics.Debug;
     using Encoding = System.Text.Encoding;
     using MemoryMarshal = System.Runtime.InteropServices.MemoryMarshal;
     using Stream = System.IO.Stream;
-    using Utf8JsonWriter = System.Text.Json.Utf8JsonWriter;
 
     internal sealed class DecodePerfJsonWriter : IDisposable
     {
         private readonly PerfDataFileReader reader = new PerfDataFileReader();
         private readonly EventHeaderEnumerator enumerator = new EventHeaderEnumerator();
-        private readonly Utf8JsonWriter writer;
 
         // Scratch buffer for formatting strings.
         private readonly ArrayBufferWriter<char> charBufStorage = new ArrayBufferWriter<char>();
 
-        public DecodePerfJsonWriter(Utf8JsonWriter writer, EventHeaderMetaOptions meta = EventHeaderMetaOptions.Default)
+        public DecodePerfJsonWriter(
+            IBufferWriter<byte> utf8JsonBufferWriter,
+            JsonWriterOptions writerOptions = default)
         {
-            this.writer = writer;
-            this.Meta = meta;
+            this.JsonWriter = new Utf8JsonWriter(utf8JsonBufferWriter, writerOptions);
+            this.InfoOptions = PerfInfoOptions.Default;
+            this.JsonOptions = PerfJsonOptions.Default;
         }
 
-        public EventHeaderMetaOptions Meta { get; set; }
+        public DecodePerfJsonWriter(
+            Stream utf8JsonStream,
+            JsonWriterOptions writerOptions = default)
+        {
+            this.JsonWriter = new Utf8JsonWriter(utf8JsonStream, writerOptions);
+            this.InfoOptions = PerfInfoOptions.Default;
+            this.JsonOptions = PerfJsonOptions.Default;
+        }
+
+        public Utf8JsonWriter JsonWriter { get; }
+
+        public PerfInfoOptions InfoOptions { get; set; }
+
+        /// <summary>
+        /// Respected options:
+        /// FieldTag,
+        /// FloatNonFiniteAsString,
+        /// IntHexAsString,
+        /// BoolOutOfRangeAsString,
+        /// UnixTimeWithinRangeAsString,
+        /// UnixTimeOutOfRangeAsString,
+        /// ErrnoKnownAsString,
+        /// ErrnoUnknownAsString.
+        /// </summary>
+        public PerfJsonOptions JsonOptions { get; set; }
+
+        public bool ShowNonSample { get; set; }
 
         public void WriteFile(string fileName, PerfDataFileEventOrder eventOrder)
         {
-            reader.OpenFile(fileName, eventOrder);
+            this.reader.OpenFile(fileName, eventOrder);
             this.WriteFromReader();
         }
 
         public void WriteFile(Stream stream, PerfDataFileEventOrder eventOrder, bool leaveOpen = false)
         {
-            reader.OpenStream(stream, eventOrder, leaveOpen);
+            this.reader.OpenStream(stream, eventOrder, leaveOpen);
             this.WriteFromReader();
         }
 
         public void Dispose()
         {
-            reader.Dispose();
-            writer.Dispose();
+            this.reader.Dispose();
+            this.JsonWriter.Dispose();
         }
 
         private void WriteFromReader()
         {
-            bool finishedInit = false;
-            var byteReader = reader.ByteReader;
+            var byteReader = this.reader.ByteReader;
             PerfDataFileResult result;
             PerfEventBytes eventBytes;
 
@@ -62,106 +89,94 @@ namespace DecodePerfToJson
 
             while (true)
             {
-                result = reader.ReadEvent(out eventBytes);
+                result = this.reader.ReadEvent(out eventBytes);
                 if (result != PerfDataFileResult.Ok)
                 {
                     if (result != PerfDataFileResult.EndOfFile)
                     {
-                        writer.WriteCommentValue($"ReadEvent {result}"); // Garbage.
+                        this.JsonWriter.WriteStartObject();
+                        this.JsonWriter.WriteString("ReadEvent", result.AsString());
+                        this.JsonWriter.WriteEndObject();
                     }
-                    break;
+                    break; // No more events.
                 }
 
-                writer.WriteStartObject(); // event
+                if (!this.ShowNonSample &&
+                    eventBytes.Header.Type != PerfEventHeaderType.Sample)
+                {
+                    continue; // Skip non-sample events.
+                }
+
+                this.JsonWriter.WriteStartObject(); // event
 
                 if (eventBytes.Header.Type != PerfEventHeaderType.Sample)
                 {
-                    finishedInit |= eventBytes.Header.Type == PerfEventHeaderType.FinishedInit;
-
-                    PerfNonSampleEventInfo info;
-                    if (eventBytes.Header.Type >= PerfEventHeaderType.UserTypeStart)
+                    PerfNonSampleEventInfo nonSampleEventInfo;
+                    result = this.reader.GetNonSampleEventInfo(eventBytes, out nonSampleEventInfo);
+                    if (result != PerfDataFileResult.Ok &&
+                        result != PerfDataFileResult.IdNotFound)
                     {
-                        // Synthetic events, no attributes.
-                        info = default;
-                        result = PerfDataFileResult.NoData;
-                    }
-                    else
-                    {
-                        // Attributes are expected to be available for these events.
-                        result = reader.GetNonSampleEventInfo(eventBytes, out info);
-                        if (result != PerfDataFileResult.Ok)
-                        {
-                            // Attributes not available.
-                            // If we haven't seen FinishedInit, IdNotFound is expected.
-                            if (finishedInit || result != PerfDataFileResult.IdNotFound)
-                            {
-                                writer.WriteCommentValue($"GetNonSampleEventInfo {result}"); // Garbage.
-                            }
-                        }
+                        this.JsonWriter.WriteString("GetNonSampleEventInfo", result.AsString());
                     }
 
-                    writer.WriteString("ns", // Garbage.
-                        result != PerfDataFileResult.Ok
-                        ? eventBytes.Header.Type.ToString()
-                        : $"{eventBytes.Header.Type}/{info.Name}");
-                    writer.WriteNumber("size", eventBytes.Memory.Length);
-
+                    this.JsonWriter.WriteString("NonSample", eventBytes.Header.Type.AsString());
+                    this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
                     if (result == PerfDataFileResult.Ok)
                     {
-                        WriteNonSampleMeta(info);
+                        WriteNonSampleMeta(nonSampleEventInfo);
                     }
                 }
                 else
                 {
-                    PerfSampleEventInfo info;
-                    result = reader.GetSampleEventInfo(eventBytes, out info);
+                    PerfSampleEventInfo sampleEventInfo;
+                    result = this.reader.GetSampleEventInfo(eventBytes, out sampleEventInfo);
                     if (result != PerfDataFileResult.Ok)
                     {
                         // Unable to lookup attributes for event. Unexpected.
-                        writer.WriteCommentValue($"GetSampleEventInfo {result}"); // Garbage.
-                        writer.WriteNull("n");
-                        writer.WriteNumber("size", eventBytes.Memory.Length);
+                        this.JsonWriter.WriteString("GetSampleEventInfo", result.AsString());
+                        this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
                     }
-                    else if (!(info.Format is PerfEventFormat infoFormat))
+                    else if (!(sampleEventInfo.Format is PerfEventFormat infoFormat))
                     {
                         // No TraceFS format for this event. Unexpected.
-                        writer.WriteString("n", info.Name);
-                        writer.WriteNumber("size", eventBytes.Memory.Length);
+                        this.JsonWriter.WriteString("GetSampleEventInfo", "NoFormat");
+
+                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
+                        {
+                            this.JsonWriter.WriteString("n", sampleEventInfo.Name);
+                        }
+
+                        this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
+
+                        if (0 != (this.InfoOptions & ~PerfInfoOptions.N))
+                        {
+                            this.JsonWriter.WriteStartObject("info");
+                            WriteSampleMeta(sampleEventInfo, true);
+                            this.JsonWriter.WriteEndObject(); // info
+                        }
                     }
                     else if (infoFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
-                        !this.enumerator.StartEvent(infoFormat.Name, info.UserData))
+                        !this.enumerator.StartEvent(infoFormat.Name, sampleEventInfo.UserData))
                     {
                         // Non-EventHeader decoding.
 
-                        if (this.Meta.HasFlag(EventHeaderMetaOptions.N))
+                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
                         {
-                            writer.WriteString("n", info.Name);
+                            this.JsonWriter.WriteString("n", sampleEventInfo.Name);
                         }
 
                         // Write the event fields. Skip the common fields by default.
-                        var firstField = this.Meta.HasFlag(EventHeaderMetaOptions.Common) ? 0 : infoFormat.CommonFieldCount;
+                        var firstField = this.InfoOptions.HasFlag(PerfInfoOptions.Common) ? 0 : infoFormat.CommonFieldCount;
                         for (int i = firstField; i < infoFormat.Fields.Count; i++)
                         {
-                            var fieldFormat = infoFormat.Fields[i];
-                            var fieldValue = fieldFormat.GetFieldValue(info.RawDataSpan, byteReader);
-                            if (!fieldValue.IsArrayOrElement)
-                            {
-                                writer.WritePropertyName(fieldFormat.Name);
-                                this.WriteValue(fieldValue, ref charBuf);
-                            }
-                            else
-                            {
-                                writer.WriteStartArray(fieldFormat.Name);
-                                WriteSimpleArrayValues(fieldValue, ref charBuf);
-                                writer.WriteEndArray();
-                            }
+                            this.WriteField(sampleEventInfo, i, ref charBuf);
                         }
 
-                        if (0 != (this.Meta & ~EventHeaderMetaOptions.N))
+                        if (0 != (this.InfoOptions & ~PerfInfoOptions.N))
                         {
-                            writer.WriteStartObject("meta");
-                            WriteSampleMeta(info, true);
-                            writer.WriteEndObject(); // meta
+                            this.JsonWriter.WriteStartObject("info");
+                            WriteSampleMeta(sampleEventInfo, true);
+                            this.JsonWriter.WriteEndObject(); // info
                         }
                     }
                     else
@@ -169,12 +184,44 @@ namespace DecodePerfToJson
                         // EventHeader decoding.
 
                         var ei = this.enumerator.GetEventInfo();
-                        if (this.Meta.HasFlag(EventHeaderMetaOptions.N))
+
+                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
                         {
-                            writer.WriteString("n", // Garbage
-                                infoFormat.SystemName == "user_events"
-                                ? $"{ei.ProviderName.ToString()}:{ei.NameAsString}"
-                                : $"{infoFormat.SystemName}:{ei.ProviderName.ToString()}:{ei.NameAsString}");
+                            var systemName = infoFormat.SystemName;
+                            var providerName = ei.ProviderName;
+                            var eventNameBytes = ei.NameBytes;
+
+                            var maxChars =
+                                providerName.Length + 1 +
+                                Encoding.UTF8.GetMaxCharCount(eventNameBytes.Length);
+
+                            var pos = 0;
+                            if (systemName == "user_events")
+                            {
+                                this.EnsureSpan(maxChars, ref charBuf);
+                            }
+                            else
+                            {
+                                this.EnsureSpan(maxChars + systemName.Length + 1, ref charBuf);
+                                systemName.AsSpan().CopyTo(charBuf.Slice(pos));
+                                pos += systemName.Length;
+                                charBuf[pos++] = ':';
+                            }
+
+                            providerName.CopyTo(charBuf.Slice(pos));
+                            pos += providerName.Length;
+                            charBuf[pos++] = ':';
+                            pos += Encoding.UTF8.GetChars(eventNameBytes, charBuf.Slice(pos));
+
+                            this.JsonWriter.WriteString("n", charBuf.Slice(0, pos));
+                        }
+
+                        if (this.InfoOptions.HasFlag(PerfInfoOptions.Common))
+                        {
+                            for (var i = 0; i < infoFormat.CommonFieldCount; i++)
+                            {
+                                this.WriteField(sampleEventInfo, i, ref charBuf);
+                            }
                         }
 
                         if (this.enumerator.MoveNext())
@@ -187,28 +234,28 @@ namespace DecodePerfToJson
                                     case EventHeaderEnumeratorState.Value:
                                         if (!item.Value.IsArrayOrElement)
                                         {
-                                            writer.WritePropertyName(MakeName(item, ref charBuf));
+                                            this.JsonWriter.WritePropertyName(MakeName(item, ref charBuf));
                                         }
                                         this.WriteValue(item.Value, ref charBuf);
                                         break;
                                     case EventHeaderEnumeratorState.StructBegin:
                                         if (!item.Value.IsArrayOrElement)
                                         {
-                                            writer.WritePropertyName(MakeName(item, ref charBuf));
+                                            this.JsonWriter.WritePropertyName(MakeName(item, ref charBuf));
                                         }
-                                        writer.WriteStartObject();
+                                        this.JsonWriter.WriteStartObject();
                                         break;
                                     case EventHeaderEnumeratorState.StructEnd:
-                                        writer.WriteEndObject();
+                                        this.JsonWriter.WriteEndObject();
                                         break;
                                     case EventHeaderEnumeratorState.ArrayBegin:
-                                        writer.WritePropertyName(MakeName(item, ref charBuf));
-                                        writer.WriteStartArray();
+                                        this.JsonWriter.WritePropertyName(MakeName(item, ref charBuf));
+                                        this.JsonWriter.WriteStartArray();
                                         if (item.Value.TypeSize != 0)
                                         {
                                             // Process the simple array directly without using the enumerator.
                                             WriteSimpleArrayValues(item.Value, ref charBuf);
-                                            writer.WriteEndArray();
+                                            this.JsonWriter.WriteEndArray();
 
                                             // Skip the entire array at once.
                                             if (!this.enumerator.MoveNextSibling()) // Instead of MoveNext().
@@ -220,7 +267,7 @@ namespace DecodePerfToJson
                                         }
                                         break;
                                     case EventHeaderEnumeratorState.ArrayEnd:
-                                        writer.WriteEndArray();
+                                        this.JsonWriter.WriteEndArray();
                                         break;
                                 }
 
@@ -233,201 +280,208 @@ namespace DecodePerfToJson
 
                     EventDone:
 
-                        if (0 != (this.Meta & ~EventHeaderMetaOptions.N))
+                        if (0 != (this.InfoOptions & ~PerfInfoOptions.N))
                         {
-                            writer.WriteStartObject("meta");
+                            this.JsonWriter.WriteStartObject("info");
 
-                            WriteSampleMeta(info, false);
+                            WriteSampleMeta(sampleEventInfo, false);
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Provider))
+                            // Same as enumerator.AppendJsonEventInfoTo, but with a Utf8JsonWriter.
+
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Provider))
                             {
-                                writer.WriteString("provider", ei.ProviderName);
+                                this.JsonWriter.WriteString("provider", ei.ProviderName);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Event))
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Event))
                             {
-                                writer.WriteString("event", ei.NameBytes);
+                                this.JsonWriter.WriteString("event", ei.NameBytes);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Id) && ei.Header.Id != 0)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Id) && ei.Header.Id != 0)
                             {
-                                this.writer.WriteNumber("id", ei.Header.Id);
+                                this.JsonWriter.WriteNumber("id", ei.Header.Id);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Version) && ei.Header.Version != 0)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Version) && ei.Header.Version != 0)
                             {
-                                this.writer.WriteNumber("version", ei.Header.Version);
+                                this.JsonWriter.WriteNumber("version", ei.Header.Version);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Level) && ei.Header.Level != 0)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Level) && ei.Header.Level != 0)
                             {
-                                this.writer.WriteNumber("level", (byte)ei.Header.Level);
+                                this.JsonWriter.WriteNumber("level", (byte)ei.Header.Level);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Keyword) && ei.Keyword != 0)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Keyword) && ei.Keyword != 0)
                             {
-                                this.writer.WriteString("keyword", PerfConvert.UInt64HexFormatAtEnd(charBuf, ei.Keyword));
+                                this.JsonWriter.WritePropertyName("keyword");
+                                this.WriteHex64Value(charBuf, ei.Keyword);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Opcode) && ei.Header.Opcode != 0)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Opcode) && ei.Header.Opcode != 0)
                             {
-                                this.writer.WriteNumber("opcode", (byte)ei.Header.Opcode);
+                                this.JsonWriter.WriteNumber("opcode", (byte)ei.Header.Opcode);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Tag) && ei.Header.Tag != 0)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Tag) && ei.Header.Tag != 0)
                             {
-                                this.writer.WriteString("tag", PerfConvert.UInt32HexFormatAtEnd(charBuf, ei.Header.Tag));
+                                this.JsonWriter.WritePropertyName("tag");
+                                this.WriteHex32Value(charBuf, ei.Header.Tag);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Activity) && ei.ActivityId is Guid aid)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Activity) && ei.ActivityId is Guid aid)
                             {
-                                this.writer.WriteString("activity", aid);
+                                this.JsonWriter.WriteString("activity", aid);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.RelatedActivity) && ei.RelatedActivityId is Guid rid)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.RelatedActivity) && ei.RelatedActivityId is Guid rid)
                             {
-                                this.writer.WriteString("relatedActivity", rid);
+                                this.JsonWriter.WriteString("relatedActivity", rid);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Options) && !ei.Options.IsEmpty)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Options) && !ei.Options.IsEmpty)
                             {
-                                this.writer.WriteString("options", ei.Options);
+                                this.JsonWriter.WriteString("options", ei.Options);
                             }
 
-                            if (this.Meta.HasFlag(EventHeaderMetaOptions.Flags) && ei.Header.Flags != 0)
+                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Flags) && ei.Header.Flags != 0)
                             {
-                                this.writer.WriteString("flags", PerfConvert.UInt32HexFormatAtEnd(charBuf, (uint)ei.Header.Flags));
+                                this.JsonWriter.WritePropertyName("flags");
+                                this.WriteHex32Value(charBuf, (uint)ei.Header.Flags);
                             }
 
-                            this.writer.WriteEndObject(); // meta
+                            this.JsonWriter.WriteEndObject(); // info
                         }
                     }
                 }
 
-                writer.WriteEndObject(); // event
+                this.JsonWriter.WriteEndObject(); // event
             }
         }
 
+        private void WriteField(PerfSampleEventInfo sampleEventInfo, int i, ref Span<char> charBuf)
+        {
+            var fieldFormat = sampleEventInfo.Format!.Fields[i];
+            var fieldValue = fieldFormat.GetFieldValue(sampleEventInfo.RawDataSpan, sampleEventInfo.ByteReader);
+            if (!fieldValue.IsArrayOrElement)
+            {
+                this.JsonWriter.WritePropertyName(fieldFormat.Name);
+                this.WriteValue(fieldValue, ref charBuf);
+            }
+            else
+            {
+                this.JsonWriter.WriteStartArray(fieldFormat.Name);
+                WriteSimpleArrayValues(fieldValue, ref charBuf);
+                this.JsonWriter.WriteEndArray();
+            }
+        }
+
+        /// <summary>
+        /// Same as nonSampleEventInfo.AppendJsonEventInfoTo, but with a Utf8JsonWriter
+        /// instead of a StringBuilder.
+        /// </summary>
         private void WriteSampleMeta(in PerfSampleEventInfo info, bool showProviderEvent)
         {
-            var sampleType = info.SampleType;
-
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(EventHeaderMetaOptions.Time))
-            {
-                if (info.SessionInfo.ClockOffsetKnown)
-                {
-                    writer.WriteString("time", info.DateTime);
-                }
-                else
-                {
-                    writer.WriteNumber("time", info.Time / 1000000000.0);
-                }
-            }
-
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(EventHeaderMetaOptions.Cpu))
-            {
-                writer.WriteNumber("cpu", info.Cpu);
-            }
-
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
-            {
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Pid))
-                {
-                    writer.WriteNumber("pid", info.Pid);
-                }
-
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Tid))
-                {
-                    writer.WriteNumber("tid", info.Tid);
-                }
-            }
-
-            if (showProviderEvent && 0 != (this.Meta & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Event)))
-            {
-                var name = info.Name.AsSpan();
-                var colonPos = name.IndexOf(':');
-                ReadOnlySpan<char> providerName, eventName;
-                if (colonPos < 0)
-                {
-                    providerName = default;
-                    eventName = name;
-                }
-                else
-                {
-                    providerName = name.Slice(0, colonPos);
-                    eventName = name.Slice(colonPos + 1);
-                }
-
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Provider) && !providerName.IsEmpty)
-                {
-                    writer.WriteString("provider", providerName);
-                }
-
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Event) && !eventName.IsEmpty)
-                {
-                    writer.WriteString("event", eventName);
-                }
-            }
+            this.WriteCommonMetadata(
+                info.SampleType,
+                info.SessionInfo,
+                info.Time,
+                info.Cpu,
+                info.Pid,
+                info.Tid,
+                showProviderEvent ? info.Name : null);
         }
 
+        /// <summary>
+        /// Same as nonSampleEventInfo.AppendJsonEventInfoTo, but with a Utf8JsonWriter
+        /// instead of a StringBuilder.
+        /// </summary>
         private void WriteNonSampleMeta(in PerfNonSampleEventInfo info)
         {
-            var sampleType = info.SampleType;
+            this.WriteCommonMetadata(
+                info.SampleType,
+                info.SessionInfo,
+                info.Time,
+                info.Cpu,
+                info.Pid,
+                info.Tid,
+                info.Name);
+        }
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) && this.Meta.HasFlag(EventHeaderMetaOptions.Time))
+        /// <summary>
+        /// Same as nonSampleEventInfo.AppendJsonEventInfoTo, but with a Utf8JsonWriter
+        /// instead of a StringBuilder.
+        /// </summary>
+        private void WriteCommonMetadata(
+            PerfEventAttrSampleType sampleType,
+            PerfEventSessionInfo sessionInfo,
+            ulong time,
+            uint cpu,
+            uint pid,
+            uint tid,
+            string? name)
+        {
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Time) &&
+                this.InfoOptions.HasFlag(PerfInfoOptions.Time))
             {
-                if (info.SessionInfo.ClockOffsetKnown)
+                if (sessionInfo.ClockOffsetKnown && sessionInfo.TimeToTimeSpec(time).DateTime is DateTime dt)
                 {
-                    writer.WriteString("time", info.DateTime);
+                    this.JsonWriter.WriteString("time", dt);
                 }
                 else
                 {
-                    writer.WriteNumber("time", info.Time / 1000000000.0);
+                    this.JsonWriter.WriteNumber("time", time / 1000000000.0);
                 }
             }
 
-            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) && this.Meta.HasFlag(EventHeaderMetaOptions.Cpu))
+            if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) &&
+                this.InfoOptions.HasFlag(PerfInfoOptions.Cpu))
             {
-                writer.WriteNumber("cpu", info.Cpu);
+                this.JsonWriter.WriteNumber("cpu", cpu);
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
             {
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Pid))
+                if (this.InfoOptions.HasFlag(PerfInfoOptions.Pid))
                 {
-                    writer.WriteNumber("pid", info.Pid);
+                    this.JsonWriter.WriteNumber("pid", pid);
                 }
 
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Tid))
+                if (this.InfoOptions.HasFlag(PerfInfoOptions.Tid) &&
+                    (pid != tid || !this.InfoOptions.HasFlag(PerfInfoOptions.Pid)))
                 {
-                    writer.WriteNumber("tid", info.Tid);
+                    this.JsonWriter.WriteNumber("tid", tid);
                 }
             }
 
-            if (0 != (this.Meta & (EventHeaderMetaOptions.Provider | EventHeaderMetaOptions.Event)))
+            if (0 != (this.InfoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Event)) &&
+                !string.IsNullOrEmpty(name))
             {
-                var name = info.Name.AsSpan();
-                var colonPos = name.IndexOf(':');
+                var nameSpan = name.AsSpan();
+                var colonPos = nameSpan.IndexOf(':');
                 ReadOnlySpan<char> providerName, eventName;
                 if (colonPos < 0)
                 {
                     providerName = default;
-                    eventName = name;
+                    eventName = nameSpan;
                 }
                 else
                 {
-                    providerName = name.Slice(0, colonPos);
-                    eventName = name.Slice(colonPos + 1);
+                    providerName = nameSpan.Slice(0, colonPos);
+                    eventName = nameSpan.Slice(colonPos + 1);
                 }
 
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Provider) && !providerName.IsEmpty)
+                if (this.InfoOptions.HasFlag(PerfInfoOptions.Provider) &&
+                    !providerName.IsEmpty)
                 {
-                    writer.WriteString("provider", providerName);
+                    this.JsonWriter.WriteString("provider", providerName);
                 }
 
-                if (this.Meta.HasFlag(EventHeaderMetaOptions.Event) && !eventName.IsEmpty)
+                if (this.InfoOptions.HasFlag(PerfInfoOptions.Event) &&
+                    !eventName.IsEmpty)
                 {
-                    writer.WriteString("event", eventName);
+                    this.JsonWriter.WriteString("event", eventName);
                 }
             }
         }
@@ -439,7 +493,7 @@ namespace DecodePerfToJson
                 default:
                     throw new NotSupportedException("Unknown encoding.");
                 case EventHeaderFieldEncoding.Invalid:
-                    writer.WriteNullValue();
+                    this.JsonWriter.WriteNullValue();
                     return;
                 case EventHeaderFieldEncoding.Struct:
                     throw new InvalidOperationException("Invalid encoding for FormatScalar.");
@@ -448,23 +502,23 @@ namespace DecodePerfToJson
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            writer.WriteNumberValue(item.GetU8());
+                            this.JsonWriter.WriteNumberValue(item.GetU8());
                             return;
                         case EventHeaderFieldFormat.SignedInt:
-                            writer.WriteNumberValue(item.GetI8());
+                            this.JsonWriter.WriteNumberValue(item.GetI8());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU8()));
+                            this.WriteHex32Value(charBuf, item.GetU8());
                             return;
                         case EventHeaderFieldFormat.Boolean:
-                            this.WriteBooleanValue(item.GetU8());
+                            this.WriteBooleanValue(charBuf, item.GetU8());
                             return;
                         case EventHeaderFieldFormat.HexBytes:
-                            writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan8()));
+                            this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan8()));
                             return;
                         case EventHeaderFieldFormat.String8:
                             charBuf[0] = (char)item.GetU8();
-                            writer.WriteStringValue(charBuf.Slice(0, 1));
+                            this.JsonWriter.WriteStringValue(charBuf.Slice(0, 1));
                             return;
                     }
                 case EventHeaderFieldEncoding.Value16:
@@ -472,26 +526,26 @@ namespace DecodePerfToJson
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            writer.WriteNumberValue(item.GetU16());
+                            this.JsonWriter.WriteNumberValue(item.GetU16());
                             return;
                         case EventHeaderFieldFormat.SignedInt:
-                            writer.WriteNumberValue(item.GetI16());
+                            this.JsonWriter.WriteNumberValue(item.GetI16());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU16()));
+                            this.WriteHex32Value(charBuf, item.GetU16());
                             return;
                         case EventHeaderFieldFormat.Boolean:
-                            this.WriteBooleanValue(item.GetU16());
+                            this.WriteBooleanValue(charBuf, item.GetU16());
                             return;
                         case EventHeaderFieldFormat.HexBytes:
-                            writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan16()));
+                            this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan16()));
                             return;
                         case EventHeaderFieldFormat.StringUtf:
                             charBuf[0] = (char)item.GetU16();
-                            writer.WriteStringValue(charBuf.Slice(0, 1));
+                            this.JsonWriter.WriteStringValue(charBuf.Slice(0, 1));
                             return;
                         case EventHeaderFieldFormat.Port:
-                            writer.WriteNumberValue(item.GetPort());
+                            this.JsonWriter.WriteNumberValue(item.GetPort());
                             return;
                     }
                 case EventHeaderFieldEncoding.Value32:
@@ -499,35 +553,35 @@ namespace DecodePerfToJson
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            writer.WriteNumberValue(item.GetU32());
+                            this.JsonWriter.WriteNumberValue(item.GetU32());
                             return;
                         case EventHeaderFieldFormat.SignedInt:
                         case EventHeaderFieldFormat.Pid:
-                            writer.WriteNumberValue(item.GetI32());
+                            this.JsonWriter.WriteNumberValue(item.GetI32());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU32()));
+                            this.WriteHex32Value(charBuf, item.GetU32());
                             return;
                         case EventHeaderFieldFormat.Errno:
-                            this.WriteErrnoValue(item.GetI32());
+                            this.WriteErrnoValue(charBuf, item.GetI32());
                             return;
                         case EventHeaderFieldFormat.Time:
-                            writer.WriteStringValue(PerfConvert.UnixTime32ToDateTime(item.GetI32()));
+                            this.WriteUnixTime32Value(item.GetI32());
                             return;
                         case EventHeaderFieldFormat.Boolean:
-                            this.WriteBooleanValue(item.GetU32());
+                            this.WriteBooleanValue(charBuf, item.GetU32());
                             return;
                         case EventHeaderFieldFormat.Float:
                             this.WriteFloat32Value(charBuf, item.GetF32());
                             return;
                         case EventHeaderFieldFormat.HexBytes:
-                            writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan32()));
+                            this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan32()));
                             return;
                         case EventHeaderFieldFormat.StringUtf:
-                            writer.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32()));
+                            this.JsonWriter.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32()));
                             return;
                         case EventHeaderFieldFormat.IPv4:
-                            writer.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4()));
+                            this.JsonWriter.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4()));
                             return;
                     }
                 case EventHeaderFieldEncoding.Value64:
@@ -535,22 +589,22 @@ namespace DecodePerfToJson
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
-                            writer.WriteNumberValue(item.GetU64());
+                            this.JsonWriter.WriteNumberValue(item.GetU64());
                             return;
                         case EventHeaderFieldFormat.SignedInt:
-                            writer.WriteNumberValue(item.GetI64());
+                            this.JsonWriter.WriteNumberValue(item.GetI64());
                             return;
                         case EventHeaderFieldFormat.HexInt:
-                            writer.WriteStringValue(PerfConvert.UInt64HexFormatAtEnd(charBuf, item.GetU64()));
+                            this.WriteHex64Value(charBuf, item.GetU64());
                             return;
                         case EventHeaderFieldFormat.Time:
-                            this.WriteUnixTime64Value(item.GetI64());
+                            this.WriteUnixTime64Value(charBuf, item.GetI64());
                             return;
                         case EventHeaderFieldFormat.Float:
                             this.WriteFloat64Value(charBuf, item.GetF64());
                             return;
                         case EventHeaderFieldFormat.HexBytes:
-                            writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan64()));
+                            this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan64()));
                             return;
                     }
                 case EventHeaderFieldEncoding.Value128:
@@ -558,10 +612,10 @@ namespace DecodePerfToJson
                     {
                         default:
                         case EventHeaderFieldFormat.HexBytes:
-                            writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan128()));
+                            this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan128()));
                             return;
                         case EventHeaderFieldFormat.Uuid:
-                            writer.WriteStringValue(item.GetGuid());
+                            this.JsonWriter.WriteStringValue(item.GetGuid());
                             return;
                         case EventHeaderFieldFormat.IPv6:
                             this.WriteIPv6Value(charBuf, item.GetIPv6());
@@ -589,7 +643,7 @@ namespace DecodePerfToJson
                             return;
                         default:
                         case EventHeaderFieldFormat.StringUtf:
-                            writer.WriteStringValue(item.Bytes); // UTF-8
+                            this.JsonWriter.WriteStringValue(item.Bytes); // UTF-8
                             return;
                     }
                 case EventHeaderFieldEncoding.ZStringChar16:
@@ -620,7 +674,7 @@ namespace DecodePerfToJson
                             }
                             else
                             {
-                                writer.WriteStringValue(MemoryMarshal.Cast<byte, char>(item.Bytes));
+                                this.JsonWriter.WriteStringValue(MemoryMarshal.Cast<byte, char>(item.Bytes));
                             }
                             return;
                     }
@@ -654,7 +708,7 @@ namespace DecodePerfToJson
 
         /// <summary>
         /// Interprets the item as the BeginArray of a simple array (TypeSize != 0).
-        /// Calls writer.WriteValue(...) for each element in the array.
+        /// Calls this.JsonWriter.WriteValue(...) for each element in the array.
         /// </summary>
         private void WriteSimpleArrayValues(in PerfValue item, ref Span<char> charBuf)
         {
@@ -679,31 +733,31 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.UnsignedInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetU8(i));
+                                this.JsonWriter.WriteNumberValue(item.GetU8(i));
                             }
                             return;
                         case EventHeaderFieldFormat.SignedInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetI8(i));
+                                this.JsonWriter.WriteNumberValue(item.GetI8(i));
                             }
                             return;
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU8(i)));
+                                this.WriteHex32Value(charBuf, item.GetU8(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Boolean:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                this.WriteBooleanValue(item.GetU8(i));
+                                this.WriteBooleanValue(charBuf, item.GetU8(i));
                             }
                             return;
                         case EventHeaderFieldFormat.HexBytes:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan8(i)));
+                                this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan8(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.String8:
@@ -711,7 +765,7 @@ namespace DecodePerfToJson
                             for (int i = 0; i < elementCount; i += 1)
                             {
                                 chars1[0] = (char)item.GetU8(i);
-                                writer.WriteStringValue(chars1);
+                                this.JsonWriter.WriteStringValue(chars1);
                             }
                             return;
                     }
@@ -722,31 +776,31 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.UnsignedInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetU16(i));
+                                this.JsonWriter.WriteNumberValue(item.GetU16(i));
                             }
                             return;
                         case EventHeaderFieldFormat.SignedInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetI16(i));
+                                this.JsonWriter.WriteNumberValue(item.GetI16(i));
                             }
                             return;
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU16(i)));
+                                this.WriteHex32Value(charBuf, item.GetU16(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Boolean:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                this.WriteBooleanValue(item.GetU16(i));
+                                this.WriteBooleanValue(charBuf, item.GetU16(i));
                             }
                             return;
                         case EventHeaderFieldFormat.HexBytes:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan16(i)));
+                                this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan16(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.StringUtf:
@@ -754,13 +808,13 @@ namespace DecodePerfToJson
                             for (int i = 0; i < elementCount; i += 1)
                             {
                                 chars1[0] = (char)item.GetU16(i);
-                                writer.WriteStringValue(chars1);
+                                this.JsonWriter.WriteStringValue(chars1);
                             }
                             return;
                         case EventHeaderFieldFormat.Port:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetPort(i));
+                                this.JsonWriter.WriteNumberValue(item.GetPort(i));
                             }
                             return;
                     }
@@ -771,38 +825,38 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.UnsignedInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetU32(i));
+                                this.JsonWriter.WriteNumberValue(item.GetU32(i));
                             }
                             return;
                         case EventHeaderFieldFormat.SignedInt:
                         case EventHeaderFieldFormat.Pid:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetI32(i));
+                                this.JsonWriter.WriteNumberValue(item.GetI32(i));
                             }
                             return;
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, item.GetU32(i)));
+                                this.WriteHex32Value(charBuf, item.GetU32(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Errno:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                this.WriteErrnoValue(item.GetI32(i));
+                                this.WriteErrnoValue(charBuf, item.GetI32(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Time:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.UnixTime32ToDateTime(item.GetI32(i)));
+                                this.WriteUnixTime32Value(item.GetI32(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Boolean:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                this.WriteBooleanValue(item.GetU32(i));
+                                this.WriteBooleanValue(charBuf, item.GetU32(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Float:
@@ -814,19 +868,19 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.HexBytes:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan32(i)));
+                                this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan32(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.StringUtf:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32(i)));
+                                this.JsonWriter.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.IPv4:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4(i)));
+                                this.JsonWriter.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4(i)));
                             }
                             return;
                     }
@@ -837,25 +891,25 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.UnsignedInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetU64(i));
+                                this.JsonWriter.WriteNumberValue(item.GetU64(i));
                             }
                             return;
                         case EventHeaderFieldFormat.SignedInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteNumberValue(item.GetI64(i));
+                                this.JsonWriter.WriteNumberValue(item.GetI64(i));
                             }
                             return;
                         case EventHeaderFieldFormat.HexInt:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.UInt64HexFormatAtEnd(charBuf, item.GetU64(i)));
+                                this.WriteHex64Value(charBuf, item.GetU64(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Time:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                this.WriteUnixTime64Value(item.GetI64(i));
+                                this.WriteUnixTime64Value(charBuf, item.GetI64(i));
                             }
                             return;
                         case EventHeaderFieldFormat.Float:
@@ -867,7 +921,7 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.HexBytes:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan64(i)));
+                                this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan64(i)));
                             }
                             return;
                     }
@@ -878,13 +932,13 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.HexBytes:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan128(i)));
+                                this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, item.GetSpan128(i)));
                             }
                             return;
                         case EventHeaderFieldFormat.Uuid:
                             for (int i = 0; i < elementCount; i += 1)
                             {
-                                writer.WriteStringValue(item.GetGuid(i));
+                                this.JsonWriter.WriteStringValue(item.GetGuid(i));
                             }
                             return;
                         case EventHeaderFieldFormat.IPv6:
@@ -902,12 +956,12 @@ namespace DecodePerfToJson
             switch (encoding.CodePage)
             {
                 case 65001: // UTF-8
-                    writer.WriteStringValue(bytes.Slice(3));
+                    this.JsonWriter.WriteStringValue(bytes.Slice(3));
                     break;
                 case 1200: // UTF-16LE
                     if (BitConverter.IsLittleEndian)
                     {
-                        writer.WriteStringValue(MemoryMarshal.Cast<byte, char>(bytes.Slice(2)));
+                        this.JsonWriter.WriteStringValue(MemoryMarshal.Cast<byte, char>(bytes.Slice(2)));
                     }
                     else
                     {
@@ -921,7 +975,7 @@ namespace DecodePerfToJson
                     }
                     else
                     {
-                        writer.WriteStringValue(MemoryMarshal.Cast<byte, char>(bytes.Slice(2)));
+                        this.JsonWriter.WriteStringValue(MemoryMarshal.Cast<byte, char>(bytes.Slice(2)));
                     }
                     break;
                 case 12000: // UTF-32LE
@@ -938,25 +992,25 @@ namespace DecodePerfToJson
         {
             EnsureSpan(encoding.GetMaxCharCount(bytes.Length), ref charBuf);
             var charCount = encoding.GetChars(bytes, charBuf);
-            writer.WriteStringValue(charBuf.Slice(0, charCount));
+            this.JsonWriter.WriteStringValue(charBuf.Slice(0, charCount));
         }
 
         private void WriteHexBytesValue(ReadOnlySpan<byte> bytes, ref Span<char> charBuf)
         {
             EnsureSpan(PerfConvert.HexBytesLength(bytes.Length), ref charBuf);
-            writer.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, bytes));
+            this.JsonWriter.WriteStringValue(PerfConvert.HexBytesFormat(charBuf, bytes));
         }
 
         private void WriteFloat32Value(Span<char> charBuf, float value)
         {
             if (float.IsFinite(value))
             {
-                writer.WriteNumberValue(value);
+                this.JsonWriter.WriteNumberValue(value);
             }
             else
             {
                 // Write Infinity, -Infinity, or NaN as a string.
-                writer.WriteStringValue(PerfConvert.Float32gFormat(charBuf, value));
+                this.JsonWriter.WriteStringValue(PerfConvert.Float32gFormat(charBuf, value));
             }
         }
 
@@ -964,61 +1018,121 @@ namespace DecodePerfToJson
         {
             if (double.IsFinite(value))
             {
-                writer.WriteNumberValue(value);
+                this.JsonWriter.WriteNumberValue(value);
+            }
+            else if (!this.JsonOptions.HasFlag(PerfJsonOptions.FloatNonFiniteAsString))
+            {
+                this.JsonWriter.WriteNullValue();
             }
             else
             {
-                // Write Infinity, -Infinity, or NaN as a string.
-                writer.WriteStringValue(PerfConvert.Float64gFormat(charBuf, value));
+                this.JsonWriter.WriteStringValue(PerfConvert.Float64gFormat(charBuf, value));
+            }
+        }
+
+        private void WriteHex32Value(Span<char> charBuf, UInt32 value)
+        {
+            if (this.JsonOptions.HasFlag(PerfJsonOptions.IntHexAsString))
+            {
+                this.JsonWriter.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, value));
+            }
+            else
+            {
+                this.JsonWriter.WriteNumberValue(value);
+            }
+        }
+
+        private void WriteHex64Value(Span<char> charBuf, UInt64 value)
+        {
+            if (this.JsonOptions.HasFlag(PerfJsonOptions.IntHexAsString))
+            {
+                this.JsonWriter.WriteStringValue(PerfConvert.UInt64HexFormatAtEnd(charBuf, value));
+            }
+            else
+            {
+                this.JsonWriter.WriteNumberValue(value);
             }
         }
 
         private void WriteIPv6Value(Span<char> charBuf, ReadOnlySpan<byte> value)
         {
-            writer.WriteStringValue(PerfConvert.IPv6Format(charBuf, value)); // Garbage.
+            this.JsonWriter.WriteStringValue(PerfConvert.IPv6Format(charBuf, value)); // Garbage.
         }
 
-        private void WriteUnixTime64Value(Int64 value)
+        private void WriteUnixTime32Value(Int32 value)
         {
-            var dateTime = PerfConvert.UnixTime64ToDateTime(value);
-            if (dateTime.HasValue)
+            if (this.JsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
             {
-                writer.WriteStringValue(dateTime.Value);
+                this.JsonWriter.WriteStringValue(PerfConvert.UnixTime32ToDateTime(value));
+                return;
+            }
+
+            this.JsonWriter.WriteNumberValue(value);
+        }
+
+        private void WriteUnixTime64Value(Span<char> charBuf, Int64 value)
+        {
+            if (PerfConvert.UnixTime64IsInDateTimeRange(value))
+            {
+                if (this.JsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
+                {
+                    this.JsonWriter.WriteStringValue(PerfConvert.UnixTime64ToDateTimeUnchecked(value));
+                    return;
+                }
             }
             else
             {
-                // Write out-of-range time_t as a signed integer.
-                writer.WriteNumberValue(value);
+                if (this.JsonOptions.HasFlag(PerfJsonOptions.UnixTimeOutOfRangeAsString))
+                {
+                    this.JsonWriter.WriteStringValue(PerfConvert.UnixTime64Format(charBuf, value));
+                    return;
+                }
             }
+
+            this.JsonWriter.WriteNumberValue(value);
         }
 
-        private void WriteErrnoValue(int errno)
+        private void WriteErrnoValue(Span<char> charBuf, int value)
         {
-            var errnoString = PerfConvert.ErrnoLookup(errno);
-            if (errnoString != null)
+            if (PerfConvert.ErrnoKnown(value))
             {
-                writer.WriteStringValue(errnoString);
+                if (this.JsonOptions.HasFlag(PerfJsonOptions.ErrnoKnownAsString))
+                {
+                    this.JsonWriter.WriteStringValue(PerfConvert.ErrnoLookup(value));
+                    return;
+                }
             }
             else
             {
-                // Write unrecognized errno as a signed integer.
-                writer.WriteNumberValue(errno);
+                if (this.JsonOptions.HasFlag(PerfJsonOptions.ErrnoUnknownAsString))
+                {
+                    this.JsonWriter.WriteStringValue(PerfConvert.ErrnoFormat(charBuf, value));
+                    return;
+                }
             }
+
+            this.JsonWriter.WriteNumberValue(value);
         }
 
-        private void WriteBooleanValue(UInt32 value)
+        private void WriteBooleanValue(Span<char> charBuf, UInt32 value)
         {
             switch (value)
             {
                 case 0:
-                    writer.WriteBooleanValue(false);
+                    this.JsonWriter.WriteBooleanValue(false);
                     break;
                 case 1:
-                    writer.WriteBooleanValue(true);
+                    this.JsonWriter.WriteBooleanValue(true);
                     break;
                 default:
-                    // Write other values of true as signed integer.
-                    writer.WriteNumberValue(unchecked((int)value));
+                    if (this.JsonOptions.HasFlag(PerfJsonOptions.BoolOutOfRangeAsString))
+                    {
+                        this.JsonWriter.WriteStringValue(PerfConvert.BooleanFormat(charBuf, value));
+                    }
+                    else
+                    {
+                        this.JsonWriter.WriteNumberValue(unchecked((int)value));
+                    }
                     break;
             }
         }
@@ -1027,7 +1141,7 @@ namespace DecodePerfToJson
         {
             var tag = item.Value.FieldTag;
             var nameBytes = item.NameBytes;
-            if (tag == 0)
+            if (!this.JsonOptions.HasFlag(PerfJsonOptions.FieldTag) || tag == 0)
             {
                 return nameBytes;
             }

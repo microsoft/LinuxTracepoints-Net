@@ -46,7 +46,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// If TvSec is representable as a DateTime, returns that DateTime + TvNsec nanoseconds,
-        /// rounded down to the nearest 100 nanoseconds.
+        /// rounded down to the nearest tick (100 nanosecond unit).
         /// Otherwise returns null.
         /// </summary>
         public DateTime? DateTime
@@ -56,8 +56,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var maybe = PerfConvert.UnixTime64ToDateTime(this.TvSec);
                 if (maybe is DateTime dt)
                 {
-                    dt.AddTicks(this.TvNsec / 100);
-                    return dt;
+                    return dt.AddTicks(this.TvNsec / 100);
                 }
                 else
                 {
