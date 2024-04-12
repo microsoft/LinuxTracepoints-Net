@@ -109,3 +109,9 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
   information. Provides byte-order-aware helpers for accessing the value as a .NET type
   (e.g. `GetU32`, `GetF64`, `GetGuid`). Provides helpers for formatting the value as a
   `string` or appending it to a `StringBuilder`.
+
+## Changelog
+
+### 0.1.0
+
+- Initial release.

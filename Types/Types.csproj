@@ -13,8 +13,7 @@
     <Company>Microsoft</Company>
     <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <IncludeSymbols>False</IncludeSymbols>
-    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -28,6 +27,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <BaseOutputPath>..\bin</BaseOutputPath>
     <IntermediateOutputPath>..\obj</IntermediateOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
     <WarningLevel>9999</WarningLevel>
   </PropertyGroup>

@@ -268,3 +268,9 @@ Each field's type has an arity, an encoding, and a format.
     `time_t`, Boolean, IP port.
   - String: Latin-1, UTF, UTF-BOM, XML, JSON.
   - Other: Float, IPv4 address, IPv6 address, UUID, Binary.
+
+## Changelog
+
+### 0.1.0
+
+- Initial release.

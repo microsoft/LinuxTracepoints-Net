@@ -4,8 +4,11 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <RollForward>LatestMajor</RollForward>
     <BaseOutputPath>..\bin</BaseOutputPath>
     <IntermediateOutputPath>..\obj</IntermediateOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
     <WarningLevel>9999</WarningLevel>
     <StartupObject>DecodeSample.Program</StartupObject>
   </PropertyGroup>

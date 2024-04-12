@@ -11,6 +11,7 @@
     <AnalysisLevel>latest-recommended</AnalysisLevel>
     <BaseOutputPath>..\bin</BaseOutputPath>
     <IntermediateOutputPath>..\obj</IntermediateOutputPath>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
     <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
   </PropertyGroup>
 
