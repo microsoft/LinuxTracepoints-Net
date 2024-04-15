@@ -10,14 +10,14 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// Semantics equivalent to struct timespec from time.h.
     /// Time = 1970 + TvSec seconds + TvNsec nanoseconds.
     /// </summary>
-    public readonly struct PerfEventTimeSpec
+    public readonly struct PerfTimeSpec
     {
         /// <summary>
-        /// Initializes a new instance of the PerfEventTimeSpec struct.
+        /// Initializes a new instance of the PerfTimeSpec struct.
         /// </summary>
         /// <param name="tvSec">Signed value indicating seconds since 1970.</param>
         /// <param name="tvNsec">Nanoseconds.</param>
-        public PerfEventTimeSpec(long tvSec, uint tvNsec)
+        public PerfTimeSpec(long tvSec, uint tvNsec)
         {
             this.TvSec = tvSec;
             this.TvNsec = tvNsec;

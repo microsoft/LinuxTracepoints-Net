@@ -90,11 +90,6 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 - `PerfEventFormat` class - parses a tracefs `format` file and provides access to the
   decoding information for tracepoint events.
 
-- `PerfEventSessionInfo` class - provides information about a trace decoding session such as the
-  byte order and the clock source.
-
-- `PerfEventTimeSpec` struct - represents a timestamp as a `time64_t` plus nanoseconds.
-
 - `PerfFieldFormat` class - parses a field format string from a tracefs `format` file and
   provides access to the field name, type, and size.
 
@@ -104,6 +99,12 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 - `PerfSampleEventInfo` struct - provides information about a sample event, such as the event
   bytes, session information, cpu, time, pid, tracepoint name, format, timestamp, raw, and
   format.
+
+- `PerfSessionInfo` class - provides information about a trace decoding session such as the
+  byte order and the clock source.
+
+- `PerfTimeSpec` struct - represents a timestamp as a `time64_t` plus nanoseconds.
+  Semantics equivalent to `struct timespec` from `time.h`.
 
 - `PerfValue` struct - represents a field value from a tracepoint event. Includes type
   information. Provides byte-order-aware helpers for accessing the value as a .NET type

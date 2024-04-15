@@ -49,7 +49,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Information about the session that collected the event, e.g. clock id and
         /// clock offset.
         /// </summary>
-        public PerfEventSessionInfo SessionInfo;
+        public PerfSessionInfo SessionInfo;
 
         /// <summary>
         /// Valid if GetNonSampleEventInfo() succeeded.
@@ -117,9 +117,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public readonly string Name => this.EventDesc.Name;
 
         /// <summary>
-        /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.
+        /// Gets the Time as a PerfTimeSpec, using offset information from SessionInfo.
         /// </summary>
-        public readonly PerfEventTimeSpec TimeSpec => this.SessionInfo.TimeToTimeSpec(this.Time);
+        public readonly PerfTimeSpec TimeSpec => this.SessionInfo.TimeToTimeSpec(this.Time);
 
         /// <summary>
         /// Returns the full name of the event, e.g. "dummy:HG", or "" if not available.

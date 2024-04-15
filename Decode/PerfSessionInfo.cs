@@ -9,40 +9,40 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// <summary>
     /// Information about a perf event collection session.
     /// </summary>
-    public class PerfEventSessionInfo
+    public class PerfSessionInfo
     {
         private const uint Billion = 1000000000;
-        private static PerfEventSessionInfo? empty;
+        private static PerfSessionInfo? empty;
 
         private long clockOffsetSeconds;
         private uint clockOffsetNanoseconds;
         private readonly bool readOnly;
 
-        private PerfEventSessionInfo()
+        private PerfSessionInfo()
         {
             this.readOnly = true;
         }
 
         /// <summary>
-        /// Constructs a new PerfEventSessionInfo instance.
+        /// Constructs a new PerfSessionInfo instance.
         /// Instances of this class are normally created by the PerfEventReader class.
         /// </summary>
-        internal PerfEventSessionInfo(PerfByteReader byteReader)
+        internal PerfSessionInfo(PerfByteReader byteReader)
         {
             this.ByteReader = byteReader;
         }
 
         /// <summary>
-        /// Returns the empty PerfEventSessionInfo instance.
+        /// Returns the empty PerfSessionInfo instance.
         /// </summary>
-        public static PerfEventSessionInfo Empty
+        public static PerfSessionInfo Empty
         {
             get
             {
                 var value = empty;
                 if (value == null)
                 {
-                    value = new PerfEventSessionInfo();
+                    value = new PerfSessionInfo();
                     empty = value;
                 }
                 return value;
@@ -70,8 +70,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns the CLOCK_REALTIME value that corresponds to an event timestamp of 0
         /// for this session. Returns 1970 if the session timestamp offset is unknown.
         /// </summary>
-        public PerfEventTimeSpec ClockOffset =>
-            new PerfEventTimeSpec(this.clockOffsetSeconds, this.clockOffsetNanoseconds);
+        public PerfTimeSpec ClockOffset =>
+            new PerfTimeSpec(this.clockOffsetSeconds, this.clockOffsetNanoseconds);
 
         /// <summary>
         /// Returns the clockid of the session timestamp, e.g. CLOCK_MONOTONIC.
@@ -86,7 +86,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             if (this.readOnly)
             {
-                throw new InvalidOperationException("Cannot modify read-only PerfEventSessionInfo.");
+                throw new InvalidOperationException("Cannot modify read-only PerfSessionInfo.");
             }
 
             this.ClockId = clockid;
@@ -99,7 +99,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             if (this.readOnly)
             {
-                throw new InvalidOperationException("Cannot modify read-only PerfEventSessionInfo.");
+                throw new InvalidOperationException("Cannot modify read-only PerfSessionInfo.");
             }
             else if (clockid == 0xFFFFFFFF)
             {
@@ -190,7 +190,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// TimeToTimeSpec = ClockOffset() + time.
         /// If session clock offset is unknown, assumes 1970.
         /// </summary>
-        public PerfEventTimeSpec TimeToTimeSpec(ulong time)
+        public PerfTimeSpec TimeToTimeSpec(ulong time)
         {
             var sec = (long)(time / Billion);
             var nsec = (uint)(time % Billion);
@@ -201,7 +201,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sec += 1;
                 nsec -= Billion;
             }
-            return new PerfEventTimeSpec(sec, nsec);
+            return new PerfTimeSpec(sec, nsec);
         }
 
         /// <summary>

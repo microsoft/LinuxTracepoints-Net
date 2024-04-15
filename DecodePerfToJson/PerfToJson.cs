@@ -415,7 +415,7 @@ namespace DecodePerfToJson
         /// </summary>
         private void WriteCommonMetadata(
             PerfEventAttrSampleType sampleType,
-            PerfEventSessionInfo sessionInfo,
+            PerfSessionInfo sessionInfo,
             ulong time,
             uint cpu,
             uint pid,

@@ -96,10 +96,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Events are sorted by timestamp, with ties broken by the order they appear
         /// in the file. Events with no timestamp are treated as having timestamp 0.
         /// <br/>
-        /// More precisely: when NextEvent() is called, it will return the next event
-        /// from a queue. If the queue is empty, NextEvent() will read events into the
-        /// queue from the file until it finds FinishedInit, FinishedRound, or
-        /// EndOfFile. It will then stable-sort the queue by the event's timestamp.
+        /// More precisely: The file is split into "rounds" based on FinishedInit event,
+        /// FinishedRound event, and EndOfFile. Within each round, events are
+        /// stable-sorted by the event's timestamp.
         /// </summary>
         Time,
     }
@@ -111,10 +110,9 @@ namespace Microsoft.LinuxTracepoints.Decode
     {
         private const sbyte OffsetUnset = -1;
         private const sbyte OffsetNotPresent = -2;
-        private const int BufferInitialSize = 0x10000;
-        private const int TrimBufferLargerThan = BufferInitialSize * 2;
-        private const int TrimHeaderLargerThan = 0x10000;
-        private const int TrimQueueEntryLargerThan = 1024;
+        private const int NormalEventMaxSize = 0x10000;
+        private const int FreeBufferLargerThan = NormalEventMaxSize;
+        private const int FreeHeaderLargerThan = 0x10000;
 
         /// <summary>
         /// A valid perf.data file starts with MagicHostEndianPERFILE2
@@ -165,22 +163,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         private UInt64 m_dataBeginFilePos;
         private UInt64 m_dataEndFilePos;
 
-        private ArrayMemory m_buffer; // Scratch buffer
+        private readonly List<PoolBuffer> m_buffers;
 
-        private readonly ArrayMemory[] m_headers;
+        private readonly PoolBuffer[] m_headers;
 
         private readonly List<PerfEventDesc> m_eventDescList;
         private readonly ReadOnlyCollection<PerfEventDesc> m_eventDescListReadOnly;
         private readonly Dictionary<UInt64, PerfEventDesc> m_eventDescById;
         private readonly ReadOnlyDictionary<UInt64, PerfEventDesc> m_eventDescByIdReadOnly;
 
-        // TODO: This isn't optimal. Better would be to use one buffer for many
-        // events, and have entries that reference the big buffer.
         private readonly List<QueueEntry> m_eventQueue;
         private int m_eventQueueBegin;
         private int m_eventQueueEnd;
 
-        private PerfEventSessionInfo m_sessionInfo;
+        private PerfSessionInfo m_sessionInfo;
 
         private Stream m_file;
         private bool m_fileShouldBeClosed;
@@ -188,7 +184,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         private PerfByteReader m_byteReader;
         private bool m_parsedHeaderEventDesc;
         private PerfDataFileEventOrder m_eventOrder;
-        private uint m_roundIndex;
+        private int m_currentBuffer;
         private PerfDataFileResult m_eventQueuePendingResult;
 
         private byte m_commonTypeSize;
@@ -232,7 +228,12 @@ namespace Microsoft.LinuxTracepoints.Decode
             Debug.Assert(EventHeader.SizeOfStruct == Marshal.SizeOf<EventHeader>());
             Debug.Assert(EventHeaderExtension.SizeOfStruct == Marshal.SizeOf<EventHeaderExtension>());
 
-            m_headers = new ArrayMemory[(byte)PerfHeaderIndex.LastFeature];
+            m_buffers = new List<PoolBuffer> { new PoolBuffer() }; // Always have at least one buffer.
+            m_headers = new PoolBuffer[(byte)PerfHeaderIndex.LastFeature];
+            for (var i = 0; i < m_headers.Length; i += 1)
+            {
+                m_headers[i] = new PoolBuffer();
+            }
 
             m_eventDescList = new List<PerfEventDesc>();
             m_eventDescListReadOnly = m_eventDescList.AsReadOnly();
@@ -240,7 +241,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             m_eventDescByIdReadOnly = new ReadOnlyDictionary<UInt64, PerfEventDesc>(m_eventDescById);
 
             m_eventQueue = new List<QueueEntry>();
-            m_sessionInfo = PerfEventSessionInfo.Empty;
+
+            m_sessionInfo = PerfSessionInfo.Empty;
             m_file = Stream.Null;
 
             m_ftraces = new List<ReadOnlyMemory<byte>>();
@@ -339,12 +341,20 @@ namespace Microsoft.LinuxTracepoints.Decode
         public static UInt64 ReadMagic(string filename)
         {
             Span<byte> bytes = stackalloc byte[8];
-            int len;
+            int pos = 0;
             using (var stream = new FileStream(filename, FileMode.Open, FileAccess.Read, FileShare.Read | FileShare.Delete))
             {
-                len = stream.Read(bytes);
+                while (pos < sizeof(UInt64))
+                {
+                    var len = stream.Read(bytes.Slice(pos));
+                    if (len == 0)
+                    {
+                        break;
+                    }
+                    pos += len;
+                }
             }
-            return len == 8 ? BitConverter.ToUInt64(bytes) : 0;
+            return pos == sizeof(UInt64) ? BitConverter.ToUInt64(bytes) : 0;
         }
 
         /// <summary>
@@ -352,7 +362,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns true if the file starts with
         /// MagicHostEndianPERFILE2 or MagicSwapEndianPERFILE2.
         /// </summary>
-        public static bool IsPerfDataFile(string filename)
+        public static bool FileStartsWithMagic(string filename)
         {
             var magic = ReadMagic(filename);
             return magic == MagicHostEndianPERFILE2 || magic == MagicSwapEndianPERFILE2;
@@ -366,7 +376,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public ReadOnlyMemory<byte> Header(PerfHeaderIndex headerIndex)
         {
             return (uint)headerIndex < (uint)m_headers.Length
-                ? m_headers[(uint)headerIndex].Memory
+                ? m_headers[(uint)headerIndex].ValidMemory
                 : default;
         }
 
@@ -376,18 +386,17 @@ namespace Microsoft.LinuxTracepoints.Decode
         public void Dispose()
         {
             GC.SuppressFinalize(this);
+
             FileClose();
             
-            m_buffer.Dispose();
-
-            for (var i = 0; i < m_headers.Length; i += 1)
+            foreach (var item in m_buffers)
             {
-                m_headers[i].Dispose();
+                item.Dispose(); // Return buffer to ArrayPool.
             }
 
-            foreach (var item in m_eventQueue)
+            foreach (var item in m_headers)
             {
-                item.Dispose();
+                item.Dispose(); // Return buffer to ArrayPool.
             }
         }
 
@@ -396,40 +405,40 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public void Close()
         {
-            m_filePos = default;
-            m_fileLen = default;
-            m_dataBeginFilePos = default;
-            m_dataEndFilePos = default;
+            m_filePos = 0;
+            m_fileLen = 0;
+            m_dataBeginFilePos = 0;
+            m_dataEndFilePos = 0;
 
-            m_buffer.SetSizeTo0AndTrim(TrimBufferLargerThan);
-
-            for (int i = 0; i < m_headers.Length; i++)
+            // Don't trim m_buffers[0].
+            m_buffers[0].ValidLength = 0;
+            for (var i = 1; i < m_buffers.Count; i += 1)
             {
-                m_headers[i].SetSizeTo0AndTrim(TrimHeaderLargerThan);
+                m_buffers[i].InvalidateAndTrim(FreeBufferLargerThan);
+            }
+
+            foreach (var item in m_headers)
+            {
+                item.InvalidateAndTrim(FreeHeaderLargerThan);
             }
 
             m_eventDescList.Clear();
             m_eventDescById.Clear();
 
-            foreach (var item in m_eventQueue)
-            {
-                item.SetSizeTo0AndTrim();
-            }
+            m_eventQueueBegin = 0;
+            m_eventQueueEnd = 0;
 
-            m_eventQueueBegin = default;
-            m_eventQueueEnd = default;
-
-            m_sessionInfo = PerfEventSessionInfo.Empty;
+            m_sessionInfo = PerfSessionInfo.Empty;
 
             FileClose();
 
             m_byteReader = default;
-            m_parsedHeaderEventDesc = default;
-            m_eventOrder = default;
-            m_roundIndex = default;
-            m_eventQueuePendingResult = default;
+            m_parsedHeaderEventDesc = false;
+            m_eventOrder = 0;
+            m_currentBuffer = 0;
+            m_eventQueuePendingResult = 0;
 
-            m_commonTypeSize = default;
+            m_commonTypeSize = 0;
             m_commonTypeOffset = OffsetUnset;
             m_sampleIdOffset = OffsetUnset;
             m_nonSampleIdOffset = OffsetUnset;
@@ -437,9 +446,9 @@ namespace Microsoft.LinuxTracepoints.Decode
             m_nonSampleTimeOffset = OffsetUnset;
 
             // HEADER_TRACING_DATA
-            m_parsedTracingData = default;
-            m_tracingDataLongSize = default;
-            m_tracingDataPageSize = default;
+            m_parsedTracingData = false;
+            m_tracingDataLongSize = 0;
+            m_tracingDataPageSize = 0;
             m_headerPage = default;
             m_headerEvent = default;
 
@@ -456,12 +465,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Closes the current input file (if any), then opens the specified
         /// perf.data file (Mode = Open, Access = Read, Share = Read + Delete) and
         /// reads the file header.
-        /// 
+        /// <br/>
         /// If not a pipe-mode file, loads headers/attributes.
-        /// 
+        /// <br/>
         /// If a pipe-mode file, headers and attributes will be loaded as the header
         /// events are encountered by ReadEvent.
-        /// 
+        /// <br/>
         /// On successful return, the file will be positioned before the first event.
         /// </summary>
         /// <returns>true on success, false if the file is not a valid perf.data file.</returns>
@@ -473,7 +482,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case PerfDataFileEventOrder.Time:
                     break;
                 default:
-                    throw new InvalidOperationException("PerfDataFileReader.OpenFile: Invalid event order.");
+                    throw new ArgumentOutOfRangeException(
+                        nameof(eventOrder),
+                        "PerfDataFileReader.OpenFile: Invalid event order.");
             }
 
             return OpenStreamImpl(
@@ -503,7 +514,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case PerfDataFileEventOrder.Time:
                     break;
                 default:
-                    throw new InvalidOperationException("PerfDataFileReader.OpenFile: Invalid event order.");
+                    throw new ArgumentOutOfRangeException(
+                        nameof(eventOrder),
+                        "PerfDataFileReader.OpenFile: Invalid event order.");
             }
 
             return OpenStreamImpl(
@@ -545,7 +558,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case PerfDataFileEventOrder.Time:
                     break;
                 default:
-                    throw new InvalidOperationException("PerfDataFileReader.OpenStream: Invalid event order.");
+                    throw new ArgumentOutOfRangeException(
+                        nameof(eventOrder),
+                        "PerfDataFileReader.OpenStream: Invalid event order.");
             }
 
             return OpenStreamImpl(stream, eventOrder, leaveOpen);
@@ -580,13 +595,13 @@ namespace Microsoft.LinuxTracepoints.Decode
             if (header.pipe_header.magic == MagicHostEndianPERFILE2)
             {
                 m_byteReader = PerfByteReader.HostEndian;
-                m_sessionInfo = new PerfEventSessionInfo(m_byteReader);
+                m_sessionInfo = new PerfSessionInfo(m_byteReader);
                 headerSize = header.pipe_header.size;
             }
             else if (header.pipe_header.magic == MagicSwapEndianPERFILE2)
             {
                 m_byteReader = PerfByteReader.SwapEndian;
-                m_sessionInfo = new PerfEventSessionInfo(m_byteReader);
+                m_sessionInfo = new PerfSessionInfo(m_byteReader);
                 headerSize = BinaryPrimitives.ReverseEndianness(header.pipe_header.size);
             }
             else
@@ -596,7 +611,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                 return false;
             }
 
-            m_buffer.SetSize(BufferInitialSize, 0);
+            var buffer0 = m_buffers[0];
+            Debug.Assert(buffer0.ValidLength == 0);
+            buffer0.EnsureCapacity(NormalEventMaxSize, 0);
 
             if (headerSize == perf_pipe_header.SizeOfStruct)
             {
@@ -665,19 +682,118 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <returns>Ok on success; EndOfFile or InvalidData if no more events.</returns>
         public PerfDataFileResult ReadEvent(out PerfEventBytes eventBytes)
         {
-            switch (m_eventOrder)
-            {
-                case PerfDataFileEventOrder.File:
-                    return ReadEventFileOrder(out eventBytes);
-                case PerfDataFileEventOrder.Time:
-                    return ReadEventTimeOrder(out eventBytes);
-                default:
-                    throw new InvalidOperationException("PerfDataFileReader.ReadEvent: Invalid event order.");
-            }
+            Debug.Assert(m_eventOrder >= PerfDataFileEventOrder.File && m_eventOrder <= PerfDataFileEventOrder.Time);
+            return m_eventOrder == PerfDataFileEventOrder.File
+                ? ReadEventFileOrder(out eventBytes)
+                : ReadEventTimeOrder(out eventBytes);
         }
 
         private PerfDataFileResult ReadEventFileOrder(out PerfEventBytes eventBytes)
         {
+            Debug.Assert(m_currentBuffer == 0);
+            var buffer = m_buffers[0];
+            buffer.ValidLength = 0;
+            return ReadOneEvent(buffer, out eventBytes);
+        }
+
+        private PerfDataFileResult ReadEventTimeOrder(out PerfEventBytes eventBytes)
+        {
+            while (true)
+            {
+                if (m_eventQueueBegin < m_eventQueueEnd)
+                {
+                    var entry = m_eventQueue[m_eventQueueBegin];
+                    m_eventQueueBegin += 1;
+                    eventBytes = new PerfEventBytes(entry.Header, entry.Memory, entry.Memory.Span);
+                    return PerfDataFileResult.Ok;
+                }
+
+                if (m_eventQueuePendingResult != PerfDataFileResult.Ok)
+                {
+                    var eventQueuePendingResult = m_eventQueuePendingResult;
+                    m_eventQueuePendingResult = PerfDataFileResult.Ok;
+                    eventBytes = default;
+                    return eventQueuePendingResult;
+                }
+
+                m_eventQueueBegin = 0;
+                m_eventQueueEnd = 0;
+
+                while (true)
+                {
+                    PerfEventBytes bytes;
+                    var result = ReadOneEvent(m_buffers[m_currentBuffer], out bytes);
+                    if (result != PerfDataFileResult.Ok)
+                    {
+                        m_eventQueuePendingResult = result;
+                        break;
+                    }
+
+                    QueueEntry entry;
+                    if (m_eventQueueEnd < m_eventQueue.Count)
+                    {
+                        entry = m_eventQueue[m_eventQueueEnd];
+                    }
+                    else
+                    {
+                        Debug.Assert(m_eventQueueEnd == m_eventQueue.Count);
+                        entry = new QueueEntry();
+                        m_eventQueue.Add(entry);
+                    }
+
+                    var bytesLength = bytes.Span.Length;
+
+                    if (bytes.Header.Type == PerfEventHeaderType.Sample)
+                    {
+                        if (m_sampleTimeOffset < sizeof(UInt64) ||
+                            m_sampleTimeOffset + sizeof(UInt64) > bytesLength)
+                        {
+                            entry.Time = 0;
+                        }
+                        else
+                        {
+                            entry.Time = m_byteReader.ReadU64(bytes.Span.Slice(m_sampleTimeOffset));
+                        }
+                    }
+                    else
+                    {
+                        if (bytes.Header.Type >= PerfEventHeaderType.UserTypeStart ||
+                            m_nonSampleTimeOffset < sizeof(UInt64) ||
+                            m_nonSampleTimeOffset > bytesLength)
+                        {
+                            entry.Time = 0;
+                        }
+                        else
+                        {
+                            entry.Time = m_byteReader.ReadU64(bytes.Span.Slice(bytesLength - m_nonSampleTimeOffset));
+                        }
+                    }
+
+                    entry.RoundSequence = unchecked((uint)m_eventQueueEnd);
+                    entry.Header = bytes.Header;
+                    entry.Memory = bytes.Memory;
+                    m_eventQueueEnd += 1;
+
+                    if (bytes.Header.Type == PerfEventHeaderType.FinishedRound ||
+                        bytes.Header.Type == PerfEventHeaderType.FinishedInit)
+                    {
+                        // These events don't generally have a timestamp.
+                        // Force them to show up at the end of the round.
+                        entry.Time = UInt64.MaxValue;
+                        break;
+                    }
+                }
+
+                // Sort using IComparable<QueueEntry>.
+                m_eventQueue.Sort(0, m_eventQueueEnd, null);
+            }
+        }
+
+        private PerfDataFileResult ReadOneEvent(PoolBuffer buffer, out PerfEventBytes eventBytes)
+        {
+            Debug.Assert(buffer.Capacity >= NormalEventMaxSize);
+            Debug.Assert(buffer.ValidLength <= NormalEventMaxSize);
+
             PerfDataFileResult result;
 
             var eventStartFilePos = m_filePos;
@@ -699,10 +815,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                 goto ErrorOrEof;
             }
 
-            Debug.Assert(m_buffer.Memory.Length >= BufferInitialSize); // Should be resized during Open().
-            var bufferSpan = m_buffer.Memory.Span;
-
-            if (!FileRead(bufferSpan.Slice(0, PerfEventHeader.SizeOfStruct)))
+            var eventHeaderFileEndian = default(PerfEventHeader);
+            var eventHeaderFileEndianBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref eventHeaderFileEndian, 1));
+            if (!FileRead(eventHeaderFileEndianBytes))
             {
                 if (m_filePos == eventStartFilePos &&
                     m_filePos != UInt64.MaxValue &&
@@ -718,28 +833,56 @@ namespace Microsoft.LinuxTracepoints.Decode
                 goto ErrorOrEof;
             }
 
-            var eventHeader = MemoryMarshal.Read<PerfEventHeader>(bufferSpan);
+            var eventHeader = eventHeaderFileEndian;
             if (m_byteReader.ByteSwapNeeded)
             {
                 eventHeader.ByteSwap();
             }
 
+            // Event size must be at least the size of the header.
             if (eventHeader.Size < PerfEventHeader.SizeOfStruct)
             {
                 result = PerfDataFileResult.InvalidData;
                 goto ErrorOrEof;
             }
 
-            const int eventDataStartPos = PerfEventHeader.SizeOfStruct;
-            var eventData = new PosLength(eventDataStartPos, eventHeader.Size - PerfEventHeader.SizeOfStruct);
-
-            if ((uint)eventData.Length > m_dataEndFilePos - m_filePos)
+            // Event size must not exceed the amount of data remaining in the file's event data section.
+            var eventDataLen = eventHeader.Size - PerfEventHeader.SizeOfStruct;
+            if ((uint)eventDataLen > m_dataEndFilePos - m_filePos)
             {
                 result = PerfDataFileResult.InvalidData;
                 goto ErrorOrEof;
             }
 
-            if (!FileRead(eventData.Slice(bufferSpan)))
+            if (eventHeader.Size > NormalEventMaxSize - buffer.ValidLength)
+            {
+                // Time-order only: event won't fit into this buffer. Switch to next buffer.
+                Debug.Assert(m_eventOrder == PerfDataFileEventOrder.Time);
+                Debug.Assert(buffer == m_buffers[m_currentBuffer]);
+
+                m_currentBuffer += 1;
+                if (m_currentBuffer < m_buffers.Count)
+                {
+                    buffer = m_buffers[m_currentBuffer];
+                }
+                else
+                {
+                    Debug.Assert(m_currentBuffer == m_buffers.Count);
+                    buffer = new PoolBuffer();
+                    buffer.EnsureCapacity(NormalEventMaxSize, 0);
+                    m_buffers.Add(buffer);
+                }
+
+                Debug.Assert(buffer.Capacity >= NormalEventMaxSize);
+                Debug.Assert(buffer.ValidLength == 0);
+            }
+
+            var bufferSpan = buffer.CapacitySpan;
+            var headerPos = buffer.ValidLength;
+            eventHeaderFileEndianBytes.CopyTo(bufferSpan.Slice(headerPos));
+
+            var eventDataPos = headerPos + PerfEventHeader.SizeOfStruct;
+            if (!FileRead(bufferSpan.Slice(eventDataPos, eventDataLen)))
             {
                 result = PerfDataFileResult.InvalidData; // EOF in the middle of expected data.
                 goto ErrorOrEof;
@@ -751,32 +894,26 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 case PerfEventHeaderType.HeaderAttr:
 
-                    if (eventData.Length >= (int)PerfEventAttrSize.Ver0)
+                    if (eventDataLen >= (int)PerfEventAttrSize.Ver0)
                     {
-                        var attrSize = (int)m_byteReader.ReadU32(bufferSpan.Slice(eventDataStartPos + PerfEventAttr.OffsetOfSize));
-                        if (attrSize < (int)PerfEventAttrSize.Ver0 || attrSize > eventData.Length)
+                        var attrSize = (int)m_byteReader.ReadU32(bufferSpan.Slice(eventDataPos + PerfEventAttr.OffsetOfSize));
+                        if (attrSize < (int)PerfEventAttrSize.Ver0 || attrSize > eventDataLen)
                         {
-                            result = PerfDataFileResult.InvalidData;
-                            goto ErrorOrEof;
+                            break;
                         }
 
                         var attrSizeCapped = Math.Min(attrSize, PerfEventAttr.SizeOfStruct);
-                        if (!AddAttr(
-                            bufferSpan.Slice(eventDataStartPos, attrSizeCapped),
+                        AddAttr(
+                            bufferSpan.Slice(eventDataPos, attrSizeCapped),
                             default,
-                            bufferSpan.Slice(eventDataStartPos + attrSize, eventData.Length - attrSize)))
-                        {
-                            result = PerfDataFileResult.InvalidData;
-                            goto ErrorOrEof;
-                        }
+                            bufferSpan.Slice(eventDataPos + attrSize, eventDataLen - attrSize));
                     }
                     break;
 
                 case PerfEventHeaderType.HeaderTracingData:
 
-                    var oldEndPos = eventData.EndPos;
-                    if (eventHeader.Size != 0x0C ||
-                        !ReadPostEventData(4, ref eventData, ref bufferSpan))
+                    if (eventDataLen < sizeof(UInt32) ||
+                        !ReadPostEventData(m_byteReader.ReadU32(bufferSpan.Slice(eventDataPos)), buffer, eventDataPos, ref bufferSpan, ref eventDataLen))
                     {
                         result = PerfDataFileResult.InvalidData;
                         goto ErrorOrEof;
@@ -784,21 +921,23 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                     if (!m_parsedTracingData)
                     {
+                        var oldEventDataLen = eventHeader.Size - PerfEventHeader.SizeOfStruct;
                         var tracingDataHeader = SetHeader(
                             PerfHeaderIndex.TracingData,
-                            bufferSpan.Slice(oldEndPos, eventData.EndPos - oldEndPos));
+                            bufferSpan.Slice(eventDataPos + oldEventDataLen, eventDataLen - oldEventDataLen));
                         ParseTracingData(tracingDataHeader);
                     }
                     break;
 
                 case PerfEventHeaderType.HeaderBuildId:
 
-                    SetHeader(PerfHeaderIndex.BuildId, eventData.Slice(bufferSpan));
+                    SetHeader(PerfHeaderIndex.BuildId, bufferSpan.Slice(eventDataPos, eventDataLen));
                     break;
 
                 case PerfEventHeaderType.Auxtrace:
 
-                    if (ReadPostEventData(8, ref eventData, ref bufferSpan))
+                    if (eventDataLen < sizeof(UInt64) ||
+                        !ReadPostEventData(m_byteReader.ReadU64(bufferSpan.Slice(eventDataPos)), buffer, eventDataPos, ref bufferSpan, ref eventDataLen))
                     {
                         result = PerfDataFileResult.InvalidData;
                         goto ErrorOrEof;
@@ -807,15 +946,15 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                 case PerfEventHeaderType.HeaderFeature:
 
-                    if (eventData.Length >= sizeof(UInt64))
+                    if (eventDataLen >= sizeof(UInt64))
                     {
-                        var index64 = m_byteReader.ReadU64(bufferSpan.Slice(eventDataStartPos));
+                        var index64 = m_byteReader.ReadU64(bufferSpan.Slice(eventDataPos));
                         if (index64 < (uint)m_headers.Length)
                         {
                             var index = (PerfHeaderIndex)index64;
                             var featureHeader = SetHeader(
                                 index,
-                                bufferSpan.Slice(eventDataStartPos + sizeof(UInt64), eventData.Length - sizeof(UInt64)));
+                                bufferSpan.Slice(eventDataPos + sizeof(UInt64), eventDataLen - sizeof(UInt64)));
                             switch (index)
                             {
                                 case PerfHeaderIndex.ClockId:
@@ -831,7 +970,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                 case PerfEventHeaderType.FinishedInit:
 
-                    var eventDescHeader = m_headers[(int)PerfHeaderIndex.EventDesc].Memory;
+                    var eventDescHeader = m_headers[(int)PerfHeaderIndex.EventDesc].ValidMemory;
                     if (!eventDescHeader.IsEmpty)
                     {
                         ParseHeaderEventDesc(eventDescHeader.Span);
@@ -839,18 +978,15 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
             }
 
-            if (m_filePos > m_dataEndFilePos)
-            {
-                result = PerfDataFileResult.InvalidData;
-                goto ErrorOrEof;
-            }
-
-            Debug.Assert(eventData.StartPos == eventDataStartPos);
-            Debug.Assert(m_buffer.Memory.Length == bufferSpan.Length); // m_buffer and bufferSpan must be kept in sync.
+            Debug.Assert(m_filePos <= m_dataEndFilePos);
+            Debug.Assert(eventDataPos == headerPos + PerfEventHeader.SizeOfStruct);
+            Debug.Assert(buffer.Capacity == bufferSpan.Length); // m_buffer and bufferSpan must be kept in sync.
+            var eventLength = PerfEventHeader.SizeOfStruct + eventDataLen;
+            buffer.ValidLength += eventLength;
             eventBytes = new PerfEventBytes(
                 eventHeader,
-                m_buffer.Memory.Slice(0, eventData.EndPos),
-                bufferSpan.Slice(0, eventData.EndPos));
+                buffer.CapacityMemory.Slice(headerPos, eventLength),
+                bufferSpan.Slice(headerPos, eventLength));
             return PerfDataFileResult.Ok;
 
         ErrorOrEof:
@@ -860,104 +996,6 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             eventBytes = default;
             return result;
-        }
-
-        private PerfDataFileResult ReadEventTimeOrder(out PerfEventBytes eventBytes)
-        {
-            while (true)
-            {
-                if (m_eventQueueBegin < m_eventQueueEnd)
-                {
-                    var entry = m_eventQueue[m_eventQueueBegin];
-                    m_eventQueueBegin += 1;
-                    eventBytes = new PerfEventBytes(entry.header, entry.bytes.Memory, entry.bytes.Memory.Span);
-                    return PerfDataFileResult.Ok;
-                }
-
-                if (m_eventQueuePendingResult != PerfDataFileResult.Ok)
-                {
-                    var eventQueuePendingResult = m_eventQueuePendingResult;
-                    m_eventQueuePendingResult = PerfDataFileResult.Ok;
-                    eventBytes = default;
-                    return eventQueuePendingResult;
-                }
-
-                for (int i = 0; i < m_eventQueueBegin; i += 1)
-                {
-                    m_eventQueue[i].SetSizeTo0AndTrim();
-                }
-
-                m_roundIndex = 0;
-                m_eventQueueBegin = 0;
-                m_eventQueueEnd = 0;
-
-                PerfEventBytes bytes;
-                while (true)
-                {
-                    var result = ReadEventFileOrder(out bytes);
-                    if (result != PerfDataFileResult.Ok)
-                    {
-                        m_eventQueuePendingResult = result;
-                        break;
-                    }
-
-                    QueueEntry entry;
-                    if (m_eventQueueEnd < m_eventQueue.Count)
-                    {
-                        entry = m_eventQueue[m_eventQueueEnd];
-                    }
-                    else
-                    {
-                        entry = new QueueEntry();
-                        m_eventQueue.Add(entry);
-                    }
-
-                    m_eventQueueEnd += 1;
-
-                    var bytesLength = bytes.Span.Length;
-
-                    if (bytes.Header.Type == PerfEventHeaderType.Sample)
-                    {
-                        if (m_sampleTimeOffset < sizeof(UInt64) ||
-                            m_sampleTimeOffset + sizeof(UInt64) > bytesLength)
-                        {
-                            entry.time = 0;
-                        }
-                        else
-                        {
-                            entry.time = m_byteReader.ReadU64(bytes.Span.Slice(m_sampleTimeOffset));
-                        }
-                    }
-                    else
-                    {
-                        if (bytes.Header.Type >= PerfEventHeaderType.UserTypeStart ||
-                            m_nonSampleTimeOffset < sizeof(UInt64) ||
-                            m_nonSampleTimeOffset > bytesLength)
-                        {
-                            entry.time = 0;
-                        }
-                        else
-                        {
-                            entry.time = m_byteReader.ReadU64(bytes.Span.Slice(bytesLength - m_nonSampleTimeOffset));
-                        }
-                    }
-
-                    entry.index = m_roundIndex;
-                    entry.header = bytes.Header;
-                    bytes.Span.CopyTo(entry.bytes.SetSize(bytesLength, 0).Span);
-                    m_roundIndex += 1;
-
-                    if (bytes.Header.Type == PerfEventHeaderType.FinishedRound ||
-                        bytes.Header.Type == PerfEventHeaderType.FinishedInit)
-                    {
-                        entry.time = UInt64.MaxValue;
-                        break;
-                    }
-                }
-
-                // Sort using IComparable<QueueEntry>.
-                m_eventQueue.Sort(0, m_eventQueueEnd, null);
-            }
         }
 
         /// <summary>
@@ -1520,48 +1558,45 @@ namespace Microsoft.LinuxTracepoints.Decode
             return ReadSection(8, dataByteReader, data, pos + expectedName.Length, out value);
         }
 
-        private bool ReadPostEventData(int sizeOfDataSize, ref PosLength eventData, ref Span<byte> buffer)
+        private bool ReadPostEventData(ulong dataSize64, PoolBuffer buffer, int eventDataPos, ref Span<byte> bufferSpan, ref int eventDataLen)
         {
-            Debug.Assert(sizeOfDataSize == sizeof(UInt32) || sizeOfDataSize == sizeof(UInt64));
-
-            if (eventData.Length < sizeOfDataSize)
-            {
-                return false;
-            }
-
-            var dataSize64 = sizeOfDataSize == sizeof(UInt64)
-                ? m_byteReader.ReadU64(buffer.Slice(eventData.StartPos))
-                : m_byteReader.ReadU32(buffer.Slice(eventData.StartPos));
-            if (dataSize64 >= 0x80000000 || 0 != (dataSize64 & 7))
+            if (dataSize64 >= 0x80000000 ||
+                0 != (dataSize64 & 7) ||
+                dataSize64 > m_dataEndFilePos - m_filePos)
             {
                 return false;
             }
 
             var dataSize = (UInt32)dataSize64;
 
-            if ((UInt32)eventData.EndPos + dataSize > (UInt32)m_buffer.Memory.Length)
+            var eventDataEndPos = eventDataPos + eventDataLen;
+            if ((UInt32)eventDataEndPos + dataSize > (UInt32)bufferSpan.Length)
             {
-                if ((UInt32)eventData.EndPos + dataSize >= 0x80000000)
+                var newCapacity = (UInt32)eventDataEndPos + dataSize;
+                if (newCapacity >= 0x80000000)
                 {
                     return false;
                 }
 
-                m_buffer.SetSize(eventData.EndPos + (int)dataSize, eventData.EndPos);
-                buffer = m_buffer.Memory.Span;
+                buffer.EnsureCapacity((int)newCapacity, eventDataEndPos);
+                bufferSpan = buffer.CapacitySpan;
             }
 
-            if (!FileRead(buffer.Slice(eventData.EndPos, (int)dataSize)))
+            if (!FileRead(bufferSpan.Slice(eventDataEndPos, (int)dataSize)))
             {
                 return false; // EOF in the middle of expected data.
             }
 
-            eventData = new PosLength(eventData.StartPos, eventData.Length + (int)dataSize);
+            eventDataLen += (int)dataSize;
             return true;
         }
 
         private ReadOnlySpan<byte> SetHeader(PerfHeaderIndex headerIndex, ReadOnlySpan<byte> value)
         {
-            var headerSpan = m_headers[(byte)headerIndex].SetSize(value.Length, 0).Span;
+            var header = m_headers[(byte)headerIndex];
+            header.EnsureCapacity(value.Length, 0);
+            header.ValidLength = value.Length;
+            var headerSpan = header.ValidSpan;
             value.CopyTo(headerSpan);
             return headerSpan;
         }
@@ -1569,6 +1604,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         private bool LoadAttrs(in perf_file_section attrsSection, UInt64 attrAndIdSectionSize64)
         {
             bool ok;
+            var bufferSpan = default(Span<byte>);
+
+            Debug.Assert(m_buffers[0].ValidLength == 0);
 
             if (attrsSection.size >= 0x80000000 ||
                 attrAndIdSectionSize64 < (int)PerfEventAttrSize.Ver0 + perf_file_section.SizeOfStruct ||
@@ -1624,23 +1662,22 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
 
                     var sectionSize = (int)section.size;
-                    if (m_buffer.Memory.Length < sectionSize)
+
+                    if (bufferSpan.Length < sectionSize)
                     {
-                        m_buffer.SetSize(sectionSize, 0);
+                        var buffer = m_buffers[0];
+                        buffer.EnsureCapacity(sectionSize, 0);
+                        bufferSpan = buffer.CapacitySpan;
                     }
 
-                    var sectionData = m_buffer.Memory.Span.Slice(0, sectionSize);
+                    var sectionData = bufferSpan.Slice(0, sectionSize);
                     if (!FileSeekAndRead(section.offset, sectionData))
                     {
                         ok = false; // EOF in the middle of expected data.
                         break;
                     }
 
-                    if (!AddAttr(attrBytes, default, sectionData))
-                    {
-                        ok = false;
-                        break;
-                    }
+                    AddAttr(attrBytes, default, sectionData);
                 }
             }
 
@@ -1674,7 +1711,13 @@ namespace Microsoft.LinuxTracepoints.Decode
                         break;
                     }
 
-                    var headerSpan = m_headers[headerIndex].SetSize((int)section.size, 0).Span;
+                    var header = m_headers[headerIndex];
+
+                    var sectionSize = (int)section.size;
+                    header.EnsureCapacity(sectionSize, 0);
+                    header.ValidLength = sectionSize;
+
+                    var headerSpan = header.ValidSpan;
                     if (!FileSeekAndRead(section.offset, headerSpan))
                     {
                         ok = false; // EOF in the middle of expected data.
@@ -1706,7 +1749,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void ParseTracingData(ReadOnlySpan<byte> data)
         {
-            var dataMemory = m_headers[(int)PerfHeaderIndex.TracingData].Memory;
+            ReadOnlyMemory<byte> dataMemory = m_headers[(int)PerfHeaderIndex.TracingData].ValidMemory;
             Debug.Assert(data == dataMemory.Span); // These should be the same thing.
 
             if (TracingSignature.Length <= data.Length &&
@@ -1920,7 +1963,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void ParseHeaderClockid(ReadOnlySpan<byte> data)
         {
-            Debug.Assert(data == m_headers[(int)PerfHeaderIndex.ClockId].Memory.Span); // These should be the same thing.
+            Debug.Assert(data == m_headers[(int)PerfHeaderIndex.ClockId].ValidSpan); // These should be the same thing.
 
             if (data.Length >= sizeof(UInt64))
             {
@@ -1930,7 +1973,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void ParseHeaderClockData(ReadOnlySpan<byte> data)
         {
-            Debug.Assert(data == m_headers[(int)PerfHeaderIndex.ClockData].Memory.Span); // These should be the same thing.
+            Debug.Assert(data == m_headers[(int)PerfHeaderIndex.ClockData].ValidSpan); // These should be the same thing.
 
             if (data.Length >= ClockData.SizeOfStruct)
             {
@@ -1947,7 +1990,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void ParseHeaderEventDesc(ReadOnlySpan<byte> data)
         {
-            Debug.Assert(data == m_headers[(int)PerfHeaderIndex.EventDesc].Memory.Span); // These should be the same thing.
+            Debug.Assert(data == m_headers[(int)PerfHeaderIndex.EventDesc].ValidSpan); // These should be the same thing.
 
             if (m_parsedHeaderEventDesc)
             {
@@ -2237,32 +2280,22 @@ namespace Microsoft.LinuxTracepoints.Decode
             return FileSeek(offset) && FileRead(buffer);
         }
 
-        private sealed class QueueEntry : IComparable<QueueEntry>, IDisposable
+        private sealed class QueueEntry : IComparable<QueueEntry>
         {
-            public ulong time;
-            public uint index;
-            public PerfEventHeader header;
-            public ArrayMemory bytes;
+            public ulong Time;
+            public uint RoundSequence;
+            public PerfEventHeader Header;
+            public ReadOnlyMemory<byte> Memory;
 
             public int CompareTo(QueueEntry other)
             {
-                var compare = this.time.CompareTo(other.time);
+                var compare = this.Time.CompareTo(other.Time);
                 if (compare == 0)
                 {
-                    compare = this.index.CompareTo(other.index);
+                    compare = this.RoundSequence.CompareTo(other.RoundSequence);
                 }
 
                 return compare;
-            }
-
-            public void Dispose()
-            {
-                this.bytes.Dispose();
-            }
-
-            public void SetSizeTo0AndTrim()
-            {
-                this.bytes.SetSizeTo0AndTrim(TrimQueueEntryLargerThan);
             }
         }
 
@@ -2277,19 +2310,12 @@ namespace Microsoft.LinuxTracepoints.Decode
                 Length = length;
             }
 
-            public int EndPos => this.StartPos + this.Length;
-
-            public Span<T> Slice<T>(Span<T> data)
-            {
-                return data.Slice(this.StartPos, this.Length);
-            }
-
             public ReadOnlySpan<T> Slice<T>(ReadOnlySpan<T> data)
             {
                 return data.Slice(this.StartPos, this.Length);
             }
 
-            public Memory<T> Slice<T>(Memory<T> data)
+            public ReadOnlyMemory<T> Slice<T>(ReadOnlyMemory<T> data)
             {
                 return data.Slice(this.StartPos, this.Length);
             }

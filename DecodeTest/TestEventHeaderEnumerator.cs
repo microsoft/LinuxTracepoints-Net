@@ -37,9 +37,9 @@ namespace DecodeTest
             new EventHeaderItemInfo().ToString();
             new PerfByteReader().ToString();
             new PerfEventBytes().ToString();
-            new PerfEventTimeSpec().ToString();
-            new PerfEventTimeSpec(long.MinValue, 999999999).ToString();
-            new PerfEventTimeSpec(long.MaxValue, 999999999).ToString();
+            new PerfTimeSpec().ToString();
+            new PerfTimeSpec(long.MinValue, 999999999).ToString();
+            new PerfTimeSpec(long.MaxValue, 999999999).ToString();
             new PerfNonSampleEventInfo().ToString();
             new PerfSampleEventInfo().ToString();
             new PerfValue().ToString();

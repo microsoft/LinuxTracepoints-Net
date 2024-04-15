@@ -82,7 +82,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Information about the session that collected the event, e.g. clock id and
         /// clock offset.
         /// </summary>
-        public PerfEventSessionInfo SessionInfo;
+        public PerfSessionInfo SessionInfo;
 
         /// <summary>
         /// Valid if GetSampleEventInfo() succeeded.
@@ -208,9 +208,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public readonly PerfEventFormat? Format => this.EventDesc.Format;
 
         /// <summary>
-        /// Gets the Time as a PerfEventTimeSpec, using offset information from SessionInfo.
+        /// Gets the Time as a PerfTimeSpec, using offset information from SessionInfo.
         /// </summary>
-        public readonly PerfEventTimeSpec TimeSpec => this.SessionInfo.TimeToTimeSpec(this.Time);
+        public readonly PerfTimeSpec TimeSpec => this.SessionInfo.TimeToTimeSpec(this.Time);
 
         /// <summary>
         /// Gets the read_format data from the event in event-endian byte order.
