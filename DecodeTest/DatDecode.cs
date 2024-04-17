@@ -133,7 +133,7 @@
                     while (e.State >= EventHeaderEnumeratorState.BeforeFirstItem)
                     {
                         var sb = this.writer.WriteRawValueBuilderOnNewLine();
-                        e.AppendJsonItemToAndMoveNextSibling(sb, false, PerfJsonOptions.All);
+                        e.AppendJsonItemToAndMoveNextSibling(sb, false, PerfConvertOptions.All);
                     }
 
                     if (e.State != EventHeaderEnumeratorState.AfterLastItem)
@@ -144,7 +144,7 @@
                     this.writer.WritePropertyNameOnNewLine("info");
                     this.writer.WriteStartObject();
 
-                    e.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false, PerfInfoOptions.All, PerfJsonOptions.All);
+                    e.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false, PerfInfoOptions.All, PerfConvertOptions.All);
 
                     this.writer.WriteEndObject(); // info
                     this.writer.WriteEndObjectOnNewLine(); // AppendJsonItemN
@@ -158,7 +158,7 @@
                     while (e.State >= EventHeaderEnumeratorState.BeforeFirstItem)
                     {
                         var sb = this.writer.WriteRawValueBuilderOnNewLine();
-                        if (!e.AppendJsonItemToAndMoveNextSibling(sb, false, PerfJsonOptions.None))
+                        if (!e.AppendJsonItemToAndMoveNextSibling(sb, false, PerfConvertOptions.None))
                         {
                             sb.Append("\"\": null"); // No fields.
                         }
@@ -174,7 +174,7 @@
 
                     e.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false,
                         PerfInfoOptions.Default & ~PerfInfoOptions.Level,
-                        PerfJsonOptions.None);
+                        PerfConvertOptions.None);
 
                     this.writer.WriteEndObject(); // info
                     this.writer.WriteEndObjectOnNewLine(); // AppendJsonItem1

@@ -4,6 +4,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using CultureInfo = System.Globalization.CultureInfo;
     using Encoding = System.Text.Encoding;
     using StringBuilder = System.Text.StringBuilder;
 
@@ -51,19 +52,29 @@ namespace Microsoft.LinuxTracepoints.Decode
         public string NameAsString => Encoding.UTF8.GetString(this.NameBytes);
 
         /// <summary>
-        /// Appends a string representation of this value like "Name=Type:Value" or "Name=Type:Value1,Value2".
+        /// Appends a string representation of this value like "Name = Type:Value" or "Name = Type:Value1, Value2".
         /// Returns sb.
         /// </summary>
         public StringBuilder AppendAsString(StringBuilder sb)
         {
             PerfConvert.StringAppend(sb, this.NameBytes, Encoding.UTF8);
-            sb.Append('=');
+
+            var fieldTag = this.Value.FieldTag;
+            if (fieldTag == 0)
+            {
+                sb.Append(" = ");
+            }
+            else
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, ";tag=0x{0:X} = ", fieldTag);
+            }
+
             this.Value.AppendTo(sb);
             return sb;
         }
 
         /// <summary>
-        /// Returns a string representation of this value like "Name=Type:Value" or "Name=Type:Value1,Value2".
+        /// Returns a string representation of this value like "Name = Type:Value" or "Name =Type:Value1, Value2".
         /// </summary>
         public override string ToString()
         {

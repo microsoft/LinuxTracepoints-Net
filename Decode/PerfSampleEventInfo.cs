@@ -352,13 +352,13 @@ namespace Microsoft.LinuxTracepoints.Decode
             StringBuilder sb,
             bool addCommaBeforeNextItem = false,
             PerfInfoOptions infoOptions = PerfInfoOptions.Default,
-            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             return this.SessionInfo.AppendJsonEventInfoTo(
                 sb,
                 addCommaBeforeNextItem,
                 infoOptions,
-                jsonOptions,
+                convertOptions,
                 this.SampleType,
                 this.Time,
                 this.Cpu,

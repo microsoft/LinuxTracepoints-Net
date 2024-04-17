@@ -257,14 +257,14 @@
             string expected;
 
             expected = value.ToString("g", CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float32gToString(value));
+            Assert.AreEqual(expected, PerfConvert.Float32ToString(value, PerfConvertOptions.None));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float32gAppend(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float32Append(sb, value, PerfConvertOptions.None).ToString());
 
             expected = value.ToString("g9", CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float32g9ToString(value));
+            Assert.AreEqual(expected, PerfConvert.Float32ToString(value, PerfConvertOptions.FloatExtraPrecision));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float32g9Append(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float32Append(sb, value, PerfConvertOptions.FloatExtraPrecision).ToString());
         }
 
         private void CheckFloat64(double value)
@@ -272,14 +272,14 @@
             string expected;
 
             expected = value.ToString("g", CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float64gToString(value));
+            Assert.AreEqual(expected, PerfConvert.Float64ToString(value, PerfConvertOptions.None));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float64gAppend(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float64Append(sb, value, PerfConvertOptions.None).ToString());
 
             expected = value.ToString("g17", CultureInfo.InvariantCulture);
-            Assert.AreEqual(expected, PerfConvert.Float64g17ToString(value));
+            Assert.AreEqual(expected, PerfConvert.Float64ToString(value, PerfConvertOptions.FloatExtraPrecision));
             sb.Clear();
-            Assert.AreEqual(expected, PerfConvert.Float64g17Append(sb, value).ToString());
+            Assert.AreEqual(expected, PerfConvert.Float64Append(sb, value, PerfConvertOptions.FloatExtraPrecision).ToString());
         }
 
         private void CheckUnixTime64OutOfRange(long outOfRange)

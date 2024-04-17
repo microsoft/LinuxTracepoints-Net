@@ -1265,9 +1265,9 @@ namespace Microsoft.LinuxTracepoints.Decode
             StringBuilder sb,
             bool addCommaBeforeNextItem = false,
             PerfInfoOptions infoOptions = PerfInfoOptions.Default,
-            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return AppendJsonEventInfoTo(m_eventData.Span, sb, addCommaBeforeNextItem, infoOptions, jsonOptions);
+            return AppendJsonEventInfoTo(m_eventData.Span, sb, addCommaBeforeNextItem, infoOptions, convertOptions);
         }
 
         /// <summary>
@@ -1295,11 +1295,11 @@ namespace Microsoft.LinuxTracepoints.Decode
             StringBuilder sb,
             bool addCommaBeforeNextItem,
             PerfInfoOptions infoOptions = PerfInfoOptions.Default,
-            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
 
-            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
+            var w = new JsonWriter(sb, convertOptions, addCommaBeforeNextItem);
 
             int providerNameEnd =
                 0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Options))
@@ -1347,7 +1347,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 PerfConvert.UInt64HexAppendJson(
                     w.WriteValueNoEscapeName("keyword"),
                     m_keyword,
-                    jsonOptions);
+                    convertOptions);
             }
 
             if (infoOptions.HasFlag(PerfInfoOptions.Opcode) && m_header.Opcode != 0)
@@ -1362,7 +1362,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 PerfConvert.UInt32HexAppendJson(
                     w.WriteValueNoEscapeName("tag"),
                     m_header.Tag,
-                    jsonOptions);
+                    convertOptions);
             }
 
             if (infoOptions.HasFlag(PerfInfoOptions.Activity) && m_activityIdSize >= 16)
@@ -1406,7 +1406,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 PerfConvert.UInt32HexAppendJson(
                     w.WriteValueNoEscapeName("flags"),
                     (byte)m_header.Flags,
-                    jsonOptions);
+                    convertOptions);
             }
 
             return w.Comma;
@@ -1430,21 +1430,21 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <remarks>
         /// The output and the amount consumed depends on the initial state of the enumerator.
         /// <list type="bullet"><item>
-        /// Value: Appends the current item as a JSON value like <c>123</c> (if jsonOptions omits
+        /// Value: Appends the current item as a JSON value like <c>123</c> (if convertOptions omits
         /// <c>RootName</c> or the item is an element of an array) or a JSON name-value pair like
-        /// <c>"MyField": 123</c> (if jsonOptions includes <c>RootName</c> and item is not an array
+        /// <c>"MyField": 123</c> (if convertOptions includes <c>RootName</c> and item is not an array
         /// element).. Moves enumeration to the next item.
         /// </item><item>
         /// StructBegin: Appends the current item as a JSON object like
-        /// <c>{ "StructField1": 123, "StructField2": "Hello" }</c> (if jsonOptions omits
+        /// <c>{ "StructField1": 123, "StructField2": "Hello" }</c> (if convertOptions omits
         /// <c>RootName</c> or the item is an element of an array) or a JSON name-object pairlike
-        /// <c>"MyStruct": { "StructField1": 123, "StructField2": "Hello" }</c> (if jsonOptions
+        /// <c>"MyStruct": { "StructField1": 123, "StructField2": "Hello" }</c> (if convertOptions
         /// includes <c>RootName</c> and item is not an array element). Moves enumeration past the
         /// end of the item and its descendents, i.e. after the matching StructEnd.
         /// </item><item>
         /// ArrayBegin: Appends the current item as a JSON array like
-        /// <c>[ 1, 2, 3 ]</c> (if jsonOptions omits <c>RootName</c>) or a JSON name-array pair like
-        /// <c>"MyArray": [ 1, 2, 3 ]</c> (if jsonOptions includes <c>RootName</c>). Moves enumeration
+        /// <c>[ 1, 2, 3 ]</c> (if convertOptions omits <c>RootName</c>) or a JSON name-array pair like
+        /// <c>"MyArray": [ 1, 2, 3 ]</c> (if convertOptions includes <c>RootName</c>). Moves enumeration
         /// past the end of the item and its descendents, i.e. after the matching ArrayEnd.
         /// </item><item>
         /// BeforeFirstItem: Appends all items in the current event as a comma-separated list of
@@ -1461,9 +1461,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public bool AppendJsonItemToAndMoveNextSibling(
             StringBuilder sb,
             bool addCommaBeforeNextItem = false,
-            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return AppendJsonItemToAndMoveNextSibling(m_eventData.Span, sb, addCommaBeforeNextItem, jsonOptions);
+            return AppendJsonItemToAndMoveNextSibling(m_eventData.Span, sb, addCommaBeforeNextItem, convertOptions);
         }
 
         /// <summary>
@@ -1490,11 +1490,11 @@ namespace Microsoft.LinuxTracepoints.Decode
             ReadOnlySpan<byte> eventDataSpan,
             StringBuilder sb,
             bool addCommaBeforeNextItem,
-            PerfJsonOptions jsonOptions = PerfJsonOptions.Default)
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
-            bool wantName = jsonOptions.HasFlag(PerfJsonOptions.RootName);
-            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
+            bool wantName = convertOptions.HasFlag(PerfConvertOptions.RootName);
+            var w = new JsonWriter(sb, convertOptions, addCommaBeforeNextItem);
 
             bool ok;
             int depth = 0;
@@ -1533,7 +1533,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                         if (itemInfo.Value.TypeSize != 0)
                         {
-                            itemInfo.Value.AppendJsonSimpleArrayTo(w.WriteValue(), jsonOptions);
+                            itemInfo.Value.AppendJsonSimpleArrayTo(w.WriteValue(), convertOptions);
                             ok = MoveNextSibling(eventDataSpan);
                             continue; // Skip the MoveNext().
                         }

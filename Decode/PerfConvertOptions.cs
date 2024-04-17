@@ -6,10 +6,10 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System;
 
     /// <summary>
-    /// Flags used when formatting a value as a JSON string.
+    /// Flags used when formatting a value as a string.
     /// </summary>
     [Flags]
-    public enum PerfJsonOptions : UInt32
+    public enum PerfConvertOptions : UInt32
     {
         /// <summary>
         /// No flags set.
@@ -47,8 +47,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         FloatNonFiniteAsString = 0x20,
 
         /// <summary>
-        /// If set, hex integer will format as a string like "0xF123".
-        /// If unset, a hex integer will format as a number like 61731.
+        /// If set, hex integer will format in JSON as a string like "0xF123".
+        /// If unset, a hex integer will format in JSON as a decimal like 61731.
         /// </summary>
         IntHexAsString = 0x40,
 

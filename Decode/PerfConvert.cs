@@ -64,35 +64,23 @@ namespace Microsoft.LinuxTracepoints.Decode
         public const int DateTimeFullMaxChars = 28;
 
         /// <summary>
-        /// Maximum number of characters required to jsonOptions an errno value,
+        /// Maximum number of characters required to convert an errno value,
         /// currently 20, e.g. "ENOTRECOVERABLE(131)".
         /// This is static readonly (not const) because it may be changed in the future.
         /// </summary>
         public static readonly int ErrnoMaxChars = 20;
 
         /// <summary>
-        /// The maximum number of characters required by Float32gFormat is
-        /// 14, e.g. "-3.4028235E+38".
+        /// The maximum number of characters required by Float32Format is
+        /// 15, e.g. "-3.40282347e+38".
         /// </summary>
-        public const int Float32gMaxChars = 14;
+        public const int Float32MaxChars = 15;
 
         /// <summary>
-        /// The maximum number of characters required by Float32g9Format is
-        /// 15, e.g. "-3.40282347E+38".
+        /// The maximum number of characters required by Float64Format is
+        /// 24, e.g. "-1.7976931348623157e+308".
         /// </summary>
-        public const int Float32g9MaxChars = 15;
-
-        /// <summary>
-        /// The maximum number of characters required by Float64gFormat is
-        /// 24, e.g. "-1.7976931348623157E+308".
-        /// </summary>
-        public const int Float64gMaxChars = 24;
-
-        /// <summary>
-        /// The maximum number of characters required by Float64g17Format is
-        /// 24, e.g. "-1.7976931348623157E+308".
-        /// </summary>
-        public const int Float64g17MaxChars = 24;
+        public const int Float64MaxChars = 24;
 
         /// <summary>
         /// The maximum number of characters required by GuidFormat is
@@ -261,16 +249,21 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer value as string.
-        /// If value is 0/1, returns "false"/"true".
-        /// Otherwise, returns value like "BOOL(5)" or "BOOL(-12)".
+        /// Formats the provided integer value as string, respecting convertOptions
+        /// flag BoolOutOfRangeAsString: If value is 0/1, returns "false"/"true".
+        /// Otherwise, if convertOptions has BoolOutOfRangeAsString, returns a string
+        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, returns value like 5 or -12.
+        /// <br/>
         /// Note: input value is UInt32 because Bool8 and Bool16 should not be
         /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// Requires appropriately-sized destination buffer, Length >= BooleanMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> BooleanFormat(Span<char> destination, UInt32 boolVal)
+        public static Span<char> BooleanFormat(
+            Span<char> destination,
+            UInt32 boolVal,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             string recognized;
             switch (boolVal)
@@ -278,17 +271,26 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case 0: recognized = "false"; break;
                 case 1: recognized = "true"; break;
                 default:
-                    var pos = 0;
-                    destination[pos++] = 'B';
-                    destination[pos++] = 'O';
-                    destination[pos++] = 'O';
-                    destination[pos++] = 'L';
-                    destination[pos++] = '(';
-                    var end = Int32DecimalFormatAtEnd(destination.Slice(pos), unchecked((int)boolVal));
-                    end.CopyTo(destination.Slice(pos));
-                    pos += end.Length;
-                    destination[pos++] = ')';
-                    return destination.Slice(0, pos);
+                    if (convertOptions.HasFlag(PerfConvertOptions.BoolOutOfRangeAsString))
+                    {
+                        var pos = 0;
+                        destination[pos++] = 'B';
+                        destination[pos++] = 'O';
+                        destination[pos++] = 'O';
+                        destination[pos++] = 'L';
+                        destination[pos++] = '(';
+                        var end = Int32DecimalFormatAtEnd(destination.Slice(pos), unchecked((int)boolVal));
+                        end.CopyTo(destination.Slice(pos));
+                        pos += end.Length;
+                        destination[pos++] = ')';
+                        return destination.Slice(0, pos);
+                    }
+                    else
+                    {
+                        var end = Int32DecimalFormatAtEnd(destination, unchecked((int)boolVal));
+                        end.CopyTo(destination);
+                        return destination.Slice(0, end.Length);
+                    }
             }
 
             recognized.AsSpan().CopyTo(destination);
@@ -296,45 +298,58 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Converts an integer value from a boolean field into a string.
-        /// If value is 0/1, returns "false"/"true".
-        /// Otherwise, returns value like "BOOL(5)" or "BOOL(-12)".
+        /// Formats the provided integer value as string, respecting convertOptions
+        /// flag BoolOutOfRangeAsString: If value is 0/1, returns "false"/"true".
+        /// Otherwise, if convertOptions has BoolOutOfRangeAsString, returns a string
+        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, returns value like 5 or -12.
+        /// <br/>
         /// Note: input value is UInt32 because Bool8 and Bool16 should not be
         /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// </summary>
-        public static string BooleanToString(UInt32 value)
+        public static string BooleanToString(
+            UInt32 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return new string(BooleanFormat(stackalloc char[BooleanMaxChars], value));
+            return new string(BooleanFormat(stackalloc char[BooleanMaxChars], value, convertOptions));
         }
 
         /// <summary>
-        /// If value is 0/1, appends "false"/"true".
-        /// Otherwise, appends a string like "BOOL(5)" or "BOOL(-12)".
+        /// Formats the provided integer value as string, respecting convertOptions
+        /// flag BoolOutOfRangeAsString: If value is 0/1, appends "false"/"true".
+        /// Otherwise, if convertOptions has BoolOutOfRangeAsString, appends a string
+        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, appends value like 5 or -12.
+        /// <br/>
         /// Note: input value is UInt32 because Bool8 and Bool16 should not be
         /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// </summary>
-        public static StringBuilder BooleanAppend(StringBuilder sb, UInt32 value)
+        public static StringBuilder BooleanAppend(
+            StringBuilder sb,
+            UInt32 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return sb.Append(BooleanFormat(stackalloc char[BooleanMaxChars], value));
+            return sb.Append(BooleanFormat(stackalloc char[BooleanMaxChars], value, convertOptions));
         }
 
         /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
+        /// Appends the provided value formatted as a JSON value, respecting
+        /// convertOptions flag BoolOutOfRangeAsString. Returns sb.
         /// Note: input value is UInt32 because Bool8 and Bool16 should not be
         /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// </summary>
-        public static StringBuilder BooleanAppendJson(StringBuilder sb, UInt32 value, PerfJsonOptions jsonOptions)
+        public static StringBuilder BooleanAppendJson(
+            StringBuilder sb,
+            UInt32 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             switch (value)
             {
                 case 0: return sb.Append("false");
                 case 1: return sb.Append("true");
                 default:
-                    if (jsonOptions.HasFlag(PerfJsonOptions.BoolOutOfRangeAsString))
+                    if (convertOptions.HasFlag(PerfConvertOptions.BoolOutOfRangeAsString))
                     {
                         sb.Append("\"BOOL(");
                         Int32DecimalAppend(sb, unchecked((Int32)value));
@@ -464,7 +479,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// value from ErrnoLookup. Note that this returns true for 0, even though 0
         /// is not really a valid error number.
         /// </summary>
-        public static bool ErrnoKnown(int linuxErrno)
+        public static bool ErrnoIsKnown(int linuxErrno)
         {
             return linuxErrno >= 0 && linuxErrno < ErrnoFirstUnknownValue;
         }
@@ -490,12 +505,16 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// If the specified value is a recognized Linux error number, returns a
-        /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise returns a new string like
-        /// "ERRNO(404)".
+        /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise, if convertOptions has
+        /// ErrnoUnknownAsString, returns a string like "ERRNO(404)". Otherwise,
+        /// returns a string like "404".
         /// Requires appropriately-sized destination buffer, Length >= ErrnoMaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> ErrnoFormat(Span<char> destination, Int32 errno)
+        public static Span<char> ErrnoFormat(
+            Span<char> destination,
+            Int32 errno,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             var recognized = ErrnoLookup(errno);
             if (recognized != null)
@@ -503,7 +522,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 recognized.AsSpan().CopyTo(destination);
                 return destination.Slice(0, recognized.Length);
             }
-            else
+            else if (convertOptions.HasFlag(PerfConvertOptions.ErrnoUnknownAsString))
             {
                 var pos = 0;
                 destination[pos++] = 'E';
@@ -518,37 +537,53 @@ namespace Microsoft.LinuxTracepoints.Decode
                 destination[pos++] = ')';
                 return destination.Slice(0, pos);
             }
+            else
+            {
+                var end = Int32DecimalFormatAtEnd(destination, errno);
+                end.CopyTo(destination);
+                return destination.Slice(0, end.Length);
+            }
         }
 
         /// <summary>
         /// If the specified value is a recognized Linux error number, returns a
-        /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise returns a new string like
-        /// "ERRNO(404)".
+        /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise, if convertOptions has
+        /// ErrnoUnknownAsString, returns a string like "ERRNO(404)". Otherwise,
+        /// returns a string like "404".
         /// </summary>
-        public static string ErrnoToString(Int32 linuxErrno)
+        public static string ErrnoToString(
+            Int32 linuxErrno,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return new string(ErrnoFormat(stackalloc char[ErrnoMaxChars], linuxErrno));
+            return new string(ErrnoFormat(stackalloc char[ErrnoMaxChars], linuxErrno, convertOptions));
         }
 
         /// <summary>
         /// If the specified value is a recognized Linux error number, appends a
-        /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise appends a string like
-        /// "ERRNO(404)". Returns sb.
+        /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise, if convertOptions has
+        /// ErrnoUnknownAsString, appends a string like "ERRNO(404)". Otherwise,
+        /// returns a string like "404".
         /// </summary>
-        public static StringBuilder ErrnoAppend(StringBuilder sb, Int32 linuxErrno)
+        public static StringBuilder ErrnoAppend(
+            StringBuilder sb,
+            Int32 linuxErrno,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return sb.Append(ErrnoFormat(stackalloc char[ErrnoMaxChars], linuxErrno));
+            return sb.Append(ErrnoFormat(stackalloc char[ErrnoMaxChars], linuxErrno, convertOptions));
         }
 
         /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
+        /// flags ErrnoKnownAsString and ErrnoUnknownAsString. Returns sb.
         /// </summary>
-        public static StringBuilder ErrnoAppendJson(StringBuilder sb, Int32 value, PerfJsonOptions jsonOptions)
+        public static StringBuilder ErrnoAppendJson(
+            StringBuilder sb,
+            Int32 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            if (ErrnoKnown(value))
+            if (ErrnoIsKnown(value))
             {
-                if (jsonOptions.HasFlag(PerfJsonOptions.ErrnoKnownAsString))
+                if (convertOptions.HasFlag(PerfConvertOptions.ErrnoKnownAsString))
                 {
                     sb.Append('"');
                     sb.Append(ErrnoLookup(value));
@@ -557,7 +592,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                if (jsonOptions.HasFlag(PerfJsonOptions.ErrnoUnknownAsString))
+                if (convertOptions.HasFlag(PerfConvertOptions.ErrnoUnknownAsString))
                 {
                     sb.Append("\"ERRNO(");
                     Int32DecimalAppend(sb, value);
@@ -570,209 +605,146 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Formats the provided value as a variable-length float string like
-        /// "-3.4028235E+38" using jsonOptions "g" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float32gMaxChars.
+        /// "-3.4028235e+38" formatted using InvariantCulture and either "g" or "g9"
+        /// (depending on convertOptions flag FloatExtraPrecision).
+        /// Requires appropriately-sized destination buffer, up to Float32MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> Float32gFormat(Span<char> destination, Single value)
+        public static Span<char> Float32Format(
+            Span<char> destination,
+            Single value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            var ok = value.TryFormat(destination, out var len, "g", CultureInfo.InvariantCulture);
+            var format = convertOptions.HasFlag(PerfConvertOptions.FloatExtraPrecision) ? "g9" : "g";
+            var ok = value.TryFormat(destination, out var len, format, CultureInfo.InvariantCulture);
             if (ok)
             {
                 return destination.Slice(0, len);
             }
             else
             {
-                Debug.Assert(destination.Length < Float32gMaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32gMaxChars");
+                Debug.Assert(destination.Length < Float32MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32MaxChars");
             }
         }
 
         /// <summary>
         /// Formats the provided value as a variable-length float string like
-        /// "-3.40282347E+38" using jsonOptions "g9" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float32g9MaxChars.
-        /// Returns the formatted string (the filled portion of destination).
+        /// "-3.4028235e+38" formatted using InvariantCulture and either "g" or "g9"
+        /// (depending on convertOptions flag FloatExtraPrecision).
         /// </summary>
-        public static Span<char> Float32g9Format(Span<char> destination, Single value)
+        public static string Float32ToString(
+            Single value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            var ok = value.TryFormat(destination, out var len, "g9", CultureInfo.InvariantCulture);
-            if (ok)
-            {
-                return destination.Slice(0, len);
-            }
-            else
-            {
-                Debug.Assert(destination.Length < Float32g9MaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float32g9MaxChars");
-            }
+            return new string(Float32Format(stackalloc char[Float32MaxChars], value, convertOptions));
         }
 
         /// <summary>
-        /// Returns a new string like "-3.4028235E+38" for the provided value,
-        /// formatted using jsonOptions "g" and InvariantCulture.
+        /// Appends the provided value as a variable-length float string like
+        /// "-3.4028235e+38" formatted using InvariantCulture and either "g" or "g9"
+        /// (depending on convertOptions flag FloatExtraPrecision). Returns sb.
         /// </summary>
-        public static string Float32gToString(Single value)
+        public static StringBuilder Float32Append(
+            StringBuilder sb,
+            Single value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return new string(Float32gFormat(stackalloc char[Float32gMaxChars], value));
+            return sb.Append(Float32Format(stackalloc char[Float32MaxChars], value, convertOptions));
         }
 
         /// <summary>
-        /// Returns a new string like "-3.40282347E+38" for the provided value,
-        /// formatted using jsonOptions "g" and InvariantCulture.
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
+        /// flags FloatExtraPrecision and FloatNonFiniteAsString. Returns sb.
         /// </summary>
-        public static string Float32g9ToString(Single value)
-        {
-            return new string(Float32g9Format(stackalloc char[Float32g9MaxChars], value));
-        }
-
-        /// <summary>
-        /// Appends a string like "-3.4028235E+38" for the provided value,
-        /// formatted using jsonOptions "g" and InvariantCulture. Returns sb.
-        /// </summary>
-        public static StringBuilder Float32gAppend(StringBuilder sb, Single value)
-        {
-            return sb.Append(Float32gFormat(stackalloc char[Float32gMaxChars], value));
-        }
-
-        /// <summary>
-        /// Appends a string like "-3.40282347E+38" for the provided value,
-        /// formatted using jsonOptions "g9" and InvariantCulture. Returns sb.
-        /// </summary>
-        public static StringBuilder Float32g9Append(StringBuilder sb, Single value)
-        {
-            return sb.Append(Float32g9Format(stackalloc char[Float32g9MaxChars], value));
-        }
-
-        /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
-        /// </summary>
-        public static StringBuilder Float32AppendJson(StringBuilder sb, Single value, PerfJsonOptions jsonOptions)
+        public static StringBuilder Float32AppendJson(
+            StringBuilder sb,
+            Single value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             if (float.IsFinite(value))
             {
-                if (jsonOptions.HasFlag(PerfJsonOptions.FloatExtraPrecision))
-                {
-                    return Float32g9Append(sb, value);
-                }
-                else
-                {
-                    return Float32gAppend(sb, value);
-                }
+                return Float32Append(sb, value, convertOptions);
+            }
+            else if (convertOptions.HasFlag(PerfConvertOptions.FloatNonFiniteAsString))
+            {
+                sb.Append('"');
+                Float32Append(sb, value, convertOptions);
+                return sb.Append('"');
             }
             else
             {
-                if (jsonOptions.HasFlag(PerfJsonOptions.FloatNonFiniteAsString))
-                {
-                    sb.Append('"');
-                    Float32gAppend(sb, value);
-                    return sb.Append('"');
-                }
-                else
-                {
-                    return sb.Append("null");
-                }
+                return sb.Append("null");
             }
         }
 
         /// <summary>
         /// Formats the provided value as a variable-length double string like
-        /// "-1.7976931348623157E+308" using jsonOptions "g" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float64gMaxChars.
+        /// "-1.7976931348623157e+308" formatted using InvariantCulture and either "g" or "g17"
+        /// (depending on convertOptions flag FloatExtraPrecision).
+        /// Requires appropriately-sized destination buffer, up to Float64MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> Float64gFormat(Span<char> destination, Double value)
+        public static Span<char> Float64Format(
+            Span<char> destination,
+            Double value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            var ok = value.TryFormat(destination, out var len, "g", CultureInfo.InvariantCulture);
+            var format = convertOptions.HasFlag(PerfConvertOptions.FloatExtraPrecision) ? "g17" : "g";
+            var ok = value.TryFormat(destination, out var len, format, CultureInfo.InvariantCulture);
             if (ok)
             {
                 return destination.Slice(0, len);
             }
             else
             {
-                Debug.Assert(destination.Length < Float64gMaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64gMaxChars");
+                Debug.Assert(destination.Length < Float64MaxChars);
+                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64MaxChars");
             }
         }
 
         /// <summary>
         /// Formats the provided value as a variable-length double string like
-        /// "-1.7976931348623157E+308" using jsonOptions "g17" and InvariantCulture.
-        /// Requires appropriately-sized destination buffer, up to Float64g17MaxChars.
-        /// Returns the formatted string (the filled portion of destination).
+        /// "-1.7976931348623157e+308" formatted using InvariantCulture and either "g" or "g17"
+        /// (depending on convertOptions flag FloatExtraPrecision).
         /// </summary>
-        public static Span<char> Float64g17Format(Span<char> destination, Double value)
+        public static string Float64ToString(
+            Double value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            var ok = value.TryFormat(destination, out var len, "g17", CultureInfo.InvariantCulture);
-            if (ok)
-            {
-                return destination.Slice(0, len);
-            }
-            else
-            {
-                Debug.Assert(destination.Length < Float64g17MaxChars);
-                throw new ArgumentOutOfRangeException(nameof(destination), "Length < Float64g17MaxChars");
-            }
+            return new string(Float64Format(stackalloc char[Float64MaxChars], value, convertOptions));
         }
 
         /// <summary>
-        /// Returns a new string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using jsonOptions "g" and InvariantCulture.
+        /// Appends the provided value as a variable-length double string like
+        /// "-1.7976931348623157e+308" formatted using InvariantCulture and either "g" or "g17"
+        /// (depending on convertOptions flag FloatExtraPrecision). Returns sb.
         /// </summary>
-        public static string Float64gToString(Double value)
+        public static StringBuilder Float64Append(
+            StringBuilder sb,
+            Double value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return new string(Float64gFormat(stackalloc char[Float64gMaxChars], value));
+            return sb.Append(Float64Format(stackalloc char[Float64MaxChars], value, convertOptions));
         }
 
         /// <summary>
-        /// Returns a new string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using jsonOptions "g17" and InvariantCulture.
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
+        /// flags FloatExtraPrecision and FloatNonFiniteAsString. Returns sb.
         /// </summary>
-        public static string Float64g17ToString(Double value)
-        {
-            return new string(Float64g17Format(stackalloc char[Float64g17MaxChars], value));
-        }
-
-        /// <summary>
-        /// Appends string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using jsonOptions "g" and InvariantCulture. Returns sb.
-        /// </summary>
-        public static StringBuilder Float64gAppend(StringBuilder sb, Double value)
-        {
-            return sb.Append(Float64gFormat(stackalloc char[Float64gMaxChars], value));
-        }
-
-        /// <summary>
-        /// Appends string like "-1.7976931348623157E+308" for the provided value,
-        /// formatted using jsonOptions "g17" and InvariantCulture. Returns sb.
-        /// </summary>
-        public static StringBuilder Float64g17Append(StringBuilder sb, Double value)
-        {
-            return sb.Append(Float64g17Format(stackalloc char[Float64g17MaxChars], value));
-        }
-
-        /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
-        /// </summary>
-        public static StringBuilder Float64AppendJson(StringBuilder sb, Double value, PerfJsonOptions jsonOptions)
+        public static StringBuilder Float64AppendJson(
+            StringBuilder sb,
+            Double value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             if (double.IsFinite(value))
             {
-                if (jsonOptions.HasFlag(PerfJsonOptions.FloatExtraPrecision))
-                {
-                    return Float64g17Append(sb, value);
-                }
-                else
-                {
-                    return Float64gAppend(sb, value);
-                }
+                return Float64Append(sb, value, convertOptions);
             }
-            else if (jsonOptions.HasFlag(PerfJsonOptions.FloatNonFiniteAsString))
+            else if (convertOptions.HasFlag(PerfConvertOptions.FloatNonFiniteAsString))
             {
                 sb.Append('"');
-                Float64gAppend(sb, value);
+                Float64Append(sb, value, convertOptions);
                 return sb.Append('"');
             }
             else
@@ -818,7 +790,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns the number of chars required to jsonOptions the provided byte array as a string
+        /// Returns the number of chars required to convertOptions the provided byte array as a string
         /// of hexadecimal bytes (e.g. "0D 0A").
         /// If bytesLength is 0, returns 0. Otherwise returns (3 * bytesLength - 1).
         /// </summary>
@@ -1020,7 +992,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Formats the provided 16-byte value as an IPv6 address.
         /// Requires appropriately-sized destination buffer, up to IPv6MaxChars.
         /// Returns the formatted string (the filled portion of destination).
-        /// Note: Allocates an IPAddress object to jsonOptions the address.
+        /// Note: Allocates an IPAddress object to convertOptions the address.
         /// </summary>
         public static Span<char> IPv6Format(Span<char> destination, ReadOnlySpan<byte> ipv6)
         {
@@ -1143,9 +1115,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             sb.Append('"');
 
-            for (int i = 0; i < bytes.Length; i += 1)
+            foreach (var b in bytes)
             {
-                AppendEscapedJson(sb, (char)bytes[i]);
+                AppendEscapedJson(sb, (char)b);
             }
 
             return sb.Append('"');
@@ -1258,12 +1230,15 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
+        /// flag IntHexAsString. Returns sb.
         /// </summary>
-        public static StringBuilder UInt32HexAppendJson(StringBuilder sb, UInt32 value, PerfJsonOptions jsonOptions)
+        public static StringBuilder UInt32HexAppendJson(
+            StringBuilder sb,
+            UInt32 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            if (jsonOptions.HasFlag(PerfJsonOptions.IntHexAsString))
+            if (convertOptions.HasFlag(PerfConvertOptions.IntHexAsString))
             {
                 sb.Append('"');
                 UInt32HexAppend(sb, value);
@@ -1312,12 +1287,15 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
+        /// flag IntHexAsString. Returns sb.
         /// </summary>
-        public static StringBuilder UInt64HexAppendJson(StringBuilder sb, UInt64 value, PerfJsonOptions jsonOptions)
+        public static StringBuilder UInt64HexAppendJson(
+            StringBuilder sb,
+            UInt64 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            if (jsonOptions.HasFlag(PerfJsonOptions.IntHexAsString))
+            if (convertOptions.HasFlag(PerfConvertOptions.IntHexAsString))
             {
                 sb.Append('"');
                 UInt64HexAppend(sb, value);
@@ -1367,12 +1345,15 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
+        /// flag UnixTimeWithinRangeAsString. Returns sb.
         /// </summary>
-        public static StringBuilder UnixTime32AppendJson(StringBuilder sb, Int32 value, PerfJsonOptions jsonOptions)
+        public static StringBuilder UnixTime32AppendJson(
+            StringBuilder sb,
+            Int32 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            if (jsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
+            if (convertOptions.HasFlag(PerfConvertOptions.UnixTimeWithinRangeAsString))
             {
                 sb.Append('"');
                 UnixTime32Append(sb, value);
@@ -1420,19 +1401,23 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Converts a 64-bit Unix time_t (signed seconds since 1970) to a string.
-        /// If year is in range 0001..9999, returns a value like   "2020-02-02T02:02:02Z".
-        /// If year is outside of 0001..9999, returns a value like "TIME(-1234567890)".
+        /// If year is in range 0001..9999, returns a string like "2020-02-02T02:02:02Z".
+        /// Otherwise, if convertOptions has UnixTimeOutOfRangeAsString, returns a string like
+        /// "TIME(-1234567890)". Otherwise, returns a string like -1234567890.
         /// Requires appropriately-sized destination buffer, Length >= UnixTime64MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
-        public static Span<char> UnixTime64Format(Span<char> destination, Int64 secondsSince1970)
+        public static Span<char> UnixTime64Format(
+            Span<char> destination,
+            Int64 secondsSince1970,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             var maybe = UnixTime64ToDateTime(secondsSince1970);
             if (maybe is DateTime value)
             {
                 return DateTimeNoSubsecondsFormat(destination, value);
             }
-            else
+            else if (convertOptions.HasFlag(PerfConvertOptions.UnixTimeOutOfRangeAsString))
             {
                 var pos = 0;
                 destination[pos++] = 'T';
@@ -1446,38 +1431,53 @@ namespace Microsoft.LinuxTracepoints.Decode
                 destination[pos++] = ')';
                 return destination.Slice(0, pos);
             }
+            else
+            {
+                var end = Int64DecimalFormatAtEnd(destination, secondsSince1970);
+                end.CopyTo(destination);
+                return destination.Slice(0, end.Length);
+            }
         }
 
         /// <summary>
-        /// Converts a 64-bit Unix time_t (signed seconds since 1970) to a new string.
-        /// If year is in range 0001..9999, returns a value like "2020-02-02T02:02:02".
-        /// If year is outside of 0001..9999, returns a value like "TIME(-1234567890)".
+        /// Converts a 64-bit Unix time_t (signed seconds since 1970) to a string.
+        /// If year is in range 0001..9999, returns a string like "2020-02-02T02:02:02Z".
+        /// Otherwise, if convertOptions has UnixTimeOutOfRangeAsString, returns a string like
+        /// "TIME(-1234567890)". Otherwise, returns a string like -1234567890.
         /// </summary>
-        public static string UnixTime64ToString(Int64 secondsSince1970)
+        public static string UnixTime64ToString(
+            Int64 secondsSince1970,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return new string(UnixTime64Format(stackalloc char[UnixTime64MaxChars], secondsSince1970));
+            return new string(UnixTime64Format(stackalloc char[UnixTime64MaxChars], secondsSince1970, convertOptions));
         }
 
         /// <summary>
-        /// Appends a 64-bit Unix time_t (signed seconds since 1970).
-        /// If year is in range 0001..9999, appends a value like "2020-02-02T02:02:02".
-        /// If year is outside of 0001..9999, appends a value like "TIME(-1234567890)".
-        /// Returns sb.
+        /// Converts a 64-bit Unix time_t (signed seconds since 1970) to a string.
+        /// If year is in range 0001..9999, appends a string like "2020-02-02T02:02:02Z".
+        /// Otherwise, if convertOptions has UnixTimeOutOfRangeAsString, appends a string like
+        /// "TIME(-1234567890)". Otherwise, appends a string like -1234567890. Returns sb.
         /// </summary>
-        public static StringBuilder UnixTime64Append(StringBuilder sb, Int64 secondsSince1970)
+        public static StringBuilder UnixTime64Append(
+            StringBuilder sb,
+            Int64 secondsSince1970,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return sb.Append(UnixTime64Format(stackalloc char[UnixTime64MaxChars], secondsSince1970));
+            return sb.Append(UnixTime64Format(stackalloc char[UnixTime64MaxChars], secondsSince1970, convertOptions));
         }
 
         /// <summary>
-        /// Appends the provided value formatted as a JSON value.
-        /// Returns sb.
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
+        /// flags UnixTimeWithinRangeAsString and UnixTimeOutOfRangeAsString. Returns sb.
         /// </summary>
-        public static StringBuilder UnixTime64AppendJson(StringBuilder sb, Int64 value, PerfJsonOptions jsonOptions)
+        public static StringBuilder UnixTime64AppendJson(
+            StringBuilder sb,
+            Int64 value,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             if (UnixTime64IsInDateTimeRange(value))
             {
-                if (jsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
+                if (convertOptions.HasFlag(PerfConvertOptions.UnixTimeWithinRangeAsString))
                 {
                     sb.Append('"');
                     DateTimeNoSubsecondsAppend(sb, UnixTime64ToDateTimeUnchecked(value));
@@ -1486,7 +1486,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                if (jsonOptions.HasFlag(PerfJsonOptions.UnixTimeOutOfRangeAsString))
+                if (convertOptions.HasFlag(PerfConvertOptions.UnixTimeOutOfRangeAsString))
                 {
                     sb.Append("\"TIME(");
                     Int64DecimalAppend(sb, value);
@@ -1637,9 +1637,9 @@ namespace Microsoft.LinuxTracepoints.Decode
             };
 
 #if DEBUG
-            for (int i = 0; i < strings.Length; i += 1)
+            foreach (var s in strings)
             {
-                Debug.Assert(strings[i].Length <= ErrnoMaxChars);
+                Debug.Assert(s.Length <= ErrnoMaxChars);
             }
 #endif
 
@@ -1680,9 +1680,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         internal static void AppendEscapedJson(StringBuilder sb, ReadOnlySpan<char> chars)
         {
-            for (int i = 0; i < chars.Length; i += 1)
+            foreach (var c in chars)
             {
-                AppendEscapedJson(sb, chars[i]);
+                AppendEscapedJson(sb, c);
             }
         }
 
@@ -1718,6 +1718,92 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 sb.Append(ch);
             }
+        }
+
+        internal static void AppendEscapedJson(StringBuilder sb, UInt32 ch32)
+        {
+            AppendEscapedJson(sb, PerfConvert.Char32Format(stackalloc char[2], ch32));
+        }
+
+        internal static void AppendEscapedC(StringBuilder sb, ReadOnlySpan<byte> bytes, Encoding encoding)
+        {
+            if (encoding.CodePage == (BitConverter.IsLittleEndian ? 1200 : 1201))
+            {
+                AppendEscapedC(sb, MemoryMarshal.Cast<byte, char>(bytes));
+            }
+            else
+            {
+                var bytesLength = bytes.Length;
+                var maxCharCount = encoding.GetMaxCharCount(bytesLength);
+                if (maxCharCount <= StackAllocCharsMax)
+                {
+                    Span<char> chars = stackalloc char[maxCharCount];
+                    var charCount = encoding.GetChars(bytes, chars);
+                    AppendEscapedC(sb, chars.Slice(0, charCount));
+                }
+                else
+                {
+                    Span<char> chars = stackalloc char[StackAllocCharsMax];
+                    var decoder = encoding.GetDecoder();
+                    bool completed;
+                    do
+                    {
+                        decoder.Convert(bytes, chars, true, out var bytesUsed, out var charsUsed, out completed);
+                        bytes = bytes.Slice(bytesUsed);
+                        AppendEscapedC(sb, chars.Slice(0, charsUsed));
+                    }
+                    while (!completed);
+                }
+            }
+        }
+
+        internal static void AppendEscapedC(StringBuilder sb, ReadOnlySpan<char> chars)
+        {
+            foreach (var c in chars)
+            {
+                AppendEscapedC(sb, c);
+            }
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        internal static void AppendEscapedC(StringBuilder sb, char ch)
+        {
+            if (ch < 0x20)
+            {
+                switch (ch)
+                {
+                    case '\a': sb.Append("\\a"); break;
+                    case '\b': sb.Append("\\b"); break;
+                    case '\f': sb.Append("\\f"); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    case '\v': sb.Append("\\v"); break;
+                    default:
+                        sb.Append(stackalloc char[6] {
+                            '\\',
+                            'u',
+                            ToHexChar(ch / 0x1000),
+                            ToHexChar(ch / 0x100),
+                            ToHexChar(ch / 0x10),
+                            ToHexChar(ch),
+                        });
+                        break;
+                }
+            }
+            else if (ch == '\\')
+            {
+                sb.Append("\\\\");
+            }
+            else
+            {
+                sb.Append(ch);
+            }
+        }
+
+        internal static void AppendEscapedC(StringBuilder sb, UInt32 ch32)
+        {
+            AppendEscapedC(sb, PerfConvert.Char32Format(stackalloc char[2], ch32));
         }
     }
 }

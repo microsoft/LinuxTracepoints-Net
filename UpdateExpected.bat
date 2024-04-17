@@ -1,7 +1,7 @@
 @echo off
 setlocal
 if "%~1" == "" (
-    set SRC=%~dp0bin\Debug\netcoreapp3.1\actual
+    set SRC=%~dp0bin\Debug\actual
 ) else (
     set SRC=%~1
 )

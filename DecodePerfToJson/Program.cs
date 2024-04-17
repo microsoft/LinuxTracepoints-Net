@@ -47,16 +47,16 @@ namespace DecodePerfToJson
             new EO("Common",            (uint)PerfInfoOptions.Common,    (uint)PerfInfoOptions.Default),
         };
 
-        private static readonly EO[] jsonOptions = {
-            new EO("Space",                          (uint)PerfJsonOptions.Space,                         (uint)PerfJsonOptions.Default),
-            new EO("FieldTag",                       (uint)PerfJsonOptions.FieldTag,                      (uint)PerfJsonOptions.Default),
-            new EO("FloatNonFiniteAsString",         (uint)PerfJsonOptions.FloatNonFiniteAsString,        (uint)PerfJsonOptions.Default),
-            new EO("IntHexAsString",                 (uint)PerfJsonOptions.IntHexAsString,                (uint)PerfJsonOptions.Default),
-            new EO("BoolOutOfRangeAsString",         (uint)PerfJsonOptions.BoolOutOfRangeAsString,        (uint)PerfJsonOptions.Default),
-            new EO("UnixTimeWithinRangeAsString",    (uint)PerfJsonOptions.UnixTimeWithinRangeAsString,   (uint)PerfJsonOptions.Default),
-            new EO("UnixTimeOutOfRangeAsString",     (uint)PerfJsonOptions.UnixTimeOutOfRangeAsString,    (uint)PerfJsonOptions.Default),
-            new EO("ErrnoKnownAsString",             (uint)PerfJsonOptions.ErrnoKnownAsString,            (uint)PerfJsonOptions.Default),
-            new EO("ErrnoUnknownAsString",           (uint)PerfJsonOptions.ErrnoUnknownAsString,          (uint)PerfJsonOptions.Default),
+        private static readonly EO[] convertOptions = {
+            new EO("Space",                          (uint)PerfConvertOptions.Space,                         (uint)PerfConvertOptions.Default),
+            new EO("FieldTag",                       (uint)PerfConvertOptions.FieldTag,                      (uint)PerfConvertOptions.Default),
+            new EO("FloatNonFiniteAsString",         (uint)PerfConvertOptions.FloatNonFiniteAsString,        (uint)PerfConvertOptions.Default),
+            new EO("IntHexAsString",                    (uint)PerfConvertOptions.IntHexAsString,                (uint)PerfConvertOptions.Default),
+            new EO("BoolOutOfRangeAsString",         (uint)PerfConvertOptions.BoolOutOfRangeAsString,        (uint)PerfConvertOptions.Default),
+            new EO("UnixTimeWithinRangeAsString",    (uint)PerfConvertOptions.UnixTimeWithinRangeAsString,   (uint)PerfConvertOptions.Default),
+            new EO("UnixTimeOutOfRangeAsString",     (uint)PerfConvertOptions.UnixTimeOutOfRangeAsString,    (uint)PerfConvertOptions.Default),
+            new EO("ErrnoKnownAsString",             (uint)PerfConvertOptions.ErrnoKnownAsString,            (uint)PerfConvertOptions.Default),
+            new EO("ErrnoUnknownAsString",           (uint)PerfConvertOptions.ErrnoUnknownAsString,          (uint)PerfConvertOptions.Default),
         };
 
         public static int Main(string[] args)
@@ -90,7 +90,7 @@ namespace DecodePerfToJson
             var sort = PerfDataFileEventOrder.Time;
             var nonsample = false;
             var info = PerfInfoOptions.Default;
-            var json = PerfJsonOptions.Default;
+            var json = PerfConvertOptions.Default;
             var validate = false;
             var help = false;
             var inputName = "";
@@ -163,7 +163,7 @@ namespace DecodePerfToJson
                                 else
                                 {
                                     argIndex += 1;
-                                    json = (PerfJsonOptions)MakeOptions("--json", jsonOptions, args[argIndex], ref help);
+                                    json = (PerfConvertOptions)MakeOptions("--json", convertOptions, args[argIndex], ref help);
                                 }
                                 break;
                             case "validate":
@@ -246,7 +246,7 @@ namespace DecodePerfToJson
                                     else
                                     {
                                         argIndex += 1;
-                                        json = (PerfJsonOptions)MakeOptions("-j", jsonOptions, args[argIndex], ref help);
+                                        json = (PerfConvertOptions)MakeOptions("-j", convertOptions, args[argIndex], ref help);
                                     }
                                     break;
                                 case 'v':
@@ -331,7 +331,7 @@ JSON options:
   FieldTag                    Fields with nonzero field tags are included in
                               field name e.g. ""Name;tag=0xNN"": value.
   FloatNonFiniteAsString      Non-finite float is a string instead of a null.
-  IntHexAsString              Hex integer is string ""0xNNN"" instead of a
+  IntHexAsString                 Hex integer is string ""0xNNN"" instead of a
                               number.
   BoolOutOfRangeAsString      Boolean other than 0..1 is string ""BOOL(N)""
                               instead of a number.
@@ -347,9 +347,9 @@ JSON options:
   ErrnoUnknownAsString        Unknown errno values are formatted as a string
                               like ""ERRNO(N)"" instead of a number.
 
-  On by default:  {MakeList(jsonOptions, true)}
+  On by default:  {MakeList(convertOptions, true)}
 
-  Off by default: {MakeList(jsonOptions, false)}
+  Off by default: {MakeList(convertOptions, false)}
 ");
                 return 1;
             }
@@ -357,7 +357,7 @@ JSON options:
             using (var decode = new DecodePerfJsonWriter(
                 string.IsNullOrEmpty(outputName) ? Console.OpenStandardOutput() : CreateWithBom(outputName),
                 new JsonWriterOptions {
-                    Indented = json.HasFlag(PerfJsonOptions.Space),
+                    Indented = json.HasFlag(PerfConvertOptions.Space),
                     SkipValidation = !validate }))
             {
                 decode.JsonOptions = json;

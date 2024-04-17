@@ -211,7 +211,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             StringBuilder sb,
             bool addCommaBeforeNextItem,
             PerfInfoOptions infoOptions,
-            PerfJsonOptions jsonOptions,
+            PerfConvertOptions convertOptions,
             PerfEventAttrSampleType sampleType,
             ulong time,
             uint cpu,
@@ -219,7 +219,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             uint tid,
             string name)
         {
-            var w = new JsonWriter(sb, jsonOptions, addCommaBeforeNextItem);
+            var w = new JsonWriter(sb, convertOptions, addCommaBeforeNextItem);
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Time) &&
                 infoOptions.HasFlag(PerfInfoOptions.Time))
@@ -233,7 +233,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
                 else
                 {
-                    PerfConvert.Float64gAppend(sb, time / 1000000000.0);
+                    PerfConvert.Float64Append(sb, time / 1000000000.0, convertOptions);
                 }
             }
 

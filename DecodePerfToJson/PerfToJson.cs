@@ -27,7 +27,7 @@ namespace DecodePerfToJson
         {
             this.JsonWriter = new Utf8JsonWriter(utf8JsonBufferWriter, writerOptions);
             this.InfoOptions = PerfInfoOptions.Default;
-            this.JsonOptions = PerfJsonOptions.Default;
+            this.JsonOptions = PerfConvertOptions.Default;
         }
 
         public DecodePerfJsonWriter(
@@ -36,7 +36,7 @@ namespace DecodePerfToJson
         {
             this.JsonWriter = new Utf8JsonWriter(utf8JsonStream, writerOptions);
             this.InfoOptions = PerfInfoOptions.Default;
-            this.JsonOptions = PerfJsonOptions.Default;
+            this.JsonOptions = PerfConvertOptions.Default;
         }
 
         public Utf8JsonWriter JsonWriter { get; }
@@ -54,7 +54,7 @@ namespace DecodePerfToJson
         /// ErrnoKnownAsString,
         /// ErrnoUnknownAsString.
         /// </summary>
-        public PerfJsonOptions JsonOptions { get; set; }
+        public PerfConvertOptions JsonOptions { get; set; }
 
         public bool ShowNonSample { get; set; }
 
@@ -111,6 +111,8 @@ namespace DecodePerfToJson
 
                 if (eventBytes.Header.Type != PerfEventHeaderType.Sample)
                 {
+                    this.JsonWriter.WriteString("NonSample", eventBytes.Header.Type.AsString());
+
                     PerfNonSampleEventInfo nonSampleEventInfo;
                     result = this.reader.GetNonSampleEventInfo(eventBytes, out nonSampleEventInfo);
                     if (result != PerfDataFileResult.Ok &&
@@ -119,7 +121,6 @@ namespace DecodePerfToJson
                         this.JsonWriter.WriteString("GetNonSampleEventInfo", result.AsString());
                     }
 
-                    this.JsonWriter.WriteString("NonSample", eventBytes.Header.Type.AsString());
                     this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
                     if (result == PerfDataFileResult.Ok)
                     {
@@ -133,19 +134,23 @@ namespace DecodePerfToJson
                     if (result != PerfDataFileResult.Ok)
                     {
                         // Unable to lookup attributes for event. Unexpected.
+                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
+                        {
+                            this.JsonWriter.WriteNull("n");
+                        }
+
                         this.JsonWriter.WriteString("GetSampleEventInfo", result.AsString());
                         this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
                     }
                     else if (!(sampleEventInfo.Format is PerfEventFormat infoFormat))
                     {
                         // No TraceFS format for this event. Unexpected.
-                        this.JsonWriter.WriteString("GetSampleEventInfo", "NoFormat");
-
                         if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
                         {
                             this.JsonWriter.WriteString("n", sampleEventInfo.Name);
                         }
 
+                        this.JsonWriter.WriteString("GetSampleEventInfo", "NoFormat");
                         this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
 
                         if (0 != (this.InfoOptions & ~PerfInfoOptions.N))
@@ -159,7 +164,6 @@ namespace DecodePerfToJson
                         !this.enumerator.StartEvent(infoFormat.Name, sampleEventInfo.UserData))
                     {
                         // Non-EventHeader decoding.
-
                         if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
                         {
                             this.JsonWriter.WriteString("n", sampleEventInfo.Name);
@@ -1010,7 +1014,7 @@ namespace DecodePerfToJson
             else
             {
                 // Write Infinity, -Infinity, or NaN as a string.
-                this.JsonWriter.WriteStringValue(PerfConvert.Float32gFormat(charBuf, value));
+                this.JsonWriter.WriteStringValue(PerfConvert.Float32Format(charBuf, value));
             }
         }
 
@@ -1020,19 +1024,19 @@ namespace DecodePerfToJson
             {
                 this.JsonWriter.WriteNumberValue(value);
             }
-            else if (!this.JsonOptions.HasFlag(PerfJsonOptions.FloatNonFiniteAsString))
+            else if (!this.JsonOptions.HasFlag(PerfConvertOptions.FloatNonFiniteAsString))
             {
                 this.JsonWriter.WriteNullValue();
             }
             else
             {
-                this.JsonWriter.WriteStringValue(PerfConvert.Float64gFormat(charBuf, value));
+                this.JsonWriter.WriteStringValue(PerfConvert.Float64Format(charBuf, value));
             }
         }
 
         private void WriteHex32Value(Span<char> charBuf, UInt32 value)
         {
-            if (this.JsonOptions.HasFlag(PerfJsonOptions.IntHexAsString))
+            if (this.JsonOptions.HasFlag(PerfConvertOptions.IntHexAsString))
             {
                 this.JsonWriter.WriteStringValue(PerfConvert.UInt32HexFormatAtEnd(charBuf, value));
             }
@@ -1044,7 +1048,7 @@ namespace DecodePerfToJson
 
         private void WriteHex64Value(Span<char> charBuf, UInt64 value)
         {
-            if (this.JsonOptions.HasFlag(PerfJsonOptions.IntHexAsString))
+            if (this.JsonOptions.HasFlag(PerfConvertOptions.IntHexAsString))
             {
                 this.JsonWriter.WriteStringValue(PerfConvert.UInt64HexFormatAtEnd(charBuf, value));
             }
@@ -1061,7 +1065,7 @@ namespace DecodePerfToJson
 
         private void WriteUnixTime32Value(Int32 value)
         {
-            if (this.JsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
+            if (this.JsonOptions.HasFlag(PerfConvertOptions.UnixTimeWithinRangeAsString))
             {
                 this.JsonWriter.WriteStringValue(PerfConvert.UnixTime32ToDateTime(value));
                 return;
@@ -1074,7 +1078,7 @@ namespace DecodePerfToJson
         {
             if (PerfConvert.UnixTime64IsInDateTimeRange(value))
             {
-                if (this.JsonOptions.HasFlag(PerfJsonOptions.UnixTimeWithinRangeAsString))
+                if (this.JsonOptions.HasFlag(PerfConvertOptions.UnixTimeWithinRangeAsString))
                 {
                     this.JsonWriter.WriteStringValue(PerfConvert.UnixTime64ToDateTimeUnchecked(value));
                     return;
@@ -1082,7 +1086,7 @@ namespace DecodePerfToJson
             }
             else
             {
-                if (this.JsonOptions.HasFlag(PerfJsonOptions.UnixTimeOutOfRangeAsString))
+                if (this.JsonOptions.HasFlag(PerfConvertOptions.UnixTimeOutOfRangeAsString))
                 {
                     this.JsonWriter.WriteStringValue(PerfConvert.UnixTime64Format(charBuf, value));
                     return;
@@ -1094,9 +1098,9 @@ namespace DecodePerfToJson
 
         private void WriteErrnoValue(Span<char> charBuf, int value)
         {
-            if (PerfConvert.ErrnoKnown(value))
+            if (PerfConvert.ErrnoIsKnown(value))
             {
-                if (this.JsonOptions.HasFlag(PerfJsonOptions.ErrnoKnownAsString))
+                if (this.JsonOptions.HasFlag(PerfConvertOptions.ErrnoKnownAsString))
                 {
                     this.JsonWriter.WriteStringValue(PerfConvert.ErrnoLookup(value));
                     return;
@@ -1104,7 +1108,7 @@ namespace DecodePerfToJson
             }
             else
             {
-                if (this.JsonOptions.HasFlag(PerfJsonOptions.ErrnoUnknownAsString))
+                if (this.JsonOptions.HasFlag(PerfConvertOptions.ErrnoUnknownAsString))
                 {
                     this.JsonWriter.WriteStringValue(PerfConvert.ErrnoFormat(charBuf, value));
                     return;
@@ -1125,7 +1129,7 @@ namespace DecodePerfToJson
                     this.JsonWriter.WriteBooleanValue(true);
                     break;
                 default:
-                    if (this.JsonOptions.HasFlag(PerfJsonOptions.BoolOutOfRangeAsString))
+                    if (this.JsonOptions.HasFlag(PerfConvertOptions.BoolOutOfRangeAsString))
                     {
                         this.JsonWriter.WriteStringValue(PerfConvert.BooleanFormat(charBuf, value));
                     }
@@ -1141,7 +1145,7 @@ namespace DecodePerfToJson
         {
             var tag = item.Value.FieldTag;
             var nameBytes = item.NameBytes;
-            if (!this.JsonOptions.HasFlag(PerfJsonOptions.FieldTag) || tag == 0)
+            if (!this.JsonOptions.HasFlag(PerfConvertOptions.FieldTag) || tag == 0)
             {
                 return nameBytes;
             }

@@ -1060,7 +1060,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.IP))
             {
-                info.IP = default;
+                info.IP = 0;
             }
             else
             {
@@ -1075,8 +1075,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Tid))
             {
-                info.Pid = default;
-                info.Tid = default;
+                info.Pid = 0;
+                info.Tid = 0;
             }
             else
             {
@@ -1093,7 +1093,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Time))
             {
-                info.Time = default;
+                info.Time = 0;
             }
             else
             {
@@ -1108,7 +1108,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Addr))
             {
-                info.Addr = default;
+                info.Addr = 0;
             }
             else
             {
@@ -1137,7 +1137,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.StreamId))
             {
-                info.StreamId = default;
+                info.StreamId = 0;
             }
             else
             {
@@ -1152,8 +1152,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Cpu))
             {
-                info.Cpu = default;
-                info.CpuReserved = default;
+                info.Cpu = 0;
+                info.CpuReserved = 0;
             }
             else
             {
@@ -1170,7 +1170,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Period))
             {
-                info.Period = default;
+                info.Period = 0;
             }
             else
             {
@@ -1185,8 +1185,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Read))
             {
-                info.ReadStart = default;
-                info.ReadLength = default;
+                info.ReadStart = 0;
+                info.ReadLength = 0;
             }
             else
             {
@@ -1253,8 +1253,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Callchain))
             {
-                info.CallchainStart = default;
-                info.CallchainLength = default;
+                info.CallchainStart = 0;
+                info.CallchainLength = 0;
             }
             else
             {
@@ -1283,8 +1283,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Raw))
             {
-                info.RawDataStart = default;
-                info.RawDataLength = default;
+                info.RawDataStart = 0;
+                info.RawDataLength = 0;
             }
             else
             {
@@ -1341,7 +1341,12 @@ namespace Microsoft.LinuxTracepoints.Decode
             UInt64 id;
             var bytesSpan = eventBytes.Span;
 
-            if (m_nonSampleIdOffset < sizeof(UInt64))
+            if (eventBytes.Header.Type >= PerfEventHeaderType.UserTypeStart)
+            {
+                result = PerfDataFileResult.IdNotFound;
+                goto Error;
+            }
+            else if (m_nonSampleIdOffset < sizeof(UInt64))
             {
                 result = PerfDataFileResult.NoData;
                 goto Error;
@@ -1349,11 +1354,6 @@ namespace Microsoft.LinuxTracepoints.Decode
             else if (m_nonSampleIdOffset > bytesSpan.Length)
             {
                 result = PerfDataFileResult.InvalidData;
-                goto Error;
-            }
-            else if (eventBytes.Header.Type >= PerfEventHeaderType.UserTypeStart)
-            {
-                result = PerfDataFileResult.IdNotFound;
                 goto Error;
             }
 
@@ -1387,8 +1387,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Cpu))
             {
-                info.CpuReserved = default;
-                info.Cpu = default;
+                info.CpuReserved = 0;
+                info.Cpu = 0;
             }
             else
             {
@@ -1405,7 +1405,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.StreamId))
             {
-                info.StreamId = default;
+                info.StreamId = 0;
             }
             else
             {
@@ -1434,7 +1434,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Time))
             {
-                info.Time = default;
+                info.Time = 0;
             }
             else
             {
@@ -1449,8 +1449,8 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (0 == (infoSampleTypes & PerfEventAttrSampleType.Tid))
             {
-                info.Pid = default;
-                info.Tid = default;
+                info.Pid = 0;
+                info.Tid = 0;
             }
             else
             {

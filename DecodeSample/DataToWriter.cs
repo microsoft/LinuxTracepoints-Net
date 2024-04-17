@@ -178,7 +178,7 @@ namespace DecodeSample
                             this.enumerator.AppendJsonItemToAndMoveNextSibling(
                                 this.scratch,
                                 false,
-                                PerfJsonOptions.Default & ~PerfJsonOptions.RootName); // We don't want a JSON "ItemName": prefix.
+                                PerfConvertOptions.Default & ~PerfConvertOptions.RootName); // We don't want a JSON "ItemName": prefix.
                             this.writer.WriteLine($"  {itemInfo.NameAsString} = {this.scratch}");
                         }
 

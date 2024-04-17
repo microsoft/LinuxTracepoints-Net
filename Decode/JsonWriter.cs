@@ -15,14 +15,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         private bool nextSpace;
         private bool wantFieldTag;
 
-        public JsonWriter(StringBuilder builder, PerfJsonOptions options, bool comma)
+        public JsonWriter(StringBuilder builder, PerfConvertOptions options, bool comma)
         {
-            var space = options.HasFlag(PerfJsonOptions.Space);
+            var space = options.HasFlag(PerfConvertOptions.Space);
             this.builder = builder;
             this.comma = comma;
             this.currentSpace = space && comma; // Space before first item only if after a comma.
             this.nextSpace = space; // Enable or disable space for subsequent items.
-            this.wantFieldTag = options.HasFlag(PerfJsonOptions.FieldTag);
+            this.wantFieldTag = options.HasFlag(PerfConvertOptions.FieldTag);
         }
 
         public bool Comma => this.comma;
