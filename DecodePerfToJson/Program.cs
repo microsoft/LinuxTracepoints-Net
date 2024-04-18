@@ -354,8 +354,9 @@ JSON options:
                 return 1;
             }
 
+            var stream = string.IsNullOrEmpty(outputName) ? Console.OpenStandardOutput() : CreateWithBom(outputName);
             using (var decode = new DecodePerfJsonWriter(
-                string.IsNullOrEmpty(outputName) ? Console.OpenStandardOutput() : CreateWithBom(outputName),
+                stream,
                 new JsonWriterOptions {
                     Indented = json.HasFlag(PerfConvertOptions.Space),
                     SkipValidation = !validate }))
@@ -366,6 +367,11 @@ JSON options:
                 decode.JsonWriter.WriteStartArray();
                 decode.WriteFile(inputName, sort);
                 decode.JsonWriter.WriteEndArray();
+                decode.JsonWriter.Flush();
+                foreach (var ch in Environment.NewLine)
+                {
+                    stream.WriteByte((byte)ch);
+                }
             }
 
             return 0;
