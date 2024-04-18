@@ -10,7 +10,7 @@ namespace DecodePerfToJson
     using System.IO;
     using System.Text.Json;
 
-    internal class Program
+    public static class Program
     {
         private readonly struct EO
         {
@@ -100,7 +100,7 @@ namespace DecodePerfToJson
                 var arg = args[argIndex];
                 if (arg.StartsWith('-') || arg.StartsWith('/'))
                 {
-                    if (arg.StartsWith("--"))
+                    if (arg.StartsWith("--", StringComparison.Ordinal))
                     {
                         var flag = arg.Substring(2).ToLowerInvariant();
                         switch (flag)
@@ -371,7 +371,7 @@ JSON options:
             return 0;
         }
 
-        private static Stream CreateWithBom(string path)
+        private static FileStream CreateWithBom(string path)
         {
             var stream = new FileStream(
                 path,

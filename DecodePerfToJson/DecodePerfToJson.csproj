@@ -1,17 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="../Common.proj" />
+
   <PropertyGroup>
     <PackageId>Microsoft.LinuxTracepoints.DecodePerfToJson</PackageId>
-    <VersionPrefix>0.1.0</VersionPrefix>
     <Title>Microsoft Linux Tracepoints Decode perf.data to JSON</Title>
     <Description>Decodes Linux perf.data files to JSON with support for tracefs formats and EventHeader events.</Description>
-    <RepositoryUrl>https://github.com/microsoft/LinuxTracepoints-Net</RepositoryUrl>
-    <PackageProjectUrl>https://github.com/microsoft/LinuxTracepoints-Net</PackageProjectUrl>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Authors>Microsoft</Authors>
-    <Company>Microsoft</Company>
-    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <IncludeSymbols>False</IncludeSymbols>
     <PackAsTool>True</PackAsTool>
@@ -19,16 +13,10 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <OutputType>Exe</OutputType>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RollForward>LatestMajor</RollForward>
-    <Nullable>enable</Nullable>
-    <BaseOutputPath>..\bin</BaseOutputPath>
-    <IntermediateOutputPath>..\obj</IntermediateOutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-    <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
-    <WarningLevel>9999</WarningLevel>
     <StartupObject>DecodePerfToJson.Program</StartupObject>
   </PropertyGroup>
 
