@@ -1,4 +1,4 @@
-<Project>
+﻿<Project>
 
   <PropertyGroup>
 
@@ -15,7 +15,7 @@
 
     <Authors>Microsoft</Authors>
     <Company>Microsoft</Company>
-    <Copyright>� Microsoft Corporation. All rights reserved.</Copyright>
+    <Copyright>© Microsoft Corporation. All rights reserved.</Copyright>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageOutputPath>$(BaseOutputPath)\$(Configuration)\packages</PackageOutputPath>
     <PackageProjectUrl>https://github.com/microsoft/LinuxTracepoints-Net</PackageProjectUrl>
