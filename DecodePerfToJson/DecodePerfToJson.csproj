@@ -6,7 +6,7 @@
     <PackageId>Microsoft.LinuxTracepoints.DecodePerfToJson</PackageId>
     <Title>Microsoft Linux Tracepoints Decode perf.data to JSON</Title>
     <Description>Decodes Linux perf.data files to JSON with support for tracefs formats and EventHeader events.</Description>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <IncludeSymbols>False</IncludeSymbols>
     <PackAsTool>True</PackAsTool>
     <PublishDocumentationFiles>False</PublishDocumentationFiles>

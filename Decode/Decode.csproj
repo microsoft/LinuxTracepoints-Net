@@ -6,7 +6,7 @@
     <PackageId>Microsoft.LinuxTracepoints.Decode</PackageId>
     <Title>Microsoft Linux Tracepoints Decode</Title>
     <Description>Decoding support for Linux Tracepoints, including perf.data files, tracefs formats, and EventHeader events.</Description>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
 

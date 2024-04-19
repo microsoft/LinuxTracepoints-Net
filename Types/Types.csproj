@@ -6,7 +6,7 @@
     <PackageId>Microsoft.LinuxTracepoints.Types</PackageId>
     <Title>Microsoft Linux Tracepoints Decode</Title>
     <Description>Types for Linux Tracepoints and EventHeader events.</Description>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>
   </PropertyGroup>
 

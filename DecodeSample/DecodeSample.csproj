@@ -3,6 +3,7 @@
   <Import Project="../Common.proj" />
 
   <PropertyGroup>
+    <IsPackable>False</IsPackable>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
