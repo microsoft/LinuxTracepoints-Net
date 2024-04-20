@@ -3,6 +3,7 @@
   <Import Project="../Common.proj" />
 
   <PropertyGroup>
+    <PackAsTool>True</PackAsTool>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <IncludeSymbols>False</IncludeSymbols>
     <IncludeBuildOutput>false</IncludeBuildOutput>
