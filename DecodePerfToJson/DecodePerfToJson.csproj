@@ -3,12 +3,11 @@
   <Import Project="../Common.proj" />
 
   <PropertyGroup>
-    <PackageId>Microsoft.LinuxTracepoints.DecodePerfToJson</PackageId>
-    <Title>Microsoft Linux Tracepoints Decode perf.data to JSON</Title>
-    <Description>Decodes Linux perf.data files to JSON with support for tracefs formats and EventHeader events.</Description>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <IncludeSymbols>False</IncludeSymbols>
-    <PackAsTool>True</PackAsTool>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <NuspecFile>DecodePerfToJson.nuspec</NuspecFile>
+    <NuspecProperties>csVersion=$(VersionPrefix);</NuspecProperties>
     <PublishDocumentationFiles>False</PublishDocumentationFiles>
   </PropertyGroup>
 
