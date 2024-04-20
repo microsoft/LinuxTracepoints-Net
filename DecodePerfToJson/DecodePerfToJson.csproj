@@ -8,7 +8,7 @@
     <IncludeSymbols>False</IncludeSymbols>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecFile>DecodePerfToJson.nuspec</NuspecFile>
-    <NuspecProperties>csVersion=$(VersionPrefix);</NuspecProperties>
+    <NuspecProperties>csVersion=$(VersionPrefix);commit=$(commit)</NuspecProperties>
     <PublishDocumentationFiles>False</PublishDocumentationFiles>
   </PropertyGroup>
 
