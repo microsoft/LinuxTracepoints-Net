@@ -113,6 +113,6 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 
 ## Changelog
 
-### 0.1.0
+### 0.1.1 (2024-04-22)
 
 - Initial release.
