@@ -147,7 +147,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 Debug.Assert((this.ActivityIdLength & 0xF) == 0);
                 return this.ActivityIdLength < 16
                     ? new Guid?()
-                    : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart));
+                    : PerfConvert.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart));
             }
         }
 
@@ -161,7 +161,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 Debug.Assert((this.ActivityIdLength & 0xF) == 0);
                 return this.ActivityIdLength < 32
                     ? new Guid?()
-                    : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
+                    : PerfConvert.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
             }
         }
 

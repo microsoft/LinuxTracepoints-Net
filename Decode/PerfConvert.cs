@@ -4,6 +4,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
+    using System.Buffers.Binary;
     using System.Runtime.CompilerServices;
     using System.Text;
     using CultureInfo = System.Globalization.CultureInfo;
@@ -237,6 +238,25 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Reads a big-endian Guid from the provided bytes.
+        /// </summary>
+        public static Guid ReadGuidBigEndian(ReadOnlySpan<byte> bytes)
+        {
+            return new Guid(
+                BinaryPrimitives.ReadUInt32BigEndian(bytes),
+                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(4)),
+                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(6)),
+                bytes[8],
+                bytes[9],
+                bytes[10],
+                bytes[11],
+                bytes[12],
+                bytes[13],
+                bytes[14],
+                bytes[15]);
         }
 
         /// <summary>

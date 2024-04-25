@@ -410,7 +410,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public Guid GetGuid()
         {
-            return Utility.ReadGuidBigEndian(this.Bytes);
+            return PerfConvert.ReadGuidBigEndian(this.Bytes);
         }
 
         /// <summary>
@@ -419,7 +419,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public Guid GetGuid(int elementIndex)
         {
             const int SizeOfGuid = 16;
-            return Utility.ReadGuidBigEndian(this.Bytes.Slice(elementIndex * SizeOfGuid));
+            return PerfConvert.ReadGuidBigEndian(this.Bytes.Slice(elementIndex * SizeOfGuid));
         }
 
         /// <summary>
@@ -1931,7 +1931,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(Separator);
-                                sb.Append(Utility.ReadGuidBigEndian(this.GetSpan128(i)).ToString());
+                                sb.Append(PerfConvert.ReadGuidBigEndian(this.GetSpan128(i)).ToString());
                             }
                             break;
                         case EventHeaderFieldFormat.IPv6:

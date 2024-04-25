@@ -13,22 +13,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     {
         private const NumberStyles BaseNumberStyle = NumberStyles.AllowTrailingWhite;
 
-        public static Guid ReadGuidBigEndian(ReadOnlySpan<byte> bytes)
-        {
-            return new Guid(
-                BinaryPrimitives.ReadUInt32BigEndian(bytes),
-                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(4)),
-                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(6)),
-                bytes[8],
-                bytes[9],
-                bytes[10],
-                bytes[11],
-                bytes[12],
-                bytes[13],
-                bytes[14],
-                bytes[15]);
-        }
-
         public static bool IsSpaceOrTab(char ch)
         {
             return ch == ' ' || ch == '\t';

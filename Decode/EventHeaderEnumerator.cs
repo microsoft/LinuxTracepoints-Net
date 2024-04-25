@@ -1371,7 +1371,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
                 PerfConvert.GuidAppend(
                     sb,
-                    Utility.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin)));
+                    PerfConvert.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin)));
                 sb.Append('"');
             }
 
@@ -1381,7 +1381,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
                 PerfConvert.GuidAppend(
                     sb,
-                    Utility.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin + 16)));
+                    PerfConvert.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin + 16)));
                 sb.Append('"');
             }
 
@@ -1456,7 +1456,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </remarks>
         /// <returns>
         /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
-        /// addCommaBeforeNextItem was true OR if any metadata items were appended.
+        /// addCommaBeforeNextItem was true OR if anything was appended.
         /// </returns>
         public bool AppendJsonItemToAndMoveNextSibling(
             StringBuilder sb,

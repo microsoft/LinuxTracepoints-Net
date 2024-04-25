@@ -275,6 +275,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         public UInt64 DataEndFilePos => m_dataEndFilePos;
 
         /// <summary>
+        /// Gets session information with clock offsets.
+        /// </summary>
+        public PerfSessionInfo SessionInfo => m_sessionInfo;
+
+        /// <summary>
         /// Combined data from perf_file_header::attrs and PERF_RECORD_HEADER_ATTR.
         /// </summary>
         public ReadOnlyCollection<PerfEventDesc> EventDescList => m_eventDescListReadOnly;
@@ -378,6 +383,26 @@ namespace Microsoft.LinuxTracepoints.Decode
             return (uint)headerIndex < (uint)m_headers.Length
                 ? m_headers[(uint)headerIndex].ValidMemory
                 : default;
+        }
+
+        /// <summary>
+        /// Assumes the specified header is a nul-terminated Latin1 string.
+        /// Returns a new string with the string value of the header.
+        /// </summary>
+        public string HeaderString(PerfHeaderIndex headerIndex)
+        {
+            var header = Header(headerIndex).Span;
+            if (header.Length <= 4)
+            {
+                return "";
+            }
+            else
+            {
+                // Starts with a 4-byte length, followed by a nul-terminated string.
+                header = header.Slice(4);
+                var nul = header.IndexOf((byte)0);
+                return PerfConvert.EncodingLatin1.GetString(header.Slice(0, nul >= 0 ? nul : header.Length));
+            }
         }
 
         /// <summary>
