@@ -40,7 +40,8 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                 filenames.Add(dataSource.Uri.LocalPath);
             }
 
-            return new DataProcessor(filenames.ToArray(), options, this.ApplicationEnvironment, processorEnvironment);
+            var parser = new PerfSourceParser(filenames.ToArray());
+            return new PerfDataProcessor(parser, options, this.ApplicationEnvironment, processorEnvironment);
         }
     }
 }

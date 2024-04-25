@@ -1,15 +1,17 @@
 ﻿namespace Microsoft.LinuxTracepoints.DecodeWpa
 {
     using Microsoft.LinuxTracepoints.Decode;
+    using Microsoft.Performance.SDK.Extensibility;
     using Microsoft.Performance.SDK.Processing;
     using System;
     using System.Diagnostics.Tracing;
     using System.Text;
 
     [Table]
+    [RequiresSourceCooker(PerfSourceParser.SourceParserId, PerfSourceCooker.DataCookerId)]
     public sealed class PerfGenericEventsTable
     {
-        private readonly ProcessedEventData<EventInfo> events;
+        private readonly ProcessedEventData<PerfEventInfo> events;
         private readonly string[] values;
         private readonly EventHeaderEnumerator enumerator = new EventHeaderEnumerator();
         private readonly StringBuilder sb = new StringBuilder();
@@ -174,33 +176,37 @@
                 Width = 200,
             });
 
-        internal PerfGenericEventsTable(ProcessedEventData<EventInfo> events)
+        private PerfGenericEventsTable(ProcessedEventData<PerfEventInfo> events)
         {
             this.events = events;
             this.values = new string[this.events.Count];
         }
 
-        internal void Build(ITableBuilder tableBuilder)
+        public static void BuildTable(
+            ITableBuilder tableBuilder,
+            IDataExtensionRetrieval requiredData)
         {
-            var builder = tableBuilder.SetRowCount(this.values.Length);
-            builder.AddColumn(columnName, Projection.Create(this.Name));
-            builder.AddColumn(columnValue, Projection.Create(this.Value));
-            builder.AddColumn(columnTimestamp, Projection.Create(this.Timestamp));
-            builder.AddColumn(columnFilename, Projection.Create(this.FileName));
-            builder.AddColumn(columnTime, Projection.Create(this.Time));
-            builder.AddColumn(columnCpu, Projection.Create(this.Cpu));
-            builder.AddColumn(columnPid, Projection.Create(this.Pid));
-            builder.AddColumn(columnTid, Projection.Create(this.Tid));
-            builder.AddColumn(columnHasEventHeader, Projection.Create(this.HasEventHeader));
-            builder.AddColumn(columnEventHeaderFlags, Projection.Create(this.EventHeaderFlags));
-            builder.AddColumn(columnId, Projection.Create(this.Id));
-            builder.AddColumn(columnVersion, Projection.Create(this.Version));
-            builder.AddColumn(columnOpcode, Projection.Create(this.Opcode));
-            builder.AddColumn(columnLevel, Projection.Create(this.Level));
-            builder.AddColumn(columnKeyword, Projection.Create(this.Keyword));
-            builder.AddColumn(columnActivityId, Projection.Create(this.ActivityId));
-            builder.AddColumn(columnRelatedId, Projection.Create(this.RelatedId));
-            builder.AddColumn(columnTag, Projection.Create(this.Tag));
+            var data = requiredData.QueryOutput<ProcessedEventData<PerfEventInfo>>(PerfSourceCooker.EventsOutputPath);
+            var table = new PerfGenericEventsTable(data);
+            var builder = tableBuilder.SetRowCount(table.values.Length);
+            builder.AddColumn(columnName, Projection.Create(table.Name));
+            builder.AddColumn(columnValue, Projection.Create(table.Value));
+            builder.AddColumn(columnTimestamp, Projection.Create(table.Timestamp));
+            builder.AddColumn(columnFilename, Projection.Create(table.FileName));
+            builder.AddColumn(columnTime, Projection.Create(table.Time));
+            builder.AddColumn(columnCpu, Projection.Create(table.Cpu));
+            builder.AddColumn(columnPid, Projection.Create(table.Pid));
+            builder.AddColumn(columnTid, Projection.Create(table.Tid));
+            builder.AddColumn(columnHasEventHeader, Projection.Create(table.HasEventHeader));
+            builder.AddColumn(columnEventHeaderFlags, Projection.Create(table.EventHeaderFlags));
+            builder.AddColumn(columnId, Projection.Create(table.Id));
+            builder.AddColumn(columnVersion, Projection.Create(table.Version));
+            builder.AddColumn(columnOpcode, Projection.Create(table.Opcode));
+            builder.AddColumn(columnLevel, Projection.Create(table.Level));
+            builder.AddColumn(columnKeyword, Projection.Create(table.Keyword));
+            builder.AddColumn(columnActivityId, Projection.Create(table.ActivityId));
+            builder.AddColumn(columnRelatedId, Projection.Create(table.RelatedId));
+            builder.AddColumn(columnTag, Projection.Create(table.Tag));
             builder.AddColumn(columnCount, Projection.Constant(1));
         }
 
@@ -271,53 +277,17 @@
             var value = this.values[i];
             if (value == null)
             {
-                var e = this.events[i];
-                
+                var e = this.events[i];                
                 lock (this.sb)
                 {
-                    if (e.Format.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
-                        !this.enumerator.StartEvent(e.Format.Name, e.RawData.AsMemory().Slice(e.Format.CommonFieldsSize)))
-                    {
-                        var rawData = e.RawData.AsSpan();
-                        bool first = true;
-                        for (int fieldIndex = e.Format.CommonFieldCount; fieldIndex < e.Format.Fields.Count; fieldIndex += 1)
-                        {
-                            if (!first)
-                            {
-                                this.sb.Append(", ");
-                            }
-
-                            first = false;
-
-                            var field = e.Format.Fields[fieldIndex];
-                            PerfConvert.StringAppendJson(this.sb, field.Name);
-                            this.sb.Append(": ");
-
-                            var fieldVal = field.GetFieldValue(rawData, e.FileInfo.ByteReader);
-                            if (fieldVal.IsArrayOrElement)
-                            {
-                                fieldVal.AppendJsonSimpleArrayTo(this.sb);
-                            }
-                            else
-                            {
-                                fieldVal.AppendJsonScalarTo(this.sb);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        this.enumerator.AppendJsonItemToAndMoveNextSibling(
-                            this.sb,
-                            false,
-                            PerfConvertOptions.Default);
-                    }
-
+                    e.AppendValueAsJson(this.enumerator, this.sb);
                     value = sb.ToString();
                     sb.Clear();
+                    this.values[i] = value;
                 }
 
-                this.values[i] = value;
             }
+
             return value;
         }
     }

@@ -1,17 +1,20 @@
 ﻿namespace Microsoft.LinuxTracepoints.DecodeWpa
 {
     using Microsoft.LinuxTracepoints.Decode;
+    using Microsoft.Performance.SDK.Extensibility;
     using System;
+    using System.Text;
     using Debug = System.Diagnostics.Debug;
 
-    internal sealed class EventInfo
+    public sealed class PerfEventInfo : IKeyedDataType<UInt32>
     {
         /// <summary>
-        /// For non-eventheader events.
+        /// For sample events.
         /// Requires: info.Format != null.
         /// </summary>
-        public EventInfo(FileInfo fileInfo, PerfSampleEventInfo info, string name)
+        public PerfEventInfo(UInt32 key, PerfFileInfo fileInfo, PerfSampleEventInfo info, string name)
         {
+            this.key = key;
             this.FileRelativeTime = info.Time;
             this.FileInfo = fileInfo;
             this.Name = name;
@@ -24,11 +27,11 @@
         }
 
         /// <summary>
-        /// For eventheader events.
+        /// For eventheader sample events.
         /// Requires: info.Format != null.
         /// </summary>
-        public EventInfo(FileInfo fileInfo, PerfSampleEventInfo info, string name, in EventHeaderEventInfo ehEventInfo)
-            : this(fileInfo, info, name)
+        public PerfEventInfo(UInt32 key, PerfFileInfo fileInfo, PerfSampleEventInfo info, string name, in EventHeaderEventInfo ehEventInfo)
+            : this(key, fileInfo, info, name)
         {
             this.HasEventHeader = true;
             this.EventHeader = ehEventInfo.Header;
@@ -50,7 +53,7 @@
 
         public ulong FileRelativeTime { get; }
 
-        public FileInfo FileInfo { get; }
+        public PerfFileInfo FileInfo { get; }
 
         public string Name { get; }
 
@@ -68,6 +71,7 @@
 
         private readonly byte activityIdLength;
         private readonly ushort activityIdStart;
+        private readonly UInt32 key;
 
         public EventHeader EventHeader { get; }
 
@@ -88,5 +92,55 @@
 
         public DateTime DateTime =>
             this.FileInfo.ClockOffset.AddNanoseconds(this.FileRelativeTime).DateTime ?? DateTime.MinValue;
+
+        public uint GetKey()
+        {
+            return this.key;
+        }
+
+        public bool AppendValueAsJson(
+            EventHeaderEnumerator enumerator,
+            StringBuilder sb,
+            bool addCommaBeforeNextItem = false,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
+        {
+            bool needComma = addCommaBeforeNextItem;
+            if (this.Format.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
+                !enumerator.StartEvent(this.Format.Name, this.RawData.AsMemory().Slice(this.Format.CommonFieldsSize)))
+            {
+                var comma = convertOptions.HasFlag(PerfConvertOptions.Space) ? ", " : "";
+                var colon = convertOptions.HasFlag(PerfConvertOptions.Space) ? ": " : ":";
+                var rawData = this.RawData.AsSpan();
+                for (int fieldIndex = this.Format.CommonFieldCount; fieldIndex < this.Format.Fields.Count; fieldIndex += 1)
+                {
+                    if (needComma)
+                    {
+                        sb.Append(comma);
+                    }
+
+                    needComma = true;
+
+                    var field = this.Format.Fields[fieldIndex];
+                    PerfConvert.StringAppendJson(sb, field.Name);
+                    sb.Append(colon);
+
+                    var fieldVal = field.GetFieldValue(rawData, this.FileInfo.ByteReader);
+                    if (fieldVal.IsArrayOrElement)
+                    {
+                        fieldVal.AppendJsonSimpleArrayTo(sb, convertOptions);
+                    }
+                    else
+                    {
+                        fieldVal.AppendJsonScalarTo(sb, convertOptions);
+                    }
+                }
+            }
+            else
+            {
+                needComma = enumerator.AppendJsonItemToAndMoveNextSibling(sb, needComma, convertOptions);
+            }
+
+            return needComma;
+        }
     }
 }

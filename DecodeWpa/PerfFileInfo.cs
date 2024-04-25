@@ -2,9 +2,9 @@
 {
     using Microsoft.LinuxTracepoints.Decode;
 
-    internal sealed class FileInfo
+    public sealed class PerfFileInfo
     {
-        internal FileInfo(string filename)
+        internal PerfFileInfo(string filename)
         {
             this.FileName = filename;
         }
