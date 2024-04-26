@@ -1,30 +1,41 @@
-﻿namespace Microsoft.LinuxTracepoints.DecodeWpa
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace Microsoft.LinuxTracepoints.DecodeWpa
 {
     using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.Performance.SDK.Extensibility.SourceParsing;
     using Microsoft.Performance.SDK.Processing;
     using System;
     using System.Collections.Generic;
+    using System.Collections.ObjectModel;
     using System.Text;
     using CancellationToken = System.Threading.CancellationToken;
     using Debug = System.Diagnostics.Debug;
 
-    public sealed class PerfSourceParser : SourceParser<PerfEventInfo, PerfFileInfo, uint>
+    public sealed class PerfSourceParser : SourceParser<PerfEventInfo, PerfFileInfo, PerfEventHeaderType>
     {
         private const uint Billion = 1000000000;
 
-        private readonly HashSet<string> internedStrings = new HashSet<string>(); // TODO: is this a good idea?
+        private readonly HashSet<PerfEventHeaderType> requestedDataKeys = new HashSet<PerfEventHeaderType>();
+        private readonly List<PerfFileInfo> fileInfos;
+        private readonly ReadOnlyCollection<PerfFileInfo> fileInfosReadOnly;
         private readonly string[] filenames;
         private DataSourceInfo? dataSourceInfo;
+        private bool allEventsConsumed;
 
         public PerfSourceParser(string[] filenames)
         {
             this.filenames = filenames;
+            this.fileInfos = new List<PerfFileInfo>(filenames.Length);
+            this.fileInfosReadOnly = this.fileInfos.AsReadOnly();
         }
 
         public const string SourceParserId = nameof(PerfSourceParser);
 
         public override string Id => SourceParserId;
+
+        public ReadOnlyCollection<PerfFileInfo> FileInfos => this.fileInfosReadOnly;
 
         public override DataSourceInfo DataSourceInfo
         {
@@ -39,24 +50,30 @@
             }
         }
 
+        public override void PrepareForProcessing(bool allEventsConsumed, IReadOnlyCollection<PerfEventHeaderType> requestedDataKeys)
+        {
+            this.allEventsConsumed = allEventsConsumed;
+            this.requestedDataKeys.Clear();
+            this.requestedDataKeys.UnionWith(requestedDataKeys);
+        }
+
         public override void ProcessSource(
-            ISourceDataProcessor<PerfEventInfo, PerfFileInfo, uint> dataProcessor,
+            ISourceDataProcessor<PerfEventInfo, PerfFileInfo, PerfEventHeaderType> dataProcessor,
             ILogger logger,
             IProgress<int> progress,
             CancellationToken cancellationToken)
         {
+            this.fileInfos.Clear();
+
             var sessionFirstTimeSpec = PerfTimeSpec.MaxValue;
-            var fileInfos = new PerfFileInfo[this.filenames.Length];
-            int filesProcessed;
             using (var reader = new PerfDataFileReader())
             {
-                var key = 0u;
                 var enumerator = new EventHeaderEnumerator();
                 var sb = new StringBuilder();
                 PerfEventBytes eventBytes;
                 PerfSampleEventInfo sampleEventInfo;
 
-                for (filesProcessed = 0; filesProcessed < this.filenames.Length; filesProcessed += 1)
+                for (var filesProcessed = 0; filesProcessed < this.filenames.Length; filesProcessed += 1)
                 {
                     // For each file:
 
@@ -101,7 +118,12 @@
                             break; // No more events in this file
                         }
 
-                        // TODO: Non-sample events.
+                        if (!this.allEventsConsumed && !this.requestedDataKeys.Contains(eventBytes.Header.Type))
+                        {
+                            continue;
+                        }
+
+                        PerfEventInfo eventInfo;
                         if (eventBytes.Header.Type == PerfEventHeaderType.Sample)
                         {
                             result = reader.GetSampleEventInfo(eventBytes, out sampleEventInfo);
@@ -151,34 +173,47 @@
                                 lastEventTime = sampleEventInfo.Time;
                             }
 
-                            PerfEventInfo eventInfo;
                             if (format.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
                                 !enumerator.StartEvent(sampleEventInfo))
                             {
-                                var name = sampleEventInfo.Name;
-                                eventInfo = new PerfEventInfo(++key, fileInfo, sampleEventInfo, name);
+                                eventInfo = new PerfEventInfo(fileInfo, eventBytes.Header, sampleEventInfo);
                             }
                             else
                             {
-                                var ehEventInfo = enumerator.GetEventInfo();
-                                sb.EnsureCapacity(ehEventInfo.ProviderName.Length + 1 + ehEventInfo.NameLength);
-                                sb.Append(ehEventInfo.ProviderName);
-                                sb.Append(':');
-                                PerfConvert.StringAppend(sb, ehEventInfo.NameBytes, Encoding.UTF8);
-                                var newName = sb.ToString();
-                                sb.Clear();
-                                if (!this.internedStrings.TryGetValue(newName, out var name))
+                                var info = enumerator.GetEventInfo();
+                                eventInfo = new PerfEventInfo(fileInfo, eventBytes.Header, sampleEventInfo, info);
+                            }
+                        }
+                        else
+                        {
+                            result = reader.GetNonSampleEventInfo(eventBytes, out var nonSampleEventInfo);
+                            if (result == PerfDataFileResult.Ok)
+                            {
+                                if (nonSampleEventInfo.Time < firstEventTime)
                                 {
-                                    this.internedStrings.Add(newName);
-                                    name = newName;
+                                    firstEventTime = nonSampleEventInfo.Time;
                                 }
 
-                                eventInfo = new PerfEventInfo(++key, fileInfo, sampleEventInfo, name, ehEventInfo);
-                            }
+                                if (nonSampleEventInfo.Time > lastEventTime)
+                                {
+                                    lastEventTime = nonSampleEventInfo.Time;
+                                }
 
-                            eventCount += 1;
-                            dataProcessor.ProcessDataElement(eventInfo, fileInfo, cancellationToken);
+                                eventInfo = new PerfEventInfo(fileInfo, eventBytes.Header, nonSampleEventInfo);
+                            }
+                            else if (result == PerfDataFileResult.IdNotFound)
+                            {
+                                eventInfo = new PerfEventInfo(fileInfo, eventBytes);
+                            }
+                            else
+                            {
+                                logger.Warn("Skipped event: {0} reading nonsample event eventInfo from file: {1}", result.ToString(), filename);
+                                continue;
+                            }
                         }
+
+                        dataProcessor.ProcessDataElement(eventInfo, fileInfo, cancellationToken);
+                        eventCount += 1;
                     }
 
                     fileInfo.SetFromReader(reader, firstEventTime, lastEventTime, eventCount);
@@ -194,7 +229,7 @@
                         }
                     }
 
-                    fileInfos[filesProcessed] = fileInfo;
+                    this.fileInfos.Add(fileInfo);
                 }
             }
 
@@ -211,9 +246,8 @@
             {
                 sessionFirst = long.MaxValue;
                 sessionLast = long.MinValue;
-                for (var fileIndex = 0; fileIndex != filesProcessed; fileIndex += 1)
+                foreach (var fileInfo in this.fileInfos)
                 {
-                    var fileInfo = fileInfos[fileIndex];
                     var fileOffsetSpec = fileInfo.ClockOffset;
 
                     // Compute the difference between session-relative and file-relative timestamps.
@@ -223,7 +257,7 @@
                         + fileOffsetSpec.TvNsec - sessionFirstTimeSpec.TvNsec;
 
                     // File-relative timestamp + SessionTimestampOffset = session-relative timestamp.
-                    fileInfo.SetSessionTimestampOffset(sessionTimestampOffset);
+                    fileInfo.SetSourceParserFinished(sessionTimestampOffset);
 
                     var fileFirstFileRelative = fileInfo.FirstEventTime;
                     var fileLastFileRelative = fileInfo.LastEventTime;

@@ -1,6 +1,10 @@
-﻿namespace Microsoft.LinuxTracepoints.DecodeWpa
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace Microsoft.LinuxTracepoints.DecodeWpa
 {
     using Microsoft.LinuxTracepoints.Decode;
+    using Microsoft.Performance.SDK;
     using Microsoft.Performance.SDK.Extensibility;
     using Microsoft.Performance.SDK.Processing;
     using System;
@@ -13,6 +17,7 @@
     {
         private readonly ProcessedEventData<PerfEventInfo> events;
         private readonly string[] values;
+        private readonly long sessionTimestampOffset;
         private readonly EventHeaderEnumerator enumerator = new EventHeaderEnumerator();
         private readonly StringBuilder sb = new StringBuilder();
 
@@ -30,11 +35,67 @@
                 AggregationMode = AggregationMode.Sum,
             });
 
-        private static readonly ColumnConfiguration columnName = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("a76305f4-bda2-4c5a-b5e3-73c4ae046d0a"), "Name"),
+        private static readonly ColumnConfiguration columnGroupName = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("01ccf0a4-d1d7-4122-8adb-8697743d602a"), "GroupName", "System or Provider name"),
             new UIHints
             {
                 IsVisible = true,
+                Width = 200,
+            });
+
+        private static readonly ColumnConfiguration columnEventName = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("79cb48eb-b1f5-4257-bf4f-203b8dce3b0f"), "EventName", "Tracepoint or Event name"),
+            new UIHints
+            {
+                IsVisible = true,
+                Width = 200,
+            });
+
+        private static readonly ColumnConfiguration columnTracepointId = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("3e8de5c0-0ee1-4a71-8dfe-2aec347f2074"), "TracepointId", "SystemName:TracepointName"),
+            new UIHints
+            {
+                IsVisible = false,
+                Width = 200,
+            });
+
+        private static readonly ColumnConfiguration columnSystemName = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("ba4ec1dd-6b64-4660-a67f-b59f86d28203"), "SystemName"),
+            new UIHints
+            {
+                IsVisible = false,
+                Width = 200,
+            });
+
+        private static readonly ColumnConfiguration columnTracepointName = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("95296c0c-be46-47d6-bd63-90217b8f4121"), "TracepointName"),
+            new UIHints
+            {
+                IsVisible = false,
+                Width = 200,
+            });
+
+        private static readonly ColumnConfiguration columnProviderName = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("c485fead-48e0-4579-996e-03bd2b1604ec"), "ProviderName", "Provider name (EventHeader-only)"),
+            new UIHints
+            {
+                IsVisible = false,
+                Width = 200,
+            });
+
+        private static readonly ColumnConfiguration columnProviderOptions = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("519ee83a-6fbc-461e-9ac8-f27cf309a24b"), "ProviderOptions", "Provider options (EventHeader-only)"),
+            new UIHints
+            {
+                IsVisible = false,
+                Width = 200,
+            });
+
+        private static readonly ColumnConfiguration columnEventHeaderName = new ColumnConfiguration(
+            new ColumnMetadata(new Guid("5a201e42-bca7-4e6a-bf53-59f3e5994869"), "EventHeaderName", "Event name (EventHeader-only)"),
+            new UIHints
+            {
+                IsVisible = false,
                 Width = 200,
             });
 
@@ -52,14 +113,6 @@
             {
                 IsVisible = true,
                 Width = 30,
-            });
-
-        private static readonly ColumnConfiguration columnTime = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("acdd3326-57e0-4271-b8bc-05ef78eddd3a"), "Time"),
-            new UIHints
-            {
-                IsVisible = true,
-                Width = 20,
             });
 
         private static readonly ColumnConfiguration columnCpu = new ColumnConfiguration(
@@ -95,7 +148,7 @@
             });
 
         private static readonly ColumnConfiguration columnEventHeaderFlags = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("9987bcc7-5c68-4105-a6b8-32afe6b1cfe2"), "EventHeaderFlags"),
+            new ColumnMetadata(new Guid("9987bcc7-5c68-4105-a6b8-32afe6b1cfe2"), "EventHeaderFlags", "Provider characteristics (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = false,
@@ -103,7 +156,7 @@
             });
 
         private static readonly ColumnConfiguration columnId = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("fbc36c32-a6fc-4ace-b576-bca3ab1fdf21"), "Id"),
+            new ColumnMetadata(new Guid("fbc36c32-a6fc-4ace-b576-bca3ab1fdf21"), "Id", "Event's stable Id (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = false,
@@ -111,7 +164,7 @@
             });
 
         private static readonly ColumnConfiguration columnVersion = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("cea693d5-e0ff-4c55-b7d4-4f98f1114a68"), "Version"),
+            new ColumnMetadata(new Guid("cea693d5-e0ff-4c55-b7d4-4f98f1114a68"), "Version", "Event's version (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = false,
@@ -119,7 +172,7 @@
             });
 
         private static readonly ColumnConfiguration columnTag = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("e638de35-56d8-4234-b204-bb6927994eeb"), "Tag"),
+            new ColumnMetadata(new Guid("e638de35-56d8-4234-b204-bb6927994eeb"), "Tag", "Event's tag (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = false,
@@ -128,7 +181,7 @@
             });
 
         private static readonly ColumnConfiguration columnOpcode = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("1cb5cfce-3ace-4d17-84c9-b8af01d3a47a"), "Opcode"),
+            new ColumnMetadata(new Guid("1cb5cfce-3ace-4d17-84c9-b8af01d3a47a"), "Opcode", "Event's opcode (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = false,
@@ -136,7 +189,7 @@
             });
 
         private static readonly ColumnConfiguration columnLevel = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("9a7f5539-6c9f-4d23-bf0a-aa663e30b48f"), "Level"),
+            new ColumnMetadata(new Guid("9a7f5539-6c9f-4d23-bf0a-aa663e30b48f"), "Level", "Event's severity (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = false,
@@ -144,7 +197,7 @@
             });
 
         private static readonly ColumnConfiguration columnKeyword = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("7c9071dd-c49d-4db1-852d-76ec31fa1938"), "Keyword"),
+            new ColumnMetadata(new Guid("7c9071dd-c49d-4db1-852d-76ec31fa1938"), "Keyword", "Event's category bits (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = false,
@@ -153,7 +206,7 @@
             });
 
         private static readonly ColumnConfiguration columnActivityId = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("ccfff171-c773-43de-80a9-f6e3e0b81090"), "ActivityId"),
+            new ColumnMetadata(new Guid("ccfff171-c773-43de-80a9-f6e3e0b81090"), "ActivityId", "Event's activity id (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = true,
@@ -161,7 +214,7 @@
             });
 
         private static readonly ColumnConfiguration columnRelatedId = new ColumnConfiguration(
-            new ColumnMetadata(new Guid("27c061c5-ff89-4604-85f6-6c27094a62fa"), "RelatedId"),
+            new ColumnMetadata(new Guid("27c061c5-ff89-4604-85f6-6c27094a62fa"), "RelatedId", "Event's related (parent) activity id (EventHeader-only)"),
             new UIHints
             {
                 IsVisible = true,
@@ -176,24 +229,32 @@
                 Width = 200,
             });
 
-        private PerfGenericEventsTable(ProcessedEventData<PerfEventInfo> events)
+        private PerfGenericEventsTable(ProcessedEventData<PerfEventInfo> events, long sessionTimestampOffset)
         {
             this.events = events;
             this.values = new string[this.events.Count];
+            this.sessionTimestampOffset = sessionTimestampOffset;
         }
 
         public static void BuildTable(
             ITableBuilder tableBuilder,
             IDataExtensionRetrieval requiredData)
         {
-            var data = requiredData.QueryOutput<ProcessedEventData<PerfEventInfo>>(PerfSourceCooker.EventsOutputPath);
-            var table = new PerfGenericEventsTable(data);
+            var events = requiredData.QueryOutput<ProcessedEventData<PerfEventInfo>>(PerfSourceCooker.EventsOutputPath);
+            var sessionTimestampOffset = requiredData.QueryOutput<long>(PerfSourceCooker.SessionTimestampOffsetOutputPath);
+            var table = new PerfGenericEventsTable(events, sessionTimestampOffset);
             var builder = tableBuilder.SetRowCount(table.values.Length);
-            builder.AddColumn(columnName, Projection.Create(table.Name));
+            builder.AddColumn(columnGroupName, Projection.Create(table.GroupName));
+            builder.AddColumn(columnEventName, Projection.Create(table.EventName));
+            builder.AddColumn(columnTracepointId, Projection.Create(table.TracepointId));
+            builder.AddColumn(columnSystemName, Projection.Create(table.SystemName));
+            builder.AddColumn(columnTracepointName, Projection.Create(table.TracepointName));
+            builder.AddColumn(columnProviderName, Projection.Create(table.ProviderName));
+            builder.AddColumn(columnProviderOptions, Projection.Create(table.ProviderOptions));
+            builder.AddColumn(columnEventHeaderName, Projection.Create(table.EventHeaderName));
             builder.AddColumn(columnValue, Projection.Create(table.Value));
             builder.AddColumn(columnTimestamp, Projection.Create(table.Timestamp));
             builder.AddColumn(columnFilename, Projection.Create(table.FileName));
-            builder.AddColumn(columnTime, Projection.Create(table.Time));
             builder.AddColumn(columnCpu, Projection.Create(table.Cpu));
             builder.AddColumn(columnPid, Projection.Create(table.Pid));
             builder.AddColumn(columnTid, Projection.Create(table.Tid));
@@ -210,13 +271,25 @@
             builder.AddColumn(columnCount, Projection.Constant(1));
         }
 
-        public string Name(int i) => events[i].Name;
+        public string GroupName(int i) => events[i].GetGroupName();
+
+        public string EventName(int i) => events[i].GetEventName();
+
+        public string TracepointId(int i) => events[i].TracepointId.ToString();
+
+        public string SystemName(int i) => events[i].SystemName.ToString();
+
+        public string TracepointName(int i) => events[i].TracepointName.ToString();
+
+        public string ProviderName(int i) => events[i].ProviderName.ToString();
+
+        public string ProviderOptions(int i) => events[i].ProviderOptions.ToString();
+
+        public string EventHeaderName(int i) => events[i].GetEventHeaderName();
 
         public string FileName(int i) => events[i].FileInfo.FileName;
 
-        public ulong Timestamp(int i) => events[i].SessionRelativeTime;
-
-        public DateTime Time(int i) => events[i].DateTime;
+        public Timestamp Timestamp(int i) => events[i].GetTimestamp(this.sessionTimestampOffset);
 
         public uint Cpu(int i) => events[i].Cpu;
 
@@ -230,47 +303,19 @@
 
         public Guid? RelatedId(int i) => events[i].RelatedId;
 
-        public EventHeaderFlags? EventHeaderFlags(int i)
-        {
-            var e = events[i];
-            return e.HasEventHeader ? e.EventHeader.Flags : new EventHeaderFlags?();
-        }
+        public EventHeaderFlags? EventHeaderFlags(int i) => events[i].EventHeaderFlags;
 
-        public ushort? Id(int i)
-        {
-            var e = events[i];
-            return e.HasEventHeader ? e.EventHeader.Id : new ushort?();
-        }
+        public ushort? Id(int i) => events[i].Id;
 
-        public byte? Version(int i)
-        {
-            var e = events[i];
-            return e.HasEventHeader ? e.EventHeader.Version : new byte?();
-        }
+        public byte? Version(int i) => events[i].Version;
 
-        public ushort? Tag(int i)
-        {
-            var e = events[i];
-            return e.HasEventHeader ? e.EventHeader.Tag : new ushort?();
-        }
+        public ushort? Tag(int i) => events[i].Tag;
 
-        public EventOpcode? Opcode(int i)
-        {
-            var e = events[i];
-            return e.HasEventHeader ? e.EventHeader.Opcode : new EventOpcode?();
-        }
+        public EventOpcode? Opcode(int i) => events[i].Opcode;
 
-        public EventLevel? Level(int i)
-        {
-            var e = events[i];
-            return e.HasEventHeader ? e.EventHeader.Level : new EventLevel?();
-        }
+        public EventLevel? Level(int i) => events[i].Level;
 
-        public ulong? Keyword(int i)
-        {
-            var e = events[i];
-            return e.HasEventHeader ? e.Keyword : new ulong?();
-        }
+        public ulong? Keyword(int i) => events[i].Keyword;
 
         public string Value(int i)
         {

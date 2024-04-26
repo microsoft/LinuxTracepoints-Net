@@ -1,9 +1,15 @@
-﻿namespace Microsoft.LinuxTracepoints.DecodeWpa
+﻿// Copyright (c) Microsoft Corporation. All rights reserved.
+// Licensed under the MIT License.
+
+namespace Microsoft.LinuxTracepoints.DecodeWpa
 {
     using Microsoft.LinuxTracepoints.Decode;
+    using InvalidOperationException = System.InvalidOperationException;
 
     public sealed class PerfFileInfo
     {
+        private long sessionTimestampOffset;
+
         internal PerfFileInfo(string filename)
         {
             this.FileName = filename;
@@ -45,6 +51,11 @@
         public PerfByteReader ByteReader { get; private set; }
 
         /// <summary>
+        /// Returns true if the data sources have been completely processed.
+        /// </summary>
+        public bool SourceParserFinished { get; private set; }
+
+        /// <summary>
         /// Number of events in this file.
         /// </summary>
         public uint EventCount { get; private set; }
@@ -77,33 +88,24 @@
         public ulong LastEventTime { get; private set; } = ulong.MinValue;
 
         /// <summary>
+        /// Must not be called before source parsing completes (see ProcessingComplete property).
         /// SessionTimestampOffset = ClockOffset - Session start time.
         /// SessionTimestampOffset must be added to an event's file-relative
         /// timestamp to get the event's session-relative timestamp.
         /// </summary>
-        public long SessionTimestampOffset { get; private set; }
+        public long SessionTimestampOffset => this.SourceParserFinished
+            ? this.sessionTimestampOffset
+            : throw new InvalidOperationException("SessionTimestampOffset is not valid until SourceParserFinished is true.");
 
         /// <summary>
         /// Returns ClockOffset + FirstEventTime.
         /// </summary>
-        public PerfTimeSpec FirstEventTimeSpec
-        {
-            get
-            {
-                return this.ClockOffset.AddNanoseconds(this.FirstEventTime);
-            }
-        }
+        public PerfTimeSpec FirstEventTimeSpec => this.ClockOffset.AddNanoseconds(this.FirstEventTime);
 
         /// <summary>
         /// Returns ClockOffset + LastEventTime.
         /// </summary>
-        public PerfTimeSpec LastEventTimeSpec
-        {
-            get
-            {
-                return this.ClockOffset.AddNanoseconds(this.LastEventTime);
-            }
-        }
+        public PerfTimeSpec LastEventTimeSpec => this.ClockOffset.AddNanoseconds(this.LastEventTime);
 
         internal void SetFromReader(
             PerfDataFileReader reader,
@@ -131,9 +133,10 @@
             this.LastEventTime = lastEventTime;
         }
 
-        internal void SetSessionTimestampOffset(long sessionTimestampOffset)
+        internal void SetSourceParserFinished(long sessionTimestampOffset)
         {
-            this.SessionTimestampOffset = sessionTimestampOffset;
+            this.sessionTimestampOffset = sessionTimestampOffset;
+            this.SourceParserFinished = true;
         }
     }
 }
