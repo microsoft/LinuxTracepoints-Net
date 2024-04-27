@@ -172,7 +172,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="sampleEventInfo">
         /// Info from which to get the tracepoint name (sampleEventInfo.Format.Name) and
         /// tracepoint user data (sampleEventInfo.UserData).
-        /// Requires sampleEventInfo.Format != null.
+        /// Requires !sampleEventInfo.Format.IsEmpty.
         /// </param>
         /// <param name="moveNextLimit">
         /// Set to the maximum number of MoveNext calls to allow when processing this event (to
@@ -183,8 +183,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             in PerfSampleEventInfo sampleEventInfo,
             int moveNextLimit = MoveNextLimitDefault)
         {
-            Debug.Assert(sampleEventInfo.Format != null); // Precondition: not null.
-            return StartEvent(sampleEventInfo.Format!.Name, sampleEventInfo.UserData, moveNextLimit);
+            Debug.Assert(!sampleEventInfo.Format.IsEmpty); // Precondition: not empty.
+            return StartEvent(sampleEventInfo.Format.Name, sampleEventInfo.UserData, moveNextLimit);
         }
 
         /// <summary>

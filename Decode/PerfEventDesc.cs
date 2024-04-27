@@ -4,6 +4,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
     using Array = System.Array;
 
     /// <summary>
@@ -23,11 +24,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="attr">
         /// Event's perf_event_attr, or an attr with size = 0 if event's attr is not available.
         /// </param>
-        /// <param name="name">Event's name, or "" if not available.</param>
-        /// <param name="format">Event's format, or null if not available.</param>
+        /// <param name="name">Event's name. Must not be null (may be "" if name not available).</param>
+        /// <param name="format">Event's format. Must not be null (may be empty).</param>
         /// <param name="ids">The sample_ids that share this descriptor. May be null.</param>
-        public PerfEventDesc(in PerfEventAttr attr, string name, PerfEventFormat? format, ReadOnlyCollection<ulong>? ids)
+        public PerfEventDesc(in PerfEventAttr attr, string name, PerfEventFormat format, ReadOnlyCollection<ulong>? ids)
         {
+            Debug.Assert(name != null);
+            Debug.Assert(format != null);
+
             this.attr = attr;
             this.Name = name;
             this.Format = format;
@@ -44,7 +48,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var value = empty;
                 if (value == null)
                 {
-                    value = new PerfEventDesc(default, string.Empty, null, null);
+                    value = new PerfEventDesc(default, "", PerfEventFormat.Empty, null);
                     empty = value;
                 }
                 return value;
@@ -63,9 +67,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public string Name { get; }
 
         /// <summary>
-        /// Event's format, or null if not available.
+        /// Event's format, or empty if not available.
         /// </summary>
-        public PerfEventFormat? Format { get; private set; }
+        public PerfEventFormat Format { get; private set; }
 
         /// <summary>
         /// The sample_ids that share this descriptor, or empty list if none.

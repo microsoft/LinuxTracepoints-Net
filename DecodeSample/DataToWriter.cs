@@ -110,7 +110,7 @@ namespace DecodeSample
                     sampleEventInfo.AppendJsonEventInfoTo(this.scratch);
 
                     var eventFormat = sampleEventInfo.Format;
-                    if (eventFormat == null)
+                    if (eventFormat.IsEmpty)
                     {
                         // Unexpected: Did not find TraceFS format metadata for this event.
                         this.writer.WriteLine($"  info = {{ {this.scratch} }}");

@@ -1481,7 +1481,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 pos -= sizeof(UInt64);
                 info.Pid = m_byteReader.ReadU32(bytesSpan.Slice(pos));
-                info.Tid = m_byteReader.ReadU32(bytesSpan.Slice(pos + sizeof(UInt64)));
+                info.Tid = m_byteReader.ReadU32(bytesSpan.Slice(pos + sizeof(UInt32)));
 
                 if (pos == 0)
                 {
@@ -1943,7 +1943,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 for (var i = 0; i < m_eventDescList.Count; i += 1)
                 {
                     var desc = m_eventDescList[i];
-                    if (desc.Format == null &&
+                    if (desc.Format.IsEmpty &&
                         desc.Attr.Type == PerfEventAttrType.Tracepoint &&
                         m_formatById.TryGetValue((uint)desc.Attr.Config, out var format))
                     {
@@ -2207,10 +2207,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                 ids[i] = m_byteReader.ReadU64(idsBytes.Slice(i * sizeof(UInt64)));
             }
 
-            PerfEventFormat? format = null;
-            if (attr.Type == PerfEventAttrType.Tracepoint)
+            PerfEventFormat format;
+            if (attr.Type != PerfEventAttrType.Tracepoint ||
+                !m_formatById.TryGetValue((UInt32)attr.Config, out format))
             {
-                m_formatById.TryGetValue((UInt32)attr.Config, out format);
+                format = PerfEventFormat.Empty;
             }
 
             var eventDesc = new PerfEventDesc(

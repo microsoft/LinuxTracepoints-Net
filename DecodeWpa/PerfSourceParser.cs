@@ -13,16 +13,16 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
     using CancellationToken = System.Threading.CancellationToken;
     using Debug = System.Diagnostics.Debug;
 
-    public sealed class PerfSourceParser : SourceParser<PerfEventInfo, PerfFileInfo, PerfEventHeaderType>
+    public sealed class PerfSourceParser : SourceParser<PerfEventData, PerfFileInfo, PerfEventHeaderType>
     {
         private const uint Billion = 1000000000;
 
         private readonly HashSet<PerfEventHeaderType> requestedDataKeys = new HashSet<PerfEventHeaderType>();
+        private readonly string[] filenames;
         private readonly List<PerfFileInfo> fileInfos;
         private readonly ReadOnlyCollection<PerfFileInfo> fileInfosReadOnly;
-        private readonly string[] filenames;
         private DataSourceInfo? dataSourceInfo;
-        private bool allEventsConsumed;
+        private bool requestedAllEvents;
 
         public PerfSourceParser(string[] filenames)
         {
@@ -37,28 +37,17 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
 
         public ReadOnlyCollection<PerfFileInfo> FileInfos => this.fileInfosReadOnly;
 
-        public override DataSourceInfo DataSourceInfo
-        {
-            get
-            {
-                if (this.dataSourceInfo == null)
-                {
-                    throw new InvalidOperationException("DataSourceInfo is not available until processing is complete.");
-                }
-
-                return this.dataSourceInfo;
-            }
-        }
+        public override DataSourceInfo DataSourceInfo => this.dataSourceInfo!;
 
         public override void PrepareForProcessing(bool allEventsConsumed, IReadOnlyCollection<PerfEventHeaderType> requestedDataKeys)
         {
-            this.allEventsConsumed = allEventsConsumed;
+            this.requestedAllEvents = allEventsConsumed;
             this.requestedDataKeys.Clear();
             this.requestedDataKeys.UnionWith(requestedDataKeys);
         }
 
         public override void ProcessSource(
-            ISourceDataProcessor<PerfEventInfo, PerfFileInfo, PerfEventHeaderType> dataProcessor,
+            ISourceDataProcessor<PerfEventData, PerfFileInfo, PerfEventHeaderType> dataProcessor,
             ILogger logger,
             IProgress<int> progress,
             CancellationToken cancellationToken)
@@ -80,22 +69,32 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                     progress.Report((filesProcessed * 100) / this.filenames.Length);
                     if (cancellationToken.IsCancellationRequested)
                     {
+                        logger.Warn("Processing cancelled with {0}/{1} files loaded.",
+                            filesProcessed,
+                            this.filenames.Length);
                         break;
                     }
 
                     var filename = this.filenames[filesProcessed];
-                    var fileInfo = new PerfFileInfo(filename);
 
-                    // TODO: Is there any benefit in supporting time-ordered processing here?
-                    if (!reader.OpenFile(filename, PerfDataFileEventOrder.File))
+                    if (!reader.OpenFile(filename, PerfDataFileEventOrder.Time))
                     {
-                        logger.Error("Failed to open file: {0}", filename);
+                        logger.Error("Invalid data, cannot open file: {0}",
+                            filename);
                         continue;
                     }
 
+                    logger.Info("Opened file: {0}",
+                        filename);
+
+                    var byteReader = reader.ByteReader;
+                    var fileInfo = new FileInfo(filename, byteReader);
+
+                    var setHeaderAttributes = false;
                     var firstEventTime = ulong.MaxValue;
                     var lastEventTime = ulong.MinValue;
                     var commonFieldCount = ushort.MaxValue;
+                    var previousEventTime = ulong.MinValue;
                     var eventCount = 0u;
 
                     while (true)
@@ -104,6 +103,10 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
 
                         if (cancellationToken.IsCancellationRequested)
                         {
+                            logger.Warn("Processing cancelled with {0}/{1} files loaded; partially loaded file: {2}",
+                                filesProcessed,
+                                this.filenames.Length,
+                                filename);
                             break;
                         }
 
@@ -112,43 +115,71 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                         {
                             if (result != PerfDataFileResult.EndOfFile)
                             {
-                                logger.Error("Error {0} reading from file: {1}", result.ToString(), filename);
+                                logger.Error("Error: {0} reading from file: {1}",
+                                    result.AsString(),
+                                    filename);
                             }
 
                             break; // No more events in this file
                         }
 
-                        if (!this.allEventsConsumed && !this.requestedDataKeys.Contains(eventBytes.Header.Type))
+                        if (!setHeaderAttributes)
+                        {
+                            if (eventBytes.Header.Type == PerfEventHeaderType.FinishedInit ||
+                                eventBytes.Header.Type == PerfEventHeaderType.Sample)
+                            {
+                                setHeaderAttributes = true;
+                                fileInfo.SetHeaderAttributes(reader);
+                            }
+                        }
+
+                        eventCount += 1; // Include ignored events in the count.
+
+                        if (!this.requestedAllEvents && !this.requestedDataKeys.Contains(eventBytes.Header.Type))
                         {
                             continue;
                         }
 
-                        PerfEventInfo eventInfo;
+                        PerfEventData eventInfo;
                         if (eventBytes.Header.Type == PerfEventHeaderType.Sample)
                         {
                             result = reader.GetSampleEventInfo(eventBytes, out sampleEventInfo);
                             if (result != PerfDataFileResult.Ok)
                             {
-                                logger.Warn("Skipped event: {0} reading sample event eventInfo from file: {1}", result.ToString(), filename);
+                                logger.Warn("Skipped event: {0} resolving sample event from file: {1}",
+                                    result.AsString(),
+                                    filename);
                                 continue;
                             }
 
-                            var format = sampleEventInfo.Format;
-                            if (format == null)
+                            if (sampleEventInfo.SampleType.HasFlag(PerfEventAttrSampleType.Time))
                             {
-                                logger.Warn("Skipped event: no format information: {0}", filename);
+                                previousEventTime = sampleEventInfo.Time;
+                            }
+                            else
+                            {
+                                sampleEventInfo.Time = previousEventTime;
+                            }
+
+                            var format = sampleEventInfo.Format;
+                            if (format.IsEmpty)
+                            {
+                                logger.Warn("Skipped event: no format information for sample event in file: {0}",
+                                    filename);
                                 continue;
                             }
 
                             if (format.Fields.Count >= ushort.MaxValue)
                             {
-                                logger.Warn("Skipped event: bad field count: {0}", filename);
+                                logger.Warn("Skipped event: bad field count for sample event in file: {0}",
+                                    filename);
                                 continue;
                             }
 
                             if (format.CommonFieldCount > format.Fields.Count)
                             {
-                                logger.Warn("Skipped event: bad CommonFieldCount: {0}", filename);
+                                logger.Warn("Skipped event: bad CommonFieldCount for sample event in file: {0}",
+                                    filename);
                                 continue;
                             }
 
@@ -156,7 +187,8 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                             {
                                 if (commonFieldCount != ushort.MaxValue)
                                 {
-                                    logger.Warn("Skipped event: inconsistent CommonFieldCount: {0}", filename);
+                                    logger.Warn("Skipped event: inconsistent CommonFieldCount for sample event in file: {0}",
+                                        filename);
                                     continue;
                                 }
 
@@ -176,12 +208,12 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                             if (format.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
                                 !enumerator.StartEvent(sampleEventInfo))
                             {
-                                eventInfo = new PerfEventInfo(fileInfo, eventBytes.Header, sampleEventInfo);
+                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, sampleEventInfo);
                             }
                             else
                             {
                                 var info = enumerator.GetEventInfo();
-                                eventInfo = new PerfEventInfo(fileInfo, eventBytes.Header, sampleEventInfo, info);
+                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, sampleEventInfo, info);
                             }
                         }
                         else
@@ -189,6 +221,15 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                             result = reader.GetNonSampleEventInfo(eventBytes, out var nonSampleEventInfo);
                             if (result == PerfDataFileResult.Ok)
                             {
+                                if (nonSampleEventInfo.SampleType.HasFlag(PerfEventAttrSampleType.Time))
+                                {
+                                    previousEventTime = nonSampleEventInfo.Time;
+                                }
+                                else
+                                {
+                                    nonSampleEventInfo.Time = previousEventTime;
+                                }
+
                                 if (nonSampleEventInfo.Time < firstEventTime)
                                 {
                                     firstEventTime = nonSampleEventInfo.Time;
@@ -199,24 +240,26 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                                     lastEventTime = nonSampleEventInfo.Time;
                                 }
 
-                                eventInfo = new PerfEventInfo(fileInfo, eventBytes.Header, nonSampleEventInfo);
+                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, nonSampleEventInfo);
                             }
                             else if (result == PerfDataFileResult.IdNotFound)
                             {
-                                eventInfo = new PerfEventInfo(fileInfo, eventBytes);
+                                // Event info not available for this event. Maybe ok.
+                                eventInfo = new PerfEventData(byteReader, eventBytes, previousEventTime);
                             }
                             else
                             {
-                                logger.Warn("Skipped event: {0} reading nonsample event eventInfo from file: {1}", result.ToString(), filename);
+                                logger.Warn("Skipped event: {0} resolving nonsample event from file: {1}",
+                                    result.AsString(),
+                                    filename);
                                 continue;
                             }
                         }
 
                         dataProcessor.ProcessDataElement(eventInfo, fileInfo, cancellationToken);
-                        eventCount += 1;
                     }
 
-                    fileInfo.SetFromReader(reader, firstEventTime, lastEventTime, eventCount);
+                    fileInfo.SetFileAttributes(firstEventTime, lastEventTime, eventCount);
 
                     // Track the wall-clock time of the first event in the session
                     // (but only if the file had one or more time-stamped events).
@@ -228,6 +271,9 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                             sessionFirstTimeSpec = fileFirstTimeSpec;
                         }
                     }
+
+                    logger.Info("Finished file: {0}",
+                        filename);
 
                     this.fileInfos.Add(fileInfo);
                 }
@@ -257,7 +303,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                         + fileOffsetSpec.TvNsec - sessionFirstTimeSpec.TvNsec;
 
                     // File-relative timestamp + SessionTimestampOffset = session-relative timestamp.
-                    fileInfo.SetSourceParserFinished(sessionTimestampOffset);
+                    ((FileInfo)fileInfo).SetSessionAttributes(sessionTimestampOffset);
 
                     var fileFirstFileRelative = fileInfo.FirstEventTime;
                     var fileLastFileRelative = fileInfo.LastEventTime;
@@ -286,6 +332,30 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                 sessionFirstTimeSpec.DateTime ?? DateTime.UnixEpoch);
 
             progress.Report(100);
+        }
+
+        private sealed class FileInfo : PerfFileInfo
+        {
+            public FileInfo(string filename, PerfByteReader byteReader)
+                : base(filename, byteReader)
+            {
+                return;
+            }
+
+            public new void SetHeaderAttributes(PerfDataFileReader reader)
+            {
+                base.SetHeaderAttributes(reader);
+            }
+
+            public new void SetFileAttributes(ulong firstEventTime, ulong lastEventTime, uint eventCount)
+            {
+                base.SetFileAttributes(firstEventTime, lastEventTime, eventCount);
+            }
+
+            public new void SetSessionAttributes(long sessionTimestampOffset)
+            {
+                base.SetSessionAttributes(sessionTimestampOffset);
+            }
         }
     }
 }

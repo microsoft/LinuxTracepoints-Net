@@ -51,6 +51,29 @@ namespace Microsoft.LinuxTracepoints.Decode
     }
 
     /// <summary>
+    /// Extension methods for PerfEventAttrType.
+    /// </summary>
+    public static class PerfEventAttrTypeExtensions
+    {
+        /// <summary>
+        /// Returns a string representation of the PerfEventAttrType value.
+        /// </summary>
+        public static string AsString(this PerfEventAttrType self)
+        {
+            switch (self)
+            {
+                case PerfEventAttrType.Hardware: return "Hardware";
+                case PerfEventAttrType.Software: return "Software";
+                case PerfEventAttrType.Tracepoint: return "Tracepoint";
+                case PerfEventAttrType.HwCache: return "HwCache";
+                case PerfEventAttrType.Raw: return "Raw";
+                case PerfEventAttrType.Breakpoint: return "Breakpoint";
+                default: return unchecked((UInt32)self).ToString(CultureInfo.InvariantCulture);
+            }
+        }
+    }
+
+    /// <summary>
     /// Values for PerfEventAttr.Size.
     /// </summary>
     public enum PerfEventAttrSize : UInt32

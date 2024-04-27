@@ -142,7 +142,7 @@ namespace DecodePerfToJson
                         this.JsonWriter.WriteString("GetSampleEventInfo", result.AsString());
                         this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
                     }
-                    else if (!(sampleEventInfo.Format is PerfEventFormat infoFormat))
+                    else if (sampleEventInfo.Format.IsEmpty)
                     {
                         // No TraceFS format for this event. Unexpected.
                         if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
@@ -160,8 +160,8 @@ namespace DecodePerfToJson
                             this.JsonWriter.WriteEndObject(); // info
                         }
                     }
-                    else if (infoFormat.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
-                        !this.enumerator.StartEvent(infoFormat.Name, sampleEventInfo.UserData))
+                    else if (sampleEventInfo.Format.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
+                        !this.enumerator.StartEvent(sampleEventInfo))
                     {
                         // Non-EventHeader decoding.
                         if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
@@ -170,6 +170,7 @@ namespace DecodePerfToJson
                         }
 
                         // Write the event fields. Skip the common fields by default.
+                        var infoFormat = sampleEventInfo.Format;
                         var firstField = this.InfoOptions.HasFlag(PerfInfoOptions.Common) ? 0 : infoFormat.CommonFieldCount;
                         for (int i = firstField; i < infoFormat.Fields.Count; i++)
                         {
@@ -187,6 +188,7 @@ namespace DecodePerfToJson
                     {
                         // EventHeader decoding.
 
+                        var infoFormat = sampleEventInfo.Format;
                         var ei = this.enumerator.GetEventInfo();
 
                         if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
@@ -366,7 +368,7 @@ namespace DecodePerfToJson
 
         private void WriteField(PerfSampleEventInfo sampleEventInfo, int i, ref Span<char> charBuf)
         {
-            var fieldFormat = sampleEventInfo.Format!.Fields[i];
+            var fieldFormat = sampleEventInfo.Format.Fields[i];
             var fieldValue = fieldFormat.GetFieldValue(sampleEventInfo.RawDataSpan, sampleEventInfo.ByteReader);
             if (!fieldValue.IsArrayOrElement)
             {

@@ -201,11 +201,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         public readonly string Name => this.EventDesc.Name;
 
         /// <summary>
-        /// Returns the event's tracefs format (decoding information), or null if not available.
+        /// Returns the event's tracefs format (decoding information), or empty if not available.
         /// Use this to access this event's field values, i.e.
         /// <c>sampleEventInfo.Format.Fields[fieldIndex].GetFieldValue(sampleEventInfo)</c>.
         /// </summary>
-        public readonly PerfEventFormat? Format => this.EventDesc.Format;
+        public readonly PerfEventFormat Format => this.EventDesc.Format;
 
         /// <summary>
         /// Gets the Time as a PerfTimeSpec, using offset information from SessionInfo.
@@ -266,7 +266,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             get
             {
                 var format = this.EventDesc.Format;
-                return format == null || format.CommonFieldsSize > this.RawDataLength
+                return format.IsEmpty || format.CommonFieldsSize > this.RawDataLength
                     ? default
                     : this.BytesMemory.Slice(
                         this.RawDataStart + format.CommonFieldsSize,
@@ -285,7 +285,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             get
             {
                 var format = this.EventDesc.Format;
-                return format == null || format.CommonFieldsSize > this.RawDataLength
+                return format.IsEmpty || format.CommonFieldsSize > this.RawDataLength
                     ? default
                     : this.BytesSpan.Slice(
                         this.RawDataStart + format.CommonFieldsSize,

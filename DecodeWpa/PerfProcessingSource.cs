@@ -4,6 +4,7 @@
 namespace Microsoft.LinuxTracepoints.DecodeWpa
 {
     using Microsoft.LinuxTracepoints.Decode;
+    using Microsoft.Performance.SDK.Extensibility.SourceParsing;
     using Microsoft.Performance.SDK.Processing;
     using System.Collections.Generic;
 
@@ -37,11 +38,39 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             var filenames = new List<string>();
             foreach (var dataSource in dataSources)
             {
-                filenames.Add(dataSource.Uri.LocalPath);
+                if (dataSource.IsFile())
+                {
+                    filenames.Add(dataSource.Uri.LocalPath);
+                }
             }
 
             var parser = new PerfSourceParser(filenames.ToArray());
-            return new PerfDataProcessor(parser, options, this.ApplicationEnvironment, processorEnvironment);
+            return new DataProcessor(parser, options, this.ApplicationEnvironment, processorEnvironment);
+        }
+
+        private sealed class DataProcessor
+            : CustomDataProcessorWithSourceParser<PerfEventData, PerfFileInfo, PerfEventHeaderType>
+        {
+            internal DataProcessor(
+                ISourceParser<PerfEventData, PerfFileInfo, PerfEventHeaderType> sourceParser,
+                ProcessorOptions options,
+                IApplicationEnvironment applicationEnvironment,
+                IProcessorEnvironment processorEnvironment)
+                : base(sourceParser, options, applicationEnvironment, processorEnvironment)
+            {
+                return;
+            }
+
+            protected override void BuildTableCore(TableDescriptor tableDescriptor, ITableBuilder tableBuilder)
+            {
+                if (this.SourceParser is PerfSourceParser perfSourceParser)
+                {
+                    if (tableDescriptor.Guid == PerfFileMetadataTable.TableDescriptor.Guid)
+                    {
+                        PerfFileMetadataTable.BuildTable(tableBuilder, perfSourceParser.FileInfos);
+                    }
+                }
+            }
         }
     }
 }

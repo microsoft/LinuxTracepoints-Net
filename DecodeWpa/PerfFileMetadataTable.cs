@@ -11,8 +11,9 @@
 
         public static readonly TableDescriptor TableDescriptor = new TableDescriptor(
             Guid.Parse("c5d716a9-8501-48ca-bd7f-12e9100862db"),
-            "perf.data files",
-            "Loaded perf.data files"
+            "perf.data loaded files",
+            "Loaded perf.data files",
+            defaultLayout: TableLayoutStyle.Table
             //, isMetadataTable: true
             );
 

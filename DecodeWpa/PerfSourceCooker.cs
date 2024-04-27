@@ -9,10 +9,15 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
     using Microsoft.Performance.SDK.Extensibility.DataCooking;
     using Microsoft.Performance.SDK.Extensibility.DataCooking.SourceDataCooking;
     using Microsoft.Performance.SDK.Processing;
+    using System;
     using System.Collections.Generic;
     using System.Threading;
 
-    public sealed class PerfSourceCooker : SourceDataCooker<PerfEventInfo, PerfFileInfo, PerfEventHeaderType>
+    /// <summary>
+    /// Generic cooker for PerfSourceParser.
+    /// Collects all event data and file info from a perf.data processing session.
+    /// </summary>
+    public sealed class PerfSourceCooker : SourceDataCooker<PerfEventData, PerfFileInfo, PerfEventHeaderType>
     {
         private static readonly ReadOnlyHashSet<PerfEventHeaderType> EmptySet = new ReadOnlyHashSet<PerfEventHeaderType>(new HashSet<PerfEventHeaderType>());
 
@@ -30,22 +35,22 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
 
         public const string DataCookerId = nameof(PerfSourceCooker);
 
-        public override string Description => "Collects all PerfEventInfo objects";
+        public override string Description => "Collects all event data and file info from a perf.data processing session.";
 
         public override ReadOnlyHashSet<PerfEventHeaderType> DataKeys => EmptySet;
 
         public override SourceDataCookerOptions Options => SourceDataCookerOptions.ReceiveAllDataElements;
 
         [DataOutput]
-        public ProcessedEventData<PerfEventInfo> Events { get; } = new ProcessedEventData<PerfEventInfo>();
+        public ProcessedEventData<ValueTuple<PerfEventData, PerfFileInfo>> Events { get; } = new ProcessedEventData<ValueTuple<PerfEventData, PerfFileInfo>>();
 
         [DataOutput]
         public long SessionTimestampOffset { get; private set; } = long.MinValue;
 
-        public override DataProcessingResult CookDataElement(PerfEventInfo data, PerfFileInfo context, CancellationToken cancellationToken)
+        public override DataProcessingResult CookDataElement(PerfEventData data, PerfFileInfo context, CancellationToken cancellationToken)
         {
             this.lastContext = context;
-            this.Events.AddEvent(data);
+            this.Events.AddEvent(new ValueTuple<PerfEventData, PerfFileInfo>(data, context));
             return DataProcessingResult.Processed;
         }
 

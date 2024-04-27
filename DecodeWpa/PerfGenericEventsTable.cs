@@ -15,7 +15,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
     [RequiresSourceCooker(PerfSourceParser.SourceParserId, PerfSourceCooker.DataCookerId)]
     public sealed class PerfGenericEventsTable
     {
-        private readonly ProcessedEventData<PerfEventInfo> events;
+        private readonly ProcessedEventData<ValueTuple<PerfEventData, PerfFileInfo>> events;
         private readonly string[] values;
         private readonly long sessionTimestampOffset;
         private readonly EventHeaderEnumerator enumerator = new EventHeaderEnumerator();
@@ -229,7 +229,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                 Width = 200,
             });
 
-        private PerfGenericEventsTable(ProcessedEventData<PerfEventInfo> events, long sessionTimestampOffset)
+        private PerfGenericEventsTable(ProcessedEventData<ValueTuple<PerfEventData, PerfFileInfo>> events, long sessionTimestampOffset)
         {
             this.events = events;
             this.values = new string[this.events.Count];
@@ -240,7 +240,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             ITableBuilder tableBuilder,
             IDataExtensionRetrieval requiredData)
         {
-            var events = requiredData.QueryOutput<ProcessedEventData<PerfEventInfo>>(PerfSourceCooker.EventsOutputPath);
+            var events = requiredData.QueryOutput<ProcessedEventData<ValueTuple<PerfEventData, PerfFileInfo>>>(PerfSourceCooker.EventsOutputPath);
             var sessionTimestampOffset = requiredData.QueryOutput<long>(PerfSourceCooker.SessionTimestampOffsetOutputPath);
             var table = new PerfGenericEventsTable(events, sessionTimestampOffset);
             var builder = tableBuilder.SetRowCount(table.values.Length);
@@ -269,63 +269,64 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             builder.AddColumn(columnRelatedId, Projection.Create(table.RelatedId));
             builder.AddColumn(columnTag, Projection.Create(table.Tag));
             builder.AddColumn(columnCount, Projection.Constant(1));
+            //tableBuilder.DefaultConfiguration.AddColumnRole(ColumnRole.StartTime, columnTimestamp.Metadata.Guid);
         }
 
-        public string GroupName(int i) => events[i].GetGroupName();
+        public string GroupName(int i) => events[i].Item1.GetGroupName();
 
-        public string EventName(int i) => events[i].GetEventName();
+        public string EventName(int i) => events[i].Item1.GetEventName();
 
-        public string TracepointId(int i) => events[i].TracepointId.ToString();
+        public string TracepointId(int i) => events[i].Item1.TracepointId.ToString();
 
-        public string SystemName(int i) => events[i].SystemName.ToString();
+        public string SystemName(int i) => events[i].Item1.SystemName.ToString();
 
-        public string TracepointName(int i) => events[i].TracepointName.ToString();
+        public string TracepointName(int i) => events[i].Item1.TracepointName.ToString();
 
-        public string ProviderName(int i) => events[i].ProviderName.ToString();
+        public string ProviderName(int i) => events[i].Item1.ProviderName.ToString();
 
-        public string ProviderOptions(int i) => events[i].ProviderOptions.ToString();
+        public string ProviderOptions(int i) => events[i].Item1.ProviderOptions.ToString();
 
-        public string EventHeaderName(int i) => events[i].GetEventHeaderName();
+        public string EventHeaderName(int i) => events[i].Item1.GetEventHeaderName();
 
-        public string FileName(int i) => events[i].FileInfo.FileName;
+        public string FileName(int i) => events[i].Item2.FileName;
 
-        public Timestamp Timestamp(int i) => events[i].GetTimestamp(this.sessionTimestampOffset);
+        public Timestamp Timestamp(int i) => events[i].Item1.GetTimestamp(this.sessionTimestampOffset);
 
-        public uint Cpu(int i) => events[i].Cpu;
+        public uint? Cpu(int i) => events[i].Item1.Cpu;
 
-        public uint Pid(int i) => events[i].Pid;
+        public uint? Pid(int i) => events[i].Item1.Pid;
 
-        public uint Tid(int i) => events[i].Tid;
+        public uint? Tid(int i) => events[i].Item1.Tid;
 
-        public bool HasEventHeader(int i) => events[i].HasEventHeader;
+        public bool HasEventHeader(int i) => events[i].Item1.HasEventHeader;
 
-        public Guid? ActivityId(int i) => events[i].ActivityId;
+        public Guid? ActivityId(int i) => events[i].Item1.ActivityId;
 
-        public Guid? RelatedId(int i) => events[i].RelatedId;
+        public Guid? RelatedId(int i) => events[i].Item1.RelatedId;
 
-        public EventHeaderFlags? EventHeaderFlags(int i) => events[i].EventHeaderFlags;
+        public EventHeaderFlags? EventHeaderFlags(int i) => events[i].Item1.EventHeaderFlags;
 
-        public ushort? Id(int i) => events[i].Id;
+        public ushort? Id(int i) => events[i].Item1.Id;
 
-        public byte? Version(int i) => events[i].Version;
+        public byte? Version(int i) => events[i].Item1.Version;
 
-        public ushort? Tag(int i) => events[i].Tag;
+        public ushort? Tag(int i) => events[i].Item1.Tag;
 
-        public EventOpcode? Opcode(int i) => events[i].Opcode;
+        public EventOpcode? Opcode(int i) => events[i].Item1.Opcode;
 
-        public EventLevel? Level(int i) => events[i].Level;
+        public EventLevel? Level(int i) => events[i].Item1.Level;
 
-        public ulong? Keyword(int i) => events[i].Keyword;
+        public ulong? Keyword(int i) => events[i].Item1.Keyword;
 
         public string Value(int i)
         {
             var value = this.values[i];
             if (value == null)
             {
-                var e = this.events[i];                
+                var e = this.events[i].Item1;                
                 lock (this.sb)
                 {
-                    e.AppendValueAsJson(this.enumerator, this.sb);
+                    e.AppendValueAsJson(this.sb, this.enumerator);
                     value = sb.ToString();
                     sb.Clear();
                     this.values[i] = value;
