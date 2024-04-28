@@ -4,9 +4,9 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
-    using System.Buffers.Binary;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
     using IPAddress = System.Net.IPAddress;
@@ -31,7 +31,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         private const long MaxSeconds = DaysToYear10000 * SecondsPerDay - UnixEpochSeconds;
 
         /// <summary>
-        /// ErrnoLookup(n) will return a non-null linuxErrno if
+        /// ErrnoLookup(n) will return a non-null value if
         /// <![CDATA[0 <= n < ErrnoFirstUnknownValue]]>.
         /// </summary>
         private const int ErrnoFirstUnknownValue = 134;
@@ -65,7 +65,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public const int DateTimeFullMaxChars = 28;
 
         /// <summary>
-        /// Maximum number of characters required to convert an linuxErrno linuxErrno,
+        /// Maximum number of characters required to convert an errno value,
         /// currently 20, e.g. "ENOTRECOVERABLE(131)".
         /// This is static readonly (not const) because it may be changed in the future.
         /// </summary>
@@ -151,14 +151,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Gets an encoding for ISO-8859-1 (Latin-1) characters, i.e. a cached
-        /// linuxErrno of Encoding.GetEncoding(28591).
+        /// value of Encoding.GetEncoding(28591).
         /// Provided because Encoding.Latin1 is not available in .NET Standard 2.1.
         /// </summary>
         public static Encoding EncodingLatin1 => encodingLatin1 ?? Utility.InterlockedInitSingleton(
             ref encodingLatin1, Encoding.GetEncoding(28591));
 
         /// <summary>
-        /// Gets an encoding for UTF-32 big-endian characters, i.e. a cached linuxErrno
+        /// Gets an encoding for UTF-32 big-endian characters, i.e. a cached value
         /// of Encoding.GetEncoding(12001).
         /// Provided because Encoding.BigEndianUTF32 is not available in .NET Standard 2.1.
         /// </summary>
@@ -236,7 +236,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Converts the low 4 bits of the provided linuxErrno to an uppercase hexadecimal character.
+        /// Converts the low 4 bits of the provided value to an uppercase hexadecimal character.
         /// </summary>
         public static char ToHexChar(int nibble)
         {
@@ -245,13 +245,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as string, respecting convertOptions
-        /// flag BoolOutOfRangeAsString: If linuxErrno is 0/1, returns "false"/"true".
+        /// Formats the provided integer value as string, respecting convertOptions
+        /// flag BoolOutOfRangeAsString: If value is 0/1, returns "false"/"true".
         /// Otherwise, if convertOptions has BoolOutOfRangeAsString, returns a string
-        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, returns linuxErrno like 5 or -12.
+        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, returns value like 5 or -12.
         /// <br/>
-        /// Note: input linuxErrno is UInt32 because Bool8 and Bool16 should not be
-        /// sign-extended, i.e. linuxErrno should come from a call to GetU8 or GetU32,
+        /// Note: input value is UInt32 because Bool8 and Bool16 should not be
+        /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// Requires appropriately-sized destination buffer, Length >= BooleanMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -294,13 +294,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as string, respecting convertOptions
-        /// flag BoolOutOfRangeAsString: If linuxErrno is 0/1, returns "false"/"true".
+        /// Formats the provided integer value as string, respecting convertOptions
+        /// flag BoolOutOfRangeAsString: If value is 0/1, returns "false"/"true".
         /// Otherwise, if convertOptions has BoolOutOfRangeAsString, returns a string
-        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, returns linuxErrno like 5 or -12.
+        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, returns value like 5 or -12.
         /// <br/>
-        /// Note: input linuxErrno is UInt32 because Bool8 and Bool16 should not be
-        /// sign-extended, i.e. linuxErrno should come from a call to GetU8 or GetU32,
+        /// Note: input value is UInt32 because Bool8 and Bool16 should not be
+        /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// </summary>
         public static string BooleanToString(
@@ -311,13 +311,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as string, respecting convertOptions
-        /// flag BoolOutOfRangeAsString: If linuxErrno is 0/1, appends "false"/"true".
+        /// Formats the provided integer value as string, respecting convertOptions
+        /// flag BoolOutOfRangeAsString: If value is 0/1, appends "false"/"true".
         /// Otherwise, if convertOptions has BoolOutOfRangeAsString, appends a string
-        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, appends linuxErrno like 5 or -12.
+        /// like "BOOL(5)" or "BOOL(-12)". Otherwise, appends value like 5 or -12.
         /// <br/>
-        /// Note: input linuxErrno is UInt32 because Bool8 and Bool16 should not be
-        /// sign-extended, i.e. linuxErrno should come from a call to GetU8 or GetU32,
+        /// Note: input value is UInt32 because Bool8 and Bool16 should not be
+        /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// </summary>
         public static StringBuilder BooleanAppend(
@@ -329,10 +329,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting
+        /// Appends the provided value formatted as a JSON value, respecting
         /// convertOptions flag BoolOutOfRangeAsString. Returns sb.
-        /// Note: input linuxErrno is UInt32 because Bool8 and Bool16 should not be
-        /// sign-extended, i.e. linuxErrno should come from a call to GetU8 or GetU32,
+        /// Note: input value is UInt32 because Bool8 and Bool16 should not be
+        /// sign-extended, i.e. value should come from a call to GetU8 or GetU32,
         /// not a call to GetI8 or GetI32.
         /// </summary>
         public static StringBuilder BooleanAppendJson(
@@ -358,7 +358,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a UTF-32 code point, or as '\uFFFD' if invalid.
+        /// Formats the provided integer value as a UTF-32 code point, or as '\uFFFD' if invalid.
         /// Requires appropriately-sized destination buffer, up to Char32MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
@@ -400,7 +400,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided DateTime linuxErrno as a string like "2020-02-02T02:02:02Z".
+        /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02Z".
         /// Requires appropriately-sized destination buffer, Length >= DateTimeNoSubsecondsMaxChars chars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
@@ -414,7 +414,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided DateTime linuxErrno as a string like "2020-02-02T02:02:02Z".
+        /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02Z".
         /// </summary>
         public static string DateTimeNoSubsecondsToString(DateTime value)
         {
@@ -422,7 +422,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided DateTime linuxErrno formatted as a string like "2020-02-02T02:02:02Z".
+        /// Appends the provided DateTime value formatted as a string like "2020-02-02T02:02:02Z".
         /// </summary>
         public static StringBuilder DateTimeNoSubsecondsAppend(StringBuilder sb, DateTime value)
         {
@@ -430,7 +430,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided DateTime linuxErrno as a string like "2020-02-02T02:02:02.1234567Z".
+        /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02.1234567Z".
         /// Requires appropriately-sized destination buffer, Length >= DateTimeFullMaxChars chars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
@@ -455,7 +455,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided DateTime linuxErrno as a string like "2020-02-02T02:02:02.1234567Z".
+        /// Formats the provided DateTime value as a string like "2020-02-02T02:02:02.1234567Z".
         /// </summary>
         public static string DateTimeFullToString(DateTime value)
         {
@@ -463,7 +463,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided DateTime linuxErrno formatted as a string like "2020-02-02T02:02:02.1234567Z".
+        /// Appends the provided DateTime value formatted as a string like "2020-02-02T02:02:02.1234567Z".
         /// </summary>
         public static StringBuilder DateTimeFullAppend(StringBuilder sb, DateTime value)
         {
@@ -471,8 +471,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns true if the provided linuxErrno is linuxErrno that will return a non-null
-        /// linuxErrno from ErrnoLookup. Note that this returns true for 0, even though 0
+        /// Returns true if the provided linuxErrno would result in a non-null value
+        /// returned from ErrnoLookup. Note that this returns true for 0, even though 0
         /// is not really a valid error number.
         /// </summary>
         public static bool ErrnoIsKnown(int linuxErrno)
@@ -481,7 +481,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// If the specified linuxErrno is a recognized Linux error number, returns a
+        /// If the specified value is a recognized Linux error number, returns a
         /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise returns null.
         /// </summary>
         public static string? ErrnoLookup(int linuxErrno)
@@ -492,7 +492,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// If the specified linuxErrno is a recognized Linux error number, returns a
+        /// If the specified value is a recognized Linux error number, returns a
         /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise, if convertOptions has
         /// ErrnoUnknownAsString, returns a string like "ERRNO(404)". Otherwise,
         /// returns a string like "404".
@@ -536,7 +536,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// If the specified linuxErrno is a recognized Linux error number, returns a
+        /// If the specified value is a recognized Linux error number, returns a
         /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise, if convertOptions has
         /// ErrnoUnknownAsString, returns a string like "ERRNO(404)". Otherwise,
         /// returns a string like "404".
@@ -549,7 +549,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// If the specified linuxErrno is a recognized Linux error number, appends a
+        /// If the specified value is a recognized Linux error number, appends a
         /// string like "ERRNO(0)" or "ENOENT(2)". Otherwise, if convertOptions has
         /// ErrnoUnknownAsString, appends a string like "ERRNO(404)". Otherwise,
         /// returns a string like "404".
@@ -563,7 +563,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting convertOptions
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
         /// flags ErrnoKnownAsString and ErrnoUnknownAsString. Returns sb.
         /// </summary>
         public static StringBuilder ErrnoAppendJson(
@@ -594,7 +594,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided linuxErrno as a variable-length float string like
+        /// Formats the provided value as a variable-length float string like
         /// "-3.4028235e+38" formatted using InvariantCulture and either "g" or "g9"
         /// (depending on convertOptions flag FloatExtraPrecision).
         /// Requires appropriately-sized destination buffer, up to Float32MaxChars.
@@ -619,7 +619,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided linuxErrno as a variable-length float string like
+        /// Formats the provided value as a variable-length float string like
         /// "-3.4028235e+38" formatted using InvariantCulture and either "g" or "g9"
         /// (depending on convertOptions flag FloatExtraPrecision).
         /// </summary>
@@ -631,7 +631,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno as a variable-length float string like
+        /// Appends the provided value as a variable-length float string like
         /// "-3.4028235e+38" formatted using InvariantCulture and either "g" or "g9"
         /// (depending on convertOptions flag FloatExtraPrecision). Returns sb.
         /// </summary>
@@ -644,7 +644,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting convertOptions
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
         /// flags FloatExtraPrecision and FloatNonFiniteAsString. Returns sb.
         /// </summary>
         public static StringBuilder Float32AppendJson(
@@ -669,7 +669,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided linuxErrno as a variable-length double string like
+        /// Formats the provided value as a variable-length double string like
         /// "-1.7976931348623157e+308" formatted using InvariantCulture and either "g" or "g17"
         /// (depending on convertOptions flag FloatExtraPrecision).
         /// Requires appropriately-sized destination buffer, up to Float64MaxChars.
@@ -694,7 +694,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided linuxErrno as a variable-length double string like
+        /// Formats the provided value as a variable-length double string like
         /// "-1.7976931348623157e+308" formatted using InvariantCulture and either "g" or "g17"
         /// (depending on convertOptions flag FloatExtraPrecision).
         /// </summary>
@@ -706,7 +706,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno as a variable-length double string like
+        /// Appends the provided value as a variable-length double string like
         /// "-1.7976931348623157e+308" formatted using InvariantCulture and either "g" or "g17"
         /// (depending on convertOptions flag FloatExtraPrecision). Returns sb.
         /// </summary>
@@ -719,7 +719,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting convertOptions
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
         /// flags FloatExtraPrecision and FloatNonFiniteAsString. Returns sb.
         /// </summary>
         public static StringBuilder Float64AppendJson(
@@ -744,7 +744,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided Guid linuxErrno as a string like
+        /// Formats the provided Guid value as a string like
         /// "12345678-1234-1234-1234-1234567890AB".
         /// Requires appropriately-sized destination buffer, up to GuidMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -764,7 +764,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns a new string like "12345678-1234-1234-1234-1234567890AB" for the provided linuxErrno.
+        /// Returns a new string like "12345678-1234-1234-1234-1234567890AB" for the provided value.
         /// </summary>
         public static string GuidToString(in Guid value)
         {
@@ -772,7 +772,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends a string like "12345678-1234-1234-1234-1234567890AB" for the provided linuxErrno.
+        /// Appends a string like "12345678-1234-1234-1234-1234567890AB" for the provided value.
         /// </summary>
         public static StringBuilder GuidAppend(StringBuilder sb, in Guid value)
         {
@@ -863,7 +863,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string
+        /// Formats the provided integer value as a variable-length decimal string
         /// like "-1234" at the end of the destination buffer.
         /// Requires appropriately-sized destination buffer, up to Int32DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -884,7 +884,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string.
+        /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
         public static string Int32DecimalToString(Int32 value)
         {
@@ -892,7 +892,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided integer linuxErrno as a variable-length decimal string.
+        /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
         public static StringBuilder Int32DecimalAppend(StringBuilder sb, Int32 value)
@@ -901,7 +901,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string
+        /// Formats the provided integer value as a variable-length decimal string
         /// like "-1234" at the end of the destination buffer.
         /// Requires appropriately-sized destination buffer, up to Int64DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -922,7 +922,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string.
+        /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
         public static string Int64DecimalToString(Int64 value)
         {
@@ -930,7 +930,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided integer linuxErrno as a variable-length decimal string.
+        /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
         public static StringBuilder Int64DecimalAppend(StringBuilder sb, Int64 value)
@@ -939,7 +939,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided linuxErrno (big-endian) as an IPv4 address.
+        /// Formats the provided value (big-endian) as an IPv4 address.
         /// Requires appropriately-sized destination buffer, up to IPv4MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
@@ -963,7 +963,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided linuxErrno (big-endian) as an IPv4 address.
+        /// Formats the provided value (big-endian) as an IPv4 address.
         /// </summary>
         public static string IPv4ToString(UInt32 ipv4)
         {
@@ -971,7 +971,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno (big-endian) as an IPv4 address. Returns sb.
+        /// Appends the provided value (big-endian) as an IPv4 address. Returns sb.
         /// </summary>
         public static StringBuilder IPv4Append(StringBuilder sb, UInt32 ipv4)
         {
@@ -979,7 +979,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided 16-byte linuxErrno as an IPv6 address.
+        /// Formats the provided 16-byte value as an IPv6 address.
         /// Requires appropriately-sized destination buffer, up to IPv6MaxChars.
         /// Returns the formatted string (the filled portion of destination).
         /// Note: Allocates an IPAddress object to convertOptions the address.
@@ -1001,7 +1001,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided 16-byte linuxErrno as an IPv6 address.
+        /// Formats the provided 16-byte value as an IPv6 address.
         /// </summary>
         public static string IPv6ToString(ReadOnlySpan<byte> ipv6)
         {
@@ -1009,7 +1009,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided 16-byte linuxErrno as an IPv6 address. Returns sb.
+        /// Appends the provided 16-byte value as an IPv6 address. Returns sb.
         /// </summary>
         public static StringBuilder IPv6Append(StringBuilder sb, ReadOnlySpan<byte> ipv6)
         {
@@ -1114,7 +1114,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string
+        /// Formats the provided integer value as a variable-length decimal string
         /// like "1234" at the end of the destination buffer.
         /// Requires appropriately-sized destination buffer, up to UInt32DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -1132,7 +1132,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string.
+        /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
         public static string UInt32DecimalToString(UInt32 value)
         {
@@ -1140,7 +1140,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided integer linuxErrno as a variable-length decimal string.
+        /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
         public static StringBuilder UInt32DecimalAppend(StringBuilder sb, UInt32 value)
@@ -1149,7 +1149,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string
+        /// Formats the provided integer value as a variable-length decimal string
         /// like "1234" at the end of the destination buffer.
         /// Requires appropriately-sized destination buffer, up to UInt64DecimalMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -1167,7 +1167,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length decimal string.
+        /// Formats the provided integer value as a variable-length decimal string.
         /// </summary>
         public static string UInt64DecimalToString(UInt64 value)
         {
@@ -1175,7 +1175,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided integer linuxErrno as a variable-length decimal string.
+        /// Appends the provided integer value as a variable-length decimal string.
         /// Returns sb.
         /// </summary>
         public static StringBuilder UInt64DecimalAppend(StringBuilder sb, UInt64 value)
@@ -1184,7 +1184,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length hex string like
+        /// Formats the provided integer value as a variable-length hex string like
         /// "0x123ABC" at the end of the destination buffer.
         /// Requires appropriately-sized destination buffer, up to UInt32HexMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -1204,7 +1204,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns a new string like "0x123ABC" for the provided linuxErrno.
+        /// Returns a new string like "0x123ABC" for the provided value.
         /// </summary>
         public static string UInt32HexToString(UInt32 value)
         {
@@ -1220,7 +1220,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting convertOptions
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
         /// flag IntHexAsString. Returns sb.
         /// </summary>
         public static StringBuilder UInt32HexAppendJson(
@@ -1241,7 +1241,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Formats the provided integer linuxErrno as a variable-length hex string like
+        /// Formats the provided integer value as a variable-length hex string like
         /// "0x123ABC" at the end of the destination buffer.
         /// Requires appropriately-sized destination buffer, up to UInt64HexMaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -1261,7 +1261,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns a new string like "0x123ABC" for the provided linuxErrno.
+        /// Returns a new string like "0x123ABC" for the provided value.
         /// </summary>
         public static string UInt64HexToString(UInt64 value)
         {
@@ -1277,7 +1277,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting convertOptions
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
         /// flag IntHexAsString. Returns sb.
         /// </summary>
         public static StringBuilder UInt64HexAppendJson(
@@ -1335,7 +1335,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting convertOptions
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
         /// flag UnixTimeWithinRangeAsString. Returns sb.
         /// </summary>
         public static StringBuilder UnixTime32AppendJson(
@@ -1457,7 +1457,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends the provided linuxErrno formatted as a JSON linuxErrno, respecting convertOptions
+        /// Appends the provided value formatted as a JSON value, respecting convertOptions
         /// flags UnixTimeWithinRangeAsString and UnixTimeOutOfRangeAsString. Returns sb.
         /// </summary>
         public static StringBuilder UnixTime64AppendJson(

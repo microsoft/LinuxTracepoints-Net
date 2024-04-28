@@ -18,6 +18,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Initializes a new instance of the PerfTimeSpec struct.
+        /// Normalizes TvNsec to the range 0..999999999, i.e. if the tvNsec parameter
+        /// exceeds 999,999,999 then an appropriate number of seconds will be added to
+        /// TvSec. (Note that this may cause TvSec to overflow, which is not detected.)
         /// </summary>
         /// <param name="tvSec">Signed value indicating seconds since 1970.</param>
         /// <param name="tvNsec">Nanoseconds.</param>

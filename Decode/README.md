@@ -113,6 +113,30 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 
 ## Changelog
 
+### 0.1.2 (TBD)
+
+- Fix invalid TID returned from `GetNonSampleEventInfo`.
+- Fix `PerfTimeSpec.ToString()` to properly include subsecond values.
+- Renamed `PerfValue` to `PerfItemValue`.
+- Refactored some of the `PerfItemValue` fields into a separate `PerfItemType`
+  struct. Several `perfItemValue.<property>` members are now accessed as
+  `perfItemValue.Type.<property>`: ElementCount, FieldTag, TypeSize, Encoding,
+  ArrayFlags, EncodingAndArrayFlags, IsArrayOrElement, Format,
+  StructFieldCount.
+- `PerfSampleEventInfo.Format` is now non-nullable. In cases where it was
+  previously null, it now holds the Empty format (format.IsEmpty is true).
+- `EventHeaderEnumerator` now has a `GetItemType()` method. This returns a
+  subset of the information returned from `GetItemInfo()` and can be used as
+  an optimization when only the item type information is needed.
+- `PerfConvert` exposes new utility method `ReadGuidBigEndian`.
+- `PerfDataFileReader` exposes new property `SessionInfo`.
+- `PerfDataFileReader` exposes new method `HeaderString`.
+- Added `AsString` extension method for `PerfEventAttrType`.
+- `PerfTimeSpec` now implements `IComparable`, `IEquatable`, and overloads
+  the comparison operators.
+- `PerfTimeSpec` can now be constructed from a `DateTime`.
+- `PerfTimeSpec` exposes an `AddNanoseconds` method.
+
 ### 0.1.1 (2024-04-22)
 
 - Initial release.
