@@ -191,7 +191,7 @@
             return str;
         }
 
-        private static void CheckStringBytes(in PerfValue value, Encoding expected, int bomLength)
+        private static void CheckStringBytes(in PerfItemValue value, Encoding expected, int bomLength)
         {
             Encoding actual;
             var bytes = value.GetStringBytes(out actual);
@@ -270,7 +270,7 @@
             Assert.AreEqual("[ " + jsonString + " ]", BuilderToString(value.AppendJsonSimpleArrayTo(builder)));
         }
 
-        private static PerfValue MakeValue(
+        private static PerfItemValue MakeValue(
             Span<byte> bytes,
             EventHeaderFieldEncoding encoding,
             EventHeaderFieldFormat format,
@@ -297,28 +297,30 @@
                 default:
                     throw new ArgumentOutOfRangeException(nameof(encoding));
             }
-            return new PerfValue(
+            return new PerfItemValue(
                 bytes,
-                new PerfByteReader(fromBigEndian),
-                encoding,
-                format,
-                typeSize,
-                1);
+                new PerfItemType(
+                    new PerfByteReader(fromBigEndian),
+                    encoding,
+                    format,
+                    typeSize,
+                    1));
         }
 
-        private static PerfValue MakeStringValue(
+        private static PerfItemValue MakeStringValue(
             byte[] bytes,
             EventHeaderFieldEncoding encoding,
             EventHeaderFieldFormat format,
             bool fromBigEndian = false)
         {
-            return new PerfValue(
+            return new PerfItemValue(
                 bytes,
-                new PerfByteReader(fromBigEndian),
-                encoding,
-                format,
-                0,
-                1);
+                new PerfItemType(
+                    new PerfByteReader(fromBigEndian),
+                    encoding,
+                    format,
+                    0,
+                    1));
         }
     }
 }

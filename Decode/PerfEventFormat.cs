@@ -61,19 +61,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns an empty PerfEventFormat: SystemName="", Name="", PrintFmt="", Id=0, CommonFieldCount=0.
         /// </summary>
-        public static PerfEventFormat Empty
-        {
-            get
-            {
-                var value = empty;
-                if (value == null)
-                {
-                    value = new PerfEventFormat("", "", "", Array.Empty<PerfFieldFormat>(), 0, 0, 0, PerfEventDecodingStyle.None);
-                    empty = value;
-                }
-                return value;
-            }
-        }
+        public static PerfEventFormat Empty => empty ?? Utility.InterlockedInitSingleton(
+                ref empty,
+                new PerfEventFormat("", "", "", Array.Empty<PerfFieldFormat>(), 0, 0, 0, PerfEventDecodingStyle.None));
 
         /// <summary>
         /// Returns true if this is the empty Format.

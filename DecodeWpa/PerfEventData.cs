@@ -23,11 +23,15 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         private readonly ulong fileRelativeTime;
         private readonly PerfEventHeader header;
 
+        private readonly ushort topLevelFieldCount;
         private readonly PerfByteReader byteReader;
-        private readonly byte activityIdLength; // 0 if no activity ID, 16 if only activity ID, 32 if both activity and related IDs.
+
+        // The following fieldsCache are zero for non-Sample events.
+
+        private readonly byte activityIdLength; // EventHeader only. 0, 16, or 32.
         private readonly ushort activityIdStart; // EventHeader only. Offset into contents for activity ID + related ID.
-        private readonly ushort rawDataLength; // Sample events only.
-        private readonly ushort rawDataStart; // Sample events only.
+        private readonly ushort rawDataLength;
+        private readonly ushort rawDataStart;
         private readonly ushort eventHeaderNameLength; // EventHeader only. Length of the EventHeader event name.
         private readonly ushort eventHeaderNameStart; // EventHeader only. Offset into contents for the EventHeader event name.
 
@@ -40,12 +44,14 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             ulong fileRelativeTime)
         {
             var bytesSpan = bytes.Span;
+            var hasContent = bytesSpan.Length > 8;
             Debug.Assert(bytesSpan.Length >= 8);
 
-            this.contents = bytesSpan.Length > 8 ? bytesSpan.Slice(8).ToArray() : Array.Empty<byte>();
+            this.contents = hasContent ? bytesSpan.Slice(8).ToArray() : Array.Empty<byte>();
             this.eventDesc = PerfEventDesc.Empty;
             this.fileRelativeTime = fileRelativeTime;
             this.header = bytes.Header;
+            this.topLevelFieldCount = (ushort)(hasContent ? 1 : 0); // If there is content, we'll make a "raw" field.
             this.byteReader = byteReader;
         }
 
@@ -57,13 +63,17 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             PerfEventHeader header,
             in PerfNonSampleEventInfo info)
         {
+            Debug.Assert(info.EventDesc.Format.IsEmpty);
+
             var bytesSpan = info.BytesSpan;
+            var hasContent = bytesSpan.Length > 8;
             Debug.Assert(bytesSpan.Length >= 8);
 
-            this.contents = bytesSpan.Length > 8 ? bytesSpan.Slice(8).ToArray() : Array.Empty<byte>();
+            this.contents = hasContent ? bytesSpan.Slice(8).ToArray() : Array.Empty<byte>();
             this.eventDesc = info.EventDesc;
             this.fileRelativeTime = info.Time;
             this.header = header;
+            this.topLevelFieldCount = (ushort)(hasContent ? 1 : 0); // If there is content, we'll make a "raw" field.
             this.byteReader = byteReader;
         }
 
@@ -75,17 +85,24 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             PerfEventHeader header,
             in PerfSampleEventInfo info)
         {
-            var bytesSpan = info.BytesSpan;
-            Debug.Assert(bytesSpan.Length >= 8);
-            Debug.Assert(this.rawDataStart + this.rawDataLength <= bytesSpan.Length);
+            var format = info.Format;
+            Debug.Assert(format.Fields.Count >= format.CommonFieldCount);
 
-            this.contents = bytesSpan.Length > 8 ? bytesSpan.Slice(8).ToArray() : Array.Empty<byte>();
+            var bytesSpan = info.BytesSpan;
+            var hasContent = bytesSpan.Length > 8;
+            Debug.Assert(bytesSpan.Length >= 8);
+
+            this.contents = hasContent ? bytesSpan.Slice(8).ToArray() : Array.Empty<byte>();
             this.eventDesc = info.EventDesc;
             this.fileRelativeTime = info.Time;
             this.header = header;
+            this.topLevelFieldCount = format.IsEmpty
+                ? (ushort)(hasContent ? 1 : 0)
+                : (ushort)(format.Fields.Count - format.CommonFieldCount);
             this.byteReader = byteReader;
             this.rawDataStart = (ushort)(info.RawDataStart >= 8 ? info.RawDataStart - 8 : 0);
             this.rawDataLength = (ushort)info.RawDataLength;
+            Debug.Assert(this.rawDataStart + this.rawDataLength <= bytesSpan.Length);
         }
 
         /// <summary>
@@ -96,13 +113,17 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             PerfByteReader byteReader,
             PerfEventHeader header,
             in PerfSampleEventInfo info,
-            in EventHeaderEventInfo ehEventInfo)
+            in EventHeaderEventInfo ehEventInfo,
+            ushort topLevelFieldCount)
             : this(byteReader, header, info)
         {
             Debug.Assert(!info.EventDesc.Format.IsEmpty);
-            var userDataStart = (ushort)(this.rawDataStart + this.eventDesc.Format.CommonFieldsSize);
 
+            this.topLevelFieldCount = topLevelFieldCount;
+
+            var userDataStart = (ushort)(this.rawDataStart + this.eventDesc.Format.CommonFieldsSize);
             Debug.Assert(userDataStart + ehEventInfo.NameStart + ehEventInfo.NameLength <= this.contents.Length);
+
             this.eventHeaderNameStart = (ushort)(userDataStart + ehEventInfo.NameStart);
             this.eventHeaderNameLength = (ushort)ehEventInfo.NameLength;
 
@@ -113,6 +134,11 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                 this.activityIdStart = (ushort)(userDataStart + ehEventInfo.ActivityIdStart);
             }
         }
+
+        /// <summary>
+        /// Gets the size of the event data bytes, NOT including the 8-byte header.
+        /// </summary>
+        public int ContentsLength => this.contents.Length;
 
         /// <summary>
         /// Gets event data bytes as ReadOnlyMemory, NOT including the 8-byte header.
@@ -181,6 +207,21 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// 8-byte header in host byte order. Contains event type and size.
         /// </summary>
         public PerfEventHeader Header => this.header;
+
+        /// <summary>
+        /// Gets the number of top-level fieldsCache.
+        /// <list type="bullet"><item>
+        /// For EventHeader Sample events, this is the number of EventHeader top-level fieldsCache
+        /// (does not include fieldsCache nested within a struct).
+        /// </item><item>
+        /// For Sample events with tracefs format information, this is the number of tracefs
+        /// fieldsCache, not including the Common fieldsCache.
+        /// </item><item>
+        /// For events without tracefs format information (i.e. non-Sample events), this is
+        /// 1 if ContentsLength > 0, or 0 if ContentsLength == 0.
+        /// </item></list>
+        /// </summary>
+        public ushort TopLevelFieldCount => this.topLevelFieldCount;
 
         /// <summary>
         /// Gets a byte reader configured for the byte order of the event's data.
@@ -651,8 +692,23 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         }
 
         /// <summary>
-        /// Formats this event's value as JSON (one JSON name-value pair per field) and appends
-        /// it to the given StringBuilder. If the event has no fields, this appends nothing.
+        /// Formats this event's fieldsCache as JSON text (one JSON name-value pair per field)
+        /// and appends it to the given StringBuilder.
+        /// <list type="bullet"><item>
+        /// If the event contains no tracefs format information and no content (e.g. a
+        /// non-Sample event with ContentLength == 0), this appends nothing.
+        /// </item><item>
+        /// If the event contains no tracefs format information but contains content
+        /// (e.g. a non-Sample event with ContentLength != 0), this appends a "raw" field
+        /// with the raw data formatted as a string of hex bytes.
+        /// </item><item>
+        /// If the event contains tracefs format information but is not an EventHeader
+        /// event, this appends all of the user fieldsCache (skips the Common fieldsCache).
+        /// If the event has no fieldsCache, this appends nothing.
+        /// </item><item>
+        /// If the event is an EventHeader event, this appends all of the EventHeader
+        /// fieldsCache. If the event has no fieldsCache, this appends nothing.
+        /// </item></list>
         /// </summary>
         /// <param name="sb">StringBuilder that receives the field values.</param>
         /// <param name="enumerator">
@@ -661,16 +717,16 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// be used for multiple operations.
         /// </param>
         /// <param name="addCommaBeforeNextItem">
-        /// True if a "," should be appended before any JSON text.
+        /// True if a "," should be appended before any appended output.
         /// </param>
         /// <param name="convertOptions">
         /// Conversion options to use when formatting the JSON.
         /// </param>
         /// <returns>
-        /// True if a "," would be needed before any subsequent JSON text. This is true if
-        /// addCommaBeforeNextItem or if any JSON text was appended.
+        /// True if a "," would be needed before any subsequent output. This is true if
+        /// addCommaBeforeNextItem was true or if any output was appended.
         /// </returns>
-        public bool AppendValueAsJson(
+        public bool AppendFieldsAsJson(
             StringBuilder sb,
             EventHeaderEnumerator enumerator,
             bool addCommaBeforeNextItem = false,
@@ -710,7 +766,6 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             else
             {
                 // TraceFS format file decoding.
-                var colon = space ? ": " : ":";
                 var rawData = this.RawDataSpan;
                 for (int fieldIndex = format.CommonFieldCount; fieldIndex < format.Fields.Count; fieldIndex += 1)
                 {
@@ -720,24 +775,69 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                     }
 
                     needComma = true;
-
-                    var field = format.Fields[fieldIndex];
-                    PerfConvert.StringAppendJson(sb, field.Name);
-                    sb.Append(colon);
-
-                    var fieldVal = field.GetFieldValue(rawData, this.byteReader);
-                    if (fieldVal.IsArrayOrElement)
-                    {
-                        fieldVal.AppendJsonSimpleArrayTo(sb, convertOptions);
-                    }
-                    else
-                    {
-                        fieldVal.AppendJsonScalarTo(sb, convertOptions);
-                    }
+                    AppendFieldAsJson(sb, format.Fields[fieldIndex], convertOptions, rawData);
                 }
             }
 
             return needComma;
+        }
+
+        /// <summary>
+        /// Formats this event's Common fieldsCache as JSON text (one JSON name-value pair per
+        /// field) and appends it to the given StringBuilder. If the event has no Common
+        /// fieldsCache (e.g. if the event is a non-Sample event), this appends nothing. In
+        /// current tracefs, the common fieldsCache are common_type, common_flags,
+        /// common_preempt_count, and common_pid.
+        /// </summary>
+        /// <param name="sb">StringBuilder that receives the field values.</param>
+        /// <param name="addCommaBeforeNextItem">
+        /// True if a "," should be appended before any appended output.
+        /// </param>
+        /// <param name="convertOptions">
+        /// Conversion options to use when formatting the JSON.
+        /// </param>
+        /// <returns>
+        /// True if a "," would be needed before any subsequent output. This is true if
+        /// addCommaBeforeNextItem was true or if any output was appended.
+        /// </returns>
+        public bool AppendCommonFieldsAsJson(
+            StringBuilder sb,
+            bool addCommaBeforeNextItem = false,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
+        {
+            bool needComma = addCommaBeforeNextItem;
+            var comma = convertOptions.HasFlag(PerfConvertOptions.Space) ? ", " : "";
+            var rawData = this.RawDataSpan;
+            var format = this.Format;
+
+            for (int fieldIndex = 0; fieldIndex < format.CommonFieldCount; fieldIndex += 1)
+            {
+                if (needComma)
+                {
+                    sb.Append(comma);
+                }
+
+                needComma = true;
+                AppendFieldAsJson(sb, format.Fields[fieldIndex], convertOptions, rawData);
+            }
+
+            return needComma;
+        }
+
+        /// <summary>
+        /// Formats this the specified field as a JSON "name": "value" pair and appends
+        /// it to the given StringBuilder.
+        /// </summary>
+        /// <param name="sb">StringBuilder that receives the field values.</param>
+        /// <param name="field">
+        /// The field to format, i.e. this.Format.Fields[fieldIndex].
+        /// </param>
+        /// <param name="convertOptions">
+        /// Conversion options to use when formatting the JSON.
+        /// </param>
+        public void AppendFieldAsJson(StringBuilder sb, PerfFieldFormat field, PerfConvertOptions convertOptions = PerfConvertOptions.Default)
+        {
+            this.AppendFieldAsJson(sb, field, convertOptions, this.RawDataSpan);
         }
 
         private static int PopCnt(UInt32 n)
@@ -745,6 +845,22 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             n = n - ((n >> 1) & 0x55555555);
             n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
             return (int)((((n + (n >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24);
+        }
+
+        private void AppendFieldAsJson(StringBuilder sb, PerfFieldFormat field, PerfConvertOptions convertOptions, ReadOnlySpan<byte> rawData)
+        {
+            PerfConvert.StringAppendJson(sb, field.Name);
+            sb.Append(convertOptions.HasFlag(PerfConvertOptions.Space) ? ": " : ":");
+
+            var fieldVal = field.GetFieldValue(rawData, this.byteReader);
+            if (fieldVal.Type.IsArrayOrElement)
+            {
+                fieldVal.AppendJsonSimpleArrayTo(sb, convertOptions);
+            }
+            else
+            {
+                fieldVal.AppendJsonScalarTo(sb, convertOptions);
+            }
         }
 
         private int PidOffset(UInt32 sampleType)

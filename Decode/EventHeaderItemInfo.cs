@@ -9,7 +9,8 @@ namespace Microsoft.LinuxTracepoints.Decode
     using StringBuilder = System.Text.StringBuilder;
 
     /// <summary>
-    /// Event item attributes (attributes of a value, array, or structure within the event)
+    /// Provides access to the name and value of an EventHeader event item. An item is a
+    /// field of the event or an element of an array field of the event. This struct is
     /// returned by the GetItemInfo() method of EventHeaderEnumerator.
     /// </summary>
     public readonly ref struct EventHeaderItemInfo
@@ -19,7 +20,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         internal EventHeaderItemInfo(
             ReadOnlySpan<byte> nameBytes,
-            PerfValue value)
+            PerfItemValue value)
         {
             this.NameBytes = nameBytes;
             this.Value = value;
@@ -38,7 +39,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Field value.
         /// </summary>
-        public PerfValue Value { get; }
+        public PerfItemValue Value { get; }
+
+        /// <summary>
+        /// Field type (same as Value.Type).
+        /// </summary>
+        public PerfItemType Type => this.Value.Type;
 
         /// <summary>
         /// Gets a new string (decoded from NameBytes) containing
@@ -59,7 +65,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             PerfConvert.StringAppend(sb, this.NameBytes, Encoding.UTF8);
 
-            var fieldTag = this.Value.FieldTag;
+            var fieldTag = this.Value.Type.FieldTag;
             if (fieldTag == 0)
             {
                 sb.Append(" = ");

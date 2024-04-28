@@ -41,19 +41,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Gets the empty event descriptor.
         /// </summary>
-        public static PerfEventDesc Empty
-        {
-            get
-            {
-                var value = empty;
-                if (value == null)
-                {
-                    value = new PerfEventDesc(default, "", PerfEventFormat.Empty, null);
-                    empty = value;
-                }
-                return value;
-            }
-        }
+        public static PerfEventDesc Empty => empty ?? Utility.InterlockedInitSingleton(
+                ref empty, new PerfEventDesc(default, "", PerfEventFormat.Empty, null));
 
         /// <summary>
         /// Event's perf_event_attr, or an attr with size = 0 if not available.
@@ -81,19 +70,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.Format = format;
         }
 
-        private static ReadOnlyCollection<ulong> EmptyIds
-        {
-            get
-            {
-                var value = emptyIds;
-                if (value == null)
-                {
-                    value = new ReadOnlyCollection<ulong>(Array.Empty<ulong>());
-                    emptyIds = value;
-                }
-                return value;
-            }
-        }
+        private static ReadOnlyCollection<ulong> EmptyIds => emptyIds ?? Utility.InterlockedInitSingleton(
+                ref emptyIds, new ReadOnlyCollection<ulong>(Array.Empty<ulong>()));
 
         /// <summary>
         /// Returns this.Name.

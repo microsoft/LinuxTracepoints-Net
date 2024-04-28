@@ -10,9 +10,9 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
 
     [ProcessingSource(
         "{ad303744-aeaa-5ffa-2315-66206f995c54}", // tlgguid(PerfProcessingSource)
-        "perf.data",
+        "Linux perf.data",
         "Loads data from Linux perf.data files")]
-    [FileDataSource(".data", "perf.data files")]
+    [FileDataSource(".data", "Linux perf.data files")]
     public sealed class PerfProcessingSource : ProcessingSource
     {
         public override ProcessingSourceInfo GetAboutInfo()

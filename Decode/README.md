@@ -43,8 +43,8 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 
   - If `sampleEventInfo.Format.DecodingStyle` is `TraceEventFormat`, decode the event using
     `sampleEventInfo.Format.Fields`. Use
-    `sampleEventInfo.Format.Fields[i].GetFieldValue(sampleEventInfo)` to get a `PerfValue` for
-    the field at index `i`. The `PerfValue` has the field's type information and a
+    `sampleEventInfo.Format.Fields[i].GetFieldValue(sampleEventInfo)` to get a `PerfItemValue` for
+    the field at index `i`. The `PerfItemValue` has the field's type information and a
     `ReadOnlySpan<byte>` with the field's value. It also has helper methods for accessing the
     field's value as a .NET type or as a string. (The first `Format.CommonFieldCount` fields
     are usually not interesting and are typically skipped.)
@@ -106,7 +106,7 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 - `PerfTimeSpec` struct - represents a timestamp as a `time64_t` plus nanoseconds.
   Semantics equivalent to `struct timespec` from `time.h`.
 
-- `PerfValue` struct - represents a field value from a tracepoint event. Includes type
+- `PerfItemValue` struct - represents the value of a field of a tracepoint event. Includes type
   information. Provides byte-order-aware helpers for accessing the value as a .NET type
   (e.g. `GetU32`, `GetF64`, `GetGuid`). Provides helpers for formatting the value as a
   `string` or appending it to a `StringBuilder`.

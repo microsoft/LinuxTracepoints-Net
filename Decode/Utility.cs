@@ -4,7 +4,7 @@
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;
-    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
+    using Interlocked = System.Threading.Interlocked;
     using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
     using NumberStyles = System.Globalization.NumberStyles;
@@ -132,6 +132,15 @@ namespace Microsoft.LinuxTracepoints.Decode
                     CultureInfo.InvariantCulture,
                     out value);
             }
+        }
+
+        /// <summary>
+        /// Atomically: old = location; if (old != null) { return old; } else { location = value; return value; }
+        /// </summary>
+        public static T InterlockedInitSingleton<T>(ref T? location, T value)
+            where T : class
+        {
+            return Interlocked.CompareExchange(ref location, value, null) ?? value;
         }
     }
 }

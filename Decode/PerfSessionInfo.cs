@@ -35,19 +35,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns the empty PerfSessionInfo instance.
         /// </summary>
-        public static PerfSessionInfo Empty
-        {
-            get
-            {
-                var value = empty;
-                if (value == null)
-                {
-                    value = new PerfSessionInfo();
-                    empty = value;
-                }
-                return value;
-            }
-        }
+        public static PerfSessionInfo Empty => empty ?? Utility.InterlockedInitSingleton(
+                ref empty, new PerfSessionInfo());
 
         /// <summary>
         /// Returns true if the the session's event data is formatted in big-endian

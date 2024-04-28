@@ -1083,7 +1083,34 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// <para>
-        /// Gets information that applies to the current item, e.g. the item's name,
+        /// Gets type information of the current item. This is a subset of
+        /// the information returned by GetItemInfo().
+        /// The current item changes each time MoveNext() is called.
+        /// </para><para>
+        /// PRECONDITION: Can be called when State > BeforeFirstItem, i.e. after MoveNext
+        /// returns true.
+        /// </para>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
+        public PerfItemType GetItemType()
+        {
+            if (m_state <= EventHeaderEnumeratorState.BeforeFirstItem)
+            {
+                throw new InvalidOperationException(); // PRECONDITION
+            }
+
+            return new PerfItemType(
+                m_byteReader,
+                m_fieldType.Encoding,
+                m_fieldType.Format,
+                m_elementSize,
+                m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
+                m_fieldType.Tag);
+        }
+
+        /// <summary>
+        /// <para>
+        /// Gets information about the current item, e.g. the item's name,
         /// the item's type (integer, string, float, etc.), data pointer, data size.
         /// The current item changes each time MoveNext() is called.
         /// </para><para>
@@ -1129,14 +1156,15 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             return new EventHeaderItemInfo(
                 eventDataSpan.Slice(m_stackTop.NameOffset, m_stackTop.NameSize),
-                new PerfValue(
+                new PerfItemValue(
                     eventDataSpan.Slice(m_dataPosCooked, m_itemSizeCooked),
-                    m_byteReader,
-                    m_fieldType.Encoding,
-                    m_fieldType.Format,
-                    m_elementSize,
-                    m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
-                    m_fieldType.Tag));
+                    new PerfItemType(
+                        m_byteReader,
+                        m_fieldType.Encoding,
+                        m_fieldType.Format,
+                        m_elementSize,
+                        m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
+                        m_fieldType.Tag)));
         }
 
         /// <summary>
@@ -1515,9 +1543,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                     case EventHeaderEnumeratorState.Value:
 
                         itemInfo = GetItemInfo(eventDataSpan);
-                        if (wantName && !itemInfo.Value.IsArrayOrElement)
+                        if (wantName && !itemInfo.Value.Type.IsArrayOrElement)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
                         }
 
                         itemInfo.Value.AppendJsonScalarTo(w.WriteValue());
@@ -1528,10 +1556,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                         itemInfo = GetItemInfo(eventDataSpan);
                         if (wantName)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
                         }
 
-                        if (itemInfo.Value.TypeSize != 0)
+                        if (itemInfo.Value.Type.TypeSize != 0)
                         {
                             itemInfo.Value.AppendJsonSimpleArrayTo(w.WriteValue(), convertOptions);
                             ok = MoveNextSibling(eventDataSpan);
@@ -1552,9 +1580,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                         itemInfo = GetItemInfo(eventDataSpan);
 
-                        if (wantName && !itemInfo.Value.IsArrayOrElement)
+                        if (wantName && !itemInfo.Value.Type.IsArrayOrElement)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
                         }
 
                         w.WriteStartObject();

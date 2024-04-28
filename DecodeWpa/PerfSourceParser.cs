@@ -212,8 +212,30 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                             }
                             else
                             {
-                                var info = enumerator.GetEventInfo();
-                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, sampleEventInfo, info);
+                                var userData = sampleEventInfo.UserDataSpan;
+                                var info = enumerator.GetEventInfo(userData);
+
+                                uint topLevelFieldCount = 0;
+                                uint structFields = 0;
+                                while (enumerator.MoveNextMetadata(userData))
+                                {
+                                    if (structFields == 0)
+                                    {
+                                        topLevelFieldCount += 1;
+                                    }
+                                    else
+                                    {
+                                        structFields -= 1;
+                                    }
+
+                                    var type = enumerator.GetItemType();
+                                    if (type.Encoding == EventHeaderFieldEncoding.Struct)
+                                    {
+                                        structFields += type.StructFieldCount;
+                                    }
+                                }
+
+                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, sampleEventInfo, info, (ushort)topLevelFieldCount);
                             }
                         }
                         else

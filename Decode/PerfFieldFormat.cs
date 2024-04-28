@@ -912,10 +912,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Event information, used for sampleEventInfo.RawDataSpan and sampleEventInfo.ByteReader.
         /// </param>
         /// <returns>
-        /// A PerfValue with the field value, or an empty PerfValue (result.Encoding == Invalid)
+        /// A PerfItemValue with the field value, or an empty PerfItemValue (result.Encoding == Invalid)
         /// if the event's expected offset exceeds eventRawData.Length.
         /// </returns>
-        public PerfValue GetFieldValue(in PerfSampleEventInfo sampleEventInfo)
+        public PerfItemValue GetFieldValue(in PerfSampleEventInfo sampleEventInfo)
         {
             return this.GetFieldValue(sampleEventInfo.RawDataSpan, sampleEventInfo.ByteReader);
         }
@@ -926,10 +926,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="eventRawData">Event's "raw" section, e.g. sampleEventInfo.RawDataSpan.</param>
         /// <param name="byteReader">Event's byte order, e.g. sampleEventInfo.ByteReader.</param>
         /// <returns>
-        /// A PerfValue with the field value, or an empty PerfValue (result.Encoding == Invalid)
+        /// A PerfItemValue with the field value, or an empty PerfItemValue (result.Encoding == Invalid)
         /// if the event's expected offset exceeds eventRawData.Length.
         /// </returns>
-        public PerfValue GetFieldValue(
+        public PerfItemValue GetFieldValue(
             ReadOnlySpan<byte> eventRawData,
             PerfByteReader byteReader)
         {
@@ -1026,13 +1026,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         FixedSize:
 
-            return new PerfValue(
+            return new PerfItemValue(
                 bytes,
-                byteReader,
-                this.DeducedEncoding,
-                this.DeducedFormat,
-                unchecked((byte)(1 << this.ElementSizeShift)),
-                arrayCount);
+                new PerfItemType(
+                    byteReader,
+                    this.DeducedEncoding,
+                    this.DeducedFormat,
+                    unchecked((byte)(1 << this.ElementSizeShift)),
+                    arrayCount));
         }
 
         /// <summary>

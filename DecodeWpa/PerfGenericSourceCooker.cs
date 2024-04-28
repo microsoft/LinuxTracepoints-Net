@@ -17,23 +17,24 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
     /// Generic cooker for PerfSourceParser.
     /// Collects all event data and file info from a perf.data processing session.
     /// </summary>
-    public sealed class PerfSourceCooker : SourceDataCooker<PerfEventData, PerfFileInfo, PerfEventHeaderType>
+    public sealed class PerfGenericSourceCooker : SourceDataCooker<PerfEventData, PerfFileInfo, PerfEventHeaderType>
     {
         private static readonly ReadOnlyHashSet<PerfEventHeaderType> EmptySet = new ReadOnlyHashSet<PerfEventHeaderType>(new HashSet<PerfEventHeaderType>());
 
-        public static readonly DataCookerPath DataCookerPath = DataCookerPath.ForSource(PerfSourceParser.SourceParserId, PerfSourceCooker.DataCookerId);
-        public static readonly DataOutputPath EventsOutputPath = DataOutputPath.ForSource(PerfSourceParser.SourceParserId, PerfSourceCooker.DataCookerId, nameof(Events));
-        public static readonly DataOutputPath SessionTimestampOffsetOutputPath = DataOutputPath.ForSource(PerfSourceParser.SourceParserId, PerfSourceCooker.DataCookerId, nameof(SessionTimestampOffset));
+        public static readonly DataCookerPath DataCookerPath = DataCookerPath.ForSource(PerfSourceParser.SourceParserId, PerfGenericSourceCooker.DataCookerId);
+        public static readonly DataOutputPath EventsOutputPath = DataOutputPath.ForSource(PerfSourceParser.SourceParserId, PerfGenericSourceCooker.DataCookerId, nameof(Events));
+        public static readonly DataOutputPath SessionTimestampOffsetOutputPath = DataOutputPath.ForSource(PerfSourceParser.SourceParserId, PerfGenericSourceCooker.DataCookerId, nameof(SessionTimestampOffset));
+        public static readonly DataOutputPath MaxTopLevelFieldCountOutputPath = DataOutputPath.ForSource(PerfSourceParser.SourceParserId, PerfGenericSourceCooker.DataCookerId, nameof(MaxTopLevelFieldCount));
 
         private PerfFileInfo? lastContext;
 
-        public PerfSourceCooker()
+        public PerfGenericSourceCooker()
             : base(DataCookerPath)
         {
             return;
         }
 
-        public const string DataCookerId = nameof(PerfSourceCooker);
+        public const string DataCookerId = nameof(PerfGenericSourceCooker);
 
         public override string Description => "Collects all event data and file info from a perf.data processing session.";
 
@@ -47,10 +48,20 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         [DataOutput]
         public long SessionTimestampOffset { get; private set; } = long.MinValue;
 
+        [DataOutput]
+        public ushort MaxTopLevelFieldCount { get; private set; } = 0;
+
         public override DataProcessingResult CookDataElement(PerfEventData data, PerfFileInfo context, CancellationToken cancellationToken)
         {
             this.lastContext = context;
             this.Events.AddEvent(new ValueTuple<PerfEventData, PerfFileInfo>(data, context));
+
+            var topLevelFieldCount = data.TopLevelFieldCount;
+            if (topLevelFieldCount > this.MaxTopLevelFieldCount)
+            {
+                this.MaxTopLevelFieldCount = topLevelFieldCount;
+            }
+
             return DataProcessingResult.Processed;
         }
 
