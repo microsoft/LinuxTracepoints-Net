@@ -8,21 +8,9 @@
     <IncludeSymbols>False</IncludeSymbols>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <NuspecFile>DecodePerfToJson.nuspec</NuspecFile>
+    <NuspecProperties>csVersion=$(Version);commit=$(commit)</NuspecProperties>
     <PublishDocumentationFiles>False</PublishDocumentationFiles>
   </PropertyGroup>
-
-  <Choose>
-    <When Condition=" '$(CDP_DEFINITION_BUILD_COUNT)' == ''">
-      <PropertyGroup>
-        <NuspecProperties>csVersion=$(VersionPrefix)-$(VersionSuffix);commit=''</NuspecProperties>
-      </PropertyGroup>
-    </When>
-    <When Condition=" '$(CDP_DEFINITION_BUILD_COUNT)' != ''">
-      <PropertyGroup>
-        <NuspecProperties>csVersion=$(VersionPrefix).$(CDP_DEFINITION_BUILD_COUNT);commit=$(commit)</NuspecProperties>
-      </PropertyGroup>
-    </When>
-  </Choose>
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
