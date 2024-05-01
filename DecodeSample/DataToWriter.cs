@@ -179,7 +179,7 @@ namespace DecodeSample
                                 this.scratch,
                                 false,
                                 PerfConvertOptions.Default & ~PerfConvertOptions.RootName); // We don't want a JSON "ItemName": prefix.
-                            this.writer.WriteLine($"  {itemInfo.NameAsString} = {this.scratch}");
+                            this.writer.WriteLine($"  {itemInfo.GetNameAsString()} = {this.scratch}");
                         }
 
                         if (this.enumerator.State == EventHeaderEnumeratorState.Error)

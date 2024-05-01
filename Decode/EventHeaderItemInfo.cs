@@ -19,22 +19,34 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Initializes a new instance of the EventHeaderItemInfo struct.
         /// </summary>
         internal EventHeaderItemInfo(
-            ReadOnlySpan<byte> nameBytes,
+            ReadOnlySpan<byte> eventData,
+            int nameStart,
+            int nameLength,
             PerfItemValue value)
         {
-            this.NameBytes = nameBytes;
+            this.EventData = eventData;
+            this.NameStart = nameStart;
+            this.NameLength = nameLength;
             this.Value = value;
         }
 
         /// <summary>
-        /// UTF-8 encoded field name followed by 0 or more field attributes,
-        /// e.g. "FieldName" or "FieldName;AttribName=AttribValue".
-        /// Each attribute is ";AttribName=AttribValue".
-        /// FieldName should not contain ';'.
-        /// AttribName should not contain ';' or '='.
-        /// AttribValue may contain ";;" which should be unescaped to ";".
+        /// The Span corresponding to the EventData parameter passed to
+        /// EventHeaderEnumerator.StartEvent(). For example, if you called
+        /// enumerator.StartEvent(name, myData), this will be the same as myData.Span.
+        /// The NameStart field is relative to this span.
         /// </summary>
-        public ReadOnlySpan<byte> NameBytes { get; }
+        public ReadOnlySpan<byte> EventData { get; }
+
+        /// <summary>
+        /// Offset into EventData where NameBytes begins.
+        /// </summary>
+        public int NameStart { get; }
+
+        /// <summary>
+        /// Length of NameBytes.
+        /// </summary>
+        public int NameLength { get; }
 
         /// <summary>
         /// Field value.
@@ -47,6 +59,16 @@ namespace Microsoft.LinuxTracepoints.Decode
         public PerfItemType Type => this.Value.Type;
 
         /// <summary>
+        /// UTF-8 encoded field name followed by 0 or more field attributes,
+        /// e.g. "FieldName" or "FieldName;AttribName=AttribValue".
+        /// Each attribute is ";AttribName=AttribValue".
+        /// FieldName should not contain ';'.
+        /// AttribName should not contain ';' or '='.
+        /// AttribValue may contain ";;" which should be unescaped to ";".
+        /// </summary>
+        public ReadOnlySpan<byte> NameBytes => this.EventData.Slice(this.NameStart, this.NameLength);
+
+        /// <summary>
         /// Gets a new string (decoded from NameBytes) containing
         /// field name followed by 0 or more field attributes, e.g.
         /// "FieldName" or "FieldName;AttribName=AttribValue".
@@ -55,7 +77,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// AttribName should not contain ';' or '='.
         /// AttribValue may contain ";;" which should be unescaped to ";".
         /// </summary>
-        public string NameAsString => Encoding.UTF8.GetString(this.NameBytes);
+        public readonly string GetNameAsString()
+        {
+            return Encoding.UTF8.GetString(this.NameBytes);
+        }
 
         /// <summary>
         /// Appends a string representation of this value like "Name = Type:Value" or "Name = Type:Value1, Value2".

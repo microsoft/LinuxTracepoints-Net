@@ -74,7 +74,7 @@
                         var item = e.GetItemInfo();
                         _ = item.ToString(); // Exercise ToString.
                         var itemType = item.Value.Type;
-                        this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, itemType.FieldTag));
+                        this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                         this.writer.WriteStartObject();
 
                         this.writer.WritePropertyName("Encoding");
@@ -232,14 +232,14 @@
                         case EventHeaderEnumeratorState.Value:
                             if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, itemType.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             item.Value.AppendJsonScalarTo(this.writer.WriteRawValueBuilder());
                             break;
                         case EventHeaderEnumeratorState.StructBegin:
                             if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, itemType.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             this.writer.WriteStartObject();
                             break;
@@ -247,7 +247,7 @@
                             this.writer.WriteEndObject();
                             break;
                         case EventHeaderEnumeratorState.ArrayBegin:
-                            this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, itemType.FieldTag));
+                            this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
 
                             if (moveNextSibling && itemType.TypeSize != 0)
                             {
@@ -290,14 +290,14 @@
                         case EventHeaderEnumeratorState.Value:
                             if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, itemType.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             this.writer.WriteStringValue(item.Value.ToString());
                             break;
                         case EventHeaderEnumeratorState.StructBegin:
                             if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, itemType.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             this.writer.WriteStartObject();
                             break;
@@ -305,7 +305,7 @@
                             this.writer.WriteEndObject();
                             break;
                         case EventHeaderEnumeratorState.ArrayBegin:
-                            this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, itemType.FieldTag));
+                            this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
 
                             if (itemType.TypeSize != 0)
                             {

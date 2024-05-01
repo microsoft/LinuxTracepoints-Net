@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-namespace Microsoft.LinuxTracepoints.DecodeWpa
+namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
 {
     using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.Performance.SDK.Extensibility.SourceParsing;
@@ -12,30 +12,31 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
     using System.Text;
     using CancellationToken = System.Threading.CancellationToken;
     using Debug = System.Diagnostics.Debug;
+    using EventHeaderFieldEncoding = Microsoft.LinuxTracepoints.EventHeaderFieldEncoding;
 
-    public sealed class PerfSourceParser : SourceParser<PerfEventData, PerfFileInfo, PerfEventHeaderType>
+    public sealed class PerfDataSourceParser : SourceParser<PerfDataEvent, PerfDataFileInfo, PerfEventHeaderType>
     {
         private const uint Billion = 1000000000;
 
         private readonly HashSet<PerfEventHeaderType> requestedDataKeys = new HashSet<PerfEventHeaderType>();
         private readonly string[] filenames;
-        private readonly List<PerfFileInfo> fileInfos;
-        private readonly ReadOnlyCollection<PerfFileInfo> fileInfosReadOnly;
+        private readonly List<PerfDataFileInfo> fileInfos;
+        private readonly ReadOnlyCollection<PerfDataFileInfo> fileInfosReadOnly;
         private DataSourceInfo? dataSourceInfo;
         private bool requestedAllEvents;
 
-        public PerfSourceParser(string[] filenames)
+        public PerfDataSourceParser(string[] filenames)
         {
             this.filenames = filenames;
-            this.fileInfos = new List<PerfFileInfo>(filenames.Length);
+            this.fileInfos = new List<PerfDataFileInfo>(filenames.Length);
             this.fileInfosReadOnly = this.fileInfos.AsReadOnly();
         }
 
-        public const string SourceParserId = nameof(PerfSourceParser);
+        public const string SourceParserId = nameof(PerfDataSourceParser);
 
         public override string Id => SourceParserId;
 
-        public ReadOnlyCollection<PerfFileInfo> FileInfos => this.fileInfosReadOnly;
+        public ReadOnlyCollection<PerfDataFileInfo> FileInfos => this.fileInfosReadOnly;
 
         public override DataSourceInfo DataSourceInfo => this.dataSourceInfo!;
 
@@ -47,7 +48,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         }
 
         public override void ProcessSource(
-            ISourceDataProcessor<PerfEventData, PerfFileInfo, PerfEventHeaderType> dataProcessor,
+            ISourceDataProcessor<PerfDataEvent, PerfDataFileInfo, PerfEventHeaderType> dataProcessor,
             ILogger logger,
             IProgress<int> progress,
             CancellationToken cancellationToken)
@@ -140,7 +141,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                             continue;
                         }
 
-                        PerfEventData eventInfo;
+                        PerfDataEvent eventInfo;
                         if (eventBytes.Header.Type == PerfEventHeaderType.Sample)
                         {
                             result = reader.GetSampleEventInfo(eventBytes, out sampleEventInfo);
@@ -208,7 +209,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                             if (format.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
                                 !enumerator.StartEvent(sampleEventInfo))
                             {
-                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, sampleEventInfo);
+                                eventInfo = new PerfDataEvent(byteReader, eventBytes.Header, sampleEventInfo);
                             }
                             else
                             {
@@ -235,7 +236,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                                     }
                                 }
 
-                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, sampleEventInfo, info, (ushort)topLevelFieldCount);
+                                eventInfo = new PerfDataEvent(byteReader, eventBytes.Header, sampleEventInfo, info, (ushort)topLevelFieldCount);
                             }
                         }
                         else
@@ -262,12 +263,12 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
                                     lastEventTime = nonSampleEventInfo.Time;
                                 }
 
-                                eventInfo = new PerfEventData(byteReader, eventBytes.Header, nonSampleEventInfo);
+                                eventInfo = new PerfDataEvent(byteReader, eventBytes.Header, nonSampleEventInfo);
                             }
                             else if (result == PerfDataFileResult.IdNotFound)
                             {
                                 // Event info not available for this event. Maybe ok.
-                                eventInfo = new PerfEventData(byteReader, eventBytes, previousEventTime);
+                                eventInfo = new PerfDataEvent(byteReader, eventBytes, previousEventTime);
                             }
                             else
                             {
@@ -356,7 +357,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             progress.Report(100);
         }
 
-        private sealed class FileInfo : PerfFileInfo
+        private sealed class FileInfo : PerfDataFileInfo
         {
             public FileInfo(string filename, PerfByteReader byteReader)
                 : base(filename, byteReader)

@@ -16,7 +16,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Initializes a new instance of the EventHeaderEventInfo struct.
         /// </summary>
         internal EventHeaderEventInfo(
-            ReadOnlySpan<byte> EventData,
+            ReadOnlySpan<byte> eventData,
             int nameStart,
             int nameLength,
             int activityIdStart,
@@ -25,7 +25,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             EventHeader header,
             ulong keyword)
         {
-            this.EventData = EventData;
+            this.EventData = eventData;
             this.NameStart = nameStart;
             this.NameLength = nameLength;
             this.ActivityIdStart = activityIdStart;

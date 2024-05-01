@@ -1,22 +1,22 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-namespace Microsoft.LinuxTracepoints.DecodeWpa
+namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
 {
+    using Microsoft.LinuxTracepoints;
     using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.Performance.SDK.Extensibility;
     using System;
     using System.Diagnostics.Tracing;
-    using System.Text;
     using Debug = System.Diagnostics.Debug;
     using Timestamp = Microsoft.Performance.SDK.Timestamp;
 
     /// <summary>
-    /// Information about an event from a perf.data file.
-    /// Stores the event's header, raw data bytes, and core context information.
-    /// Other information is decoded on demand.
+    /// Stores and provides access to an event from a perf.data file.
+    /// Stores the event's header, raw data bytes, and core offsets/lengths.
+    /// Other information is extracted on-demand by properties.
     /// </summary>
-    public sealed class PerfEventData : IKeyedDataType<PerfEventHeaderType>
+    public sealed class PerfDataEvent : IKeyedDataType<PerfEventHeaderType>
     {
         private readonly byte[] contents;
         private readonly PerfEventDesc eventDesc;
@@ -26,7 +26,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         private readonly ushort topLevelFieldCount;
         private readonly PerfByteReader byteReader;
 
-        // The following fieldsCache are zero for non-Sample events.
+        // The following fields are zero for non-Sample events.
 
         private readonly byte activityIdLength; // EventHeader only. 0, 16, or 32.
         private readonly ushort activityIdStart; // EventHeader only. Offset into contents for activity ID + related ID.
@@ -38,7 +38,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// <summary>
         /// For raw events, i.e. non-Sample events with no event info.
         /// </summary>
-        public PerfEventData(
+        public PerfDataEvent(
             PerfByteReader byteReader,
             in PerfEventBytes bytes,
             ulong fileRelativeTime)
@@ -58,7 +58,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// <summary>
         /// For non-Sample events with event info.
         /// </summary>
-        public PerfEventData(
+        public PerfDataEvent(
             PerfByteReader byteReader,
             PerfEventHeader header,
             in PerfNonSampleEventInfo info)
@@ -80,7 +80,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// <summary>
         /// For Sample events with event info.
         /// </summary>
-        public PerfEventData(
+        public PerfDataEvent(
             PerfByteReader byteReader,
             PerfEventHeader header,
             in PerfSampleEventInfo info)
@@ -109,7 +109,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// For EventHeader Sample events with event info.
         /// Requires !info.EventDesc.Format.IsEmpty.
         /// </summary>
-        public PerfEventData(
+        public PerfDataEvent(
             PerfByteReader byteReader,
             PerfEventHeader header,
             in PerfSampleEventInfo info,
@@ -163,31 +163,61 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
 
         /// <summary>
         /// Returns the part of TracepointId before the first ':'.
+        /// If no ':', returns the entire TracepointId (usually only empty TracepointId will lack a ':').
+        /// Note that when !this.Format.IsEmpty, this.Format.SystemName will generally return the
+        /// same string.
         /// </summary>
-        public ReadOnlyMemory<char> SystemName
+        public ReadOnlyMemory<char> SystemNameMemory
         {
             get
             {
                 var tracepointId = this.eventDesc.Name;
-                var colonPos = tracepointId.IndexOf(':');
-                return colonPos < 0
-                    ? tracepointId.AsMemory()
-                    : tracepointId.AsMemory(0, colonPos);
+                return tracepointId.AsMemory(0, GetSystemNameLength(tracepointId));
+            }
+        }
+
+        /// <summary>
+        /// Returns the part of TracepointId before the first ':'.
+        /// If no ':', returns the entire TracepointId (usually only empty TracepointId will lack a ':').
+        /// Note that when !this.Format.IsEmpty, this.Format.SystemName will generally return the
+        /// same string.
+        /// </summary>
+        public ReadOnlySpan<char> SystemNameSpan
+        {
+            get
+            {
+                var tracepointId = this.eventDesc.Name;
+                return tracepointId.AsSpan(0, GetSystemNameLength(tracepointId));
             }
         }
 
         /// <summary>
         /// Returns the part of TracepointId after the first ':'.
+        /// If no ':', returns empty (usually only empty TracepointId will lack a ':').
+        /// Note that when !this.Format.IsEmpty, this.Format.Name will generally return the
+        /// same string.
         /// </summary>
-        public ReadOnlyMemory<char> TracepointName
+        public ReadOnlyMemory<char> TracepointNameMemory
         {
             get
             {
                 var tracepointId = this.eventDesc.Name;
-                var colonPos = tracepointId.IndexOf(':');
-                return colonPos < 0
-                    ? tracepointId.AsMemory()
-                    : tracepointId.AsMemory(colonPos + 1);
+                return tracepointId.AsMemory(GetTracepointNameStart(tracepointId));
+            }
+        }
+
+        /// <summary>
+        /// Returns the part of TracepointId after the first ':'.
+        /// If no ':', returns empty (usually only empty TracepointId will lack a ':').
+        /// Note that when !this.Format.IsEmpty, this.Format.Name will generally return the
+        /// same string.
+        /// </summary>
+        public ReadOnlySpan<char> TracepointNameSpan
+        {
+            get
+            {
+                var tracepointId = this.eventDesc.Name;
+                return tracepointId.AsSpan(GetTracepointNameStart(tracepointId));
             }
         }
 
@@ -209,13 +239,13 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         public PerfEventHeader Header => this.header;
 
         /// <summary>
-        /// Gets the number of top-level fieldsCache.
+        /// Gets the number of top-level fields.
         /// <list type="bullet"><item>
-        /// For EventHeader Sample events, this is the number of EventHeader top-level fieldsCache
-        /// (does not include fieldsCache nested within a struct).
+        /// For EventHeader Sample events, this is the number of EventHeader top-level fields
+        /// (does not include fields nested within a struct).
         /// </item><item>
         /// For Sample events with tracefs format information, this is the number of tracefs
-        /// fieldsCache, not including the Common fieldsCache.
+        /// fields, not including the Common fields.
         /// </item><item>
         /// For events without tracefs format information (i.e. non-Sample events), this is
         /// 1 if ContentsLength > 0, or 0 if ContentsLength == 0.
@@ -337,23 +367,61 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// i.e. for "MyProvider_L1KffGgroup" returns "MyProvider".
         /// Otherwise, returns empty.
         /// </summary>
-        public ReadOnlyMemory<char> ProviderName
+        public ReadOnlyMemory<char> ProviderNameMemory
         {
             get
             {
-                if (!this.HasEventHeader)
+                if (this.HasEventHeader)
+                {
+                    var formatName = this.eventDesc.Format.Name;
+                    return formatName.AsMemory(0, GetProviderNameLength(formatName));
+                }
+                else
                 {
                     return default;
                 }
+            }
+        }
 
-                var tp = this.eventDesc.Format.Name;
-                var pos = tp.LastIndexOf('_');
-                if (pos < 0)
+        /// <summary>
+        /// For EventHeader events, returns the part of the tracepoint name before the last '_',
+        /// i.e. for "MyProvider_L1KffGgroup" returns "MyProvider".
+        /// Otherwise, returns empty.
+        /// </summary>
+        public ReadOnlySpan<char> ProviderNameSpan
+        {
+            get
+            {
+                if (this.HasEventHeader)
+                {
+                    var formatName = this.eventDesc.Format.Name;
+                    return formatName.AsSpan(0, GetProviderNameLength(formatName));
+                }
+                else
                 {
                     return default;
                 }
+            }
+        }
 
-                return tp.AsMemory(0, pos);
+        /// <summary>
+        /// For EventHeader events, returns the part of the tracepoint name after the "_LnKn"
+        /// (if any), i.e. for "MyProvider_L1KffGgroup" returns "Ggroup".
+        /// Otherwise, returns empty.
+        /// </summary>
+        public ReadOnlyMemory<char> ProviderOptionsMemory
+        {
+            get
+            {
+                if (this.HasEventHeader)
+                {
+                    var formatName = this.eventDesc.Format.Name;
+                    return formatName.AsMemory(GetProviderOptionsStart(formatName));
+                }
+                else
+                {
+                    return default;
+                }
             }
         }
 
@@ -362,51 +430,47 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// "_LnKn" (if any), i.e. for "MyProvider_L1KffGgroup" returns "Ggroup".
         /// Otherwise, returns empty.
         /// </summary>
-        public ReadOnlyMemory<char> ProviderOptions
+        public ReadOnlySpan<char> ProviderOptionsSpan
         {
             get
             {
-                if (!this.HasEventHeader)
+                if (this.HasEventHeader)
+                {
+                    var formatName = this.eventDesc.Format.Name;
+                    return formatName.AsSpan(GetProviderOptionsStart(formatName));
+                }
+                else
                 {
                     return default;
                 }
-
-                var tp = this.eventDesc.Format.Name;
-                var pos = tp.LastIndexOf('_');
-                if (pos < 0)
-                {
-                    return default;
-                }
-
-                pos += 1;
-                while (pos < tp.Length)
-                {
-                    var ch = tp[pos];
-                    if ('A' <= ch && ch <= 'Z' && ch != 'L' && ch != 'K')
-                    {
-                        return tp.AsMemory(pos);
-                    }
-
-                    pos += 1;
-                }
-
-                return default;
             }
         }
+
+        /// <summary>
+        /// For EventHeader events, returns the EventHeader event name's length
+        /// in UTF-8 bytes. Otherwise, returns 0.
+        /// </summary>
+        public int EventHeaderNameLength => this.eventHeaderNameLength;
 
         /// <summary>
         /// For EventHeader events, returns the EventHeader event name.
         /// Otherwise, returns empty.
         /// </summary>
-        public ReadOnlyMemory<byte> EventHeaderNameBytes =>
+        public ReadOnlyMemory<byte> EventHeaderNameMemory =>
             this.ContentsMemory.Slice(this.eventHeaderNameStart, this.eventHeaderNameLength);
+
+        /// <summary>
+        /// For EventHeader events, returns the EventHeader event name.
+        /// Otherwise, returns empty.
+        /// </summary>
+        public ReadOnlySpan<byte> EventHeaderNameSpan =>
+            this.ContentsSpan.Slice(this.eventHeaderNameStart, this.eventHeaderNameLength);
 
         /// <summary>
         /// For EventHeader events with an ActivityID, returns the ActivityID.
         /// Otherwise, returns null.
         /// </summary>
-        public Guid? ActivityId =>
-            this.activityIdLength >= 16
+        public Guid? ActivityId => this.activityIdLength >= 16
             ? PerfConvert.ReadGuidBigEndian(this.ContentsSpan.Slice(this.activityIdStart))
             : default(Guid?);
 
@@ -414,8 +478,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// For EventHeader events with a related ActivityID (e.g. parent activity), returns
         /// the related ActivityID. Otherwise, returns null.
         /// </summary>
-        public Guid? RelatedId =>
-            this.activityIdLength >= 32
+        public Guid? RelatedId => this.activityIdLength >= 32
             ? PerfConvert.ReadGuidBigEndian(this.ContentsSpan.Slice(this.activityIdStart + 16))
             : default(Guid?);
 
@@ -423,8 +486,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// For EventHeader events, returns the EventHeader (flags, version, ID, tag, opcode, level).
         /// Otherwise, returns null.
         /// </summary>
-        public EventHeader? EventHeader =>
-            this.HasEventHeader
+        public EventHeader? EventHeader => this.HasEventHeader
             ? this.ReadEventHeader()
             : default(EventHeader?);
 
@@ -432,8 +494,7 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         /// For EventHeader events, returns the EventHeader (flags, version, ID, tag, opcode, level).
         /// Otherwise, returns default(EventHeader).
         /// </summary>
-        public EventHeader EventHeaderOrDefault =>
-            this.HasEventHeader
+        public EventHeader EventHeaderOrDefault => this.HasEventHeader
             ? this.ReadEventHeader()
             : default;
 
@@ -600,86 +661,72 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
         }
 
         /// <summary>
+        /// Returns the part of TracepointId before the first ':'.
+        /// If no ':', returns the entire TracepointId (usually only empty TracepointId will lack a ':').
+        /// </summary>
+        public static int GetSystemNameLength(string tracepointId)
+        {
+            var colonPos = tracepointId.IndexOf(':');
+            return colonPos < 0 ? tracepointId.Length : colonPos;
+        }
+
+        /// <summary>
+        /// Returns the part of TracepointId after the first ':'.
+        /// If no ':', returns empty (usually only empty TracepointId will lack a ':').
+        /// </summary>
+        public static int GetTracepointNameStart(string tracepointId)
+        {
+            var colonPos = tracepointId.IndexOf(':');
+            return colonPos < 0 ? tracepointId.Length : colonPos + 1;
+        }
+
+        /// <summary>
+        /// Returns the part of the tracepoint name before the last '_', i.e. for
+        /// "MyProvider_L1KffGgroup" returns "MyProvider". If no '_', returns empty.
+        /// Since eventheader events always have a valid format, you can get the tracepoint
+        /// name from this.Format.Name.
+        /// </summary>
+        public static int GetProviderNameLength(string eventheaderTracepointName)
+        {
+            var pos = eventheaderTracepointName.LastIndexOf('_');
+            return pos < 0 ? eventheaderTracepointName.Length : pos;
+        }
+
+        /// <summary>
+        /// Returns the part of the eventheader tracepoint name after the "_LnKn" (if any),
+        /// i.e. for "MyProvider_L1KffGgroup" returns "Ggroup". Otherwise, returns empty.
+        /// Since eventheader events always have a valid format, you can get the tracepoint
+        /// name from this.Format.Name.
+        /// </summary>
+        public static int GetProviderOptionsStart(string eventheaderTracepointName)
+        {
+            var pos = eventheaderTracepointName.LastIndexOf('_');
+            if (pos < 0)
+            {
+                return eventheaderTracepointName.Length;
+            }
+
+            pos += 1;
+            while (pos < eventheaderTracepointName.Length)
+            {
+                var ch = eventheaderTracepointName[pos];
+                if ('A' <= ch && ch <= 'Z' && ch != 'L' && ch != 'K')
+                {
+                    return pos;
+                }
+
+                pos += 1;
+            }
+
+            return eventheaderTracepointName.Length;
+        }
+
+        /// <summary>
         /// Returns the event type (same as this.Header.Type).
         /// </summary>
         public PerfEventHeaderType GetKey()
         {
             return this.Header.Type;
-        }
-
-        /// <summary>
-        /// Returns a new string with a human-friendly group for the event.
-        /// For EventHeader events, this is the EventHeader provider name.
-        /// For tracepoint events, this is the tracepoint system name.
-        /// Otherwise, this is the PERF_TYPE (Hardware, Software, HwCache, etc.).
-        /// </summary>
-        public string GetGroupName()
-        {
-            if (this.HasEventHeader)
-            {
-                return this.ProviderName.ToString();
-            }
-
-            var type = this.Header.Type;
-            if (type == PerfEventHeaderType.Sample)
-            {
-                var format = this.eventDesc.Format;
-                if (!format.IsEmpty)
-                {
-                    return format.SystemName;
-                }
-
-                var systemName = this.SystemName;
-                if (systemName.Length != 0)
-                {
-                    return systemName.ToString();
-                }
-            }
-
-            return this.eventDesc.Attr.Type.AsString();
-        }
-
-        /// <summary>
-        /// Returns a new string with a human-friendly name for the event.
-        /// For EventHeader events, this is the EventHeader event name.
-        /// For tracepoint events, this is the tracepoint name.
-        /// Otherwise (e.g. non-Sample events), returns the event type (Header.Type.AsString).
-        /// </summary>
-        public string GetEventName()
-        {
-            if (this.HasEventHeader)
-            {
-                return this.GetEventHeaderName();
-            }
-
-            var type = this.Header.Type;
-            if (type == PerfEventHeaderType.Sample)
-            {
-                var format = this.eventDesc.Format;
-                if (!format.IsEmpty)
-                {
-                    return format.Name;
-                }
-                
-                var tracepointName = this.TracepointName;
-                if (tracepointName.Length != 0)
-                {
-                    return tracepointName.ToString();
-                }
-            }
-
-            return type.AsString();
-        }
-
-        /// <summary>
-        /// For EventHeader events, returns a new string with the EventHeader event name.
-        /// Otherwise, returns "".
-        /// </summary>
-        public string GetEventHeaderName()
-        {
-            return this.eventHeaderNameLength != 0
-                ? Encoding.UTF8.GetString(this.ContentsSpan.Slice(this.eventHeaderNameStart, this.eventHeaderNameLength))
-                : "";
         }
 
         /// <summary>
@@ -691,176 +738,11 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             return new Timestamp(Math.Max(0, unchecked((long)this.FileRelativeTime + sessionTimestampOffset)));
         }
 
-        /// <summary>
-        /// Formats this event's fieldsCache as JSON text (one JSON name-value pair per field)
-        /// and appends it to the given StringBuilder.
-        /// <list type="bullet"><item>
-        /// If the event contains no tracefs format information and no content (e.g. a
-        /// non-Sample event with ContentLength == 0), this appends nothing.
-        /// </item><item>
-        /// If the event contains no tracefs format information but contains content
-        /// (e.g. a non-Sample event with ContentLength != 0), this appends a "raw" field
-        /// with the raw data formatted as a string of hex bytes.
-        /// </item><item>
-        /// If the event contains tracefs format information but is not an EventHeader
-        /// event, this appends all of the user fieldsCache (skips the Common fieldsCache).
-        /// If the event has no fieldsCache, this appends nothing.
-        /// </item><item>
-        /// If the event is an EventHeader event, this appends all of the EventHeader
-        /// fieldsCache. If the event has no fieldsCache, this appends nothing.
-        /// </item></list>
-        /// </summary>
-        /// <param name="sb">StringBuilder that receives the field values.</param>
-        /// <param name="enumerator">
-        /// An enumerator that will be used to decode the event if this is an EventHeader event.
-        /// This is an optimization to reduce garbage by allowing the same enumerator object to
-        /// be used for multiple operations.
-        /// </param>
-        /// <param name="addCommaBeforeNextItem">
-        /// True if a "," should be appended before any appended output.
-        /// </param>
-        /// <param name="convertOptions">
-        /// Conversion options to use when formatting the JSON.
-        /// </param>
-        /// <returns>
-        /// True if a "," would be needed before any subsequent output. This is true if
-        /// addCommaBeforeNextItem was true or if any output was appended.
-        /// </returns>
-        public bool AppendFieldsAsJson(
-            StringBuilder sb,
-            EventHeaderEnumerator enumerator,
-            bool addCommaBeforeNextItem = false,
-            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
-        {
-            bool needComma = addCommaBeforeNextItem;
-            bool space = convertOptions.HasFlag(PerfConvertOptions.Space);
-            var comma = space ? ", " : "";
-
-            var format = this.Format;
-            if (format.IsEmpty)
-            {
-                // No format - probably a non-Sample event.
-                if (this.contents.Length != 0)
-                {
-                    if (needComma)
-                    {
-                        sb.Append(comma);
-                    }
-
-                    needComma = true;
-
-                    sb.Append(space
-                        ? @"""raw"": """
-                        : @"""raw"":""");
-                    var len = Math.Min(256, this.contents.Length); // Limit output to 256 bytes.
-                    PerfConvert.HexBytesAppend(sb, this.ContentsSpan.Slice(0, len));
-                    sb.Append('"');
-                }
-            }
-            else if (format.DecodingStyle == PerfEventDecodingStyle.EventHeader &&
-                enumerator.StartEvent(format.Name, this.RawDataMemory.Slice(format.CommonFieldsSize)))
-            {
-                // EventHeader-style decoding.
-                needComma = enumerator.AppendJsonItemToAndMoveNextSibling(sb, needComma, convertOptions);
-            }
-            else
-            {
-                // TraceFS format file decoding.
-                var rawData = this.RawDataSpan;
-                for (int fieldIndex = format.CommonFieldCount; fieldIndex < format.Fields.Count; fieldIndex += 1)
-                {
-                    if (needComma)
-                    {
-                        sb.Append(comma);
-                    }
-
-                    needComma = true;
-                    AppendFieldAsJson(sb, format.Fields[fieldIndex], convertOptions, rawData);
-                }
-            }
-
-            return needComma;
-        }
-
-        /// <summary>
-        /// Formats this event's Common fieldsCache as JSON text (one JSON name-value pair per
-        /// field) and appends it to the given StringBuilder. If the event has no Common
-        /// fieldsCache (e.g. if the event is a non-Sample event), this appends nothing. In
-        /// current tracefs, the common fieldsCache are common_type, common_flags,
-        /// common_preempt_count, and common_pid.
-        /// </summary>
-        /// <param name="sb">StringBuilder that receives the field values.</param>
-        /// <param name="addCommaBeforeNextItem">
-        /// True if a "," should be appended before any appended output.
-        /// </param>
-        /// <param name="convertOptions">
-        /// Conversion options to use when formatting the JSON.
-        /// </param>
-        /// <returns>
-        /// True if a "," would be needed before any subsequent output. This is true if
-        /// addCommaBeforeNextItem was true or if any output was appended.
-        /// </returns>
-        public bool AppendCommonFieldsAsJson(
-            StringBuilder sb,
-            bool addCommaBeforeNextItem = false,
-            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
-        {
-            bool needComma = addCommaBeforeNextItem;
-            var comma = convertOptions.HasFlag(PerfConvertOptions.Space) ? ", " : "";
-            var rawData = this.RawDataSpan;
-            var format = this.Format;
-
-            for (int fieldIndex = 0; fieldIndex < format.CommonFieldCount; fieldIndex += 1)
-            {
-                if (needComma)
-                {
-                    sb.Append(comma);
-                }
-
-                needComma = true;
-                AppendFieldAsJson(sb, format.Fields[fieldIndex], convertOptions, rawData);
-            }
-
-            return needComma;
-        }
-
-        /// <summary>
-        /// Formats this the specified field as a JSON "name": "value" pair and appends
-        /// it to the given StringBuilder.
-        /// </summary>
-        /// <param name="sb">StringBuilder that receives the field values.</param>
-        /// <param name="field">
-        /// The field to format, i.e. this.Format.Fields[fieldIndex].
-        /// </param>
-        /// <param name="convertOptions">
-        /// Conversion options to use when formatting the JSON.
-        /// </param>
-        public void AppendFieldAsJson(StringBuilder sb, PerfFieldFormat field, PerfConvertOptions convertOptions = PerfConvertOptions.Default)
-        {
-            this.AppendFieldAsJson(sb, field, convertOptions, this.RawDataSpan);
-        }
-
         private static int PopCnt(UInt32 n)
         {
             n = n - ((n >> 1) & 0x55555555);
             n = (n & 0x33333333) + ((n >> 2) & 0x33333333);
             return (int)((((n + (n >> 4)) & 0xF0F0F0F) * 0x1010101) >> 24);
-        }
-
-        private void AppendFieldAsJson(StringBuilder sb, PerfFieldFormat field, PerfConvertOptions convertOptions, ReadOnlySpan<byte> rawData)
-        {
-            PerfConvert.StringAppendJson(sb, field.Name);
-            sb.Append(convertOptions.HasFlag(PerfConvertOptions.Space) ? ": " : ":");
-
-            var fieldVal = field.GetFieldValue(rawData, this.byteReader);
-            if (fieldVal.Type.IsArrayOrElement)
-            {
-                fieldVal.AppendJsonSimpleArrayTo(sb, convertOptions);
-            }
-            else
-            {
-                fieldVal.AppendJsonScalarTo(sb, convertOptions);
-            }
         }
 
         private int PidOffset(UInt32 sampleType)

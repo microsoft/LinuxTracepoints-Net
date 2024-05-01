@@ -1155,7 +1155,9 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             return new EventHeaderItemInfo(
-                eventDataSpan.Slice(m_stackTop.NameOffset, m_stackTop.NameSize),
+                eventDataSpan,
+                m_stackTop.NameOffset,
+                m_stackTop.NameSize,
                 new PerfItemValue(
                     eventDataSpan.Slice(m_dataPosCooked, m_itemSizeCooked),
                     new PerfItemType(
@@ -1500,8 +1502,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// except that it uses the provided eventDataSpan instead of accessing the Span
         /// property of a ReadOnlyMemory field.
         /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
+        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
         /// </summary>
         /// <remarks>

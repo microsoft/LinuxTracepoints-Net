@@ -23,7 +23,7 @@ EndProject
 Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "wpa", "C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\wpa.exe", "{D31B2680-10FB-4E19-A6AC-91A4A02601C4}"
 	ProjectSection(DebuggerProjectSystem) = preProject
 		PortSupplier = 00000000-0000-0000-0000-000000000000
-		Executable = C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\wpa.exe
+		Executable = E:\latest\wpa.exe
 		RemoteMachine = DCOOK2
 		StartingDirectory = E:\repos\LinuxTracepoints-Net\bin\
 		Arguments = -nodefault -addsearchdir E:\repos\LinuxTracepoints-Net\bin\Debug

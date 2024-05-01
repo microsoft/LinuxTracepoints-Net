@@ -65,9 +65,10 @@ namespace Microsoft.LinuxTracepoints.Decode
     public static class PerfDataFileResultExtensions
     {
         /// <summary>
-        /// Returns a string for the enum value of PerfDataFileResult.
+        /// Returns a string representation of the PerfDataFileResult value.
+        /// If value is not known, returns null.
         /// </summary>
-        public static string AsString(this PerfDataFileResult self)
+        public static string? AsStringIfKnown(this PerfDataFileResult self)
         {
             return self switch
             {
@@ -77,8 +78,17 @@ namespace Microsoft.LinuxTracepoints.Decode
                 PerfDataFileResult.IdNotFound => "IdNotFound",
                 PerfDataFileResult.NotSupported => "NotSupported",
                 PerfDataFileResult.NoData => "NoData",
-                _ => unchecked((byte)self).ToString(CultureInfo.InvariantCulture),
+                _ => null,
             };
+        }
+
+        /// <summary>
+        /// Returns a string representation of the PerfDataFileResult value.
+        /// If value is not known, returns the numeric value as a string.
+        /// </summary>
+        public static string AsString(this PerfDataFileResult self)
+        {
+            return AsStringIfKnown(self) ?? unchecked((UInt32)self).ToString(CultureInfo.InvariantCulture);
         }
     }
 

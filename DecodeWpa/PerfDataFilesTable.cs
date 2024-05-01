@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
-namespace Microsoft.LinuxTracepoints.DecodeWpa
+namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
 {
     using Microsoft.Performance.SDK;
     using Microsoft.Performance.SDK.Processing;
@@ -9,28 +9,27 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
     using System.Collections.ObjectModel;
 
     [Table]
-    public sealed class PerfFileMetadataTable
+    public sealed class PerfDataFilesTable
     {
-        private readonly ReadOnlyCollection<PerfFileInfo> fileInfos;
+        private readonly ReadOnlyCollection<PerfDataFileInfo> fileInfos;
 
         public static readonly TableDescriptor TableDescriptor = new TableDescriptor(
             Guid.Parse("c5d716a9-8501-48ca-bd7f-12e9100862db"),
             "File Information",
             "Information about loaded perf.data files",
-            "Linux perf.data files"
-            //, isMetadataTable: true
-            );
+            "Linux perf.data files",
+            isMetadataTable: true);
 
-        private PerfFileMetadataTable(ReadOnlyCollection<PerfFileInfo> fileInfos)
+        private PerfDataFilesTable(ReadOnlyCollection<PerfDataFileInfo> fileInfos)
         {
             this.fileInfos = fileInfos;
         }
 
         public static void BuildTable(
             ITableBuilder tableBuilder,
-            ReadOnlyCollection<PerfFileInfo> fileInfos)
+            ReadOnlyCollection<PerfDataFileInfo> fileInfos)
         {
-            var table = new PerfFileMetadataTable(fileInfos);
+            var table = new PerfDataFilesTable(fileInfos);
 
             var builder = tableBuilder.SetRowCount(fileInfos.Count);
             builder.AddColumn(Arch_Column, Projection.Create(table.Arch));
@@ -75,8 +74,6 @@ namespace Microsoft.LinuxTracepoints.DecodeWpa
             basicConfig.AddColumnRole(ColumnRole.StartTime, FirstEventTime_FirstEventTime);
             basicConfig.AddColumnRole(ColumnRole.EndTime, LastEventTime_LastEventTime);
             basicConfig.AddColumnRole(ColumnRole.Duration, Elapsed_Column);
-
-            //tableBuilder.AddTableConfiguration(basicConfig);
             tableBuilder.SetDefaultTableConfiguration(basicConfig);
         }
 
