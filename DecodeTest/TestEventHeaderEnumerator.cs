@@ -42,7 +42,7 @@ namespace DecodeTest
             new PerfTimeSpec(long.MaxValue, 999999999).ToString();
             new PerfNonSampleEventInfo().ToString();
             new PerfSampleEventInfo().ToString();
-            new PerfValue().ToString();
+            new PerfItemValue().ToString();
         }
     }
 }

@@ -51,6 +51,39 @@ namespace Microsoft.LinuxTracepoints.Decode
     }
 
     /// <summary>
+    /// Extension methods for PerfEventAttrType.
+    /// </summary>
+    public static class PerfEventAttrTypeExtensions
+    {
+        /// <summary>
+        /// Returns a string representation of the PerfEventAttrType value.
+        /// If value is not known, returns null.
+        /// </summary>
+        public static string? AsStringIfKnown(this PerfEventAttrType self)
+        {
+            switch (self)
+            {
+                case PerfEventAttrType.Hardware: return "Hardware";
+                case PerfEventAttrType.Software: return "Software";
+                case PerfEventAttrType.Tracepoint: return "Tracepoint";
+                case PerfEventAttrType.HwCache: return "HwCache";
+                case PerfEventAttrType.Raw: return "Raw";
+                case PerfEventAttrType.Breakpoint: return "Breakpoint";
+                default: return null;
+            }
+        }
+
+        /// <summary>
+        /// Returns a string representation of the PerfEventAttrType value.
+        /// If value is not known, returns the numeric value as a string.
+        /// </summary>
+        public static string AsString(this PerfEventAttrType self)
+        {
+            return AsStringIfKnown(self) ?? unchecked((UInt32)self).ToString(CultureInfo.InvariantCulture);
+        }
+    }
+
+    /// <summary>
     /// Values for PerfEventAttr.Size.
     /// </summary>
     public enum PerfEventAttrSize : UInt32
@@ -1459,8 +1492,9 @@ namespace Microsoft.LinuxTracepoints.Decode
     {
         /// <summary>
         /// Returns a string representation of the PerfEventHeaderType value.
+        /// If value is not known, returns null.
         /// </summary>
-        public static string AsString(this PerfEventHeaderType self)
+        public static string? AsStringIfKnown(this PerfEventHeaderType self)
         {
             switch (self)
             {
@@ -1506,8 +1540,17 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case PerfEventHeaderType.HeaderFeature: return "HeaderFeature";
                 case PerfEventHeaderType.Compressed: return "Compressed";
                 case PerfEventHeaderType.FinishedInit: return "FinishedInit";
-                default: return unchecked((UInt32)self).ToString(CultureInfo.InvariantCulture);
+                default: return null;
             }
+        }
+
+        /// <summary>
+        /// Returns a string representation of the PerfEventHeaderType value.
+        /// If value is not known, returns the numeric value as a string.
+        /// </summary>
+        public static string AsString(this PerfEventHeaderType self)
+        {
+            return AsStringIfKnown(self) ?? unchecked((UInt32)self).ToString(CultureInfo.InvariantCulture);
         }
     }
 

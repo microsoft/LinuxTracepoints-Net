@@ -14,6 +14,11 @@ namespace Microsoft.LinuxTracepoints.Decode
     public enum PerfEventDecodingStyle : byte
     {
         /// <summary>
+        /// Decoding information not available.
+        /// </summary>
+        None,
+
+        /// <summary>
         /// Event should be decoded using tracefs "format" file.
         /// </summary>
         TraceEventFormat,
@@ -31,6 +36,8 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public class PerfEventFormat
     {
+        private static PerfEventFormat? empty;
+
         private PerfEventFormat(
             string systemName,
             string name,
@@ -50,6 +57,18 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.CommonFieldsSize = commonFieldsSize;
             this.DecodingStyle = decodingStyle;
         }
+
+        /// <summary>
+        /// Returns an empty PerfEventFormat: SystemName="", Name="", PrintFmt="", Id=0, CommonFieldCount=0.
+        /// </summary>
+        public static PerfEventFormat Empty => empty ?? Utility.InterlockedInitSingleton(
+                ref empty,
+                new PerfEventFormat("", "", "", Array.Empty<PerfFieldFormat>(), 0, 0, 0, PerfEventDecodingStyle.None));
+
+        /// <summary>
+        /// Returns true if this is the empty Format.
+        /// </summary>
+        public bool IsEmpty => this.DecodingStyle == PerfEventDecodingStyle.None;
 
         /// <summary>
         /// Returns the value of the systemName parameter, e.g. "user_events".
@@ -92,7 +111,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public ushort CommonFieldsSize { get; }
 
         /// <summary>
-        /// Returns the detected event decoding system - Normal or EventHeader.
+        /// Returns the detected event decoding system - TraceEventFormat or EventHeader.
         /// </summary>
         public PerfEventDecodingStyle DecodingStyle { get; }
 

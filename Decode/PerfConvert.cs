@@ -6,6 +6,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System;
     using System.Runtime.CompilerServices;
     using System.Text;
+    using BinaryPrimitives = System.Buffers.Binary.BinaryPrimitives;
     using CultureInfo = System.Globalization.CultureInfo;
     using Debug = System.Diagnostics.Debug;
     using IPAddress = System.Net.IPAddress;
@@ -35,8 +36,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         private const int ErrnoFirstUnknownValue = 134;
 
-        private static Encoding? encodingLatin1; // ISO-8859-1
-        private static Encoding? encodingUTF32BE;
+        private static Encoding? encodingLatin1; // ISO-8859-1 = GetEncoding(28591)
+        private static Encoding? encodingUTF32BE; // GetEncoding(12001)
         private static string[]? errnoStrings;
 
         /// <summary>
@@ -153,40 +154,16 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// value of Encoding.GetEncoding(28591).
         /// Provided because Encoding.Latin1 is not available in .NET Standard 2.1.
         /// </summary>
-        public static Encoding EncodingLatin1
-        {
-            get
-            {
-                var encoding = encodingLatin1; // Get the cached encoding, if available.
-                if (encoding == null)
-                {
-                    encoding = Encoding.GetEncoding(28591);
-                    encodingLatin1 = encoding; // Cache the encoding.
-                }
-
-                return encoding;
-            }
-        }
+        public static Encoding EncodingLatin1 => encodingLatin1 ?? Utility.InterlockedInitSingleton(
+            ref encodingLatin1, Encoding.GetEncoding(28591));
 
         /// <summary>
         /// Gets an encoding for UTF-32 big-endian characters, i.e. a cached value
         /// of Encoding.GetEncoding(12001).
         /// Provided because Encoding.BigEndianUTF32 is not available in .NET Standard 2.1.
         /// </summary>
-        public static Encoding EncodingUTF32BE
-        {
-            get
-            {
-                var encoding = encodingUTF32BE; // Get the cached encoding, if available.
-                if (encoding == null)
-                {
-                    encoding = Encoding.GetEncoding(12001);
-                    encodingUTF32BE = encoding; // Cache the encoding.
-                }
-
-                return encoding;
-            }
-        }
+        public static Encoding EncodingUTF32BE => encodingUTF32BE ?? Utility.InterlockedInitSingleton(
+            ref encodingUTF32BE, Encoding.GetEncoding(12001));
 
         /// <summary>
         /// If the provided byte array starts with a byte order mark (BOM),
@@ -237,6 +214,25 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Reads a big-endian Guid from the provided bytes.
+        /// </summary>
+        public static Guid ReadGuidBigEndian(ReadOnlySpan<byte> bytes)
+        {
+            return new Guid(
+                BinaryPrimitives.ReadUInt32BigEndian(bytes),
+                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(4)),
+                BinaryPrimitives.ReadUInt16BigEndian(bytes.Slice(6)),
+                bytes[8],
+                bytes[9],
+                bytes[10],
+                bytes[11],
+                bytes[12],
+                bytes[13],
+                bytes[14],
+                bytes[15]);
         }
 
         /// <summary>
@@ -475,8 +471,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns true if the provided value is value that will return a non-null
-        /// value from ErrnoLookup. Note that this returns true for 0, even though 0
+        /// Returns true if the provided linuxErrno would result in a non-null value
+        /// returned from ErrnoLookup. Note that this returns true for 0, even though 0
         /// is not really a valid error number.
         /// </summary>
         public static bool ErrnoIsKnown(int linuxErrno)
@@ -490,17 +486,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static string? ErrnoLookup(int linuxErrno)
         {
-            var strings = errnoStrings; // Get the cached strings, if available.
-            if (strings == null)
-            {
-                strings = NewErrnoStrings();
-                Debug.Assert(strings.Length == ErrnoFirstUnknownValue);
-                errnoStrings = strings; // Cache the strings.
-            }
-
-            return linuxErrno >= 0 && linuxErrno < strings.Length
-                ? strings[linuxErrno]
-                : null;
+            var errno = unchecked((uint)linuxErrno);
+            var strings = errnoStrings ?? Utility.InterlockedInitSingleton(ref errnoStrings, NewErrnoStrings());
+            return errno < strings.Length ? strings[errno] : null;
         }
 
         /// <summary>
@@ -513,12 +501,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static Span<char> ErrnoFormat(
             Span<char> destination,
-            Int32 errno,
+            Int32 linuxErrno,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            var recognized = ErrnoLookup(errno);
-            if (recognized != null)
+            var errno = unchecked((uint)linuxErrno);
+            var strings = errnoStrings ?? Utility.InterlockedInitSingleton(ref errnoStrings, NewErrnoStrings());
+            if (errno < strings.Length)
             {
+                var recognized = strings[errno];
                 recognized.AsSpan().CopyTo(destination);
                 return destination.Slice(0, recognized.Length);
             }
@@ -531,7 +521,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 destination[pos++] = 'N';
                 destination[pos++] = 'O';
                 destination[pos++] = '(';
-                var end = Int32DecimalFormatAtEnd(destination.Slice(pos), errno);
+                var end = Int32DecimalFormatAtEnd(destination.Slice(pos), linuxErrno);
                 end.CopyTo(destination.Slice(pos));
                 pos += end.Length;
                 destination[pos++] = ')';
@@ -539,7 +529,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
             else
             {
-                var end = Int32DecimalFormatAtEnd(destination, errno);
+                var end = Int32DecimalFormatAtEnd(destination, linuxErrno);
                 end.CopyTo(destination);
                 return destination.Slice(0, end.Length);
             }
@@ -578,15 +568,15 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static StringBuilder ErrnoAppendJson(
             StringBuilder sb,
-            Int32 value,
+            Int32 linuxErrno,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            if (ErrnoIsKnown(value))
+            if (ErrnoIsKnown(linuxErrno))
             {
                 if (convertOptions.HasFlag(PerfConvertOptions.ErrnoKnownAsString))
                 {
                     sb.Append('"');
-                    sb.Append(ErrnoLookup(value));
+                    sb.Append(ErrnoLookup(linuxErrno));
                     return sb.Append('"');
                 }
             }
@@ -595,12 +585,12 @@ namespace Microsoft.LinuxTracepoints.Decode
                 if (convertOptions.HasFlag(PerfConvertOptions.ErrnoUnknownAsString))
                 {
                     sb.Append("\"ERRNO(");
-                    Int32DecimalAppend(sb, value);
+                    Int32DecimalAppend(sb, linuxErrno);
                     return sb.Append(")\"");
                 }
             }
 
-            return Int32DecimalAppend(sb, value);
+            return Int32DecimalAppend(sb, linuxErrno);
         }
 
         /// <summary>
@@ -1635,6 +1625,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             "ERFKILL(132)",
             "EHWPOISON(133)",
             };
+
+            Debug.Assert(strings.Length == ErrnoFirstUnknownValue);
 
 #if DEBUG
             foreach (var s in strings)

@@ -110,7 +110,7 @@ namespace DecodeSample
                     sampleEventInfo.AppendJsonEventInfoTo(this.scratch);
 
                     var eventFormat = sampleEventInfo.Format;
-                    if (eventFormat == null)
+                    if (eventFormat.IsEmpty)
                     {
                         // Unexpected: Did not find TraceFS format metadata for this event.
                         this.writer.WriteLine($"  info = {{ {this.scratch} }}");
@@ -134,7 +134,7 @@ namespace DecodeSample
                             // formats. TraceFS fields are always scalars or arrays of fixed-size elements, so
                             // the following will work to get the data as a JSON value.
                             this.scratch.Clear();
-                            if (fieldValue.IsArrayOrElement)
+                            if (fieldValue.Type.IsArrayOrElement)
                             {
                                 fieldValue.AppendJsonSimpleArrayTo(this.scratch);
                             }
@@ -179,7 +179,7 @@ namespace DecodeSample
                                 this.scratch,
                                 false,
                                 PerfConvertOptions.Default & ~PerfConvertOptions.RootName); // We don't want a JSON "ItemName": prefix.
-                            this.writer.WriteLine($"  {itemInfo.NameAsString} = {this.scratch}");
+                            this.writer.WriteLine($"  {itemInfo.GetNameAsString()} = {this.scratch}");
                         }
 
                         if (this.enumerator.State == EventHeaderEnumeratorState.Error)

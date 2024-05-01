@@ -172,7 +172,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="sampleEventInfo">
         /// Info from which to get the tracepoint name (sampleEventInfo.Format.Name) and
         /// tracepoint user data (sampleEventInfo.UserData).
-        /// Requires sampleEventInfo.Format != null.
+        /// Requires !sampleEventInfo.Format.IsEmpty.
         /// </param>
         /// <param name="moveNextLimit">
         /// Set to the maximum number of MoveNext calls to allow when processing this event (to
@@ -183,8 +183,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             in PerfSampleEventInfo sampleEventInfo,
             int moveNextLimit = MoveNextLimitDefault)
         {
-            Debug.Assert(sampleEventInfo.Format != null); // Precondition: not null.
-            return StartEvent(sampleEventInfo.Format!.Name, sampleEventInfo.UserData, moveNextLimit);
+            Debug.Assert(!sampleEventInfo.Format.IsEmpty); // Precondition: not empty.
+            return StartEvent(sampleEventInfo.Format.Name, sampleEventInfo.UserData, moveNextLimit);
         }
 
         /// <summary>
@@ -1083,7 +1083,34 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// <para>
-        /// Gets information that applies to the current item, e.g. the item's name,
+        /// Gets type information of the current item. This is a subset of
+        /// the information returned by GetItemInfo().
+        /// The current item changes each time MoveNext() is called.
+        /// </para><para>
+        /// PRECONDITION: Can be called when State > BeforeFirstItem, i.e. after MoveNext
+        /// returns true.
+        /// </para>
+        /// </summary>
+        /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
+        public PerfItemType GetItemType()
+        {
+            if (m_state <= EventHeaderEnumeratorState.BeforeFirstItem)
+            {
+                throw new InvalidOperationException(); // PRECONDITION
+            }
+
+            return new PerfItemType(
+                m_byteReader,
+                m_fieldType.Encoding,
+                m_fieldType.Format,
+                m_elementSize,
+                m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
+                m_fieldType.Tag);
+        }
+
+        /// <summary>
+        /// <para>
+        /// Gets information about the current item, e.g. the item's name,
         /// the item's type (integer, string, float, etc.), data pointer, data size.
         /// The current item changes each time MoveNext() is called.
         /// </para><para>
@@ -1128,15 +1155,18 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             return new EventHeaderItemInfo(
-                eventDataSpan.Slice(m_stackTop.NameOffset, m_stackTop.NameSize),
-                new PerfValue(
+                eventDataSpan,
+                m_stackTop.NameOffset,
+                m_stackTop.NameSize,
+                new PerfItemValue(
                     eventDataSpan.Slice(m_dataPosCooked, m_itemSizeCooked),
-                    m_byteReader,
-                    m_fieldType.Encoding,
-                    m_fieldType.Format,
-                    m_elementSize,
-                    m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
-                    m_fieldType.Tag));
+                    new PerfItemType(
+                        m_byteReader,
+                        m_fieldType.Encoding,
+                        m_fieldType.Format,
+                        m_elementSize,
+                        m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
+                        m_fieldType.Tag)));
         }
 
         /// <summary>
@@ -1371,7 +1401,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
                 PerfConvert.GuidAppend(
                     sb,
-                    Utility.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin)));
+                    PerfConvert.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin)));
                 sb.Append('"');
             }
 
@@ -1381,7 +1411,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
                 PerfConvert.GuidAppend(
                     sb,
-                    Utility.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin + 16)));
+                    PerfConvert.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin + 16)));
                 sb.Append('"');
             }
 
@@ -1456,7 +1486,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </remarks>
         /// <returns>
         /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
-        /// addCommaBeforeNextItem was true OR if any metadata items were appended.
+        /// addCommaBeforeNextItem was true OR if anything was appended.
         /// </returns>
         public bool AppendJsonItemToAndMoveNextSibling(
             StringBuilder sb,
@@ -1472,8 +1502,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// except that it uses the provided eventDataSpan instead of accessing the Span
         /// property of a ReadOnlyMemory field.
         /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
+        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
         /// </summary>
         /// <remarks>
@@ -1515,9 +1545,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                     case EventHeaderEnumeratorState.Value:
 
                         itemInfo = GetItemInfo(eventDataSpan);
-                        if (wantName && !itemInfo.Value.IsArrayOrElement)
+                        if (wantName && !itemInfo.Value.Type.IsArrayOrElement)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
                         }
 
                         itemInfo.Value.AppendJsonScalarTo(w.WriteValue());
@@ -1528,10 +1558,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                         itemInfo = GetItemInfo(eventDataSpan);
                         if (wantName)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
                         }
 
-                        if (itemInfo.Value.TypeSize != 0)
+                        if (itemInfo.Value.Type.TypeSize != 0)
                         {
                             itemInfo.Value.AppendJsonSimpleArrayTo(w.WriteValue(), convertOptions);
                             ok = MoveNextSibling(eventDataSpan);
@@ -1552,9 +1582,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                         itemInfo = GetItemInfo(eventDataSpan);
 
-                        if (wantName && !itemInfo.Value.IsArrayOrElement)
+                        if (wantName && !itemInfo.Value.Type.IsArrayOrElement)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
                         }
 
                         w.WriteStartObject();

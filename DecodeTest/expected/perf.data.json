@@ -2301,8 +2301,7 @@
     "size": 64,
     "time": "2024-03-28T00:45:12.600304Z",
     "cpu": 16,
-    "pid": 2002,
-    "tid": 691854456
+    "pid": 2002
   },
   {
     "n": "sched:sched_switch",
@@ -4728,8 +4727,7 @@
     "size": 64,
     "time": "2024-03-28T00:45:14.7876837Z",
     "cpu": 14,
-    "pid": 1220,
-    "tid": 2879234103
+    "pid": 1220
   },
   {
     "n": "sched:sched_switch",
@@ -5006,40 +5004,35 @@
     "size": 64,
     "time": "2024-03-28T00:45:14.7882375Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879787941
+    "pid": 2004
   },
   {
     "NonSample": "Mmap2",
     "size": 192,
     "time": "2024-03-28T00:45:14.7882823Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879832715
+    "pid": 2004
   },
   {
     "NonSample": "Mmap2",
     "size": 152,
     "time": "2024-03-28T00:45:14.7883218Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879872187
+    "pid": 2004
   },
   {
     "NonSample": "Mmap2",
     "size": 112,
     "time": "2024-03-28T00:45:14.7883448Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879895209
+    "pid": 2004
   },
   {
     "NonSample": "Mmap2",
     "size": 144,
     "time": "2024-03-28T00:45:14.7885835Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2880133956
+    "pid": 2004
   },
   {
     "n": "Long_Provider_Name_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX0123456789:LongProviderEvent",
@@ -8416,8 +8409,7 @@
     "size": 64,
     "time": "2024-03-28T00:45:14.7913846Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2882935004
+    "pid": 2004
   },
   {
     "n": "sched:sched_switch",
@@ -11358,8 +11350,7 @@
     "size": 64,
     "time": "2024-03-28T00:45:12.600304Z",
     "cpu": 16,
-    "pid": 2002,
-    "tid": 691854456
+    "pid": 2002
   },
   {
     "n": "sched:sched_switch",
@@ -13487,8 +13478,7 @@
     "size": 64,
     "time": "2024-03-28T00:45:14.7876837Z",
     "cpu": 14,
-    "pid": 1220,
-    "tid": 2879234103
+    "pid": 1220
   },
   {
     "n": "sched:sched_switch",
@@ -13555,32 +13545,28 @@
     "size": 64,
     "time": "2024-03-28T00:45:14.7882375Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879787941
+    "pid": 2004
   },
   {
     "NonSample": "Mmap2",
     "size": 192,
     "time": "2024-03-28T00:45:14.7882823Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879832715
+    "pid": 2004
   },
   {
     "NonSample": "Mmap2",
     "size": 152,
     "time": "2024-03-28T00:45:14.7883218Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879872187
+    "pid": 2004
   },
   {
     "NonSample": "Mmap2",
     "size": 112,
     "time": "2024-03-28T00:45:14.7883448Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2879895209
+    "pid": 2004
   },
   {
     "n": "sched:sched_switch",
@@ -13617,8 +13603,7 @@
     "size": 144,
     "time": "2024-03-28T00:45:14.7885835Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2880133956
+    "pid": 2004
   },
   {
     "n": "sched:sched_switch",
@@ -17325,8 +17310,7 @@
     "size": 64,
     "time": "2024-03-28T00:45:14.7913846Z",
     "cpu": 16,
-    "pid": 2004,
-    "tid": 2882935004
+    "pid": 2004
   },
   {
     "n": "sched:sched_switch",

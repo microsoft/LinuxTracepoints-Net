@@ -73,22 +73,23 @@
                     {
                         var item = e.GetItemInfo();
                         _ = item.ToString(); // Exercise ToString.
-                        this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                        var itemType = item.Value.Type;
+                        this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                         this.writer.WriteStartObject();
 
                         this.writer.WritePropertyName("Encoding");
-                        this.writer.WriteStringValue(item.Value.Encoding.ToString());
+                        this.writer.WriteStringValue(itemType.Encoding.ToString());
 
-                        if (item.Value.Format != 0)
+                        if (itemType.Format != 0)
                         {
-                            if (item.Value.Encoding == EventHeaderFieldEncoding.Struct)
+                            if (itemType.Encoding == EventHeaderFieldEncoding.Struct)
                             {
-                                this.writer.WriteRaw("FieldCount", ((byte)item.Value.Format).ToString(CultureInfo.InvariantCulture));
+                                this.writer.WriteRaw("FieldCount", ((byte)itemType.Format).ToString(CultureInfo.InvariantCulture));
                             }
                             else
                             {
                                 this.writer.WritePropertyName("Format");
-                                this.writer.WriteStringValue(item.Value.Format.ToString());
+                                this.writer.WriteStringValue(itemType.Format.ToString());
                             }
                         }
 
@@ -97,18 +98,18 @@
                             this.writer.WriteRaw("BadValueBytes", item.Value.Bytes.Length.ToString(CultureInfo.InvariantCulture));
                         }
 
-                        if (item.Value.TypeSize != 0)
+                        if (itemType.TypeSize != 0)
                         {
-                            this.writer.WriteRaw("BadFixedSize", item.Value.TypeSize.ToString(CultureInfo.InvariantCulture));
+                            this.writer.WriteRaw("BadFixedSize", itemType.TypeSize.ToString(CultureInfo.InvariantCulture));
                         }
 
-                        if (item.Value.ArrayFlags != 0)
+                        if (itemType.ArrayFlags != 0)
                         {
-                            this.writer.WriteRaw("ElementCount", item.Value.ElementCount.ToString(CultureInfo.InvariantCulture));
+                            this.writer.WriteRaw("ElementCount", itemType.ElementCount.ToString(CultureInfo.InvariantCulture));
                         }
-                        else if (item.Value.ElementCount != 1)
+                        else if (itemType.ElementCount != 1)
                         {
-                            this.writer.WriteRaw("BadElementCount", item.Value.ElementCount.ToString(CultureInfo.InvariantCulture));
+                            this.writer.WriteRaw("BadElementCount", itemType.ElementCount.ToString(CultureInfo.InvariantCulture));
                         }
 
                         this.writer.WriteEndObject();
@@ -225,19 +226,20 @@
                 while (true)
                 {
                     var item = e.GetItemInfo();
+                    var itemType = item.Value.Type;
                     switch (e.State)
                     {
                         case EventHeaderEnumeratorState.Value:
-                            if (!item.Value.IsArrayOrElement)
+                            if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             item.Value.AppendJsonScalarTo(this.writer.WriteRawValueBuilder());
                             break;
                         case EventHeaderEnumeratorState.StructBegin:
-                            if (!item.Value.IsArrayOrElement)
+                            if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             this.writer.WriteStartObject();
                             break;
@@ -245,9 +247,9 @@
                             this.writer.WriteEndObject();
                             break;
                         case EventHeaderEnumeratorState.ArrayBegin:
-                            this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                            this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
 
-                            if (moveNextSibling && item.Value.TypeSize != 0)
+                            if (moveNextSibling && itemType.TypeSize != 0)
                             {
                                 item.Value.AppendJsonSimpleArrayTo(this.writer.WriteRawValueBuilder());
 
@@ -282,19 +284,20 @@
                 while (true)
                 {
                     var item = e.GetItemInfo();
+                    var itemType = item.Value.Type;
                     switch (e.State)
                     {
                         case EventHeaderEnumeratorState.Value:
-                            if (!item.Value.IsArrayOrElement)
+                            if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             this.writer.WriteStringValue(item.Value.ToString());
                             break;
                         case EventHeaderEnumeratorState.StructBegin:
-                            if (!item.Value.IsArrayOrElement)
+                            if (!itemType.IsArrayOrElement)
                             {
-                                this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                                this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             this.writer.WriteStartObject();
                             break;
@@ -302,9 +305,9 @@
                             this.writer.WriteEndObject();
                             break;
                         case EventHeaderEnumeratorState.ArrayBegin:
-                            this.writer.WritePropertyNameOnNewLine(MakeName(item.NameAsString, item.Value.FieldTag));
+                            this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
 
-                            if (item.Value.TypeSize != 0)
+                            if (itemType.TypeSize != 0)
                             {
                                 this.writer.WriteStringValue(item.Value.ToString());
 

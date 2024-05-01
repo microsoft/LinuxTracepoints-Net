@@ -65,9 +65,10 @@ namespace Microsoft.LinuxTracepoints.Decode
     public static class PerfDataFileResultExtensions
     {
         /// <summary>
-        /// Returns a string for the enum value of PerfDataFileResult.
+        /// Returns a string representation of the PerfDataFileResult value.
+        /// If value is not known, returns null.
         /// </summary>
-        public static string AsString(this PerfDataFileResult self)
+        public static string? AsStringIfKnown(this PerfDataFileResult self)
         {
             return self switch
             {
@@ -77,8 +78,17 @@ namespace Microsoft.LinuxTracepoints.Decode
                 PerfDataFileResult.IdNotFound => "IdNotFound",
                 PerfDataFileResult.NotSupported => "NotSupported",
                 PerfDataFileResult.NoData => "NoData",
-                _ => unchecked((byte)self).ToString(CultureInfo.InvariantCulture),
+                _ => null,
             };
+        }
+
+        /// <summary>
+        /// Returns a string representation of the PerfDataFileResult value.
+        /// If value is not known, returns the numeric value as a string.
+        /// </summary>
+        public static string AsString(this PerfDataFileResult self)
+        {
+            return AsStringIfKnown(self) ?? unchecked((UInt32)self).ToString(CultureInfo.InvariantCulture);
         }
     }
 
@@ -275,6 +285,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         public UInt64 DataEndFilePos => m_dataEndFilePos;
 
         /// <summary>
+        /// Gets session information with clock offsets.
+        /// </summary>
+        public PerfSessionInfo SessionInfo => m_sessionInfo;
+
+        /// <summary>
         /// Combined data from perf_file_header::attrs and PERF_RECORD_HEADER_ATTR.
         /// </summary>
         public ReadOnlyCollection<PerfEventDesc> EventDescList => m_eventDescListReadOnly;
@@ -378,6 +393,26 @@ namespace Microsoft.LinuxTracepoints.Decode
             return (uint)headerIndex < (uint)m_headers.Length
                 ? m_headers[(uint)headerIndex].ValidMemory
                 : default;
+        }
+
+        /// <summary>
+        /// Assumes the specified header is a nul-terminated Latin1 string.
+        /// Returns a new string with the string value of the header.
+        /// </summary>
+        public string HeaderString(PerfHeaderIndex headerIndex)
+        {
+            var header = Header(headerIndex).Span;
+            if (header.Length <= 4)
+            {
+                return "";
+            }
+            else
+            {
+                // Starts with a 4-byte length, followed by a nul-terminated string.
+                header = header.Slice(4);
+                var nul = header.IndexOf((byte)0);
+                return PerfConvert.EncodingLatin1.GetString(header.Slice(0, nul >= 0 ? nul : header.Length));
+            }
         }
 
         /// <summary>
@@ -1456,7 +1491,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             {
                 pos -= sizeof(UInt64);
                 info.Pid = m_byteReader.ReadU32(bytesSpan.Slice(pos));
-                info.Tid = m_byteReader.ReadU32(bytesSpan.Slice(pos + sizeof(UInt64)));
+                info.Tid = m_byteReader.ReadU32(bytesSpan.Slice(pos + sizeof(UInt32)));
 
                 if (pos == 0)
                 {
@@ -1918,7 +1953,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 for (var i = 0; i < m_eventDescList.Count; i += 1)
                 {
                     var desc = m_eventDescList[i];
-                    if (desc.Format == null &&
+                    if (desc.Format.IsEmpty &&
                         desc.Attr.Type == PerfEventAttrType.Tracepoint &&
                         m_formatById.TryGetValue((uint)desc.Attr.Config, out var format))
                     {
@@ -2182,10 +2217,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                 ids[i] = m_byteReader.ReadU64(idsBytes.Slice(i * sizeof(UInt64)));
             }
 
-            PerfEventFormat? format = null;
-            if (attr.Type == PerfEventAttrType.Tracepoint)
+            PerfEventFormat format;
+            if (attr.Type != PerfEventAttrType.Tracepoint ||
+                !m_formatById.TryGetValue((UInt32)attr.Config, out format))
             {
-                m_formatById.TryGetValue((UInt32)attr.Config, out format);
+                format = PerfEventFormat.Empty;
             }
 
             var eventDesc = new PerfEventDesc(

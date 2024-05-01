@@ -16,7 +16,24 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DecodeSample", "DecodeSample\DecodeSample.csproj", "{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodeSample", "DecodeSample\DecodeSample.csproj", "{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodeWpa", "DecodeWpa\DecodeWpa.csproj", "{F75ED5EC-A07B-478A-86B2-400BDD05109B}"
+EndProject
+Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "wpa", "C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\wpa.exe", "{D31B2680-10FB-4E19-A6AC-91A4A02601C4}"
+	ProjectSection(DebuggerProjectSystem) = preProject
+		PortSupplier = 00000000-0000-0000-0000-000000000000
+		Executable = E:\latest\wpa.exe
+		RemoteMachine = DCOOK2
+		StartingDirectory = E:\repos\LinuxTracepoints-Net\bin\
+		Arguments = -nodefault -addsearchdir E:\repos\LinuxTracepoints-Net\bin\Debug
+		Environment = Default
+		LaunchingEngine = 2e36f1d4-b23c-435d-ab41-18e608940038
+		UseLegacyDebugEngines = No
+		LaunchSQLEngine = No
+		AttachLaunchAction = No
+		IORedirection = Auto
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -44,6 +61,12 @@ Global
 		{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F75ED5EC-A07B-478A-86B2-400BDD05109B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F75ED5EC-A07B-478A-86B2-400BDD05109B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F75ED5EC-A07B-478A-86B2-400BDD05109B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F75ED5EC-A07B-478A-86B2-400BDD05109B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D31B2680-10FB-4E19-A6AC-91A4A02601C4}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{D31B2680-10FB-4E19-A6AC-91A4A02601C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

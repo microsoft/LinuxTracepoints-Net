@@ -1,5 +1,7 @@
 # DecodePerfToJson tool
 
+Tool for converting perf.data files to JSON text.
+
 ```
 Usage: DecodePerfToJson [options] input.perf.data
 
@@ -73,6 +75,10 @@ JSON options:
 ```
 
 ## Changelog
+
+### 0.1.2 (TBD)
+
+- Fix TID field for non-Sample events.
 
 ### 0.1.1 (2024-04-22)
 

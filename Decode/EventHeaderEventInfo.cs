@@ -16,7 +16,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Initializes a new instance of the EventHeaderEventInfo struct.
         /// </summary>
         internal EventHeaderEventInfo(
-            ReadOnlySpan<byte> EventData,
+            ReadOnlySpan<byte> eventData,
             int nameStart,
             int nameLength,
             int activityIdStart,
@@ -25,7 +25,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             EventHeader header,
             ulong keyword)
         {
-            this.EventData = EventData;
+            this.EventData = eventData;
             this.NameStart = nameStart;
             this.NameLength = nameLength;
             this.ActivityIdStart = activityIdStart;
@@ -147,7 +147,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 Debug.Assert((this.ActivityIdLength & 0xF) == 0);
                 return this.ActivityIdLength < 16
                     ? new Guid?()
-                    : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart));
+                    : PerfConvert.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart));
             }
         }
 
@@ -161,7 +161,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 Debug.Assert((this.ActivityIdLength & 0xF) == 0);
                 return this.ActivityIdLength < 32
                     ? new Guid?()
-                    : Utility.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
+                    : PerfConvert.ReadGuidBigEndian(this.EventData.Slice(this.ActivityIdStart + 16));
             }
         }
 

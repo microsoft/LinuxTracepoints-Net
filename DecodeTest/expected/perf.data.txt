@@ -908,7 +908,7 @@ NonSample: FinishedInit
   size = 8
 NonSample: Fork
   size = 64
-  info = { "time": "2024-03-28T00:45:12.6003040Z", "cpu": 16, "pid": 2002, "tid": 691854456 }
+  info = { "time": "2024-03-28T00:45:12.6003040Z", "cpu": 16, "pid": 2002 }
 Sample: sched:sched_switch
   size = 128
   info = { "time": "2024-03-28T00:45:12.6409131Z", "cpu": 0, "pid": 2002 }
@@ -2323,7 +2323,7 @@ Sample: sched:sched_switch
   next_prio = 120
 NonSample: Fork
   size = 64
-  info = { "time": "2024-03-28T00:45:14.7876837Z", "cpu": 14, "pid": 1220, "tid": 2879234103 }
+  info = { "time": "2024-03-28T00:45:14.7876837Z", "cpu": 14, "pid": 1220 }
 Sample: sched:sched_switch
   size = 128
   info = { "time": "2024-03-28T00:45:14.7876915Z", "cpu": 11, "pid": 0 }
@@ -2366,16 +2366,16 @@ Sample: sched:sched_switch
   next_prio = 120
 NonSample: Comm
   size = 64
-  info = { "time": "2024-03-28T00:45:14.7882375Z", "cpu": 16, "pid": 2004, "tid": 2879787941 }
+  info = { "time": "2024-03-28T00:45:14.7882375Z", "cpu": 16, "pid": 2004 }
 NonSample: Mmap2
   size = 192
-  info = { "time": "2024-03-28T00:45:14.7882823Z", "cpu": 16, "pid": 2004, "tid": 2879832715 }
+  info = { "time": "2024-03-28T00:45:14.7882823Z", "cpu": 16, "pid": 2004 }
 NonSample: Mmap2
   size = 152
-  info = { "time": "2024-03-28T00:45:14.7883218Z", "cpu": 16, "pid": 2004, "tid": 2879872187 }
+  info = { "time": "2024-03-28T00:45:14.7883218Z", "cpu": 16, "pid": 2004 }
 NonSample: Mmap2
   size = 112
-  info = { "time": "2024-03-28T00:45:14.7883448Z", "cpu": 16, "pid": 2004, "tid": 2879895209 }
+  info = { "time": "2024-03-28T00:45:14.7883448Z", "cpu": 16, "pid": 2004 }
 Sample: sched:sched_switch
   size = 128
   info = { "time": "2024-03-28T00:45:14.7884109Z", "cpu": 11, "pid": 0 }
@@ -2398,7 +2398,7 @@ Sample: sched:sched_switch
   next_prio = 120
 NonSample: Mmap2
   size = 144
-  info = { "time": "2024-03-28T00:45:14.7885835Z", "cpu": 16, "pid": 2004, "tid": 2880133956 }
+  info = { "time": "2024-03-28T00:45:14.7885835Z", "cpu": 16, "pid": 2004 }
 Sample: sched:sched_switch
   size = 128
   info = { "time": "2024-03-28T00:45:14.7889434Z", "cpu": 19, "pid": 0 }
@@ -4027,7 +4027,7 @@ Sample: sched:sched_switch
   next_prio = 120
 NonSample: Exit
   size = 64
-  info = { "time": "2024-03-28T00:45:14.7913846Z", "cpu": 16, "pid": 2004, "tid": 2882935004 }
+  info = { "time": "2024-03-28T00:45:14.7913846Z", "cpu": 16, "pid": 2004 }
 Sample: sched:sched_switch
   size = 128
   info = { "time": "2024-03-28T00:45:14.7913958Z", "cpu": 5, "pid": 0 }
