@@ -19,6 +19,7 @@
   <files>
     <file src="obj/DotnetToolSettings.xml" target="tools/netcoreapp3.1/any/DotnetToolSettings.xml" />
     <file src="../bin/Release/DecodePerfToJson.dll" target="tools/netcoreapp3.1/any/DecodePerfToJson.dll" />
+    <file src="../bin/Release/DecodePerfToJson.deps.json" target="tools/netcoreapp3.1/any/DecodePerfToJson.deps.json" />
     <file src="../bin/Release/DecodePerfToJson.runtimeconfig.json" target="tools/netcoreapp3.1/any/DecodePerfToJson.runtimeconfig.json" />
     <file src="../bin/Release/DecodePerfToJson.pdb" target="tools/netcoreapp3.1/any/DecodePerfToJson.pdb" />
     <file src="../bin/Release/Microsoft.LinuxTracepoints.Decode.dll" target="tools/netcoreapp3.1/any/Microsoft.LinuxTracepoints.Decode.dll" />
