@@ -118,7 +118,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Parses an event's "format" file and sets the fields of this object based
         /// on the results.
-        /// 
+        ///
         /// If "ID:" is a valid unsigned and and "name:" is not empty, returns a new
         /// PerfEventFormat. Otherwise, returns null.
         /// </summary>

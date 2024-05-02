@@ -83,6 +83,24 @@ namespace Microsoft.LinuxTracepoints.Decode
         ErrnoUnknownAsString = 0x800,
 
         /// <summary>
+        /// For non-JSON string conversions: replace control characters with space.
+        /// Conflicts with StringControlCharsJsonEscape.
+        /// </summary>
+        StringControlCharsReplaceWithSpace = 0x10000,
+
+        /// <summary>
+        /// For non-JSON string conversions: escape control characters using JSON-compatible
+        /// escapes sequences, e.g. "\n" for newline or "\u0000" for NUL.
+        /// Conflicts with StringControlCharsReplaceWithSpace.
+        /// </summary>
+        StringControlCharsJsonEscape = 0x20000,
+
+        /// <summary>
+        /// Mask for string control character flags.
+        /// </summary>
+        StringControlCharsMask = StringControlCharsReplaceWithSpace | StringControlCharsJsonEscape,
+
+        /// <summary>
         /// Default flags.
         /// </summary>
         Default =
@@ -96,7 +114,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             UnixTimeWithinRangeAsString |
             UnixTimeOutOfRangeAsString |
             ErrnoKnownAsString |
-            ErrnoUnknownAsString,
+            ErrnoUnknownAsString |
+            StringControlCharsReplaceWithSpace,
 
         /// <summary>
         /// All flags set.

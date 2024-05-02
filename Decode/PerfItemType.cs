@@ -14,7 +14,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// Scalar (non-array field, or one element of an array field):
     /// ElementCount is 1.
     /// TypeSize is the size of the item's type (itemValue.Bytes.Length == TypeSize) if
-    /// the type has a constant size (e.g. a UInt32), or 0 if the type is variable-size 
+    /// the type has a constant size (e.g. a UInt32), or 0 if the type is variable-size
     /// (e.g. a string).
     /// Format is significant.
     /// StructFieldCount should be ignored.

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="../Common.proj" />
-  
+
   <PropertyGroup>
     <PackAsTool>True</PackAsTool>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
