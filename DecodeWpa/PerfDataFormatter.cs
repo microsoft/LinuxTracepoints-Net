@@ -357,7 +357,10 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
         /// <br/>
         /// This method is thread-safe (serialized).
         /// </summary>
-        public KeyValuePair<string, string>[] MakeRowSynchronized(PerfDataEvent perfEvent, int maxTopLevelFields)
+        public KeyValuePair<string, string>[] MakeRowSynchronized(
+            PerfDataEvent perfEvent,
+            int maxTopLevelFields,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             if (maxTopLevelFields <= 0 || perfEvent.TopLevelFieldCount <= 0)
             {
@@ -423,7 +426,7 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
 
                             if (this.enumerator.State == EventHeaderEnumeratorState.Value)
                             {
-                                item.Value.AppendScalarTo(sb);
+                                item.Value.AppendScalarTo(sb, convertOptions);
                                 this.enumerator.MoveNext(userSpan);
                             }
                             else
@@ -432,7 +435,7 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
                                     userSpan,
                                     sb,
                                     false,
-                                    PerfConvertOptions.Default & ~PerfConvertOptions.RootName);
+                                    convertOptions & ~PerfConvertOptions.RootName);
                             }
 
                             row[fieldIndex] = new KeyValuePair<string, string>(
@@ -456,7 +459,7 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
                         sb.Clear();
                         do
                         {
-                            comma = this.enumerator.AppendJsonItemToAndMoveNextSibling(userSpan, sb, comma);
+                            comma = this.enumerator.AppendJsonItemToAndMoveNextSibling(userSpan, sb, comma, convertOptions);
                         } while (this.enumerator.State > EventHeaderEnumeratorState.BeforeFirstItem);
 
                         row[fieldIndex] = new KeyValuePair<string, string>("...", this.BuilderIntern());
@@ -482,11 +485,11 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
                     sb.Clear();
                     if (fieldVal.Type.IsArrayOrElement)
                     {
-                        fieldVal.AppendScalarTo(sb, PerfConvertOptions.Default & ~PerfConvertOptions.RootName);
+                        fieldVal.AppendSimpleArrayTo(sb, convertOptions);
                     }
                     else
                     {
-                        fieldVal.AppendScalarTo(sb, PerfConvertOptions.Default & ~PerfConvertOptions.RootName);
+                        fieldVal.AppendScalarTo(sb, convertOptions);
                     }
 
                     row[fieldIndex] = new KeyValuePair<string, string>(field.Name, this.BuilderIntern());
@@ -516,7 +519,7 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
 
                     comma = true;
                     var field = fields[i];
-                    this.AppendFieldAsJson(byteReader, rawData, field, PerfConvertOptions.Default);
+                    this.AppendFieldAsJson(byteReader, rawData, field, convertOptions);
                 }
 
                 row[fieldIndex] = new KeyValuePair<string, string>("...", this.BuilderIntern());

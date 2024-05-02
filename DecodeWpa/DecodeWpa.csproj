@@ -21,7 +21,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Performance.SDK" Version="1.1.13" />
   </ItemGroup>
-    
+
   <ItemGroup>
     <ProjectReference Include="..\Decode\Decode.csproj" />
   </ItemGroup>

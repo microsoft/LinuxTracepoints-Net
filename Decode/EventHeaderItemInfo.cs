@@ -88,7 +88,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public StringBuilder AppendAsString(StringBuilder sb)
         {
-            PerfConvert.StringAppend(sb, this.NameBytes, Encoding.UTF8);
+            PerfConvert.StringAppendWithControlCharsJsonEscape(sb, this.NameBytes, Encoding.UTF8);
 
             var fieldTag = this.Value.Type.FieldTag;
             if (fieldTag == 0)

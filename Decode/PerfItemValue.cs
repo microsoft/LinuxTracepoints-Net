@@ -536,7 +536,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// If the value is a boolean, appends a bool false (for 0), true (for 1), a string like
         /// BOOL(-123) if convertOptions has BoolOutOfRangeAsString, or a string like -123 otherwise.
         /// </item><item>
-        /// If the value is a string, appends a C-escaped string like abc\nxyz.
+        /// If the value is a string, control characters (char values 0..31) are
+        /// filtered based on the flags in convertOptions (kept, replaced with space,
+        /// or JSON-escaped).
         /// </item></list>
         /// </summary>
         public StringBuilder AppendScalarTo(
@@ -577,10 +579,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             PerfConvert.HexBytesAppend(sb, this.Bytes);
                             break;
                         case EventHeaderFieldFormat.String8:
-                            foreach (var b in this.Bytes)
-                            {
-                                PerfConvert.AppendEscapedC(sb, (char)b);
-                            }
+                            PerfConvert.StringLatin1AppendWithControlChars(sb, this.Bytes, convertOptions);
                             break;
                         case EventHeaderFieldFormat.StringUtfBom:
                         case EventHeaderFieldFormat.StringXml:
@@ -590,11 +589,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
-                            PerfConvert.AppendEscapedC(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
                         case EventHeaderFieldFormat.StringUtf:
-                            PerfConvert.AppendEscapedC(sb, this.Bytes, Text.Encoding.UTF8);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes, Text.Encoding.UTF8, convertOptions);
                             break;
                     }
                     break;
@@ -613,14 +612,15 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
-                            PerfConvert.AppendEscapedC(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
                         case EventHeaderFieldFormat.StringUtf:
-                            PerfConvert.AppendEscapedC(
+                            PerfConvert.StringAppendWithControlChars(
                                 sb,
                                 this.Bytes,
-                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode);
+                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode,
+                                convertOptions);
                             break;
                     }
                     break;
@@ -639,14 +639,15 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
-                            PerfConvert.AppendEscapedC(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
                         case EventHeaderFieldFormat.StringUtf:
-                            PerfConvert.AppendEscapedC(
+                            PerfConvert.StringAppendWithControlChars(
                                 sb,
                                 this.Bytes,
-                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32);
+                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32,
+                                convertOptions);
                             break;
                     }
                     break;
@@ -778,7 +779,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(separator);
-                                PerfConvert.AppendEscapedC(sb, (char)this.GetU8(i));
+                                PerfConvert.Char16AppendWithControlChars(sb, (char)this.GetU8(i), convertOptions);
                             }
                             break;
                     }
@@ -827,7 +828,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(separator);
-                                PerfConvert.AppendEscapedC(sb, (char)this.GetU16(i));
+                                PerfConvert.Char16AppendWithControlChars(sb, (char)this.GetU16(i), convertOptions);
                             }
                             break;
                         case EventHeaderFieldFormat.Port:
@@ -905,7 +906,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(separator);
-                                PerfConvert.AppendEscapedC(sb, this.GetU32(i));
+                                PerfConvert.Char32AppendWithControlChars(sb, this.GetU32(i), convertOptions);
                             }
                             break;
                         case EventHeaderFieldFormat.IPv4:
@@ -1523,7 +1524,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 PerfConvertOptions.FloatNonFiniteAsString |
                 PerfConvertOptions.IntHexAsString |
                 PerfConvertOptions.UnixTimeWithinRangeAsString |
-                PerfConvertOptions.ErrnoKnownAsString;
+                PerfConvertOptions.ErrnoKnownAsString |
+                PerfConvertOptions.StringControlCharsJsonEscape;
             const string Separator = ", ";
             int count;
             Text.Encoding? encodingFromBom;
@@ -1864,7 +1866,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             break;
                         case EventHeaderFieldFormat.String8:
                             sb.Append("String8: ");
-                            PerfConvert.StringLatin1Append(sb, this.Bytes);
+                            PerfConvert.StringLatin1AppendWithControlChars(sb, this.Bytes, convertOptions);
                             break;
                         case EventHeaderFieldFormat.StringXml:
                             sb.Append("StringXml8: ");
@@ -1880,7 +1882,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto Utf8;
                             }
-                            PerfConvert.StringAppend(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
                             sb.Append(this.Type.Format.ToString());
@@ -1889,7 +1891,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             sb.Append("StringUtf8: ");
                         Utf8:
-                            PerfConvert.StringAppend(sb, this.Bytes, Text.Encoding.UTF8);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes, Text.Encoding.UTF8, convertOptions);
                             break;
                     }
                     break;
@@ -1917,7 +1919,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto Utf16;
                             }
-                            PerfConvert.StringAppend(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
                             sb.Append(this.Type.Format.ToString());
@@ -1926,10 +1928,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             sb.Append("StringUtf16: ");
                         Utf16:
-                            PerfConvert.StringAppend(
+                            PerfConvert.StringAppendWithControlChars(
                                 sb,
                                 this.Bytes,
-                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode);
+                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode,
+                                convertOptions);
                             break;
                     }
                     break;
@@ -1957,7 +1960,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             {
                                 goto Utf32;
                             }
-                            PerfConvert.StringAppend(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
                             sb.Append(this.Type.Format.ToString());
@@ -1966,10 +1969,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldFormat.StringUtf:
                             sb.Append("StringUtf32: ");
                         Utf32:
-                            PerfConvert.StringAppend(
+                            PerfConvert.StringAppendWithControlChars(
                                 sb,
                                 this.Bytes,
-                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32);
+                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32,
+                                convertOptions);
                             break;
                     }
                     break;
@@ -2008,7 +2012,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     PerfConvert.HexBytesAppend(sb, this.GetSpan8(elementIndex));
                     break;
                 case EventHeaderFieldFormat.String8:
-                    PerfConvert.AppendEscapedJson(sb, (char)this.GetU8(elementIndex));
+                    PerfConvert.Char16AppendWithControlChars(sb, (char)this.GetU8(elementIndex), convertOptions);
                     break;
             }
         }
@@ -2034,7 +2038,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     PerfConvert.HexBytesAppend(sb, this.GetSpan16(elementIndex));
                     break;
                 case EventHeaderFieldFormat.StringUtf:
-                    PerfConvert.AppendEscapedJson(sb, (char)this.GetU16(elementIndex));
+                    PerfConvert.Char16AppendWithControlChars(sb, (char)this.GetU16(elementIndex), convertOptions);
                     break;
                 case EventHeaderFieldFormat.Port:
                     PerfConvert.UInt32DecimalAppend(sb, this.GetPort(elementIndex));
@@ -2073,7 +2077,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     PerfConvert.HexBytesAppend(sb, this.GetSpan32(elementIndex));
                     break;
                 case EventHeaderFieldFormat.StringUtf:
-                    PerfConvert.AppendEscapedJson(sb, this.GetU32(elementIndex));
+                    PerfConvert.Char32AppendWithControlChars(sb, this.GetU32(elementIndex), convertOptions);
                     break;
                 case EventHeaderFieldFormat.IPv4:
                     PerfConvert.IPv4Append(sb, this.GetIPv4(elementIndex));
@@ -2292,14 +2296,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         private static void Char16AppendJson(StringBuilder sb, UInt16 value)
         {
             sb.Append('"');
-            PerfConvert.AppendEscapedJson(sb, (char)value);
+            PerfConvert.Char16AppendWithControlCharsJsonEscape(sb, (char)value);
             sb.Append('"');
         }
 
         private static void Char32AppendJson(StringBuilder sb, UInt32 value)
         {
             sb.Append('"');
-            PerfConvert.AppendEscapedJson(sb, value);
+            PerfConvert.Char32AppendWithControlCharsJsonEscape(sb, value);
             sb.Append('"');
         }
     }

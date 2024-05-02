@@ -699,14 +699,14 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// sample_regs_user:
         /// Defines set of user regs to dump on samples.
-        /// See asm/perf_regs.h for details.  
+        /// See asm/perf_regs.h for details.
         /// </summary>
         [FieldOffset(80)]
         public UInt64 SampleRegsUser;
 
         /// <summary>
         /// sample_stack_user:
-        /// Defines size of the user stack to dump on samples.  
+        /// Defines size of the user stack to dump on samples.
         /// </summary>
         [FieldOffset(88)]
         public UInt32 SampleStackUser;
@@ -732,7 +732,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// aux_watermark:
-        /// Wakeup watermark for AUX area 
+        /// Wakeup watermark for AUX area
         /// </summary>
         [FieldOffset(104)]
         public UInt32 AuxWatermark;
@@ -843,7 +843,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <code><![CDATA[
         /// struct {
         ///    struct perf_event_header    header;
-        /// 
+        ///
         ///    u32                pid, tid;
         ///    u64                addr;
         ///    u64                len;
@@ -873,7 +873,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <code><![CDATA[
         /// struct {
         ///    struct perf_event_header    header;
-        /// 
+        ///
         ///    u32                pid, tid;
         ///    char                comm[];
         ///     struct sample_id        sample_id;
@@ -944,7 +944,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// struct {
         ///    struct perf_event_header    header;
         ///    u32                pid, tid;
-        /// 
+        ///
         ///    struct read_format        values;
         ///     struct sample_id        sample_id;
         /// };
@@ -957,13 +957,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <code><![CDATA[
         /// struct {
         ///    struct perf_event_header    header;
-        /// 
+        ///
         ///    #
         ///    # Note that PERF_SAMPLE_IDENTIFIER duplicates PERF_SAMPLE_ID.
         ///    # The advantage of PERF_SAMPLE_IDENTIFIER is that its position
         ///    # is fixed relative to header.
         ///    #
-        /// 
+        ///
         ///    { u64            id;      } && PERF_SAMPLE_IDENTIFIER
         ///    { u64            ip;      } && PERF_SAMPLE_IP
         ///    { u32            pid, tid; } && PERF_SAMPLE_TID
@@ -973,12 +973,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///    { u64            stream_id;} && PERF_SAMPLE_STREAM_ID
         ///    { u32            cpu, res; } && PERF_SAMPLE_CPU
         ///    { u64            period;   } && PERF_SAMPLE_PERIOD
-        /// 
+        ///
         ///    { struct read_format    values;      } && PERF_SAMPLE_READ
-        /// 
+        ///
         ///    { u64            nr,
         ///      u64            ips[nr];  } && PERF_SAMPLE_CALLCHAIN
-        /// 
+        ///
         ///    #
         ///    # The RAW record below is opaque data wrt the ABI
         ///    #
@@ -989,22 +989,22 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///    #
         ///    # In other words, PERF_SAMPLE_RAW contents are not an ABI.
         ///    #
-        /// 
+        ///
         ///    { u32            size;
         ///      char                  data[size];}&& PERF_SAMPLE_RAW
-        /// 
+        ///
         ///    { u64                   nr;
         ///      { u64    hw_idx; } && PERF_SAMPLE_BRANCH_HW_INDEX
         ///        { u64 from, to, flags } lbr[nr];
         ///      } && PERF_SAMPLE_BRANCH_STACK
-        /// 
+        ///
         ///     { u64            abi; # enum perf_sample_regs_abi
         ///       u64            regs[weight(mask)]; } && PERF_SAMPLE_REGS_USER
-        /// 
+        ///
         ///     { u64            size;
         ///       char            data[size];
         ///       u64            dyn_size; } && PERF_SAMPLE_STACK_USER
-        /// 
+        ///
         ///    { union perf_sample_weight
         ///     {
         ///        u64        full; && PERF_SAMPLE_WEIGHT
@@ -1044,7 +1044,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <code><![CDATA[
         /// struct {
         ///    struct perf_event_header    header;
-        /// 
+        ///
         ///    u32                pid, tid;
         ///    u64                addr;
         ///    u64                len;
@@ -1073,12 +1073,12 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_AUX:
-        /// 
+        ///
         /// Records that new data landed in the AUX buffer part.
         /// <code><![CDATA[
         /// struct {
         ///     struct perf_event_header    header;
-        /// 
+        ///
         ///     u64                aux_offset;
         ///     u64                aux_size;
         ///    u64                flags;
@@ -1090,7 +1090,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_ITRACE_START:
-        /// 
+        ///
         /// Indicates that instruction trace has started
         /// <code><![CDATA[
         /// struct {
@@ -1105,12 +1105,12 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_LOST_SAMPLES:
-        /// 
+        ///
         /// Records the dropped/lost sample number.
         /// <code><![CDATA[
         /// struct {
         ///    struct perf_event_header    header;
-        /// 
+        ///
         ///    u64                lost;
         ///    struct sample_id        sample_id;
         /// };
@@ -1120,7 +1120,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_SWITCH:
-        /// 
+        ///
         /// Records a context switch in or out (flagged by
         /// PERF_RECORD_MISC_SWITCH_OUT). See also
         /// PERF_RECORD_SWITCH_CPU_WIDE.
@@ -1135,7 +1135,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_SWITCH_CPU_WIDE:
-        /// 
+        ///
         /// CPU-wide version of PERF_RECORD_SWITCH with next_prev_pid and
         /// next_prev_tid that are the next (switching out) or previous
         /// (switching in) pid/tid.
@@ -1167,7 +1167,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_KSYMBOL:
-        /// 
+        ///
         /// Record ksymbol register/unregister events:
         /// <code><![CDATA[
         /// struct {
@@ -1185,7 +1185,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_BPF_EVENT:
-        /// 
+        ///
         /// Record bpf events:
         /// <code><![CDATA[
         ///  enum perf_bpf_event_type {
@@ -1193,7 +1193,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///    PERF_BPF_EVENT_PROG_LOAD    = 1,
         ///    PERF_BPF_EVENT_PROG_UNLOAD    = 2,
         ///  };
-        /// 
+        ///
         /// struct {
         ///    struct perf_event_header    header;
         ///    u16                type;
@@ -1221,7 +1221,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_TEXT_POKE:
-        /// 
+        ///
         /// Records changes to kernel text i.e. self-modified code. 'old_len' is
         /// the number of old bytes, 'new_len' is the number of new bytes. Either
         /// 'old_len' or 'new_len' may be zero to indicate, for example, the
@@ -1242,7 +1242,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_AUX_OUTPUT_HW_ID:
-        /// 
+        ///
         /// Data written to the AUX area by hardware due to aux_output, may need
         /// to be matched to the event by an architecture-specific hardware ID.
         /// This records the hardware ID, but requires sample_id to provide the
@@ -1284,12 +1284,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// PERF_RECORD_HEADER_EVENT_TYPE: deprecated
         /// <code><![CDATA[
         /// #define MAX_EVENT_NAME 64
-        /// 
+        ///
         /// struct perf_trace_event_type {
         ///     UInt64    event_id;
         ///     char    name[MAX_EVENT_NAME];
         /// };
-        /// 
+        ///
         /// struct event_type_event {
         ///     struct perf_event_header header;
         ///     struct perf_trace_event_type event_type;
@@ -1311,21 +1311,21 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_HEADER_BUILD_ID:
-        /// 
+        ///
         /// Define a ELF build ID for a referenced executable.
         /// </summary>
         HeaderBuildId = 67,
 
         /// <summary>
         /// PERF_RECORD_FINISHED_ROUND:
-        /// 
+        ///
         /// No event reordering over this header. No payload.
         /// </summary>
         FinishedRound = 68,
 
         /// <summary>
         /// PERF_RECORD_ID_INDEX:
-        /// 
+        ///
         /// Map event ids to CPUs and TIDs.
         /// <code><![CDATA[
         /// struct id_index_entry {
@@ -1334,7 +1334,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///     UInt64 cpu;
         ///     UInt64 tid;
         /// };
-        /// 
+        ///
         /// struct id_index_event {
         ///     struct perf_event_header header;
         ///     UInt64 nr;
@@ -1346,7 +1346,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_AUXTRACE_INFO:
-        /// 
+        ///
         /// Auxtrace type specific information. Describe me
         /// <code><![CDATA[
         /// struct auxtrace_info_event {
@@ -1361,7 +1361,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_AUXTRACE:
-        /// 
+        ///
         /// Defines auxtrace data. Followed by the actual data. The contents of
         /// the auxtrace data is dependent on the event and the CPU. For example
         /// for Intel Processor Trace it contains Processor Trace data generated
@@ -1377,7 +1377,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///      UInt32 cpu;
         ///      UInt32 reserved__; // For alignment
         /// };
-        /// 
+        ///
         /// struct aux_event {
         ///      struct perf_event_header header;
         ///      UInt64    aux_offset;
@@ -1390,16 +1390,16 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_AUXTRACE_ERROR:
-        /// 
+        ///
         /// Describes an error in hardware tracing
         /// <code><![CDATA[
         /// enum auxtrace_error_type {
         ///     PERF_AUXTRACE_ERROR_ITRACE  = 1,
         ///     PERF_AUXTRACE_ERROR_MAX
         /// };
-        /// 
+        ///
         /// #define MAX_AUXTRACE_ERROR_MSG 64
-        /// 
+        ///
         /// struct auxtrace_error_event {
         ///     struct perf_event_header header;
         ///     UInt32 type;
@@ -1452,7 +1452,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_HEADER_FEATURE:
-        /// 
+        ///
         /// Describes a header feature. These are records used in pipe-mode that
         /// contain information that otherwise would be in perf.data file's header.
         /// </summary>
@@ -1474,7 +1474,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// PERF_RECORD_FINISHED_INIT:
-        /// 
+        ///
         /// Marks the end of records for the system, pre-existing threads in system wide
         /// sessions, etc. Those are the ones prefixed PERF_RECORD_USER_*.
         ///
@@ -1676,14 +1676,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// perf_event_header::misc:
-        /// 
+        ///
         /// The misc field contains additional information about the sample.
         /// </summary>
         public PerfEventHeaderMisc Misc;
 
         /// <summary>
         /// perf_event_header::size:
-        /// 
+        ///
         /// This indicates the size of the record.
         /// </summary>
         public UInt16 Size;

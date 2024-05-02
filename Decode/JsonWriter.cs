@@ -41,7 +41,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.CommaSpace();
             this.builder.Append('"');
 
-            PerfConvert.AppendEscapedJson(this.builder, nameUtf8, Text.Encoding.UTF8);
+            PerfConvert.StringAppendWithControlCharsJsonEscape(this.builder, nameUtf8, Text.Encoding.UTF8);
             if (this.wantFieldTag && fieldTag != 0)
             {
                 this.builder.Append(";tag=");

@@ -29,6 +29,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         private const long DaysToYear10000 = 3652059;
         private const long SecondsPerDay = 60 * 60 * 24;
         private const long MaxSeconds = DaysToYear10000 * SecondsPerDay - UnixEpochSeconds;
+        private const int Latin1CodePage = 28591;
+        private const int Utf32BECodePage = 12001;
+        private const int Utf16LECodePage = 1200;
+        private const int Utf16BECodePage = 1201;
 
         /// <summary>
         /// ErrnoLookup(n) will return a non-null value if
@@ -155,7 +159,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Provided because Encoding.Latin1 is not available in .NET Standard 2.1.
         /// </summary>
         public static Encoding EncodingLatin1 => encodingLatin1 ?? Utility.InterlockedInitSingleton(
-            ref encodingLatin1, Encoding.GetEncoding(28591));
+            ref encodingLatin1, Encoding.GetEncoding(Latin1CodePage));
 
         /// <summary>
         /// Gets an encoding for UTF-32 big-endian characters, i.e. a cached value
@@ -163,7 +167,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Provided because Encoding.BigEndianUTF32 is not available in .NET Standard 2.1.
         /// </summary>
         public static Encoding EncodingUTF32BE => encodingUTF32BE ?? Utility.InterlockedInitSingleton(
-            ref encodingUTF32BE, Encoding.GetEncoding(12001));
+            ref encodingUTF32BE, Encoding.GetEncoding(Utf32BECodePage));
 
         /// <summary>
         /// If the provided byte array starts with a byte order mark (BOM),
@@ -358,6 +362,70 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// Appends the provided UTF-16 code unit, replacing control characters
+        /// (e.g. CR, LF, NUL) as specified by convertOptions. Returns sb.
+        /// </summary>
+        public static StringBuilder Char16AppendWithControlChars(
+            StringBuilder sb,
+            char value,
+            PerfConvertOptions convertOptions)
+        {
+            switch (convertOptions & PerfConvertOptions.StringControlCharsMask)
+            {
+                default:
+                    Debug.Assert(0 == (convertOptions & PerfConvertOptions.StringControlCharsMask));
+                    return sb.Append(value);
+
+                case PerfConvertOptions.StringControlCharsReplaceWithSpace:
+                    return sb.Append(value < ' ' ? ' ' : value);
+
+                case PerfConvertOptions.StringControlCharsJsonEscape:
+                    return Char16AppendWithControlCharsJsonEscape(sb, value);
+            }
+        }
+
+        /// <summary>
+        /// Appends the provided UTF-16 code unit, escaping control characters (e.g. CR, LF, NUL)
+        /// with JSON-style escape sequences (e.g. \r, \n, \u0000). Returns sb.
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static StringBuilder Char16AppendWithControlCharsJsonEscape(StringBuilder sb, char value)
+        {
+            if (value < 0x20)
+            {
+                switch (value)
+                {
+                    case '\b': sb.Append("\\b"); break;
+                    case '\f': sb.Append("\\f"); break;
+                    case '\n': sb.Append("\\n"); break;
+                    case '\r': sb.Append("\\r"); break;
+                    case '\t': sb.Append("\\t"); break;
+                    default:
+                        sb.Append(stackalloc char[6] {
+                            '\\', 'u', '0', '0',
+                            ToHexChar(value / 0x10),
+                            ToHexChar(value),
+                        });
+                        break;
+                }
+            }
+            else if (value == '"')
+            {
+                sb.Append(@"\""");
+            }
+            else if (value == '\\')
+            {
+                sb.Append(@"\\");
+            }
+            else
+            {
+                sb.Append(value);
+            }
+
+            return sb;
+        }
+
+        /// <summary>
         /// Formats the provided integer value as a UTF-32 code point, or as '\uFFFD' if invalid.
         /// Requires appropriately-sized destination buffer, up to Char32MaxChars.
         /// Returns the formatted string (the filled portion of destination).
@@ -396,7 +464,46 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static StringBuilder Char32Append(StringBuilder sb, UInt32 utf32CodePoint)
         {
-            return sb.Append(Char32Format(stackalloc char[Char32MaxChars], utf32CodePoint));
+            if (utf32CodePoint <= 0xFFFF)
+            {
+                return sb.Append((char)utf32CodePoint);
+            }
+            else if (utf32CodePoint <= 0x10FFFF)
+            {
+                var u = (utf32CodePoint - 0x10000) & 0xFFFFF;
+                sb.Append((char)(0xD800 | (u >> 10)));
+                return sb.Append((char)(0xDC00 | (u & 0x3FF)));
+            }
+            else
+            {
+                return sb.Append('\uFFFD'); // Replacement character
+            }
+        }
+
+        /// <summary>
+        /// Appends the provided Unicode code point, handling control characters (e.g. CR, LF, NUL)
+        /// as specified by convertOptions.
+        /// Returns sb.
+        /// </summary>
+        public static StringBuilder Char32AppendWithControlChars(
+            StringBuilder sb,
+            UInt32 utf32CodePoint,
+            PerfConvertOptions convertOptions)
+        {
+            return utf32CodePoint <= '\\'
+                ? Char16AppendWithControlChars(sb, (char)utf32CodePoint, convertOptions)
+                : Char32Append(sb, utf32CodePoint);
+        }
+
+        /// <summary>
+        /// Appends the provided Unicode code point, escaping control characters (e.g. CR, LF, NUL)
+        /// with JSON-style escape sequences (e.g. \r, \n, \u0000). Returns sb.
+        /// </summary>
+        public static StringBuilder Char32AppendWithControlCharsJsonEscape(StringBuilder sb, UInt32 utf32CodePoint)
+        {
+            return utf32CodePoint <= '\\'
+                ? Char16AppendWithControlCharsJsonEscape(sb, (char)utf32CodePoint)
+                : Char32Append(sb, utf32CodePoint);
         }
 
         /// <summary>
@@ -781,14 +888,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns the number of chars required to convertOptions the provided byte array as a string
-        /// of hexadecimal bytes (e.g. "0D 0A").
+        /// of hexadecimal chars (e.g. "0D 0A").
         /// If bytesLength is 0, returns 0. Otherwise returns (3 * bytesLength - 1).
         /// </summary>
         public static int HexBytesLength(int bytesLength) =>
             bytesLength <= 0 ? 0 : 3 * bytesLength - 1;
 
         /// <summary>
-        /// Formats the provided byte array as a string of hexadecimal bytes (e.g. "0D 0A").
+        /// Formats the provided byte array as a string of hexadecimal chars (e.g. "0D 0A").
         /// Requires appropriately-sized destination buffer, Length >= HexBytesLength(bytes.Length).
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
@@ -822,7 +929,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Converts a byte array to a new string of hexadecimal bytes (e.g. "0D 0A").
+        /// Converts a byte array to a new string of hexadecimal chars (e.g. "0D 0A").
         /// </summary>
         public static string HexBytesToString(ReadOnlySpan<byte> bytes)
         {
@@ -832,7 +939,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Converts a byte array to a string of hexadecimal bytes (e.g. "0D 0A") and appends it
+        /// Converts a byte array to a string of hexadecimal chars (e.g. "0D 0A") and appends it
         /// to the provided StringBuilder. Returns sb.
         /// </summary>
         public static StringBuilder HexBytesAppend(StringBuilder sb, ReadOnlySpan<byte> bytes)
@@ -1017,57 +1124,188 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Uses the provided encoding to convert a byte array to a string and appends it to the
-        /// provided StringBuilder. Returns sb.
-        /// Note that this conversion avoids generating garbage by using a stackalloc buffer.
-        /// For short strings, there will be no garbage. For long strings, this will make one
-        /// call to encoding.GetDecoder() which will allocate a decoder object to be used for
-        /// the conversion.
+        /// Appends chars to sb.
+        /// Handles control chars (characters 0..31) as specified by convertOptions, i.e. keeps
+        /// control chars, turns them into spaces, or JSON-escapes.
+        /// Returns sb.
         /// </summary>
-        public static StringBuilder StringAppend(StringBuilder sb, ReadOnlySpan<byte> bytes, Encoding encoding)
+        public static StringBuilder StringAppendWithControlChars(
+            StringBuilder sb,
+            ReadOnlySpan<char> chars,
+            PerfConvertOptions convertOptions)
         {
-            var bytesLength = bytes.Length;
-            var maxCharCount = encoding.GetMaxCharCount(bytesLength);
-            if (maxCharCount <= StackAllocCharsMax)
+            switch (convertOptions & PerfConvertOptions.StringControlCharsMask)
             {
-                Span<char> chars = stackalloc char[maxCharCount];
-                var charCount = encoding.GetChars(bytes, chars);
-                sb.Append(chars.Slice(0, charCount));
-            }
-            else
-            {
-                Span<char> chars = stackalloc char[StackAllocCharsMax];
-                var decoder = encoding.GetDecoder();
-                bool completed;
-                do
-                {
-                    decoder.Convert(bytes, chars, true, out var bytesUsed, out var charsUsed, out completed);
-                    bytes = bytes.Slice(bytesUsed);
-                    sb.Append(chars.Slice(0, charsUsed));
-                }
-                while (!completed);
+                default:
+                    Debug.Assert(0 == (convertOptions & PerfConvertOptions.StringControlCharsMask));
+                    sb.Append(chars);
+                    break;
+
+                case PerfConvertOptions.StringControlCharsReplaceWithSpace:
+                    foreach (var ch in chars)
+                    {
+                        sb.Append(ch < ' ' ? ' ' : ch);
+                    }
+                    break;
+
+                case PerfConvertOptions.StringControlCharsJsonEscape:
+                    StringAppendWithControlCharsJsonEscape(sb, chars);
+                    break;
             }
 
             return sb;
         }
 
         /// <summary>
-        /// Appends the string to sb as a JSON string. Returns sb.
+        /// Uses the specified encoding to convert bytes to a string and appends it to the
+        /// provided StringBuilder.
+        /// Handles control chars (characters 0..31) as specified by convertOptions, i.e. keeps
+        /// control chars, turns them into spaces, or JSON-escapes.
+        /// Returns sb.
+        /// <br/>
+        /// Note that this conversion avoids generating garbage by using a stackalloc buffer.
+        /// For short strings, there will be no garbage. For long strings, this will make one
+        /// call to encoding.GetDecoder() which will allocate a decoder object to be used for
+        /// the conversion.
+        /// </summary>
+        public static StringBuilder StringAppendWithControlChars(
+            StringBuilder sb,
+            ReadOnlySpan<byte> bytes,
+            Encoding encoding,
+            PerfConvertOptions convertOptions)
+        {
+            var nativeCharCodePage = BitConverter.IsLittleEndian ? Utf16LECodePage : Utf16BECodePage;
+            var codePage = encoding.CodePage;
+            if (codePage == nativeCharCodePage)
+            {
+                StringAppendWithControlChars(sb, MemoryMarshal.Cast<byte, char>(bytes), convertOptions);
+            }
+            else if (codePage == Latin1CodePage)
+            {
+                StringLatin1AppendWithControlChars(sb, bytes, convertOptions);
+            }
+            else
+            {
+                var bytesLength = bytes.Length;
+                var maxCharCount = encoding.GetMaxCharCount(bytesLength);
+                if (maxCharCount <= StackAllocCharsMax)
+                {
+                    Span<char> chars = stackalloc char[maxCharCount];
+                    var charCount = encoding.GetChars(bytes, chars);
+                    StringAppendWithControlChars(sb, chars.Slice(0, charCount), convertOptions);
+                }
+                else
+                {
+                    Span<char> chars = stackalloc char[StackAllocCharsMax];
+                    var decoder = encoding.GetDecoder();
+                    bool completed;
+                    do
+                    {
+                        decoder.Convert(bytes, chars, true, out var bytesUsed, out var charsUsed, out completed);
+                        bytes = bytes.Slice(bytesUsed);
+                        StringAppendWithControlChars(sb, chars.Slice(0, charsUsed), convertOptions);
+                    }
+                    while (!completed);
+                }
+            }
+
+            return sb;
+        }
+
+        /// <summary>
+        /// Appends chars to sb.
+        /// Handles control chars (characters 0..31) with JSON-escapes.
+        /// Returns sb.
+        /// </summary>
+        public static StringBuilder StringAppendWithControlCharsJsonEscape(
+            StringBuilder sb,
+            ReadOnlySpan<char> chars)
+        {
+            foreach (var ch in chars)
+            {
+                Char16AppendWithControlCharsJsonEscape(sb, ch);
+            }
+
+            return sb;
+        }
+
+        /// <summary>
+        /// Uses the specified encoding to convert bytes to a string and appends it to the
+        /// provided StringBuilder.
+        /// Handles control chars (characters 0..31) with JSON-escapes.
+        /// Returns sb.
+        /// <br/>
+        /// Note that this conversion avoids generating garbage by using a stackalloc buffer.
+        /// For short strings, there will be no garbage. For long strings, this will make one
+        /// call to encoding.GetDecoder() which will allocate a decoder object to be used for
+        /// the conversion.
+        /// </summary>
+        public static StringBuilder StringAppendWithControlCharsJsonEscape(
+            StringBuilder sb,
+            ReadOnlySpan<byte> bytes,
+            Encoding encoding)
+        {
+            var nativeCharCodePage = BitConverter.IsLittleEndian ? Utf16LECodePage : Utf16BECodePage;
+            var codePage = encoding.CodePage;
+            if (codePage == nativeCharCodePage)
+            {
+                StringAppendWithControlCharsJsonEscape(sb, MemoryMarshal.Cast<byte, char>(bytes));
+            }
+            else if (codePage == Latin1CodePage)
+            {
+                StringLatin1AppendWithControlCharsJsonEscape(sb, bytes);
+            }
+            else
+            {
+                var bytesLength = bytes.Length;
+                var maxCharCount = encoding.GetMaxCharCount(bytesLength);
+                if (maxCharCount <= StackAllocCharsMax)
+                {
+                    Span<char> chars = stackalloc char[maxCharCount];
+                    var charCount = encoding.GetChars(bytes, chars);
+                    StringAppendWithControlCharsJsonEscape(sb, chars.Slice(0, charCount));
+                }
+                else
+                {
+                    Span<char> chars = stackalloc char[StackAllocCharsMax];
+                    var decoder = encoding.GetDecoder();
+                    bool completed;
+                    do
+                    {
+                        decoder.Convert(bytes, chars, true, out var bytesUsed, out var charsUsed, out completed);
+                        bytes = bytes.Slice(bytesUsed);
+                        StringAppendWithControlCharsJsonEscape(sb, chars.Slice(0, charsUsed));
+                    }
+                    while (!completed);
+                }
+            }
+
+            return sb;
+        }
+
+        /// <summary>
+        /// Converts chars to a JSON string (replaces control characters with JSON-style escape
+        /// sequences like "\r" and adds leading/trailing quotation marks) and appends it to sb.
+        /// Returns sb.
+        /// <br/>
         /// For example, if provided with input [Hello?World] where the ? is a NUL byte, this
         /// would append ["Hello\u0000World"].
         /// </summary>
         public static StringBuilder StringAppendJson(StringBuilder sb, ReadOnlySpan<char> chars)
         {
             sb.Append('"');
-            AppendEscapedJson(sb, chars);
+            StringAppendWithControlCharsJsonEscape(sb, chars);
             return sb.Append('"');
         }
 
         /// <summary>
-        /// Uses the specified encoding to convert the provided bytes into a string and appends
-        /// it to sb as a JSON string. Returns sb.
+        /// Uses the provided encoding to convert chars to a JSON string (replaces control
+        /// characters with JSON-style escape sequences like "\r" and adds leading/trailing
+        /// quotation marks) and appends it to sb. Returns sb.
+        /// <br/>
         /// For example, if provided with input [Hello?World] where the ? is a NUL byte, this
         /// would append ["Hello\u0000World"].
+        /// <br/>
         /// Note that this conversion avoids generating garbage by using a stackalloc buffer.
         /// For short strings, there will be no garbage. For long strings, this will make one
         /// call to encoding.GetDecoder() which will allocate a decoder object to be used for
@@ -1076,40 +1314,74 @@ namespace Microsoft.LinuxTracepoints.Decode
         public static StringBuilder StringAppendJson(StringBuilder sb, ReadOnlySpan<byte> bytes, Encoding encoding)
         {
             sb.Append('"');
-            AppendEscapedJson(sb, bytes, encoding);
+            StringAppendWithControlCharsJsonEscape(sb, bytes, encoding);
             return sb.Append('"');
         }
 
-
         /// <summary>
-        /// Uses the Latin1 encoding to convert a byte array to a string and appends it to the
-        /// provided StringBuilder. Returns sb.
+        /// Uses the Latin1 encoding to convert bytes to a string and appends it to sb.
+        /// Handles control chars (characters 0..31) as specified by convertOptions, i.e. keeps
+        /// control chars, turns them into spaces, C-escapes, or JSON-escapes.
+        /// Returns sb.
         /// </summary>
-        public static StringBuilder StringLatin1Append(StringBuilder sb, ReadOnlySpan<byte> bytes)
+        public static StringBuilder StringLatin1AppendWithControlChars(
+            StringBuilder sb,
+            ReadOnlySpan<byte> bytes,
+            PerfConvertOptions convertOptions)
         {
-            for (var i = 0; i < bytes.Length; i += 1)
+            switch (convertOptions & PerfConvertOptions.StringControlCharsMask)
             {
-                sb.Append((char)bytes[i]);
+                default:
+                    Debug.Assert(0 == (convertOptions & PerfConvertOptions.StringControlCharsMask));
+                    foreach (var b in bytes)
+                    {
+                        sb.Append((char)b);
+                    }
+                    break;
+
+                case PerfConvertOptions.StringControlCharsReplaceWithSpace:
+                    foreach (var b in bytes)
+                    {
+                        sb.Append(b < ' ' ? ' ' : (char)b);
+                    }
+                    break;
+
+                case PerfConvertOptions.StringControlCharsJsonEscape:
+                    StringLatin1AppendWithControlCharsJsonEscape(sb, bytes);
+                    break;
             }
 
             return sb;
         }
 
         /// <summary>
-        /// Uses the Latin1 encoding to convert the provided bytes into a string and appends
-        /// it to sb as a JSON string. Returns sb.
+        /// Uses the Latin1 encoding to convert bytes to a string and appends it to sb.
+        /// Handles control chars (characters 0..31) with JSON-escapes.
+        /// Returns sb.
+        /// </summary>
+        public static StringBuilder StringLatin1AppendWithControlCharsJsonEscape(
+            StringBuilder sb,
+            ReadOnlySpan<byte> bytes)
+        {
+            foreach (var b in bytes)
+            {
+                Char16AppendWithControlCharsJsonEscape(sb, (char)b);
+            }
+            return sb;
+        }
+
+        /// <summary>
+        /// Uses the Latin1 encoding to convert bytes to a JSON string (replaces control
+        /// characters with JSON-style escape sequences like "\r" and adds leading/trailing
+        /// quotation marks) and appends it to sb. Returns sb.
+        /// <br/>
         /// For example, if provided with input [Hello?World] where the ? is a NUL byte, this
         /// would append ["Hello\u0000World"].
         /// </summary>
         public static StringBuilder StringLatin1AppendJson(StringBuilder sb, ReadOnlySpan<byte> bytes)
         {
             sb.Append('"');
-
-            foreach (var b in bytes)
-            {
-                AppendEscapedJson(sb, (char)b);
-            }
-
+            StringLatin1AppendWithControlCharsJsonEscape(sb, bytes);
             return sb.Append('"');
         }
 
@@ -1636,166 +1908,6 @@ namespace Microsoft.LinuxTracepoints.Decode
 #endif
 
             return strings;
-        }
-
-        internal static void AppendEscapedJson(StringBuilder sb, ReadOnlySpan<byte> bytes, Encoding encoding)
-        {
-            if (encoding.CodePage == (BitConverter.IsLittleEndian ? 1200 : 1201))
-            {
-                AppendEscapedJson(sb, MemoryMarshal.Cast<byte, char>(bytes));
-            }
-            else
-            {
-                var bytesLength = bytes.Length;
-                var maxCharCount = encoding.GetMaxCharCount(bytesLength);
-                if (maxCharCount <= StackAllocCharsMax)
-                {
-                    Span<char> chars = stackalloc char[maxCharCount];
-                    var charCount = encoding.GetChars(bytes, chars);
-                    AppendEscapedJson(sb, chars.Slice(0, charCount));
-                }
-                else
-                {
-                    Span<char> chars = stackalloc char[StackAllocCharsMax];
-                    var decoder = encoding.GetDecoder();
-                    bool completed;
-                    do
-                    {
-                        decoder.Convert(bytes, chars, true, out var bytesUsed, out var charsUsed, out completed);
-                        bytes = bytes.Slice(bytesUsed);
-                        AppendEscapedJson(sb, chars.Slice(0, charsUsed));
-                    }
-                    while (!completed);
-                }
-            }
-        }
-
-        internal static void AppendEscapedJson(StringBuilder sb, ReadOnlySpan<char> chars)
-        {
-            foreach (var c in chars)
-            {
-                AppendEscapedJson(sb, c);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AppendEscapedJson(StringBuilder sb, char ch)
-        {
-            if (ch < 0x20)
-            {
-                switch (ch)
-                {
-                    case '\b': sb.Append("\\b"); break;
-                    case '\f': sb.Append("\\f"); break;
-                    case '\n': sb.Append("\\n"); break;
-                    case '\r': sb.Append("\\r"); break;
-                    case '\t': sb.Append("\\t"); break;
-                    default:
-                        sb.Append(stackalloc char[6] {
-                            '\\',
-                            'u',
-                            ToHexChar(ch / 0x1000),
-                            ToHexChar(ch / 0x100),
-                            ToHexChar(ch / 0x10),
-                            ToHexChar(ch),
-                        });
-                        break;
-                }
-            }
-            else if (ch == '"' || ch == '\\')
-            {
-                sb.Append(stackalloc char[2] { '\\', ch });
-            }
-            else
-            {
-                sb.Append(ch);
-            }
-        }
-
-        internal static void AppendEscapedJson(StringBuilder sb, UInt32 ch32)
-        {
-            AppendEscapedJson(sb, PerfConvert.Char32Format(stackalloc char[2], ch32));
-        }
-
-        internal static void AppendEscapedC(StringBuilder sb, ReadOnlySpan<byte> bytes, Encoding encoding)
-        {
-            if (encoding.CodePage == (BitConverter.IsLittleEndian ? 1200 : 1201))
-            {
-                AppendEscapedC(sb, MemoryMarshal.Cast<byte, char>(bytes));
-            }
-            else
-            {
-                var bytesLength = bytes.Length;
-                var maxCharCount = encoding.GetMaxCharCount(bytesLength);
-                if (maxCharCount <= StackAllocCharsMax)
-                {
-                    Span<char> chars = stackalloc char[maxCharCount];
-                    var charCount = encoding.GetChars(bytes, chars);
-                    AppendEscapedC(sb, chars.Slice(0, charCount));
-                }
-                else
-                {
-                    Span<char> chars = stackalloc char[StackAllocCharsMax];
-                    var decoder = encoding.GetDecoder();
-                    bool completed;
-                    do
-                    {
-                        decoder.Convert(bytes, chars, true, out var bytesUsed, out var charsUsed, out completed);
-                        bytes = bytes.Slice(bytesUsed);
-                        AppendEscapedC(sb, chars.Slice(0, charsUsed));
-                    }
-                    while (!completed);
-                }
-            }
-        }
-
-        internal static void AppendEscapedC(StringBuilder sb, ReadOnlySpan<char> chars)
-        {
-            foreach (var c in chars)
-            {
-                AppendEscapedC(sb, c);
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AppendEscapedC(StringBuilder sb, char ch)
-        {
-            if (ch < 0x20)
-            {
-                switch (ch)
-                {
-                    case '\a': sb.Append("\\a"); break;
-                    case '\b': sb.Append("\\b"); break;
-                    case '\f': sb.Append("\\f"); break;
-                    case '\n': sb.Append("\\n"); break;
-                    case '\r': sb.Append("\\r"); break;
-                    case '\t': sb.Append("\\t"); break;
-                    case '\v': sb.Append("\\v"); break;
-                    default:
-                        sb.Append(stackalloc char[6] {
-                            '\\',
-                            'u',
-                            ToHexChar(ch / 0x1000),
-                            ToHexChar(ch / 0x100),
-                            ToHexChar(ch / 0x10),
-                            ToHexChar(ch),
-                        });
-                        break;
-                }
-            }
-            else if (ch == '\\')
-            {
-                sb.Append("\\\\");
-            }
-            else
-            {
-                sb.Append(ch);
-            }
-        }
-
-        internal static void AppendEscapedC(StringBuilder sb, UInt32 ch32)
-        {
-            AppendEscapedC(sb, PerfConvert.Char32Format(stackalloc char[2], ch32));
         }
     }
 }

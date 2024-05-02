@@ -31,7 +31,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// ReadEvent:
         /// No more events because the file contains invalid data.
-        /// 
+        ///
         /// GetSampleEventInfo or GetNonSampleEventInfo:
         /// Failed to get event info because the event contains invalid data.
         /// </summary>
@@ -423,7 +423,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             GC.SuppressFinalize(this);
 
             FileClose();
-            
+
             foreach (var item in m_buffers)
             {
                 item.Dispose(); // Return buffer to ArrayPool.
@@ -532,12 +532,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Closes the current input file (if any), then opens the specified
         /// perf.data file (Mode = Open, Access = Read, Share = Read + Delete) and
         /// reads the file header.
-        /// 
+        ///
         /// If not a pipe-mode file, loads headers/attributes.
-        /// 
+        ///
         /// If a pipe-mode file, headers and attributes will be loaded as the header
         /// events are encountered by ReadEvent.
-        /// 
+        ///
         /// On successful return, the file will be positioned before the first event.
         /// </summary>
         /// <returns>true on success, false if the file is not a valid perf.data file.</returns>
@@ -563,12 +563,12 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Closes the current input file (if any), then opens the specified stream
         /// and reads the file header.
-        /// 
+        ///
         /// If reading a pipe-mode file, headers will be loaded as the header
         /// events are encountered by ReadEvent. No seeking will occur.
-        /// 
+        ///
         /// If not a pipe-mode file, loads headers. The stream must be seekable.
-        /// 
+        ///
         /// On successful return, the file will be positioned before the first event.
         /// </summary>
         /// <param name="stream">

@@ -23,6 +23,7 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
             "Events loaded from a perf.data file",
             "Linux perf.data");
 
+        private const PerfConvertOptions ConvertOptions = PerfConvertOptions.Default;
         private readonly long sessionTimestampOffset;
         private readonly ushort maxTopLevelFields;
         private readonly ProcessedEventData<ValueTuple<PerfDataEvent, PerfDataFileInfo>> events;
@@ -173,14 +174,17 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
                 file.ClockOffset.AddNanoseconds(evt.FileRelativeTime).ToString());
 
             var fields = details[line++] = new TableRowDetailEntry("Fields",
-                this.formatter.GetFieldsAsJsonSynchronized(evt));
+                this.formatter.GetFieldsAsJsonSynchronized(evt, ConvertOptions));
             for (int i = 0; i < row.Length; i += 1)
             {
-                fields.AddChildDetailsInfo(new TableRowDetailEntry(row[i].Key, row[i].Value));
+                var key = row[i].Key;
+                fields.AddChildDetailsInfo(new TableRowDetailEntry(
+                    string.IsNullOrWhiteSpace(key) ? "?" : key,
+                    row[i].Value));
             }
 
             details[line++] = new TableRowDetailEntry(CommonFields_Column.Metadata.Name,
-                this.formatter.GetCommonFieldsAsJsonSynchronized(evt));
+                this.formatter.GetCommonFieldsAsJsonSynchronized(evt, ConvertOptions));
 
             details[line++] = new TableRowDetailEntry(FileName_Column.Metadata.Name,
                 file.FileName);
@@ -224,7 +228,7 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
 
         private KeyValuePair<string, string>[] InitFieldsCache(int rowIndex)
         {
-            var row = this.formatter.MakeRowSynchronized(this.events[rowIndex].Item1, this.maxTopLevelFields);
+            var row = this.formatter.MakeRowSynchronized(this.events[rowIndex].Item1, this.maxTopLevelFields, ConvertOptions);
             this.fieldsCache[rowIndex] = row;
             return row;
         }
@@ -241,7 +245,7 @@ namespace Microsoft.Performance.Toolkit.Plugins.PerfDataExtension
             new ColumnMetadata(new Guid("cdb2c54f-fee5-4b3b-9c89-7e910ab176af"), "Attr Type", "perf_event_attr.type"),
             new UIHints { IsVisible = false, Width = 60, });
 
-        public string CommonFields(int i) => this.formatter.GetCommonFieldsAsJsonSynchronized(this.events[i].Item1);
+        public string CommonFields(int i) => this.formatter.GetCommonFieldsAsJsonSynchronized(this.events[i].Item1, ConvertOptions);
 
         private static readonly ColumnConfiguration CommonFields_Column = new ColumnConfiguration(
             new ColumnMetadata(new Guid("ab3cb8ba-5167-4117-82f1-98b34b6e1430"), "Common Fields"),

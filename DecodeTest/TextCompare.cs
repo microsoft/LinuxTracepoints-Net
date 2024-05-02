@@ -40,7 +40,7 @@
             var expectedLines = expectedText.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);
 
             Assert.AreEqual(expectedLines.Length, actualLines.Length);
-            
+
             bool anyDifferences = false;
             for (var i = 0; i < expectedLines.Length; i++)
             {

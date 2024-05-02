@@ -18,7 +18,7 @@
             this.indentLevel = 0;
             this.comma = false;
         }
-        
+
         public StringBuilder Builder => this.builder;
 
         public void Reset()

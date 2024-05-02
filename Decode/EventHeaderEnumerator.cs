@@ -757,7 +757,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///                 DoSimpleArrayElement(item, i);
         ///             }
         ///             DoSimpleArrayEnd(item);
-        /// 
+        ///
         ///             // Skip the entire array at once.
         ///             if (!e.MoveNextSibling()) // Instead of MoveNext().
         ///             {
@@ -770,7 +770,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         ///         DoComplexArrayEnd(item);
         ///         break;
         ///     }
-        /// 
+        ///
         ///     if (!e.MoveNext())
         ///     {
         ///         return e.LastError;
@@ -1234,11 +1234,11 @@ namespace Microsoft.LinuxTracepoints.Decode
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
 
             sb.Append('"');
-            PerfConvert.AppendEscapedJson(
+            PerfConvert.StringAppendWithControlCharsJsonEscape(
                 sb,
                 m_tracepointName.AsSpan().Slice(0, m_tracepointName.LastIndexOf('_')));
             sb.Append(':');
-            PerfConvert.AppendEscapedJson(
+            PerfConvert.StringAppendWithControlCharsJsonEscape(
                 sb,
                 eventDataSpan.Slice(m_metaBegin, m_eventNameSize),
                 Text.Encoding.UTF8);
