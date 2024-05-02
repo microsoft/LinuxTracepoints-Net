@@ -113,7 +113,7 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 
 ## Changelog
 
-### 0.1.2 (TBD)
+### 0.1.2 (2024-05-02)
 
 - Fix invalid TID returned from `GetNonSampleEventInfo`.
 - Fix `PerfTimeSpec.ToString()` to properly include subsecond values.
@@ -128,7 +128,16 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
 - `EventHeaderEnumerator` now has a `GetItemType()` method. This returns a
   subset of the information returned from `GetItemInfo()` and can be used as
   an optimization when only the item type information is needed.
-- `PerfConvert` exposes new utility method `ReadGuidBigEndian`.
+- `PerfConvert` string methods have been refactored to ensure that callers
+  correctly handle control characters (space, newline, etc.) when formatting
+  strings (the new methods have a required parameter to indicate how control
+  characters should be formatted - as-is, as-space, or as-escape-sequence).
+  `StringAppend` is now `StringAppendWithControlChars`, and
+  `StringLatin1Append` is now `StringLatin1AppendWithControlChars`. Default
+  control character handling is replace-with-space for basic formatting and
+  replace-with-JSON-escape-sequence for JSON formatting.
+- `PerfConvert` exposes several new methods: `ReadGuidBigEndian`,
+  `Char16AppendWithControlChars`, etc.
 - `PerfDataFileReader` exposes new property `SessionInfo`.
 - `PerfDataFileReader` exposes new method `HeaderString`.
 - Added `AsString` extension method for `PerfEventAttrType`.

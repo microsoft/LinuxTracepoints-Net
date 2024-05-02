@@ -888,14 +888,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Returns the number of chars required to convertOptions the provided byte array as a string
-        /// of hexadecimal chars (e.g. "0D 0A").
+        /// of hexadecimal bytes (e.g. "0D 0A").
         /// If bytesLength is 0, returns 0. Otherwise returns (3 * bytesLength - 1).
         /// </summary>
         public static int HexBytesLength(int bytesLength) =>
             bytesLength <= 0 ? 0 : 3 * bytesLength - 1;
 
         /// <summary>
-        /// Formats the provided byte array as a string of hexadecimal chars (e.g. "0D 0A").
+        /// Formats the provided byte array as a string of hexadecimal bytes (e.g. "0D 0A").
         /// Requires appropriately-sized destination buffer, Length >= HexBytesLength(bytes.Length).
         /// Returns the formatted string (the filled portion of destination).
         /// </summary>
@@ -929,7 +929,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Converts a byte array to a new string of hexadecimal chars (e.g. "0D 0A").
+        /// Converts a byte array to a new string of hexadecimal bytes (e.g. "0D 0A").
         /// </summary>
         public static string HexBytesToString(ReadOnlySpan<byte> bytes)
         {
@@ -939,7 +939,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Converts a byte array to a string of hexadecimal chars (e.g. "0D 0A") and appends it
+        /// Converts a byte array to a string of hexadecimal bytes (e.g. "0D 0A") and appends it
         /// to the provided StringBuilder. Returns sb.
         /// </summary>
         public static StringBuilder HexBytesAppend(StringBuilder sb, ReadOnlySpan<byte> bytes)
