@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <PackageId>Microsoft.LinuxTracepoints.Types</PackageId>
-    <Title>Microsoft Linux Tracepoints Decode</Title>
+    <Title>Microsoft Linux Tracepoints Types</Title>
     <Description>Types for Linux Tracepoints and EventHeader events.</Description>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>

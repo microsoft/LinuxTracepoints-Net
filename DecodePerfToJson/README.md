@@ -74,9 +74,15 @@ JSON options:
   Off by default: <none>
 ```
 
+## Project
+
+This component is a part of the
+[LinuxTracepoints-Net](https://github.com/microsoft/LinuxTracepoints-Net)
+project. Feedback and contributions are welcome.
+
 ## Changelog
 
-### 0.1.2 (TBD)
+### 0.1.2 (2024-05-06)
 
 - Fix TID field for non-Sample events.
 

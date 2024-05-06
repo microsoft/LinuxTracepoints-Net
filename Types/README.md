@@ -269,7 +269,17 @@ Each field's type has an arity, an encoding, and a format.
   - String: Latin-1, UTF, UTF-BOM, XML, JSON.
   - Other: Float, IPv4 address, IPv6 address, UUID, Binary.
 
+## Project
+
+This component is a part of the
+[LinuxTracepoints-Net](https://github.com/microsoft/LinuxTracepoints-Net)
+project. Feedback and contributions are welcome.
+
 ## Changelog
+
+### 0.1.2 (2024-05-06)
+
+- NuGet cleanup.
 
 ### 0.1.1 (2024-04-22)
 

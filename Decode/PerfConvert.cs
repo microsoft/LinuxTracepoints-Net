@@ -1052,16 +1052,23 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public static Span<char> IPv4Format(Span<char> destination, UInt32 ipv4)
         {
-            var bytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref ipv4, 1));
+            // Caller did: memcpy(&ipv4, &bigEndianEventBytes, 4).
+            // We are about to treat ipv4 as a host-endian integer, so reverse
+            // byte order if appropriate.
+            if (!BitConverter.IsLittleEndian)
+            {
+                ipv4 = BinaryPrimitives.ReverseEndianness(ipv4);
+            }
+
             var pos = 0;
-            var end = UInt32DecimalFormatAtEnd(destination.Slice(pos), bytes[0]);
+            var end = UInt32DecimalFormatAtEnd(destination.Slice(pos), unchecked((byte)ipv4));
             end.CopyTo(destination);
             pos += end.Length;
 
-            for (var i = 1; i < 4; i += 1)
+            for (var i = 8; i <= 24; i += 8)
             {
                 destination[pos++] = '.';
-                end = UInt32DecimalFormatAtEnd(destination.Slice(pos), bytes[i]);
+                end = UInt32DecimalFormatAtEnd(destination.Slice(pos), unchecked((byte)(ipv4 >> i)));
                 end.CopyTo(destination.Slice(pos));
                 pos += end.Length;
             }

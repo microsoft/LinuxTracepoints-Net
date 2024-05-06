@@ -50,7 +50,7 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
     are usually not interesting and are typically skipped.)
     
   - If `sampleEventInfo.Format.DecodingStyle` is `EventHeader`, decode the event using
-	`eventHeaderEnumerator`. Start enumeration by calling
+    `eventHeaderEnumerator`. Start enumeration by calling
     `eventHeaderEnumerator.StartEvent(sampleEventInfo)`. You can then get EventHeader-specific
     information about the event from `eventHeaderEnumerator.GetEventInfo()`, and you can iterate
     through the fields of the event using `eventHeaderEnumerator.MoveNext()`.
@@ -111,9 +111,15 @@ For an example, see [DecodeSample](https://github.com/microsoft/LinuxTracepoints
   (e.g. `GetU32`, `GetF64`, `GetGuid`). Provides helpers for formatting the value as a
   `string` or appending it to a `StringBuilder`.
 
+## Project
+
+This component is a part of the
+[LinuxTracepoints-Net](https://github.com/microsoft/LinuxTracepoints-Net)
+project. Feedback and contributions are welcome.
+
 ## Changelog
 
-### 0.1.2 (2024-05-02)
+### 0.1.2 (2024-05-06)
 
 - Fix invalid TID returned from `GetNonSampleEventInfo`.
 - Fix `PerfTimeSpec.ToString()` to properly include subsecond values.

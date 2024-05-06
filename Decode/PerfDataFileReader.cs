@@ -850,8 +850,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 goto ErrorOrEof;
             }
 
-            var eventHeaderFileEndian = default(PerfEventHeader);
-            var eventHeaderFileEndianBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref eventHeaderFileEndian, 1));
+            Span<byte> eventHeaderFileEndianBytes = stackalloc byte[PerfEventHeader.SizeOfStruct];
             if (!FileRead(eventHeaderFileEndianBytes))
             {
                 if (m_filePos == eventStartFilePos &&
@@ -868,7 +867,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 goto ErrorOrEof;
             }
 
-            var eventHeader = eventHeaderFileEndian;
+            var eventHeader = MemoryMarshal.Read<PerfEventHeader>(eventHeaderFileEndianBytes);
             if (m_byteReader.ByteSwapNeeded)
             {
                 eventHeader.ByteSwap();
@@ -1654,10 +1653,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 var attrAndIdSectionSize = (uint)attrAndIdSectionSize64; // <= 0x10000
                 var attrSizeInFile = attrAndIdSectionSize - perf_file_section.SizeOfStruct;
 
-                PerfEventAttr attr = default;
-                var attrBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref attr, 1))
-                    .Slice(0, Math.Min((int)attrSizeInFile, PerfEventAttr.SizeOfStruct));
-
+                Span<byte> attrBytes = stackalloc byte[Math.Min((int)attrSizeInFile, PerfEventAttr.SizeOfStruct)];
                 perf_file_section section = default;
                 var sectionBytes = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan(ref section, 1));
 
