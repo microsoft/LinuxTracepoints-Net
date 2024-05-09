@@ -1045,7 +1045,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="info">Receives event information.</param>
         /// <returns>Ok on success, other value if this event could not be decoded.</returns>
         public PerfDataFileResult GetSampleEventInfo(
-            in PerfEventBytes eventBytes,
+            PerfEventBytes eventBytes,
             out PerfSampleEventInfo info)
         {
             PerfDataFileResult result;
@@ -1368,7 +1368,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <param name="info">Receives event information.</param>
         /// <returns>Ok on success, other value if this event could not be decoded.</returns>
         public PerfDataFileResult GetNonSampleEventInfo(
-            in PerfEventBytes eventBytes,
+            PerfEventBytes eventBytes,
             out PerfNonSampleEventInfo info)
         {
             PerfDataFileResult result;

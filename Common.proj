@@ -2,6 +2,7 @@
 
   <PropertyGroup>
 
+    <LangVersion>12</LangVersion>
     <Nullable>enable</Nullable>
     <WarningLevel>9999</WarningLevel>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
