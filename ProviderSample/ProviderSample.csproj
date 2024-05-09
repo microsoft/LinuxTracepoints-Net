@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="../Common.proj" />
+
+  <PropertyGroup>
+    <IsPackable>False</IsPackable>
+    <TargetFramework>net6.0</TargetFramework>
+    <OutputType>Exe</OutputType>
+    <CheckEolTargetFramework>false</CheckEolTargetFramework>
+    <RollForward>LatestMajor</RollForward>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Provider\Provider.csproj" />
+  </ItemGroup>
+
+</Project>

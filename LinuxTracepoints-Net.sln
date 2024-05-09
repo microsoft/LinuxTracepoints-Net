@@ -34,6 +34,10 @@ Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "wpa", "C:\Program Files (x8
 		IORedirection = Auto
 	EndProjectSection
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider", "Provider\Provider.csproj", "{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProviderSample", "ProviderSample\ProviderSample.csproj", "{DD16875B-C2E2-4DF7-B9A5-320F13048B23}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +66,14 @@ Global
 		{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D31B2680-10FB-4E19-A6AC-91A4A02601C4}.Debug|Any CPU.ActiveCfg = Release|Any CPU
 		{D31B2680-10FB-4E19-A6AC-91A4A02601C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD16875B-C2E2-4DF7-B9A5-320F13048B23}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD16875B-C2E2-4DF7-B9A5-320F13048B23}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD16875B-C2E2-4DF7-B9A5-320F13048B23}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD16875B-C2E2-4DF7-B9A5-320F13048B23}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

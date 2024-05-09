@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <Import Project="../Common.proj" />
+
+  <PropertyGroup>
+    <PackageId>Microsoft.LinuxTracepoints.Provider</PackageId>
+    <Title>Microsoft Linux Tracepoints Provider</Title>
+    <Description>Support for logging Linux user_events Tracepoints with EventHeader encoding.</Description>
+    <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
+    <IncludeSymbols>True</IncludeSymbols>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <RollForward>LatestMajor</RollForward>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Microsoft.LinuxTracepoints.Provider</AssemblyName>
+    <RootNamespace>Microsoft.LinuxTracepoints.Provider</RootNamespace>
+    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Types\Types.csproj" />
+  </ItemGroup>
+
+</Project>
