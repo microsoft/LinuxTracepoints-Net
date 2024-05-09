@@ -166,7 +166,7 @@ namespace DecodePerfToJson
                         // Non-EventHeader decoding.
                         if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
                         {
-                            this.JsonWriter.WriteString("n", sampleEventInfo.Name);
+                            this.JsonWriter.WriteString("n", sampleEventInfo.GetName()); // Garbage
                         }
 
                         // Write the event fields. Skip the common fields by default.
@@ -396,7 +396,7 @@ namespace DecodePerfToJson
                 info.Cpu,
                 info.Pid,
                 info.Tid,
-                showProviderEvent ? info.Name : null);
+                showProviderEvent ? info.GetName() : null); // Garbage
         }
 
         /// <summary>
@@ -469,8 +469,8 @@ namespace DecodePerfToJson
                 ReadOnlySpan<char> providerName, eventName;
                 if (colonPos < 0)
                 {
-                    providerName = default;
-                    eventName = nameSpan;
+                    providerName = nameSpan;
+                    eventName = default;
                 }
                 else
                 {

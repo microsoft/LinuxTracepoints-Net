@@ -101,7 +101,7 @@ namespace DecodeSample
                         continue; // Usually can't make use of the event without the metadata.
                     }
 
-                    this.writer.WriteLine($"Sample: {sampleEventInfo.Name}");
+                    this.writer.WriteLine($"Sample: {sampleEventInfo.GetName()}");
                     this.writer.WriteLine($"  size = {eventBytes.Header.Size}");
 
                     // Found event info (attributes). Include data from it in the output.

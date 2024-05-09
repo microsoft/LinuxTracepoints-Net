@@ -196,7 +196,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Event's full name (including the system name), e.g. "sched:sched_switch",
-        /// or "" if not available.
+        /// or "" if not available (i.e. if PERF_HEADER_EVENT_DESC header not present).
         /// </summary>
         public readonly string Name => this.EventDesc.Name;
 
@@ -299,7 +299,22 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public readonly override string ToString()
         {
-            return this.EventDesc == null ? "" : this.EventDesc.Name;
+            var eventDesc = this.EventDesc;
+            return eventDesc == null ? "" : eventDesc.GetName();
+        }
+
+        /// <summary>
+        /// Returns the full name of the event e.g. "sched:sched_switch", or "" if not
+        /// available.
+        /// <br/>
+        /// Unlike the Name property, this function will fall back to creating a new
+        /// string from Format (Format.SystemName + ':' + Format.Name) if the name from
+        /// PERF_HEADER_EVENT_DESC is empty and Format is non-empty. It may still return
+        /// "" in cases where both PERF_HEADER_EVENT_DESC and Format are missing.
+        /// </summary>
+        public readonly string GetName()
+        {
+            return this.EventDesc.GetName();
         }
 
         /// <summary>
@@ -313,7 +328,17 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         public readonly void AppendJsonEventIdentityTo(StringBuilder sb)
         {
-            PerfConvert.StringAppendJson(sb, this.EventDesc.Name);
+            var name = this.EventDesc.Name;
+            if (name.Length > 0 || this.Format.IsEmpty)
+            {
+                PerfConvert.StringAppendJson(sb, name);
+            }
+            else
+            {
+                PerfConvert.StringAppendJson(sb, this.Format.SystemName);
+                sb.Append(':');
+                PerfConvert.StringAppendJson(sb, this.Format.Name);
+            }
         }
 
         /// <summary>
@@ -364,7 +389,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 this.Cpu,
                 this.Pid,
                 this.Tid,
-                this.Name);
+                this.Name,
+                this.Format);
         }
 
     }
