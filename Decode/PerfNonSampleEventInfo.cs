@@ -112,7 +112,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Event's full name (including the system name), e.g. "dummy:HG",
-        /// or "" if not available.
+        /// or "" if PERF_HEADER_EVENT_DESC header was not available.
         /// </summary>
         public readonly string Name => this.EventDesc.Name;
 
@@ -122,7 +122,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         public readonly PerfTimeSpec TimeSpec => this.SessionInfo.TimeToTimeSpec(this.Time);
 
         /// <summary>
-        /// Returns the full name of the event, e.g. "dummy:HG", or "" if not available.
+        /// Event's full name (including the system name), e.g. "dummy:HG",
+        /// or "" if PERF_HEADER_EVENT_DESC header was not available.
         /// </summary>
         public readonly override string ToString()
         {
@@ -177,7 +178,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 this.Cpu,
                 this.Pid,
                 this.Tid,
-                this.Name);
+                this.Name,
+                null);
         }
     }
 }

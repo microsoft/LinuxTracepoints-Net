@@ -206,7 +206,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             uint cpu,
             uint pid,
             uint tid,
-            string name)
+            string name,
+            PerfEventFormat? format)
         {
             var w = new JsonWriter(sb, convertOptions, addCommaBeforeNextItem);
 
@@ -249,21 +250,29 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            if (0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Event)) &&
-                !string.IsNullOrEmpty(name))
+            if (0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Event)))
             {
-                var nameSpan = name.AsSpan();
-                var colonPos = nameSpan.IndexOf(':');
                 ReadOnlySpan<char> providerName, eventName;
-                if (colonPos < 0)
+
+                if (string.IsNullOrEmpty(name) && format != null && !format.IsEmpty)
                 {
-                    providerName = default;
-                    eventName = nameSpan;
+                    providerName = format.SystemName;
+                    eventName = format.Name;
                 }
                 else
                 {
-                    providerName = nameSpan.Slice(0, colonPos);
-                    eventName = nameSpan.Slice(colonPos + 1);
+                    var nameSpan = name.AsSpan();
+                    var colonPos = nameSpan.IndexOf(':');
+                    if (colonPos < 0)
+                    {
+                        providerName = nameSpan;
+                        eventName = default;
+                    }
+                    else
+                    {
+                        providerName = nameSpan.Slice(0, colonPos);
+                        eventName = nameSpan.Slice(colonPos + 1);
+                    }
                 }
 
                 if (infoOptions.HasFlag(PerfInfoOptions.Provider) &&

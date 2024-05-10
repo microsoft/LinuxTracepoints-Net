@@ -13,7 +13,6 @@ namespace Microsoft.LinuxTracepoints.Decode
     public class PerfEventDesc
     {
         private static PerfEventDesc? empty;
-        private static ReadOnlyCollection<ulong>? emptyIds;
 
         private readonly PerfEventAttr attr;
 
@@ -26,23 +25,25 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </param>
         /// <param name="name">Event's name. Must not be null (may be "" if name not available).</param>
         /// <param name="format">Event's format. Must not be null (may be empty).</param>
-        /// <param name="ids">The sample_ids that share this descriptor. May be null.</param>
-        public PerfEventDesc(in PerfEventAttr attr, string name, PerfEventFormat format, ReadOnlyCollection<ulong>? ids)
+        /// <param name="ids">The sample_ids that share this descriptor. Must not be null.</param>
+        public PerfEventDesc(in PerfEventAttr attr, string name, PerfEventFormat format, ReadOnlyCollection<ulong> ids)
         {
             Debug.Assert(name != null);
             Debug.Assert(format != null);
+            Debug.Assert(ids != null);
 
             this.attr = attr;
             this.Name = name;
             this.Format = format;
-            this.Ids = ids ?? EmptyIds;
+            this.Ids = ids;
         }
 
         /// <summary>
         /// Gets the empty event descriptor.
         /// </summary>
         public static PerfEventDesc Empty => empty ?? Utility.InterlockedInitSingleton(
-                ref empty, new PerfEventDesc(default, "", PerfEventFormat.Empty, null));
+            ref empty,
+            new PerfEventDesc(default, "", PerfEventFormat.Empty, new ReadOnlyCollection<ulong>(Array.Empty<ulong>())));
 
         /// <summary>
         /// Event's perf_event_attr, or an attr with size = 0 if not available.
@@ -51,7 +52,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// Event's full name (including the system name), e.g. "sched:sched_switch",
-        /// or "" if not available.
+        /// or "" if PERF_HEADER_EVENT_DESC was not available.
         /// </summary>
         public string Name { get; }
 
@@ -70,15 +71,29 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.Format = format;
         }
 
-        private static ReadOnlyCollection<ulong> EmptyIds => emptyIds ?? Utility.InterlockedInitSingleton(
-                ref emptyIds, new ReadOnlyCollection<ulong>(Array.Empty<ulong>()));
+        /// <summary>
+        /// Returns the full name of the event e.g. "sched:sched_switch", or "" if not
+        /// available.
+        /// <br/>
+        /// Unlike the Name property, this function will fall back to creating a new
+        /// string from Format (Format.SystemName + ':' + Format.Name) if the name from
+        /// PERF_HEADER_EVENT_DESC is empty and Format is non-empty. It may still return
+        /// "" in cases where both PERF_HEADER_EVENT_DESC and Format are missing.
+        /// </summary>
+        public string GetName()
+        {
+            var name = this.Name;
+            return name.Length > 0 || this.Format.IsEmpty
+                ? name
+                : this.Format.SystemName + ':' + this.Format.Name;
+        }
 
         /// <summary>
-        /// Returns this.Name.
+        /// Returns the full name of the event e.g. "sched:sched_switch".
         /// </summary>
         public override string ToString()
         {
-            return this.Name;
+            return this.GetName();
         }
     }
 }
