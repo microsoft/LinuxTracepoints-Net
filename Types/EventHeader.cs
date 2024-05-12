@@ -156,6 +156,7 @@ The following header extensions are defined:
 */
 namespace Microsoft.LinuxTracepoints
 {
+    using System;
     using System.Runtime.InteropServices;
     using Tracing = System.Diagnostics.Tracing;
 
@@ -200,6 +201,14 @@ namespace Microsoft.LinuxTracepoints
         public const int SizeOfStruct = 8;
 
         /// <summary>
+        /// Pointer-size and Endian flags as appropriate for the currently-running process,
+        /// no extension blocks present.
+        /// </summary>
+        public static readonly EventHeaderFlags DefaultFlags = EventHeaderFlags.None |
+            (IntPtr.Size == 8 ? EventHeaderFlags.Pointer64 : EventHeaderFlags.None) |
+            (BitConverter.IsLittleEndian ? EventHeaderFlags.LittleEndian : EventHeaderFlags.None);
+
+        /// <summary>
         /// Pointer64, LittleEndian, Extension.
         /// </summary>
         public EventHeaderFlags Flags;
@@ -231,6 +240,7 @@ namespace Microsoft.LinuxTracepoints
 
         /// <summary>
         /// EventOpcode: info, start activity, stop activity, etc.
+        /// Throws OverflowException if set value > 255.
         /// </summary>
         /// <remarks><para>
         /// Most events set Opcode = Info (0). Other Opcode values add special semantics to
@@ -260,19 +270,22 @@ namespace Microsoft.LinuxTracepoints
         /// that is ending (extension length will be 16).
         /// </item></list>
         /// </remarks>
+        /// <exception cref="OverflowException">Set value > 255</exception>
         public Tracing.EventOpcode Opcode
         {
             readonly get => (Tracing.EventOpcode)OpcodeByte;
-            set => OpcodeByte = (byte)value;
+            set => OpcodeByte = checked((byte)value);
         }
 
         /// <summary>
         /// EventLevel: critical, error, warning, info, verbose.
+        /// Throws OverflowException if set value > 255.
         /// </summary>
+        /// <exception cref="OverflowException">Set value > 255</exception>
         public Tracing.EventLevel Level
         {
             readonly get => (Tracing.EventLevel)LevelByte;
-            set => LevelByte = (byte)value;
+            set => LevelByte = checked((byte)value);
         }
 
         // Followed by: EventHeaderExtension block(s), then event payload.

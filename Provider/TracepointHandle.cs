@@ -91,7 +91,7 @@ internal sealed class TracepointHandle : SafeHandle
     /// IsInvalid == true, IsEnabled == false, RegisterResult != 0,
     /// Write will always return EBADF.
     /// </summary>
-    public static TracepointHandle Register(ReadOnlySpan<char> nameArgs, UInt16 flags = 0)
+    public static TracepointHandle Register(ReadOnlySpan<char> nameArgs, PerfUserEventReg flags = 0)
     {
         Span<byte> nulTerminatedNameArgs = stackalloc byte[nameArgs.Length + 1];
         for (var i = 0; i < nameArgs.Length; i += 1)
@@ -118,7 +118,7 @@ internal sealed class TracepointHandle : SafeHandle
     /// IsInvalid == true, IsEnabled == false, RegisterResult != 0,
     /// Write will always return EBADF.
     /// </summary>
-    public static TracepointHandle Register(ReadOnlySpan<byte> nulTerminatedNameArgs, UInt16 flags = 0)
+    public static TracepointHandle Register(ReadOnlySpan<byte> nulTerminatedNameArgs, PerfUserEventReg flags = 0)
     {
         Debug.Assert(0 <= nulTerminatedNameArgs.LastIndexOf((byte)0));
 
@@ -195,8 +195,8 @@ internal sealed class TracepointHandle : SafeHandle
     }
 
     /// <summary>
-    /// Sends the data to the user_events_data file (does not check IsEnabled).
-    /// Uses data[0] for headers.
+    /// Sends tracepoint data to the user_events_data file. Uses data[0] for headers.
+    /// Returns EBADF if closed. Does NOT check IsEnabled (caller should do that).
     /// <br/>
     /// Requires: data[0].Length == 0 (data[0] will be used for headers).
     /// </summary>
@@ -232,6 +232,115 @@ internal sealed class TracepointHandle : SafeHandle
     }
 
     /// <summary>
+    /// Sends tracepoint with EventHeader to the user_events_data file. Uses data[0] for headers.
+    /// Returns EBADF if closed. Does NOT check IsEnabled (caller should do that).
+    /// <br/>
+    /// Fills in data[0] with writeIndex + eventHeader + activityIdBlock? + metadataHeader?. Sets the extension
+    /// block's flags based on metaLength.
+    /// <br/>
+    /// Requires: data[0].Length == 0 (data[0] will be used for headers).
+    /// <br/>
+    /// Requires: relatedId cannot be present unless activityId is present.
+    /// <br/>
+    /// Requires: If activityId is present or metaLength != 0 then
+    /// eventHeader.Flags must equal DefaultWithExtension.
+    /// <br/>
+    /// Requires: If metaLength != 0 then data[1] starts with metadata extension block data.
+    /// </summary>
+    public unsafe int WriteEventHeader(
+        EventHeader eventHeader,
+        Guid* activityId,
+        Guid* relatedId,
+        ushort metaLength,
+        Span<DataSegment> data)
+    {
+        // Precondition: slot for write_index in data[0].
+        Debug.Assert(data[0].Length == 0);
+
+        // Precondition: relatedId cannot be present unless activityId is present.
+        Debug.Assert(relatedId == null || activityId != null);
+
+        // Precondition: eventHeader.Flags must match up with presence of first extension.
+        Debug.Assert(activityId == null || metaLength == 0 ||
+            eventHeader.Flags == (EventHeader.DefaultFlags | EventHeaderFlags.Extension));
+
+        // Precondition: metaLength implies metadata extension block data.
+        Debug.Assert(metaLength == 0 || data.Length > 1);
+
+        // Precondition: EventHeader metadata in data[1].
+        Debug.Assert(data[1].Length != 0);
+
+        var userEventsData = userEventsDataStatic;
+        Debug.Assert(userEventsData != null); // Otherwise there would be no TracepointHandle instance.
+        Debug.Assert(userEventsData.OpenResult == 0); // Otherwise Enabled would be false.
+
+        const byte HeadersMax = sizeof(Int32)               // writeIndex
+            + EventHeader.SizeOfStruct                      // eventHeader
+            + EventHeaderExtension.SizeOfStruct + 16 + 16   // activityId header + activityId + relatedId
+            + EventHeaderExtension.SizeOfStruct;            // metadata header
+        var writeIndex = (Int32)(nint)this.handle;
+        unsafe
+        {
+            uint* headersUInt32 = stackalloc UInt32[HeadersMax / sizeof(UInt32)]; // Ensure 4-byte alignment.
+            byte* headers = (byte*)headersUInt32;
+            uint pos = 0;
+
+            *(Int32*)&headers[pos] = (Int32)(nint)this.handle;
+            pos += sizeof(Int32);
+
+            *(EventHeader*)&headers[pos] = eventHeader;
+            pos += EventHeader.SizeOfStruct;
+
+            if (activityId != null)
+            {
+                var kind = EventHeaderExtensionKind.ActivityId | (metaLength == 0 ? 0 : EventHeaderExtensionKind.ChainFlag);
+                if (relatedId != null)
+                {
+                    *(EventHeaderExtension*)&headers[pos] = new EventHeaderExtension { Kind = kind, Size = 32 };
+                    pos += EventHeaderExtension.SizeOfStruct;
+                    Utility.WriteGuidBigEndian(new Span<byte>(&headers[pos], 16), *activityId);
+                    pos += 16;
+                    Utility.WriteGuidBigEndian(new Span<byte>(&headers[pos], 16), *relatedId);
+                    pos += 16;
+                }
+                else
+                {
+                    *(EventHeaderExtension*)&headers[pos] = new EventHeaderExtension { Kind = kind, Size = 16 };
+                    pos += EventHeaderExtension.SizeOfStruct;
+                    Utility.WriteGuidBigEndian(new Span<byte>(&headers[pos], 16), *activityId);
+                    pos += 16;
+                }
+            }
+
+            if (metaLength != 0)
+            {
+                *(EventHeaderExtension*)&headers[pos] = new EventHeaderExtension {
+                    Kind = EventHeaderExtensionKind.Metadata, // Last one, so no chain flag.
+                    Size = metaLength,
+                };
+                pos += EventHeaderExtension.SizeOfStruct;
+            }
+
+            data[0] = new DataSegment(headers, pos);
+        }
+
+        if (this.IsClosed)
+        {
+            return DisabledEventError;
+        }
+
+        // Ignore race condition: if we're disposed between checking IsClosed and calling WriteV,
+        // we will write the data using a write_index that doesn't belong to us. That's not great,
+        // but it's not fatal and probably not worth degrading performance to avoid it. The
+        // write_index is unlikely to be recycled during the race condition, and even if it is
+        // recycled, the worst consequence would be a garbage event in a trace. Could avoid with:
+        // try { AddRef; WriteV; } catch { return EBADF; } finally { Release; }.
+
+        var writevResult = userEventsData.WriteV(data);
+        return writevResult >= 0 ? 0 : Marshal.GetLastWin32Error();
+    }
+
+    /// <summary>
     /// Returns an array of length 1 that contains the value that will be updated by the
     /// kernel when the tracepoint is enabled or disabled. Caller MUST NOT modify the contents
     /// of the array.
@@ -239,7 +348,7 @@ internal sealed class TracepointHandle : SafeHandle
     /// When this.IsInvalid, the array is shared by all other invalid handles and is a normal allocation.
     /// When !this.IsInvalid, there is a separate array for each handle and is a pinned allocation.
     /// </summary>
-    public Int32[] DangerousGetEnablementPointer()
+    public Int32[] DangerousGetEnablementArray()
     {
         return this.enabledPinned;
     }
@@ -511,7 +620,7 @@ internal sealed class TracepointHandle : SafeHandle
         public UInt32 size;
         public byte enable_bit;
         public byte enable_size;
-        public UInt16 flags;
+        public PerfUserEventReg flags;
         public UInt64 enable_addr;
         public UInt64 name_args;
         public Int32 write_index;
