@@ -3,6 +3,7 @@
 using Microsoft.LinuxTracepoints;
 using Microsoft.LinuxTracepoints.Provider;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics.Tracing;
 using System.Runtime.InteropServices;
 using Debug = System.Diagnostics.Debug;
@@ -140,10 +141,40 @@ internal static class Program
         /*
         The EventHeaderDynamicProvider class manages EventHeader-encoded Linux Tracepoints.
 
-        - EventHeaderDynamicProvider is a collection of tracepoints that all share the same ProviderName
-          and will all be unregistered at the same time (i.e. at component cleanup).
+        EventHeaderDynamicProvider is a collection of tracepoints that all share the same ProviderName
+        and will all be unregistered at the same time (i.e. when provider is disposed at component
+        cleanup). All provider operations are thread-safe (reader lock for Find operations, writer lock
+        for Register operations).
 
-          - Calling provider.Register(
+        Calling provider.Register(level, keyword) registers and returns a tracepoint based on the
+        ProviderName + Level + Keyword (throws if the level+keyword combination is already
+        registered).
+
+        You can later call provider.Find(level, keyword) to get a previously-registered tracepoint.
+        As an alternative, you can keep track of the tracepoints returned by Register in your own
+        data structure to avoid the overhead of acquiring the reader lock and looking up the
+        tracepoint each time it is needed.
+
+        You can call provider.FindOrRegister(level, keyword) to register a tracepoint the first time
+        it is used. Avoid this if possible because this makes it harder for tracepoint consumers to
+        find your tracepoints. It's usually better to Register all needed level+keyword combinations
+        during component initialization.
+
+        Calling provider.Dispose() unregisters all tracepoints. Subsequent calls to Register or Find
+        will throw ObjectDisposedException.
+
+        The EventHeaderDynamicTracepoint class manages a single tracepoint's registration. EventHeader
+        tracepoints are named based on the provider name + level + keyword, e.g. "MyProvider_L1K1" for
+        a tracepoint for the "MyProvider" provider, Level 1 (error), and keyword 0x1 (provider-defined).
+        You get a tracepoint from provider.Register(level, keyword). You can determine whether any
+        active perf collection sessions are collecting the tracepoint's event by checking the
+        tracepoint.IsEnabled property. (You cannot set the IsEnabled property -- it becomes true when
+        you start a trace collection session that collects it.) You can write an event to a tracepoint
+        using an event builder.
+
+        The EventHeaderDynamicBuilder class manages the attributes and fields for an event. To write
+        an event, you create a builder, call builder.Reset(eventName), call builder methods to set
+        event attributes and add fields, then call builder.Write(tracepoint) to write the event.
         */
 
         // Construct an EventHeaderDynamicProvider for your provider name.
@@ -234,12 +265,13 @@ internal static class Program
                     .Write(tpVerbose1);
                 Console.WriteLine($"tpVerbose1.Write = {errno}");
 
-                // This next event will declare the start of an "activity", which is a group of events
-                // that can be grouped during analysis. An activity consists of an event with
-                // opcode = Start, then any number of info events, then an event with opcode = Stop.
-                // All of the events in the activity should be tagged with the same activity ID.
-                // The Start event can optionally specify the ID of a related (parent) activity to
-                // created a nested activity (not shown here).
+                // This next event will declare the start of an "activity".
+
+                // An activity is a group of events that can be grouped during analysis. An activity
+                // consists of an event with opcode = Start, then any number of info events, then an
+                // event with opcode = Stop. All of the events in the activity should be tagged with
+                // the same activity ID. The Start event can optionally specify the ID of a related
+                // (parent) activity to created a nested activity (not shown here).
                 var activityID = Guid.NewGuid();
 
                 // We'll reuse the existing builder to minimize overhead.
@@ -248,10 +280,21 @@ internal static class Program
                     .AddString8("TaskName", "James"u8) // Field with a UTF-8 string value.
                     .Write(tpVerbose1, activityID); // Specify the activity ID (if any) and related activity ID (if any) in the Write method.
 
-                // This event shows a few options you might use in your events.
-                builder.Reset("MyActivityProgress");
+                // The next event illustrates some options you might use in your events.
+
+                // Event name can be provided as either a ReadOnlySpan<char> (i.e. a string or string
+                // segment) or a ReadOnlySpan<byte> (UTF-8 encoded bytes). Using UTF-8 saves a bit of
+                // string transcoding overhead.
+                builder.Reset("MyActivityProgress"u8); // To avoid UTF-16 to UTF-8 conversion overhead, you can use u8 for event name.
+
+                // Field name can be provided as either a ReadOnlySpan<char> (i.e. a string or string
+                // segment) or a ReadOnlySpan<byte> (UTF-8 encoded bytes). Using UTF-8 saves a bit of
+                // string transcoding overhead.
+                builder.AddInt32("NameUTF8"u8, 1234); // To avoid UTF-16 to UTF-8 conversion overhead, you can use u8 for field name.
 
                 // Formatting: Applying a "Time" format to an Int64 field turns it into a Time64 field.
+                // Different formats apply to different types, e.g. Int32 can format as HexInt, Errno, Pid, Time,
+                // StringUtf, or IPv4, and String8 can fornat as Latin1, UTF-8, UTF-with-BOM, or HexBytes.
                 builder.AddInt64("Time", (Int64)(DateTime.Now - DateTime.UnixEpoch).TotalSeconds, EventHeaderFieldFormat.Time);
 
                 // Grouping: You can declare a "struct", which is a named grouping of fields.
@@ -263,7 +306,7 @@ internal static class Program
 
                 // Groups can be nested. The nested group and all its fields count as a single field
                 // for grouping purposes.
-                builder.AddStruct("Group1Nested", 3);
+                builder.AddStruct("Group1Nested"u8, 3);
 
                 // Strings are logged as length-prefixed by default, so you can log a string with embedded nul chars.
                 builder.AddString16("Group1Nested1", "Embeds\0Nul\0No\0Problem");
@@ -287,6 +330,48 @@ internal static class Program
                 builder.Reset("MyActivityStop")
                     .SetOpcode(EventOpcode.Stop)
                     .Write(tpVerbose1, activityID); // Stop event must include the activity ID.
+
+                // Advanced scenarios:
+
+                // If you have a common set of fields that need to be added to multiple events, you can
+                // avoid the overhead of repeatedly encoding them by encoding them once and saving the
+                // resulting data. Do this by using a builder to encode the fields, then dumping the
+                // builder's state with GetRawFields(), then adding the saved data to subsequent builders
+                // as needed.
+                var commonFieldsData = builder.Reset(""u8)
+                    .AddInt32("CommonField1", 25)
+                    .AddString8("CommonField2", "FieldValue"u8)
+                    .GetRawFields();
+                builder.Reset("EventWithCommonFields1")
+                    .AddInt32("BeforeCommonFields", 10)
+                    .AddRawFields(commonFieldsData)
+                    .AddInt32("AfterCommonFields", 20)
+                    .Write(tpVerbose1);
+
+                // If you don't know how many fields will be in a struct (typically because the struct
+                // is being generated based on an IEnumerable<Field>), you can initially create a
+                // struct with a placeholder field count then update the field count once the actual
+                // field count is known. Note that field count is still limited to 127.
+                IEnumerable<KeyValuePair<string, int>> unknownNumberOfFields = [
+                    new("Field1", 1),
+                    new("Field2", 2),
+                    ];
+                int metadataPos;
+                builder.Reset("EventWithPlaceholderFieldCount")
+                    .AddStructWithMetadataPosition("VariableLengthStruct", out  metadataPos);
+                byte fieldCount = 0;
+                foreach (var field in unknownNumberOfFields)
+                {
+                    builder.AddInt32(field.Key, field.Value);
+                    fieldCount += 1;
+                    if (fieldCount == 127)
+                    {
+                        // At the limit - skip the remaining fields.
+                        break;
+                    }
+                }
+                builder.SetStructFieldCount(metadataPos, fieldCount)
+                    .Write(tpVerbose1);
             }
         }
 
@@ -374,7 +459,7 @@ internal static class Program
         b.Reset("ZString8")
             .AddZString8("Bytes[1]", bytes.Slice(1))
             .AddZString8Array("UArray", [new byte[] { 65, 66, 67, 0, 70 }, default])
-            .AddZString8("Bytes[1]", bytes.Slice(10))
+            .AddZString8("Bytes[10]", bytes.Slice(10))
             .Write(tp);
         b.Reset("ZString16")
             .AddZString16("U123", [49, 50, 51])
@@ -391,7 +476,7 @@ internal static class Program
         b.Reset("String8")
             .AddString8("Bytes[1]", bytes.Slice(1))
             .AddString8Array("UArray", [new byte[] { 65, 66, 67, 0, 70 }, default])
-            .AddString8("Bytes[1]", bytes.Slice(10))
+            .AddString8("Bytes[10]", bytes.Slice(10))
             .Write(tp);
         b.Reset("String16")
             .AddString16("U123", [49, 50, 51])

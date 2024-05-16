@@ -4,6 +4,8 @@
 
 Requires TargetFramework `net6.0` or later.
 
+See [ProviderSample](../ProviderSample/README.md) for example usage.
+
 ## Usage
 
 - At component initialization, create
@@ -40,11 +42,11 @@ Requires TargetFramework `net6.0` or later.
   - Call builder methods as appropriate to add fields to the event or to configure event
     attributes like tag, opcode, id, or version.
 
-  - Call `tracepoint.Write(builder)` to write the event.
+  - Call `builder.Write(tracepoint)` to write the builder's event to the tracepoint.
 
   - Call `builder.Dispose()` to return the builder's temporary buffers to the array pool.
 
-- At component cleanup, call `provider.Dispose()` to close all tracepoints.
+- At component cleanup, call `provider.Dispose()` to unregister all tracepoints.
 
 ## Changelog
 

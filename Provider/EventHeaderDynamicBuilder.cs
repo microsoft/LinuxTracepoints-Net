@@ -12,10 +12,11 @@ using MemoryMarshal = System.Runtime.InteropServices.MemoryMarshal;
 
 /// <summary>
 /// Builder for events to be written through an <see cref="EventHeaderDynamicTracepoint"/>.
-/// Create a <see cref="EventHeaderDynamicProvider"/> provider, use the provider to get a
-/// <see cref="EventHeaderDynamicTracepoint"/> tracepoint. Create a
+/// Create a <see cref="EventHeaderDynamicProvider"/> provider and use provider.Register to get
+/// a <see cref="EventHeaderDynamicTracepoint"/> tracepoint. Create a
 /// <see cref="EventHeaderDynamicBuilder"/> builder (or reuse an existing one to minimize
-/// overhead), add data to it, and then call tracepoint.Write(builder) to emit the event.
+/// overhead), add data to it, and then call builder.Write(tracepoint) to emit the event.
+/// Dispose of the builder when you're done with it to return temporary buffers to the ArrayPool.
 /// </summary>
 /// <remarks>
 /// <para>
@@ -46,30 +47,6 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// range 4 through 65536. Default is 256 bytes.
     /// </param>
     public EventHeaderDynamicBuilder(int initialMetadataBufferSize = 256, int initialDataBufferSize = 256)
-        : this(Encoding.UTF8, initialMetadataBufferSize, initialDataBufferSize)
-    {
-        return;
-    }
-
-    /// <summary>
-    /// Advanced scenarios: Initializes a new instance of the EventBuilder class that
-    /// uses a customized UTF-8 encoding for event and field names.
-    /// </summary>
-    /// <param name="utf8NameEncoding">
-    /// The customized UTF-8 encoding to use for event and field names.
-    /// </param>
-    /// <param name="initialMetadataBufferSize">
-    /// The initial capacity of the metadata buffer. This must be a power of 2 in the
-    /// range 4 through 65536.
-    /// </param>
-    /// <param name="initialDataBufferSize">
-    /// The initial capacity of the data buffer. This must be a power of 2 in the
-    /// range 4 through 65536.
-    /// </param>
-    public EventHeaderDynamicBuilder(
-        Encoding utf8NameEncoding,
-        int initialMetadataBufferSize = 256,
-        int initialDataBufferSize = 256)
     {
         if (initialMetadataBufferSize < 4 || initialMetadataBufferSize > 65536 ||
             (initialMetadataBufferSize & (initialMetadataBufferSize - 1)) != 0)
@@ -83,7 +60,6 @@ public class EventHeaderDynamicBuilder : IDisposable
             throw new ArgumentOutOfRangeException(nameof(initialDataBufferSize));
         }
 
-        this.Utf8NameEncoding = utf8NameEncoding;
         this.meta = new Vector(initialMetadataBufferSize);
         this.data = new Vector(initialDataBufferSize);
 
@@ -91,12 +67,6 @@ public class EventHeaderDynamicBuilder : IDisposable
         this.meta.AddByte(0); // nul-termination for empty event name.
         Debug.Assert(this.meta.Used == 1);
     }
-
-    /// <summary>
-    /// Advanced scenarios: Gets or sets the UTF-8 encoding that will be used for
-    /// event and field names.
-    /// </summary>
-    public Encoding Utf8NameEncoding { get; set; }
 
     /// <summary>
     /// Provider-defined event tag, or 0 if none.
@@ -172,18 +142,39 @@ public class EventHeaderDynamicBuilder : IDisposable
     public EventHeaderDynamicBuilder Reset(ReadOnlySpan<char> name)
     {
         Debug.Assert(name.IndexOf('\0') < 0, "Event name must not have embedded NUL characters.");
-        this.meta.Reset();
-        this.data.Reset();
-        this.Tag = 0;
-        this.Id = 0;
-        this.Version = 0;
-        this.OpcodeByte = 0;
+        this.ResetImpl();
 
-        this.meta.ReserveSpaceFor((uint)this.Utf8NameEncoding.GetMaxByteCount(name.Length) + 1);
-        var metaBytes = this.meta.UsedSpan;
-        var nameUsed = this.Utf8NameEncoding.GetBytes(name, metaBytes);
-        metaBytes[nameUsed++] = 0;
-        this.meta.SetUsed(nameUsed);
+        var utf8 = Encoding.UTF8;
+        var metaBytes = this.meta.ReserveSpanFor((uint)utf8.GetMaxByteCount(name.Length) + 1);
+        int nameUsed = 0;
+        try
+        {
+            nameUsed = utf8.GetBytes(name, metaBytes);
+        }
+        finally
+        {
+            metaBytes[nameUsed] = 0;
+            this.meta.SetUsed(nameUsed + 1);
+        }
+
+        return this;
+    }
+
+    /// <summary>
+    /// Clears the previous event (if any) from the builder and starts building a new event.
+    /// Sets Tag, Id, Version, Opcode to 0.
+    /// </summary>
+    /// <param name="nameUtf8">
+    /// The UTF-8 event name for the new event. Must not contain any '\0' bytes.
+    /// </param>
+    public EventHeaderDynamicBuilder Reset(ReadOnlySpan<byte> nameUtf8)
+    {
+        Debug.Assert(nameUtf8.IndexOf((byte)0) < 0, "Event name must not have embedded NUL characters.");
+        this.ResetImpl();
+
+        var metaBytes = this.meta.ReserveSpanFor((uint)nameUtf8.Length + 1);
+        metaBytes[nameUtf8.Length] = 0;
+        nameUtf8.CopyTo(metaBytes);
 
         return this;
     }
@@ -307,6 +298,23 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value8"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, String8.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt8(
+        ReadOnlySpan<byte> nameUtf8,
+        Byte value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value8, format, tag);
+        this.data.AddByte(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value8"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
     /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, String8.
@@ -319,7 +327,24 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value8 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value8"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, String8.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt8Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Byte> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value8 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -341,6 +366,23 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value8"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, String8.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt8(
+        ReadOnlySpan<byte> nameUtf8,
+        SByte value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value8, format, tag);
+        this.data.AddByte(unchecked((Byte)value));
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value8"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
     /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, String8.
@@ -353,7 +395,24 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value8 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value8"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, String8.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt8Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<SByte> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value8 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -371,7 +430,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataT(value);
+        this.AddDataU32(value);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value16"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, StringUtf,
+    /// Port.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt16(
+        ReadOnlySpan<byte> nameUtf8,
+        UInt16 value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16, format, tag);
+        this.AddDataU32(value);
         return this;
     }
 
@@ -389,7 +466,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value16"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, StringUtf,
+    /// Port.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<UInt16> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -407,7 +502,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataT(unchecked((UInt16)value));
+        this.AddDataU32(unchecked((UInt16)value));
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value16"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, StringUtf,
+    /// Port.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt16(
+        ReadOnlySpan<byte> nameUtf8,
+        Int16 value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16, format, tag);
+        this.AddDataU32(unchecked((UInt16)value));
         return this;
     }
 
@@ -425,7 +538,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value16"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, StringUtf,
+    /// Port.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Int16> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -443,7 +574,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataT(unchecked((UInt16)value));
+        this.AddDataU32(unchecked((UInt16)value));
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value16"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.StringUtf"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, StringUtf,
+    /// Port.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddChar16(
+        ReadOnlySpan<byte> nameUtf8,
+        Char value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.StringUtf,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16, format, tag);
+        this.AddDataU32(unchecked((UInt16)value));
         return this;
     }
 
@@ -462,7 +611,26 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value16"/> array to the event.
+    /// Note that this adds an array of char (i.e. ['A', 'B', 'C']), not a String.
+    /// Default format is <see cref="EventHeaderFieldFormat.StringUtf"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Boolean, HexBytes, StringUtf,
+    /// Port.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddChar16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Char> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.StringUtf,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -485,6 +653,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Errno, Pid, Time, Boolean,
+    /// Float, HexBytes, StringUtf, IPv4.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt32(
+        ReadOnlySpan<byte> nameUtf8,
+        UInt32 value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value32, format, tag);
+        this.AddDataT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
     /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Errno, Pid, Time, Boolean,
@@ -498,7 +684,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value32 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Errno, Pid, Time, Boolean,
+    /// Float, HexBytes, StringUtf, IPv4.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt32Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<UInt32> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value32 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -521,6 +725,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Errno, Pid, Time, Boolean,
+    /// Float, HexBytes, StringUtf, IPv4.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt32(
+        ReadOnlySpan<byte> nameUtf8,
+        Int32 value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value32, format, tag);
+        this.AddDataT(unchecked((UInt32)value));
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
     /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Errno, Pid, Time, Boolean,
@@ -534,7 +756,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value32 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Errno, Pid, Time, Boolean,
+    /// Float, HexBytes, StringUtf, IPv4.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt32Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Int32> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value32 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -556,6 +796,23 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt64(
+        ReadOnlySpan<byte> nameUtf8,
+        UInt64 value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value64, format, tag);
+        this.AddDataT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
     /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
@@ -568,7 +825,24 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value64 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUInt64Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<UInt64> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value64 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -590,6 +864,23 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt64(
+        ReadOnlySpan<byte> nameUtf8,
+        Int64 value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value64, format, tag);
+        this.AddDataT(unchecked((UInt64)value));
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
     /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
@@ -602,7 +893,24 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value64 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddInt64Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Int64> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value64 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -625,6 +933,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeader.IntPtrEncoding"/> field to the event (either
+    /// <see cref="EventHeaderFieldEncoding.Value32"/> or <see cref="EventHeaderFieldEncoding.Value64"/>.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUIntPtr(
+        ReadOnlySpan<byte> nameUtf8,
+        nuint value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeader.IntPtrEncoding, format, tag);
+        this.AddDataT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeader.IntPtrEncoding"/> array to the event (either
     /// <see cref="EventHeaderFieldEncoding.Value32"/> or <see cref="EventHeaderFieldEncoding.Value64"/>.
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
@@ -638,7 +964,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeader.IntPtrEncoding | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeader.IntPtrEncoding"/> array to the event (either
+    /// <see cref="EventHeaderFieldEncoding.Value32"/> or <see cref="EventHeaderFieldEncoding.Value64"/>.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as UnsignedInt).
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddUIntPtrArray(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<nuint> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeader.IntPtrEncoding | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -661,6 +1005,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeader.IntPtrEncoding"/> field to the event (either
+    /// <see cref="EventHeaderFieldEncoding.Value32"/> or <see cref="EventHeaderFieldEncoding.Value64"/>.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddIntPtr(
+        ReadOnlySpan<byte> nameUtf8,
+        nint value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeader.IntPtrEncoding, format, tag);
+        this.AddDataT(unchecked((nuint)value));
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeader.IntPtrEncoding"/> array to the event (either
     /// <see cref="EventHeaderFieldEncoding.Value32"/> or <see cref="EventHeaderFieldEncoding.Value64"/>.
     /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
@@ -674,7 +1036,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeader.IntPtrEncoding | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeader.IntPtrEncoding"/> array to the event (either
+    /// <see cref="EventHeaderFieldEncoding.Value32"/> or <see cref="EventHeaderFieldEncoding.Value64"/>.
+    /// Default format is <see cref="EventHeaderFieldFormat.SignedInt"/>.
+    /// Applicable formats include: UnsignedInt, SignedInt, HexInt, Time, Float, HexBytes.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddIntPtrArray(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<nint> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.SignedInt,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeader.IntPtrEncoding | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -695,6 +1075,22 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Float"/>.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddFloat32(
+        ReadOnlySpan<byte> nameUtf8,
+        Single value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Float,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value32, format, tag);
+        this.AddDataT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.Float"/>.
     /// </summary>
@@ -706,7 +1102,23 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value32 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value32"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Float"/>.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddFloat32Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Single> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Float,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value32 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -727,6 +1139,22 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Float"/>.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddFloat64(
+        ReadOnlySpan<byte> nameUtf8,
+        Double value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Float,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value64, format, tag);
+        this.AddDataT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.Float"/>.
     /// </summary>
@@ -738,7 +1166,23 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value64 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value64"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Float"/>.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddFloat64Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Double> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Float,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value64 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -760,6 +1204,23 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value128"/> field to the event,
+    /// fixing byte order as appropriate for GUID--UUID conversion.
+    /// Default format is <see cref="EventHeaderFieldFormat.Uuid"/>.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddGuid(
+        ReadOnlySpan<byte> nameUtf8,
+        in Guid value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Uuid,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value128, format, tag);
+        Utility.WriteGuidBigEndian(this.data.ReserveSpanFor(16), value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value128"/> array to the event,
     /// fixing byte order as appropriate for GUID--UUID conversion.
     /// Default format is <see cref="EventHeaderFieldFormat.Uuid"/>.
@@ -772,21 +1233,31 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value128 | VArrayFlag, format, tag);
-        var dest = this.data.ReserveSpanFor((uint)sizeof(UInt16) + (uint)values.Length * 16);
-        var count = (UInt16)values.Length;
-        MemoryMarshal.Write(dest, ref count);
-        var pos = sizeof(UInt16);
-        foreach (var v in values)
-        {
-            Utility.WriteGuidBigEndian(dest.Slice(pos), v);
-            pos += 16;
-        }
+        this.AddDataArrayGuid(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value128"/> array to the event,
+    /// fixing byte order as appropriate for GUID--UUID conversion.
+    /// Default format is <see cref="EventHeaderFieldFormat.Uuid"/>.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddGuidArray(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Guid> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Uuid,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value128 | VArrayFlag, format, tag);
+        this.AddDataArrayGuid(values);
         return this;
     }
 
     /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value128"/> field to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// Applicable formats include: HexBytes, Uuid, IPv6.
     /// </summary>
     /// <returns>this</returns>
     public EventHeaderDynamicBuilder AddValue128(
@@ -801,8 +1272,26 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value128"/> field to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// Applicable formats include: HexBytes, Uuid, IPv6.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddValue128(
+        ReadOnlySpan<byte> nameUtf8,
+        EventHeaderValue128 value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value128, format, tag);
+        MemoryMarshal.Write(this.data.ReserveSpanFor(16), ref value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.Value128"/> array to the event.
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// Applicable formats include: HexBytes, Uuid, IPv6.
     /// </summary>
     /// <returns>this</returns>
     public EventHeaderDynamicBuilder AddValue128Array(
@@ -812,7 +1301,24 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value128 | VArrayFlag, format, tag);
-        this.AddDataArray(values);
+        this.AddDataArrayT(values);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.Value128"/> array to the event.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// Applicable formats include: HexBytes, Uuid, IPv6.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddValue128Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<EventHeaderValue128> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value128 | VArrayFlag, format, tag);
+        this.AddDataArrayT(values);
         return this;
     }
 
@@ -835,6 +1341,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar8"/> field to the event (zero-terminated
+    /// sequence of 8-bit values). You should prefer AddString8 over this method in most scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString8(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<byte> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar8, format, tag);
+        this.AddDataZStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar8"/> array to the event (array of
     /// zero-terminated 8-bit strings). You should prefer AddString8Array over this method in most
     /// scenarios.
@@ -849,7 +1373,30 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar8 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)values.Length);
+        this.AddDataU32((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataZStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar8"/> array to the event (array of
+    /// zero-terminated 8-bit strings). You should prefer AddString8Array over this method in most
+    /// scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString8Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<byte>> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar8 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -876,6 +1423,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar16"/> field to the event (zero-terminated
+    /// sequence of 16-bit values). You should prefer AddString16 over this method in most scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString16(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<UInt16> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16, format, tag);
+        this.AddDataZStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar16"/> array to the event (array of
     /// zero-terminated 16-bit strings). You should prefer AddString16Array over this method in most
     /// scenarios.
@@ -890,7 +1455,30 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)values.Length);
+        this.AddDataU32((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataZStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar16"/> array to the event (array of
+    /// zero-terminated 16-bit strings). You should prefer AddString16Array over this method in most
+    /// scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<UInt16>> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -917,6 +1505,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar16"/> field to the event (zero-terminated
+    /// sequence of 16-bit values). You should prefer AddString16 over this method in most scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString16(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Char> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16, format, tag);
+        this.AddDataZStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar16"/> array to the event (array of
     /// zero-terminated 16-bit strings). You should prefer AddString16Array over this method in most
     /// scenarios.
@@ -931,7 +1537,30 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)values.Length);
+        this.AddDataU32((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataZStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar16"/> array to the event (array of
+    /// zero-terminated 16-bit strings). You should prefer AddString16Array over this method in most
+    /// scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<Char>> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -954,7 +1583,30 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)values.Length);
+        this.AddDataU32((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataZStringT(v.AsSpan());
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar16"/> array to the event (array of
+    /// zero-terminated 16-bit strings). You should prefer AddString16Array over this method in most
+    /// scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<String> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.AsSpan());
@@ -981,6 +1633,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar32"/> field to the event (zero-terminated
+    /// sequence of 32-bit values). You should prefer AddString32 over this method in most scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString32(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<UInt32> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar32, format, tag);
+        this.AddDataZStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar32"/> array to the event (array of
     /// zero-terminated 32-bit strings). You should prefer AddString32Array over this method in most
     /// scenarios.
@@ -995,7 +1665,30 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar32 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)values.Length);
+        this.AddDataU32((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataZStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.ZStringChar32"/> array to the event (array of
+    /// zero-terminated 32-bit strings). You should prefer AddString32Array over this method in most
+    /// scenarios.
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddZString32Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<UInt32>> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar32 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1022,6 +1715,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char8"/> field to the event
+    /// (counted sequence of 8-bit values, e.g. a UTF-8 string or a binary blob).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString8(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<byte> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char8, format, tag);
+        this.AddDataStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char8"/> array to the event
     /// (e.g. array of binary blobs, array of UTF-8 strings, array of Latin1 strings, etc.).
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
@@ -1035,7 +1746,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char8 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)values.Length);
+        this.AddDataU32((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataStringT(v.Span);
@@ -1043,6 +1754,27 @@ public class EventHeaderDynamicBuilder : IDisposable
         return this;
     }
 
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char8"/> array to the event
+    /// (e.g. array of binary blobs, array of UTF-8 strings, array of Latin1 strings, etc.).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString8Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<byte>> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char8 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataStringT(v.Span);
+        }
+        return this;
+    }
 
     /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> field to the event
@@ -1063,6 +1795,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> field to the event
+    /// (counted sequence of 16-bit values, e.g. a UTF-16 string).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString16(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<UInt16> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16, format, tag);
+        this.AddDataStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> array to the event
     /// (e.g. array of UTF-16 strings).
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
@@ -1076,7 +1826,29 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)value.Length);
+        this.AddDataU32((UInt16)value.Length);
+        foreach (var v in value)
+        {
+            this.AddDataStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> array to the event
+    /// (e.g. array of UTF-16 strings).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<UInt16>> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -1103,6 +1875,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> field to the event
+    /// (counted sequence of 16-bit values, e.g. a UTF-16 string).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString16(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<Char> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16, format, tag);
+        this.AddDataStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> array to the event
     /// (array of strings).
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
@@ -1116,7 +1906,29 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)value.Length);
+        this.AddDataU32((UInt16)value.Length);
+        foreach (var v in value)
+        {
+            this.AddDataStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> array to the event
+    /// (array of strings).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<Char>> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -1138,7 +1950,29 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)value.Length);
+        this.AddDataU32((UInt16)value.Length);
+        foreach (var v in value)
+        {
+            this.AddDataStringT(v.AsSpan());
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char16"/> array to the event
+    /// (array of strings).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString16Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<String> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.AsSpan());
@@ -1165,6 +1999,24 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char32"/> field to the event
+    /// (counted sequence of 32-bit values, e.g. a UTF-32 string).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString32(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<UInt32> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char32, format, tag);
+        this.AddDataStringT(value);
+        return this;
+    }
+
+    /// <summary>
     /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char32"/> array to the event
     /// (e.g. array of UTF-32 strings).
     /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
@@ -1178,7 +2030,29 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char32 | VArrayFlag, format, tag);
-        this.AddDataT((UInt16)value.Length);
+        this.AddDataU32((UInt16)value.Length);
+        foreach (var v in value)
+        {
+            this.AddDataStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.StringLength16Char32"/> array to the event
+    /// (e.g. array of UTF-32 strings).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as StringUtf).
+    /// Applicable formats include: StringUtf, HexBytes, StringUtfBom, StringXml, StringJson.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddString32Array(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<UInt32>> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char32 | VArrayFlag, format, tag);
+        this.AddDataU32((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -1192,7 +2066,10 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// Note that fieldCount must be in the range 1 to 127 (must NOT be 0).
     /// </summary>
     /// <returns>this</returns>
-    public EventHeaderDynamicBuilder AddStruct(ReadOnlySpan<char> name, byte fieldCount, ushort tag = 0)
+    public EventHeaderDynamicBuilder AddStruct(
+        ReadOnlySpan<char> name,
+        byte fieldCount,
+        ushort tag = 0)
     {
         if (fieldCount < 1 || fieldCount > 127)
         {
@@ -1204,29 +2081,68 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a new logical field with the specified name and indicates that the next
+    /// fieldCount logical fields should be considered as members of this field.
+    /// Note that fieldCount must be in the range 1 to 127 (must NOT be 0).
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddStruct(
+        ReadOnlySpan<byte> nameUtf8,
+        byte fieldCount,
+        ushort tag = 0)
+    {
+        if (fieldCount < 1 || fieldCount > 127)
+        {
+            throw new ArgumentOutOfRangeException(nameof(fieldCount));
+        }
+
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Struct, (EventHeaderFieldFormat)fieldCount, tag);
+        return this;
+    }
+
+    /// <summary>
     /// Advanced: For use when field count is not yet known.
     /// Adds a new logical field with the specified name and indicates that the next
-    /// initialFieldCount logical fields should be considered as members of this field.
-    /// Note that initialFieldCount must be in the range 1 to 127 (must NOT be 0).
-    /// Returns the position of the field count so that it can subsequently updated by
-    /// a call to SetStructFieldCount.
+    /// 127 logical fields should be considered as members of this field (placeholder
+    /// value). Returns the position of the field count so that the placeholder value
+    /// can subsequently updated by a call to SetStructFieldCount.
     /// </summary>
     /// <param name="name">The name of the field.</param>
-    /// <param name="initialFieldCount">The field count for the struct.</param>
     /// <param name="tag">User-defined field tag.</param>
     /// <param name="metadataPosition">
     /// Receives the offset of the field count within the metadata.
     /// You can use this value with SetStructFieldCount.
     /// </param>
     /// <returns>this</returns>
-    public EventHeaderDynamicBuilder AddStruct(ReadOnlySpan<char> name, byte initialFieldCount, ushort tag, out int metadataPosition)
+    public EventHeaderDynamicBuilder AddStructWithMetadataPosition(
+        ReadOnlySpan<char> name,
+        out int metadataPosition,
+        ushort tag = 0)
     {
-        if (initialFieldCount < 1 || initialFieldCount > 127)
-        {
-            throw new ArgumentOutOfRangeException(nameof(initialFieldCount));
-        }
+        metadataPosition = this.AddMeta(name, EventHeaderFieldEncoding.Struct, (EventHeaderFieldFormat)127, tag);
+        return this;
+    }
 
-        metadataPosition = this.AddMeta(name, EventHeaderFieldEncoding.Struct, (EventHeaderFieldFormat)initialFieldCount, tag);
+    /// <summary>
+    /// Advanced: For use when field count is not yet known.
+    /// Adds a new logical field with the specified name and indicates that the next
+    /// 127 logical fields should be considered as members of this field (placeholder
+    /// value). Returns the position of the field count so that the placeholder value
+    /// can subsequently updated by a call to SetStructFieldCount.
+    /// </summary>
+    /// <param name="nameUtf8">The name of the field.</param>
+    /// <param name="tag">User-defined field tag.</param>
+    /// <param name="metadataPosition">
+    /// Receives the offset of the field count within the metadata.
+    /// You can use this value with SetStructFieldCount.
+    /// </param>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddStructWithMetadataPosition(
+        ReadOnlySpan<byte> nameUtf8,
+        out int metadataPosition,
+        ushort tag = 0)
+    {
+        metadataPosition = this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Struct, (EventHeaderFieldFormat)127, tag);
         return this;
     }
 
@@ -1241,7 +2157,8 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// The actual number of fields in the structure. This value must be in the range
     /// 1 to 127.
     /// </param>
-    public void SetStructFieldCount(int metadataPosition, byte fieldCount)
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder SetStructFieldCount(int metadataPosition, byte fieldCount)
     {
         if (fieldCount < 1 || fieldCount > 127)
         {
@@ -1250,6 +2167,58 @@ public class EventHeaderDynamicBuilder : IDisposable
 
         var bytes = this.meta.Bytes;
         bytes[metadataPosition] = (byte)((bytes[metadataPosition] & 0x80) | (fieldCount & 0x7F));
+        return this;
+    }
+
+    /// <summary>
+    /// Advanced: Extracts the raw data for the fields currently in the builder.
+    /// This can be used to add the same fields to multiple builders with
+    /// AddRawFields, i.e. you use one builder to add a set of common fields,
+    /// then you use GetRawFields() to get the raw data for the common fields and
+    /// save it, then each time you need to add the common fields to an event you
+    /// call AddRawFields with the saved data.
+    /// </summary>
+    /// <returns>
+    /// Raw field bytes (rawMeta, rawData) that can be used with AddRawFields.
+    /// </returns>
+    public ValueTuple<byte[], byte[]> GetRawFields()
+    {
+        var metaUsed = this.meta.UsedSpan;
+
+        // Skip event name.
+        var metaFieldsPos = metaUsed.IndexOf((byte)0) + 1; // Skip event name and NUL.
+        if (metaFieldsPos <= 0)
+        {
+            // I think only reachable if object disposed.
+            Debug.Assert(this.meta.Used == 0);
+            Debug.Assert(this.data.Used == 0);
+            metaFieldsPos = metaUsed.Length;
+        }
+
+        return (metaUsed.Slice(metaFieldsPos).ToArray(), this.data.UsedSpan.ToArray());
+    }
+
+    /// <summary>
+    /// Advanced: Appends raw data and metadata to the builder. This can be used with
+    /// the data from GetRawFields.
+    /// </summary>
+    /// <param name="rawFields">Data from GetRawFields</param>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddRawFields(ValueTuple<byte[], byte[]> rawFields)
+    {
+        return this.AddRawFields(rawFields.Item1, rawFields.Item2);
+    }
+
+    /// <summary>
+    /// Advanced: Appends raw data and metadata to the builder. This can be used with
+    /// the data from GetRawFields.
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddRawFields(ReadOnlySpan<byte> rawMeta, ReadOnlySpan<byte> rawData)
+    {
+        rawMeta.CopyTo(this.meta.ReserveSpanFor((uint)rawMeta.Length));
+        rawData.CopyTo(this.data.ReserveSpanFor((uint)rawData.Length));
+        return this;
     }
 
     /// <summary>
@@ -1357,9 +2326,20 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     internal ReadOnlySpan<byte> GetRawMeta() => this.meta.UsedSpan;
+
     internal ReadOnlySpan<byte> GetRawData() => this.data.UsedSpan;
 
-    private void AddDataT(UInt16 value)
+    private void ResetImpl()
+    {
+        this.meta.Reset();
+        this.data.Reset();
+        this.Tag = 0;
+        this.Id = 0;
+        this.Version = 0;
+        this.OpcodeByte = 0;
+    }
+
+    private void AddDataU32(UInt16 value)
     {
         MemoryMarshal.Write(this.data.ReserveSpanFor(sizeof(UInt16)), ref value);
     }
@@ -1376,7 +2356,20 @@ public class EventHeaderDynamicBuilder : IDisposable
         MemoryMarshal.Write(this.data.ReserveSpanFor(sizeofT), ref value);
     }
 
-    private void AddDataArray<T>(ReadOnlySpan<T> values)
+    private void AddDataArrayGuid(ReadOnlySpan<Guid> values)
+    {
+        var dest = this.data.ReserveSpanFor((uint)sizeof(UInt16) + (uint)values.Length * 16);
+        var count = (UInt16)values.Length;
+        MemoryMarshal.Write(dest, ref count);
+        var pos = sizeof(UInt16);
+        foreach (var v in values)
+        {
+            Utility.WriteGuidBigEndian(dest.Slice(pos), v);
+            pos += 16;
+        }
+    }
+
+    private void AddDataArrayT<T>(ReadOnlySpan<T> values)
         where T : unmanaged
     {
         var valuesBytes = MemoryMarshal.AsBytes(values);
@@ -1441,13 +2434,14 @@ public class EventHeaderDynamicBuilder : IDisposable
 
         int pos;
 
+        var utf8 = Encoding.UTF8;
         var nameLength = name.Length;
-        var nameMaxByteCount = this.Utf8NameEncoding.GetMaxByteCount(name.Length);
+        var nameMaxByteCount = utf8.GetMaxByteCount(name.Length);
         if (tag != 0)
         {
             pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 5);
             var metaSpan = this.meta.UsedSpan;
-            pos += this.Utf8NameEncoding.GetBytes(name, metaSpan.Slice(pos));
+            pos += utf8.GetBytes(name, metaSpan.Slice(pos));
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
             metaSpan[pos++] = (byte)(format | EventHeaderFieldFormat.ChainFlag);
@@ -1460,7 +2454,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         {
             pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 3);
             var metaSpan = this.meta.UsedSpan;
-            pos += this.Utf8NameEncoding.GetBytes(name, metaSpan.Slice(pos));
+            pos += utf8.GetBytes(name, metaSpan.Slice(pos));
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
             metaSpan[pos++] = (byte)format;
@@ -1471,7 +2465,62 @@ public class EventHeaderDynamicBuilder : IDisposable
         {
             pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 2);
             var metaSpan = this.meta.UsedSpan;
-            pos += this.Utf8NameEncoding.GetBytes(name, metaSpan.Slice(pos));
+            pos += utf8.GetBytes(name, metaSpan.Slice(pos));
+            metaSpan[pos++] = 0;
+            metaSpan[pos++] = (byte)encoding;
+            this.meta.SetUsed(pos);
+            metadataPos = -1; // AddStruct doesn't accept format == 0.
+        }
+
+        return metadataPos; // For AddStruct: Position of the format byte, or -1 if format == 0.
+    }
+
+    /// <returns>The position of the format byte within the metadata array (for AddStruct).</returns>
+    private int AddMeta(
+        ReadOnlySpan<byte> nameUtf8,
+        EventHeaderFieldEncoding encoding,
+        EventHeaderFieldFormat format,
+        UInt16 tag)
+    {
+        int metadataPos;
+        Debug.Assert(nameUtf8.IndexOf((byte)0) < 0, "Field name must not have embedded NUL characters.");
+        Debug.Assert(!encoding.HasChainFlag());
+        Debug.Assert(!format.HasChainFlag());
+
+        int pos;
+        var nameLength = nameUtf8.Length;
+        if (tag != 0)
+        {
+            pos = this.meta.ReserveSpaceFor((uint)nameLength + 5);
+            var metaSpan = this.meta.UsedSpan;
+            nameUtf8.CopyTo(metaSpan.Slice(pos));
+            pos += nameLength;
+            metaSpan[pos++] = 0;
+            metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
+            metaSpan[pos++] = (byte)(format | EventHeaderFieldFormat.ChainFlag);
+            MemoryMarshal.Write(metaSpan.Slice(pos), ref tag);
+            pos += sizeof(UInt16);
+            this.meta.SetUsed(pos);
+            metadataPos = pos - 3; // Returned from AddStruct.
+        }
+        else if (format != 0)
+        {
+            pos = this.meta.ReserveSpaceFor((uint)nameLength + 3);
+            var metaSpan = this.meta.UsedSpan;
+            nameUtf8.CopyTo(metaSpan.Slice(pos));
+            pos += nameLength;
+            metaSpan[pos++] = 0;
+            metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
+            metaSpan[pos++] = (byte)format;
+            this.meta.SetUsed(pos);
+            metadataPos = pos - 1; // Returned from AddStruct.
+        }
+        else
+        {
+            pos = this.meta.ReserveSpaceFor((uint)nameLength + 2);
+            var metaSpan = this.meta.UsedSpan;
+            nameUtf8.CopyTo(metaSpan.Slice(pos));
+            pos += nameLength;
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)encoding;
             this.meta.SetUsed(pos);

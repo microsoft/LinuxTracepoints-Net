@@ -8,8 +8,31 @@ using Debug = System.Diagnostics.Debug;
 using EventLevel = System.Diagnostics.Tracing.EventLevel;
 
 /// <summary>
-/// Represents a tracepoint for a specific provider + level + keyword.
-/// Register tracepoints using <see cref="EventHeaderDynamicProvider"/>.Register.
+/// Represents a tracepoint registered for a specific provider + level + keyword.
+/// The tracepoint name is based on provider name + level + keyword + provider group,
+/// e.g. "MyProviderName_L1K1" or "MyProviderName_L1K1Ggroup".
+/// <br/>
+/// Tracepoint operations are thread safe.
+/// If tracepoint registration fails or if the tracepoint is unregistered, IsEnabled
+/// will return false and Writing to the tracepoint will be a safe no-op (immediately
+/// returns EBADF).
+/// <br/>
+/// Tracepoint operations:
+/// <list type="bullet"><item>
+/// Register: Create tracepoints using <see cref="EventHeaderDynamicProvider"/>.Register.
+/// </item><item>
+/// Unregister: Close tracepoints using <see cref="EventHeaderDynamicProvider"/>.Dispose.
+/// </item><item>
+/// Write: Generate an event using <see cref="EventHeaderDynamicBuilder"/>.Write.
+/// </item><item>
+/// Enabled: Determine whether any trace collection session is listening for this tracepoint
+/// by checking the IsEnabled property. This is optional (calling Write with a disabled
+/// or unregistered tracepoint is a safe no-op) but can help improve performance (avoids the
+/// overhead of preparing the data for the event).
+/// </item><item>
+/// Debugging: Determine whether tracepoint registration succeeded by checking the
+/// RegisterResult property.
+/// </item></list>
 /// </summary>
 public sealed class EventHeaderDynamicTracepoint : IDisposable
 {
@@ -90,10 +113,10 @@ public sealed class EventHeaderDynamicTracepoint : IDisposable
     /// registration failed or if the tracepoint has been disposed.
     /// <br/>
     /// Note that this property is provided to support performance optimization, but use of this
-    /// property is optional. It's ok to call Write even if IsEnabled returns false. If your
-    /// tracepoint is not being collected, the Write method will do nothing and will immediately
-    /// return EBADF. This property is provided so that you can efficiently skip preparing your data
-    /// and calling the Write method if your tracepoint is not being collected.
+    /// property is optional. It's ok to Write to a tracepoint even if IsEnabled returns false. If your
+    /// tracepoint is not being collected, the builder.Write method will do nothing and will immediately
+    /// return EBADF. The IsEnabled property is provided so that you can efficiently skip preparing your
+    /// data and calling builder.Write if your tracepoint is not being collected.
     /// </summary>
     public bool IsEnabled => this.enablementArray[0] != 0;
 
