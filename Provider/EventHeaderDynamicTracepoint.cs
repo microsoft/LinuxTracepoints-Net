@@ -13,8 +13,6 @@ using EventLevel = System.Diagnostics.Tracing.EventLevel;
 /// </summary>
 public sealed class EventHeaderDynamicTracepoint : IDisposable
 {
-    private const string EventHeaderCommandTypes = " u8 eventheader_flags; u8 version; u16 id; u16 tag; u8 opcode; u8 level\0";
-
     private readonly TracepointHandle handle;
 
     /// <summary>
@@ -34,6 +32,8 @@ public sealed class EventHeaderDynamicTracepoint : IDisposable
         UInt64 keyword,
         PerfUserEventReg flags)
     {
+        var EventHeaderCommandTypes = " u8 eventheader_flags; u8 version; u16 id; u16 tag; u8 opcode; u8 level\0"u8;
+
         var name = $"{provider.Name}_L{levelByte:x}K{keyword:x}{provider.Options}";
 
         // command = ProviderName_LnnKnn + EventHeaderCommandTypes
@@ -47,7 +47,7 @@ public sealed class EventHeaderDynamicTracepoint : IDisposable
 
         foreach (var ch in EventHeaderCommandTypes)
         {
-            command[commandPos++] = (byte)ch;
+            command[commandPos++] = ch;
         }
 
         Debug.Assert(command[commandPos - 1] == 0);
@@ -116,85 +116,6 @@ public sealed class EventHeaderDynamicTracepoint : IDisposable
     }
 
     /// <summary>
-    /// If !IsEnabled, immediately returns EBADF.
-    /// Otherwise, writes an event with the data from the builder.
-    /// </summary>
-    /// <param name="builder">
-    /// The builder with the name, attributes, and fields for the event.
-    /// </param>
-    /// <returns>
-    /// 0 if event was written, errno otherwise.
-    /// Typically returns EBADF if no data collection sessions are listening for the tracepoint.
-    /// The return value is for debugging/diagnostic purposes and is usually ignored in normal operation
-    /// since most programs should continue to function even when tracing is not configured.
-    /// </returns>
-    public int Write(EventHeaderDynamicBuilder builder)
-    {
-        unsafe
-        {
-            return this.WriteRaw(builder, null, null);
-        }
-    }
-
-    /// <summary>
-    /// If !IsEnabled, immediately returns EBADF.
-    /// Otherwise, writes an event with the data from the builder.
-    /// </summary>
-    /// <param name="builder">
-    /// The builder with the name, attributes, and fields for the event.
-    /// </param>
-    /// <param name="activityId">
-    /// ID of the event's activity.
-    /// </param>
-    /// <returns>
-    /// 0 if event was written, errno otherwise.
-    /// Typically returns EBADF if no data collection sessions are listening for the tracepoint.
-    /// The return value is for debugging/diagnostic purposes and is usually ignored in normal operation
-    /// since most programs should continue to function even when tracing is not configured.
-    /// </returns>
-    public int Write(EventHeaderDynamicBuilder builder, in Guid activityId)
-    {
-        unsafe
-        {
-            fixed (Guid* activityIdPtr = &activityId)
-            {
-                return this.WriteRaw(builder, activityIdPtr, null);
-            }
-        }
-    }
-
-    /// <summary>
-    /// If !IsEnabled, immediately returns EBADF.
-    /// Otherwise, writes an event with the data from the builder.
-    /// </summary>
-    /// <param name="builder">
-    /// The builder with the name, attributes, and fields for the event.
-    /// </param>
-    /// <param name="activityId">
-    /// ID of the event's activity.
-    /// </param>
-    /// <param name="relatedActivityId">
-    /// ID of the activity's parent. Usually used only when Opcode = Start,
-    /// i.e. when starting a new activity.
-    /// </param>
-    /// <returns>
-    /// 0 if event was written, errno otherwise.
-    /// Typically returns EBADF if no data collection sessions are listening for the tracepoint.
-    /// The return value is for debugging/diagnostic purposes and is usually ignored in normal operation
-    /// since most programs should continue to function even when tracing is not configured.
-    /// </returns>
-    public int Write(EventHeaderDynamicBuilder builder, in Guid activityId, in Guid relatedActivityId)
-    {
-        unsafe
-        {
-            fixed (Guid* activityIdPtr = &activityId, relatedIdPtr = &relatedActivityId)
-            {
-                return this.WriteRaw(builder, activityIdPtr, relatedIdPtr);
-            }
-        }
-    }
-
-    /// <summary>
     /// Unregisters this tracepoint.
     /// </summary>
     void IDisposable.Dispose()
@@ -202,15 +123,18 @@ public sealed class EventHeaderDynamicTracepoint : IDisposable
         this.handle.Dispose();
     }
 
-    private unsafe int WriteRaw(EventHeaderDynamicBuilder builder, in Guid* activityId, in Guid* relatedId)
+    internal unsafe int WriteRaw(
+        EventHeaderDynamicBuilder builder,
+        in Guid* activityId,
+        in Guid* relatedId)
     {
         if (this.enablementArray[0] == 0)
         {
             return TracepointHandle.DisabledEventError;
         }
 
-        var meta = builder.Meta;
-        var data = builder.Data;
+        var meta = builder.GetRawMeta();
+        var data = builder.GetRawData();
         unsafe
         {
             fixed (byte* metaPtr = meta, dataPtr = data)

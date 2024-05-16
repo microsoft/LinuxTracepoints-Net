@@ -209,6 +209,13 @@ namespace Microsoft.LinuxTracepoints
             (BitConverter.IsLittleEndian ? EventHeaderFlags.LittleEndian : EventHeaderFlags.None);
 
         /// <summary>
+        /// The encoding corresponding to IntPtr. If IntPtr.Size == 8, this is Value64.
+        /// Otherwise, this is Value32.
+        /// </summary>
+        public static readonly EventHeaderFieldEncoding IntPtrEncoding =
+            IntPtr.Size == 8 ? EventHeaderFieldEncoding.Value64 : EventHeaderFieldEncoding.Value32;
+
+        /// <summary>
         /// Pointer64, LittleEndian, Extension.
         /// </summary>
         public EventHeaderFlags Flags;

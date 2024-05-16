@@ -12,12 +12,16 @@ using EventLevel = System.Diagnostics.Tracing.EventLevel;
 /// Manages tracepoints that will be used to generate EventHeader-encoded events.
 /// Typical usage:
 /// <list type="bullet"><item>
-/// At program start or component initialization, create a Provider. Call
-/// provider.FindOrRegister(...) for each combination of Level+Keyword that you will
-/// need.
+/// At program start or component initialization, create a Provider.
 /// </item><item>
-/// When you need to log an event, call tracepoint = provider.Find(level, keyword) to
-/// get the tracepoint for the event's level+keyword (or you can cache the tracepoints
+/// Optional: Call provider.Register(...) for each combination of Level+Keyword that
+/// you will need. Registering the tracepoints during component startup (rather than
+/// at first use) helps tracepoint consumers get a complete list of the tracepoints
+/// that your component can generate so they can correctly subscribe to all the
+/// tracepoints they need.
+/// </item><item>
+/// When you need to log an event, call tracepoint = provider.FindOrRegister(level, keyword)
+/// to get the tracepoint for the event's level+keyword (or you can cache the tracepoints
 /// to avoid runtime lookup overhead). Then check tracepoint.IsEnabled to see whether
 /// the tracepoint is connected to any consumers. If tracepoint.IsEnabled returns true,
 /// use an <see cref="EventHeaderDynamicBuilder"/> to build the event, then call

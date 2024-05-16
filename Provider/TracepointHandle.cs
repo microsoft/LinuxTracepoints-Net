@@ -209,10 +209,12 @@ internal sealed class TracepointHandle : SafeHandle
         Debug.Assert(userEventsData != null); // Otherwise there would be no TracepointHandle instance.
         Debug.Assert(userEventsData.OpenResult == 0); // Otherwise Enabled would be false.
 
-        var writeIndex = (Int32)(nint)this.handle;
+        var writeIndex = new WriteIndexPlus { WriteIndex = (Int32)(nint)this.handle, Padding = 0 };
         unsafe
         {
-            data[0] = new DataSegment(&writeIndex, sizeof(Int32));
+            // Workaround: On old kernels, events with 0 bytes of data don't get written.
+            // If event has 0 bytes of data, add a byte to avoid the problem.
+            data[0] = new DataSegment(&writeIndex, sizeof(Int32) + (data.Length == 1 ? 1u : 0u));
         }
 
         if (this.IsClosed)
@@ -395,13 +397,7 @@ internal sealed class TracepointHandle : SafeHandle
         RawFileHandle? newHandle = null;
         try
         {
-            // "/sys/kernel/tracing/user_events_data\0"
-            ReadOnlySpan<byte> sysKernelTracingUserEventsData0 = stackalloc byte[] {
-                0x2F,0x73,0x79,0x73,0x2F,0x6B,0x65,0x72,0x6E,0x65,0x6C,0x2F,0x74,0x72,0x61,0x63,
-                0x69,0x6E,0x67,0x2F,0x75,0x73,0x65,0x72,0x5F,0x65,0x76,0x65,0x6E,0x74,0x73,0x5F,
-                0x64,0x61,0x74,0x61,0x00, };
-
-            newHandle = RawFileHandle.OpenWRONLY(sysKernelTracingUserEventsData0);
+            newHandle = RawFileHandle.OpenWRONLY("/sys/kernel/tracing/user_events_data\0"u8);
             if (newHandle.OpenResult == 0)
             {
                 // Success.
@@ -412,24 +408,6 @@ internal sealed class TracepointHandle : SafeHandle
             }
             else
             {
-                // "tracefs"
-                ReadOnlySpan<byte> tracefs = stackalloc byte[] {
-                    0x74,0x72,0x61,0x63,0x65,0x66,0x73, };
-
-                // "/user_events_data\0"
-                ReadOnlySpan<byte> tracefsSuffix0 = stackalloc byte[] {
-                    0x2F,0x75,0x73,0x65,0x72,0x5F,0x65,0x76,0x65,0x6E,0x74,0x73,0x5F,0x64,0x61,0x74,
-                    0x61,0x00, };
-
-                // "debugfs"
-                ReadOnlySpan<byte> debugfs = stackalloc byte[] {
-                    0x64,0x65,0x62,0x75,0x67,0x66,0x73, };
-
-                // "/tracing/user_events_data\0"
-                ReadOnlySpan<byte> debugfsSuffix0 = stackalloc byte[] {
-                    0x2F,0x74,0x72,0x61,0x63,0x69,0x6E,0x67,0x2F,0x75,0x73,0x65,0x72,0x5F,0x65,0x76,
-                    0x65,0x6E,0x74,0x73,0x5F,0x64,0x61,0x74,0x61,0x00, };
-
                 Span<byte> path = stackalloc byte[274]; // 256 + sizeof("/user_events_data\0")
                 FileStream? mounts = null;
                 try
@@ -508,12 +486,12 @@ internal sealed class TracepointHandle : SafeHandle
 
                         bool foundTraceFS;
                         var fs = line.Slice(fsBegin, fsEnd - fsBegin);
-                        if (fs.SequenceEqual(tracefs))
+                        if (fs.SequenceEqual("tracefs"u8))
                         {
                             // "tracefsMountPoint/user_events_data"
                             foundTraceFS = true;
                         }
-                        else if (path[0] == 0 && fs.SequenceEqual(debugfs))
+                        else if (path[0] == 0 && fs.SequenceEqual("debugfs"u8))
                         {
                             // "debugfsMountPoint/tracing/user_events_data"
                             foundTraceFS = false;
@@ -523,7 +501,9 @@ internal sealed class TracepointHandle : SafeHandle
                             continue;
                         }
 
-                        var pathSuffix0 = (foundTraceFS ? tracefsSuffix0 : debugfsSuffix0);
+                        var pathSuffix0 = foundTraceFS
+                            ? "/user_events_data\0"u8
+                            : "/tracing/user_events_data\0"u8;
 
                         var mountLen = mountEnd - mountBegin;
                         var pathLen = mountLen + pathSuffix0.Length; // Includes NUL
@@ -635,5 +615,12 @@ internal sealed class TracepointHandle : SafeHandle
         public byte reserved;
         public UInt16 reserved2;
         public UInt64 disable_addr;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WriteIndexPlus
+    {
+        public Int32 WriteIndex;
+        public UInt32 Padding;
     }
 }
