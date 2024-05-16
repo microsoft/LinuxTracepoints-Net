@@ -6,7 +6,34 @@ Requires TargetFramework `net6.0` or later.
 
 See [ProviderSample](../ProviderSample/README.md) for example usage.
 
-## Usage
+## Usage for direct Tracepoint events
+
+- At component initialization, create
+  `tracepoint = new PerfTracepoint("MyTracepointName int Field1; int Field2")` to
+  create a tracepoint. Use the tracepoint command format described in the
+  [user_events](https://docs.kernel.org/trace/user_events.html#command-format)
+  documentation.
+
+- Check the `tracepoint.IsEnabled` property to efficiently determine whether any
+  tracepoint collection session is collecting data from your tracepoint. This
+  allows you to skip preparing data and calling Write when nobody is collecting
+  your event.
+
+- Call `tracepoint.Write(eventData...)` with 0 to 5 `ReadOnlySpan<T>` eventData args
+  to write an event to your tracepoint. If no tracepoint collection session is
+  collecting data from your tracepoint, the `Write` method will immediately return
+  EBADF. Otherwise, the `Write` method will concatenate the values of the eventData
+  args and write an event with the specified data.
+
+- Call `tracepoint.Dispose()` to unregister your tracepoint.
+
+- For debugging or diagnostic purposes, check the `tracepoint.RegisterResult`
+  property to determine the errno returned during tracepoint registration.
+
+Note that if the tracepoint is unregistered (i.e. if registration failed or if the
+tracepoint is disposed), the IsEnabled property and Write method are safe no-ops.
+
+## Usage for EventHeader-encoded events
 
 - At component initialization, create
   `provider = new EventHeaderDynamicProvider("MyCompany_MyOrg_MyComponent")` to
