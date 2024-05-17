@@ -20,6 +20,15 @@ using MemoryMarshal = System.Runtime.InteropServices.MemoryMarshal;
 /// </summary>
 /// <remarks>
 /// <para>
+/// Total event size (including headers, event name string, field name strings, and field
+/// values) is limited to 64KB. If the builder detects that event size will definitely exceed
+/// 64KB, the TooBig property will become true and any call to the Write method will return
+/// E2BIG (7) without trying to send the event to the kernel. However, the actual size limit
+/// depends on the the configuration of the trace collection session. If the event is large
+/// but does not definitely exceed 64KB, the Write method will send the event to the kernel,
+/// but the kernel may still drop the event if the headers added by the kernel cause the event
+/// to exceed 64KB. The kernel may or may not return an error in this case.
+/// </para><para>
 /// Builder objects are reusable. If generating several events in sequence, you can minimize
 /// overhead by using the same builder for multiple events.
 /// </para><para>
@@ -30,10 +39,12 @@ using MemoryMarshal = System.Runtime.InteropServices.MemoryMarshal;
 /// </remarks>
 public class EventHeaderDynamicBuilder : IDisposable
 {
+    private const uint SizeOfGuid = 16;
     private const EventHeaderFieldEncoding VArrayFlag = EventHeaderFieldEncoding.VArrayFlag;
 
     private Vector meta;
     private Vector data;
+    private bool addFailed;
 
     /// <summary>
     /// Initializes a new instance of the EventBuilder.
@@ -64,7 +75,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         this.data = new Vector(initialDataBufferSize);
 
         // Initial state is the same as Reset("").
-        this.meta.AddByte(0); // nul-termination for empty event name.
+        this.meta.AddByte(0); // nul-termination for empty event name. (Cannot fail.)
         Debug.Assert(this.meta.Used == 1);
     }
 
@@ -93,15 +104,22 @@ public class EventHeaderDynamicBuilder : IDisposable
     public byte OpcodeByte { get; set; }
 
     /// <summary>
+    /// Returns true if the event is too large to be written (event name, field names,
+    /// and field values total more than 64KB). If this property is true, Write will
+    /// return E2BIG. This status is cleared by a call to Reset.
+    /// </summary>
+    public bool TooBig => this.addFailed || 65520 < this.meta.Used + this.data.Used;
+
+    /// <summary>
     /// EventOpcode: info, start activity, stop activity, etc.
     /// Reset sets this to 0 (Info). Can also be set by SetOpcode.
     /// Throws OverflowException if set to a value greater than 255.
     /// </summary>
     /// <exception cref="OverflowException">value > 255</exception>
     /// <remarks><para>
-    /// Most events set Opcode = Info (0). Other Opcode values add special semantics to
-    /// an event that help the event analysis tool with grouping related events. The
-    /// most frequently-used special semantics are ActivityStart and ActivityStop.
+    /// Most events use Opcode = Info (0). Other Opcode values add special semantics to
+    /// an event that help the event analysis tool group related events. The most
+    /// frequently-used special semantics are ActivityStart and ActivityStop.
     /// </para><para>
     /// To record an activity:
     /// </para><list type="bullet"><item>
@@ -110,20 +128,17 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// other id-generation system that is unlikely to create the same value for any
     /// other activity id in the same trace.
     /// </item><item>
-    /// Write an event with opcode = ActivityStart and with an ActivityId header
-    /// extension. The ActivityId extension should have the newly-generated activity
-    /// id, followed by the id of a parent activity (if any). If there is a parent
-    /// activity, the extension length will be 32; otherwise it will be 16.
+    /// Write an event with opcode = ActivityStart and with an ActivityId. The
+    /// ActivityId should have the newly-generated activity. The event may optionally
+    /// contain the ID of a related (parent) activity.
     /// </item><item>
     /// As appropriate, write any number of normal events (events with opcode set to
     /// something other than ActivityStart or ActivityStop, e.g. opcode = Info). To
     /// indicate that the events are part of the activity, each of these events
-    /// should have an ActivityId header extension with the new activity id
-    /// (extension length will be 16).
+    /// should have the ActivityId set to the new activity id.
     /// </item><item>
     /// When the activity ends, write an event with opcode = ActivityStop and with
-    /// an ActivityId header extension containing the activity id of the activity
-    /// that is ending (extension length will be 16).
+    /// the ActivityId set to activity id of the activity that is ending.
     /// </item></list>
     /// </remarks>
     public EventOpcode Opcode
@@ -145,16 +160,25 @@ public class EventHeaderDynamicBuilder : IDisposable
         this.ResetImpl();
 
         var utf8 = Encoding.UTF8;
-        var metaBytes = this.meta.ReserveSpanFor((uint)utf8.GetMaxByteCount(name.Length) + 1);
-        int nameUsed = 0;
-        try
+        var nameBuffer = this.meta.ReserveSpanFor((uint)utf8.GetMaxByteCount(name.Length) + 1);
+        if (nameBuffer.IsEmpty)
         {
-            nameUsed = utf8.GetBytes(name, metaBytes);
+            this.addFailed = true;
+            this.meta.AddByte(0); // nul-termination for empty event name. (Cannot fail.)
+            Debug.Assert(this.meta.Used == 1);
         }
-        finally
+        else
         {
-            metaBytes[nameUsed] = 0;
-            this.meta.SetUsed(nameUsed + 1);
+            int nameUsed = 0;
+            try
+            {
+                nameUsed = utf8.GetBytes(name, nameBuffer);
+            }
+            finally
+            {
+                nameBuffer[nameUsed] = 0;
+                this.meta.SetUsed(nameUsed + 1);
+            }
         }
 
         return this;
@@ -172,9 +196,18 @@ public class EventHeaderDynamicBuilder : IDisposable
         Debug.Assert(nameUtf8.IndexOf((byte)0) < 0, "Event name must not have embedded NUL characters.");
         this.ResetImpl();
 
-        var metaBytes = this.meta.ReserveSpanFor((uint)nameUtf8.Length + 1);
-        metaBytes[nameUtf8.Length] = 0;
-        nameUtf8.CopyTo(metaBytes);
+        var nameBuffer = this.meta.ReserveSpanFor((uint)nameUtf8.Length + 1);
+        if (nameBuffer.IsEmpty)
+        {
+            this.addFailed = true;
+            this.meta.AddByte(0); // nul-termination for empty event name. (Cannot fail.)
+            Debug.Assert(this.meta.Used == 1);
+        }
+        else
+        {
+            nameBuffer[nameUtf8.Length] = 0;
+            nameUtf8.CopyTo(nameBuffer);
+        }
 
         return this;
     }
@@ -207,9 +240,9 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// </summary>
     /// <returns>this</returns>
     /// <remarks><para>
-    /// Most events set Opcode = Info (0). Other Opcode values add special semantics to
-    /// an event that help the event analysis tool with grouping related events. The
-    /// most frequently-used special semantics are ActivityStart and ActivityStop.
+    /// Most events use Opcode = Info (0). Other Opcode values add special semantics to
+    /// an event that help the event analysis tool group related events. The most
+    /// frequently-used special semantics are ActivityStart and ActivityStop.
     /// </para><para>
     /// To record an activity:
     /// </para><list type="bullet"><item>
@@ -218,20 +251,17 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// other id-generation system that is unlikely to create the same value for any
     /// other activity id in the same trace.
     /// </item><item>
-    /// Write an event with opcode = ActivityStart and with an ActivityId header
-    /// extension. The ActivityId extension should have the newly-generated activity
-    /// id, followed by the id of a parent activity (if any). If there is a parent
-    /// activity, the extension length will be 32; otherwise it will be 16.
+    /// Write an event with opcode = ActivityStart and with an ActivityId. The
+    /// ActivityId should have the newly-generated activity. The event may optionally
+    /// contain the ID of a related (parent) activity.
     /// </item><item>
     /// As appropriate, write any number of normal events (events with opcode set to
     /// something other than ActivityStart or ActivityStop, e.g. opcode = Info). To
     /// indicate that the events are part of the activity, each of these events
-    /// should have an ActivityId header extension with the new activity id
-    /// (extension length will be 16).
+    /// should have the ActivityId set to the new activity id.
     /// </item><item>
     /// When the activity ends, write an event with opcode = ActivityStop and with
-    /// an ActivityId header extension containing the activity id of the activity
-    /// that is ending (extension length will be 16).
+    /// the ActivityId set to activity id of the activity that is ending.
     /// </item></list>
     /// </remarks>
     public EventHeaderDynamicBuilder SetOpcodeByte(byte opcode)
@@ -247,9 +277,9 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// <returns>this</returns>
     /// <exception cref="OverflowException">value > 255</exception>
     /// <remarks><para>
-    /// Most events set Opcode = Info (0). Other Opcode values add special semantics to
-    /// an event that help the event analysis tool with grouping related events. The
-    /// most frequently-used special semantics are ActivityStart and ActivityStop.
+    /// Most events use Opcode = Info (0). Other Opcode values add special semantics to
+    /// an event that help the event analysis tool group related events. The most
+    /// frequently-used special semantics are ActivityStart and ActivityStop.
     /// </para><para>
     /// To record an activity:
     /// </para><list type="bullet"><item>
@@ -258,20 +288,17 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// other id-generation system that is unlikely to create the same value for any
     /// other activity id in the same trace.
     /// </item><item>
-    /// Write an event with opcode = ActivityStart and with an ActivityId header
-    /// extension. The ActivityId extension should have the newly-generated activity
-    /// id, followed by the id of a parent activity (if any). If there is a parent
-    /// activity, the extension length will be 32; otherwise it will be 16.
+    /// Write an event with opcode = ActivityStart and with an ActivityId. The
+    /// ActivityId should have the newly-generated activity. The event may optionally
+    /// contain the ID of a related (parent) activity.
     /// </item><item>
     /// As appropriate, write any number of normal events (events with opcode set to
     /// something other than ActivityStart or ActivityStop, e.g. opcode = Info). To
     /// indicate that the events are part of the activity, each of these events
-    /// should have an ActivityId header extension with the new activity id
-    /// (extension length will be 16).
+    /// should have the ActivityId set to the new activity id.
     /// </item><item>
     /// When the activity ends, write an event with opcode = ActivityStop and with
-    /// an ActivityId header extension containing the activity id of the activity
-    /// that is ending (extension length will be 16).
+    /// the ActivityId set to activity id of the activity that is ending.
     /// </item></list>
     /// </remarks>
     public EventHeaderDynamicBuilder SetOpcode(EventOpcode opcode)
@@ -293,7 +320,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value8, format, tag);
-        this.data.AddByte(value);
+        this.addFailed |= !this.data.AddByte(value);
         return this;
     }
 
@@ -310,7 +337,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value8, format, tag);
-        this.data.AddByte(value);
+        this.addFailed |= !this.data.AddByte(value);
         return this;
     }
 
@@ -361,7 +388,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value8, format, tag);
-        this.data.AddByte(unchecked((Byte)value));
+        this.addFailed |= !this.data.AddByte(unchecked((Byte)value));
         return this;
     }
 
@@ -378,7 +405,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value8, format, tag);
-        this.data.AddByte(unchecked((Byte)value));
+        this.addFailed |= !this.data.AddByte(unchecked((Byte)value));
         return this;
     }
 
@@ -430,7 +457,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataU32(value);
+        this.AddDataU16(value);
         return this;
     }
 
@@ -448,7 +475,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataU32(value);
+        this.AddDataU16(value);
         return this;
     }
 
@@ -502,7 +529,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataU32(unchecked((UInt16)value));
+        this.AddDataU16(unchecked((UInt16)value));
         return this;
     }
 
@@ -520,7 +547,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataU32(unchecked((UInt16)value));
+        this.AddDataU16(unchecked((UInt16)value));
         return this;
     }
 
@@ -574,7 +601,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataU32(unchecked((UInt16)value));
+        this.AddDataU16(unchecked((UInt16)value));
         return this;
     }
 
@@ -592,7 +619,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value16, format, tag);
-        this.AddDataU32(unchecked((UInt16)value));
+        this.AddDataU16(unchecked((UInt16)value));
         return this;
     }
 
@@ -1199,7 +1226,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value128, format, tag);
-        Utility.WriteGuidBigEndian(this.data.ReserveSpanFor(16), value);
+        this.AddDataGuid(value);
         return this;
     }
 
@@ -1216,7 +1243,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value128, format, tag);
-        Utility.WriteGuidBigEndian(this.data.ReserveSpanFor(16), value);
+        this.AddDataGuid(value);
         return this;
     }
 
@@ -1267,7 +1294,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.Value128, format, tag);
-        MemoryMarshal.Write(this.data.ReserveSpanFor(16), ref value);
+        this.AddDataT(value);
         return this;
     }
 
@@ -1284,7 +1311,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.Value128, format, tag);
-        MemoryMarshal.Write(this.data.ReserveSpanFor(16), ref value);
+        this.AddDataT(value);
         return this;
     }
 
@@ -1373,7 +1400,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar8 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1396,7 +1423,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar8 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1455,7 +1482,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1478,7 +1505,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1537,7 +1564,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1560,7 +1587,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1583,7 +1610,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.AsSpan());
@@ -1606,7 +1633,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.AsSpan());
@@ -1665,7 +1692,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.ZStringChar32 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1688,7 +1715,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.ZStringChar32 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataZStringT(v.Span);
@@ -1746,7 +1773,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char8 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataStringT(v.Span);
@@ -1768,7 +1795,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char8 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)values.Length);
+        this.AddDataU16((UInt16)values.Length);
         foreach (var v in values)
         {
             this.AddDataStringT(v.Span);
@@ -1826,7 +1853,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -1848,7 +1875,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -1906,7 +1933,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -1928,7 +1955,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -1950,7 +1977,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.AsSpan());
@@ -1972,7 +1999,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char16 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.AsSpan());
@@ -2030,7 +2057,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(name, EventHeaderFieldEncoding.StringLength16Char32 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -2052,7 +2079,7 @@ public class EventHeaderDynamicBuilder : IDisposable
         ushort tag = 0)
     {
         this.AddMeta(nameUtf8, EventHeaderFieldEncoding.StringLength16Char32 | VArrayFlag, format, tag);
-        this.AddDataU32((UInt16)value.Length);
+        this.AddDataU16((UInt16)value.Length);
         foreach (var v in value)
         {
             this.AddDataStringT(v.Span);
@@ -2151,7 +2178,7 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// </summary>
     /// <param name="metadataPosition">
     /// The position of the metadata field within the structure. This value is
-    /// returned by the AddStruct method.
+    /// returned by the AddStructWithMetadataPosition method.
     /// </param>
     /// <param name="fieldCount">
     /// The actual number of fields in the structure. This value must be in the range
@@ -2177,19 +2204,28 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// then you use GetRawFields() to get the raw data for the common fields and
     /// save it, then each time you need to add the common fields to an event you
     /// call AddRawFields with the saved data.
+    /// <br/>
+    /// If TooBig is true, this throws InvalidOperationException.
     /// </summary>
     /// <returns>
     /// Raw field bytes (rawMeta, rawData) that can be used with AddRawFields.
     /// </returns>
+    /// <exception cref="InvalidOperationException">TooBig is true</exception>
     public ValueTuple<byte[], byte[]> GetRawFields()
     {
+        if (this.TooBig)
+        {
+            throw new InvalidOperationException(
+                "Cannot call GetRawFields when builder." + nameof(TooBig) + " is true.");
+        }
+
         var metaUsed = this.meta.UsedSpan;
 
-        // Skip event name.
-        var metaFieldsPos = metaUsed.IndexOf((byte)0) + 1; // Skip event name and NUL.
+        // Skip event name and NUL.
+        var metaFieldsPos = metaUsed.IndexOf((byte)0) + 1;
         if (metaFieldsPos <= 0)
         {
-            // I think only reachable if object disposed.
+            // I think this is only reachable if the object has been disposed.
             Debug.Assert(this.meta.Used == 0);
             Debug.Assert(this.data.Used == 0);
             metaFieldsPos = metaUsed.Length;
@@ -2216,14 +2252,38 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// <returns>this</returns>
     public EventHeaderDynamicBuilder AddRawFields(ReadOnlySpan<byte> rawMeta, ReadOnlySpan<byte> rawData)
     {
-        rawMeta.CopyTo(this.meta.ReserveSpanFor((uint)rawMeta.Length));
-        rawData.CopyTo(this.data.ReserveSpanFor((uint)rawData.Length));
+        Span<byte> dest;
+
+        dest = this.meta.ReserveSpanFor((uint)rawMeta.Length);
+        if (dest.Length < rawMeta.Length)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            rawMeta.CopyTo(dest);
+        }
+
+        dest = this.data.ReserveSpanFor((uint)rawData.Length);
+        if (dest.Length < rawData.Length)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            rawData.CopyTo(dest);
+        }
+
         return this;
     }
 
     /// <summary>
+    /// If builder.TooBig (event exceeds 64KB), immediately returns E2BIG.
+    /// <br/>
     /// If !tracepoint.IsEnabled, immediately returns EBADF.
-    /// Otherwise, writes this builder's event to the specified tracepoint.
+    /// <br/>
+    /// Otherwise, writes this builder's event to the specified tracepoint and returns
+    /// the errno from writev.
     /// </summary>
     /// <param name="tracepoint">
     /// The tracepoint (provider name, level, and keyword) to which the event should
@@ -2231,7 +2291,6 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// </param>
     /// <returns>
     /// 0 if event was written, errno otherwise.
-    /// Typically returns EBADF if no data collection sessions are listening for the tracepoint.
     /// The return value is for debugging/diagnostic purposes and is usually ignored in normal operation
     /// since most programs should continue to function even when tracing is not configured.
     /// </returns>
@@ -2244,8 +2303,12 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// If builder.TooBig (event exceeds 64KB), immediately returns E2BIG.
+    /// <br/>
     /// If !tracepoint.IsEnabled, immediately returns EBADF.
-    /// Otherwise, writes this builder's event to the specified tracepoint.
+    /// <br/>
+    /// Otherwise, writes this builder's event to the specified tracepoint and returns
+    /// the errno from writev.
     /// </summary>
     /// <param name="tracepoint">
     /// The tracepoint (provider name, level, and keyword) to which the event should
@@ -2256,7 +2319,6 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// </param>
     /// <returns>
     /// 0 if event was written, errno otherwise.
-    /// Typically returns EBADF if no data collection sessions are listening for the tracepoint.
     /// The return value is for debugging/diagnostic purposes and is usually ignored in normal operation
     /// since most programs should continue to function even when tracing is not configured.
     /// </returns>
@@ -2272,8 +2334,12 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// If builder.TooBig (event exceeds 64KB), immediately returns E2BIG.
+    /// <br/>
     /// If !tracepoint.IsEnabled, immediately returns EBADF.
-    /// Otherwise, writes this builder's event to the specified tracepoint.
+    /// <br/>
+    /// Otherwise, writes this builder's event to the specified tracepoint and returns
+    /// the errno from writev.
     /// </summary>
     /// <param name="tracepoint">
     /// The tracepoint (provider name, level, and keyword) to which the event should
@@ -2288,7 +2354,6 @@ public class EventHeaderDynamicBuilder : IDisposable
     /// </param>
     /// <returns>
     /// 0 if event was written, errno otherwise.
-    /// Typically returns EBADF if no data collection sessions are listening for the tracepoint.
     /// The return value is for debugging/diagnostic purposes and is usually ignored in normal operation
     /// since most programs should continue to function even when tracing is not configured.
     /// </returns>
@@ -2333,15 +2398,37 @@ public class EventHeaderDynamicBuilder : IDisposable
     {
         this.meta.Reset();
         this.data.Reset();
+        this.addFailed = false;
         this.Tag = 0;
         this.Id = 0;
         this.Version = 0;
         this.OpcodeByte = 0;
     }
 
-    private void AddDataU32(UInt16 value)
+    private void AddDataU16(UInt16 value)
     {
-        MemoryMarshal.Write(this.data.ReserveSpanFor(sizeof(UInt16)), ref value);
+        var dest = this.data.ReserveSpanFor(sizeof(UInt16));
+        if (dest.IsEmpty)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            MemoryMarshal.Write(dest, ref value);
+        }
+    }
+
+    private void AddDataGuid(in Guid value)
+    {
+        var dest = this.data.ReserveSpanFor(SizeOfGuid);
+        if (dest.IsEmpty)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            Utility.WriteGuidBigEndian(dest, value);
+        }
     }
 
     private void AddDataT<T>(T value)
@@ -2353,30 +2440,15 @@ public class EventHeaderDynamicBuilder : IDisposable
             sizeofT = (uint)sizeof(T);
         }
 
-        MemoryMarshal.Write(this.data.ReserveSpanFor(sizeofT), ref value);
-    }
-
-    private void AddDataArrayGuid(ReadOnlySpan<Guid> values)
-    {
-        var dest = this.data.ReserveSpanFor((uint)sizeof(UInt16) + (uint)values.Length * 16);
-        var count = (UInt16)values.Length;
-        MemoryMarshal.Write(dest, ref count);
-        var pos = sizeof(UInt16);
-        foreach (var v in values)
+        var dest = this.data.ReserveSpanFor(sizeofT);
+        if (dest.IsEmpty)
         {
-            Utility.WriteGuidBigEndian(dest.Slice(pos), v);
-            pos += 16;
+            this.addFailed = true;
         }
-    }
-
-    private void AddDataArrayT<T>(ReadOnlySpan<T> values)
-        where T : unmanaged
-    {
-        var valuesBytes = MemoryMarshal.AsBytes(values);
-        var dest = this.data.ReserveSpanFor((uint)sizeof(UInt16) + (uint)valuesBytes.Length);
-        var count = (UInt16)values.Length;
-        MemoryMarshal.Write(dest, ref count);
-        valuesBytes.CopyTo(dest.Slice(sizeof(UInt16)));
+        else
+        {
+            MemoryMarshal.Write(dest, ref value);
+        }
     }
 
     private void AddDataStringT<T>(ReadOnlySpan<T> value)
@@ -2388,15 +2460,28 @@ public class EventHeaderDynamicBuilder : IDisposable
         }
 
         var valueBytes = MemoryMarshal.AsBytes(value);
-        var span = this.data.ReserveSpanFor((uint)sizeof(UInt16) + (uint)valueBytes.Length);
-        UInt16 len = (UInt16)value.Length;
-        MemoryMarshal.Write(span, ref len);
-        valueBytes.CopyTo(span.Slice(sizeof(UInt16)));
+        var dest = this.data.ReserveSpanFor(sizeof(UInt16) + (uint)valueBytes.Length);
+        if (dest.IsEmpty)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            UInt16 lenU16 = (UInt16)value.Length;
+            MemoryMarshal.Write(dest, ref lenU16);
+            valueBytes.CopyTo(dest.Slice(sizeof(UInt16)));
+        }
     }
 
     private void AddDataZStringT<T>(ReadOnlySpan<T> value)
         where T : unmanaged, IEquatable<T>
     {
+        uint sizeofT;
+        unsafe
+        {
+            sizeofT = (uint)sizeof(T);
+        }
+
         if (value.Length > UInt16.MaxValue)
         {
             value = value.Slice(0, UInt16.MaxValue);
@@ -2415,12 +2500,59 @@ public class EventHeaderDynamicBuilder : IDisposable
         }
 
         var valueBytes = MemoryMarshal.AsBytes(value);
-        var span = this.data.ReserveSpanFor((uint)valueBytes.Length);
-        valueBytes.CopyTo(span);
-        this.AddDataT(default(T));
+        var dest = this.data.ReserveSpanFor((uint)valueBytes.Length + sizeofT);
+        if (dest.IsEmpty)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            valueBytes.CopyTo(dest);
+            var zero = default(T);
+            MemoryMarshal.Write(dest.Slice(valueBytes.Length), ref zero);
+        }
     }
 
-    /// <returns>The position of the format byte within the metadata array (for AddStruct).</returns>
+    private void AddDataArrayT<T>(ReadOnlySpan<T> values)
+        where T : unmanaged
+    {
+        var valuesBytes = MemoryMarshal.AsBytes(values);
+        var dest = this.data.ReserveSpanFor(sizeof(UInt16) + (uint)valuesBytes.Length);
+        if (dest.IsEmpty)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            var countU16 = (UInt16)values.Length;
+            MemoryMarshal.Write(dest, ref countU16);
+            valuesBytes.CopyTo(dest.Slice(sizeof(UInt16)));
+        }
+    }
+
+    private void AddDataArrayGuid(ReadOnlySpan<Guid> values)
+    {
+        var dest = this.data.ReserveSpanFor(sizeof(UInt16) + (uint)values.Length * SizeOfGuid);
+        if (dest.IsEmpty)
+        {
+            this.addFailed = true;
+        }
+        else
+        {
+            var countU16 = (UInt16)values.Length;
+            MemoryMarshal.Write(dest, ref countU16);
+            var pos = sizeof(UInt16);
+            foreach (var v in values)
+            {
+                Utility.WriteGuidBigEndian(dest.Slice(pos), v);
+                pos += (int)SizeOfGuid;
+            }
+        }
+    }
+
+    /// <returns>
+    /// The position of the format byte within the metadata array (for AddStructWithMetadataPosition).
+    /// </returns>
     private int AddMeta(
         ReadOnlySpan<char> name,
         EventHeaderFieldEncoding encoding,
@@ -2432,14 +2564,16 @@ public class EventHeaderDynamicBuilder : IDisposable
         Debug.Assert(!encoding.HasChainFlag());
         Debug.Assert(!format.HasChainFlag());
 
-        int pos;
-
         var utf8 = Encoding.UTF8;
-        var nameLength = name.Length;
         var nameMaxByteCount = utf8.GetMaxByteCount(name.Length);
         if (tag != 0)
         {
-            pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 5);
+            var pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 5);
+            if (pos < 0)
+            {
+                this.addFailed = true;
+                return 0;
+            }
             var metaSpan = this.meta.UsedSpan;
             pos += utf8.GetBytes(name, metaSpan.Slice(pos));
             metaSpan[pos++] = 0;
@@ -2448,34 +2582,46 @@ public class EventHeaderDynamicBuilder : IDisposable
             MemoryMarshal.Write(metaSpan.Slice(pos), ref tag);
             pos += sizeof(UInt16);
             this.meta.SetUsed(pos);
-            metadataPos = pos - 3; // Returned from AddStruct.
+            metadataPos = pos - 3; // Returned from AddStructWithMetadataPosition.
         }
         else if (format != 0)
         {
-            pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 3);
+            var pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 3);
+            if (pos < 0)
+            {
+                this.addFailed = true;
+                return 0;
+            }
             var metaSpan = this.meta.UsedSpan;
             pos += utf8.GetBytes(name, metaSpan.Slice(pos));
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
             metaSpan[pos++] = (byte)format;
             this.meta.SetUsed(pos);
-            metadataPos = pos - 1; // Returned from AddStruct.
+            metadataPos = pos - 1; // Returned from AddStructWithMetadataPosition.
         }
         else
         {
-            pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 2);
+            var pos = this.meta.ReserveSpaceFor((uint)nameMaxByteCount + 2);
+            if (pos < 0)
+            {
+                this.addFailed = true;
+                return 0;
+            }
             var metaSpan = this.meta.UsedSpan;
             pos += utf8.GetBytes(name, metaSpan.Slice(pos));
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)encoding;
             this.meta.SetUsed(pos);
-            metadataPos = -1; // AddStruct doesn't accept format == 0.
+            metadataPos = -1; // Unreachable from AddStructWithMetadataPosition.
         }
 
-        return metadataPos; // For AddStruct: Position of the format byte, or -1 if format == 0.
+        return metadataPos; // For AddStructWithMetadataPosition: Position of the format byte, or -1 if format == 0.
     }
 
-    /// <returns>The position of the format byte within the metadata array (for AddStruct).</returns>
+    /// <returns>
+    /// The position of the format byte within the metadata array (for AddStructWithMetadataPosition).
+    /// </returns>
     private int AddMeta(
         ReadOnlySpan<byte> nameUtf8,
         EventHeaderFieldEncoding encoding,
@@ -2487,11 +2633,15 @@ public class EventHeaderDynamicBuilder : IDisposable
         Debug.Assert(!encoding.HasChainFlag());
         Debug.Assert(!format.HasChainFlag());
 
-        int pos;
         var nameLength = nameUtf8.Length;
         if (tag != 0)
         {
-            pos = this.meta.ReserveSpaceFor((uint)nameLength + 5);
+            var pos = this.meta.ReserveSpaceFor((uint)nameLength + 5);
+            if (pos < 0)
+            {
+                this.addFailed = true;
+                return 0;
+            }
             var metaSpan = this.meta.UsedSpan;
             nameUtf8.CopyTo(metaSpan.Slice(pos));
             pos += nameLength;
@@ -2501,11 +2651,16 @@ public class EventHeaderDynamicBuilder : IDisposable
             MemoryMarshal.Write(metaSpan.Slice(pos), ref tag);
             pos += sizeof(UInt16);
             this.meta.SetUsed(pos);
-            metadataPos = pos - 3; // Returned from AddStruct.
+            metadataPos = pos - 3; // Returned from AddStructWithMetadataPosition.
         }
         else if (format != 0)
         {
-            pos = this.meta.ReserveSpaceFor((uint)nameLength + 3);
+            var pos = this.meta.ReserveSpaceFor((uint)nameLength + 3);
+            if (pos < 0)
+            {
+                this.addFailed = true;
+                return 0;
+            }
             var metaSpan = this.meta.UsedSpan;
             nameUtf8.CopyTo(metaSpan.Slice(pos));
             pos += nameLength;
@@ -2513,21 +2668,26 @@ public class EventHeaderDynamicBuilder : IDisposable
             metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
             metaSpan[pos++] = (byte)format;
             this.meta.SetUsed(pos);
-            metadataPos = pos - 1; // Returned from AddStruct.
+            metadataPos = pos - 1; // Returned from AddStructWithMetadataPosition.
         }
         else
         {
-            pos = this.meta.ReserveSpaceFor((uint)nameLength + 2);
+            var pos = this.meta.ReserveSpaceFor((uint)nameLength + 2);
+            if (pos < 0)
+            {
+                this.addFailed = true;
+                return 0;
+            }
             var metaSpan = this.meta.UsedSpan;
             nameUtf8.CopyTo(metaSpan.Slice(pos));
             pos += nameLength;
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)encoding;
             this.meta.SetUsed(pos);
-            metadataPos = -1; // AddStruct doesn't accept format == 0.
+            metadataPos = -1; // Unreachable from AddStructWithMetadataPosition.
         }
 
-        return metadataPos; // For AddStruct: Position of the format byte, or -1 if format == 0.
+        return metadataPos; // For AddStructWithMetadataPosition: Position of the format byte, or -1 if format == 0.
     }
 
     private struct Vector : IDisposable
@@ -2563,46 +2723,57 @@ public class EventHeaderDynamicBuilder : IDisposable
             this.Used = 0;
         }
 
-        public void AddByte(byte value)
+        /// <summary>
+        /// Returns false if resulting buffer would exceed 64KB.
+        /// </summary>
+        public bool AddByte(byte value)
         {
             var oldUsed = this.Used;
             Debug.Assert(this.Bytes.Length >= oldUsed);
 
-            if (this.Bytes.Length == oldUsed)
+            if (this.Bytes.Length == oldUsed &&
+                !this.Grow(1))
             {
-                this.Grow(1);
+                return false;
             }
 
             this.Bytes[oldUsed] = value;
             this.Used = oldUsed + 1;
+            return true;
         }
 
+        /// <summary>
+        /// Returns -1 if resulting buffer would exceed 64KB.
+        /// </summary>
         public int ReserveSpaceFor(uint requiredSize)
         {
             int oldUsed = this.Used;
             Debug.Assert(this.Bytes.Length >= oldUsed);
 
             // condition will always be true if requiredSize > int.MaxValue.
-            if ((uint)(this.Bytes.Length - oldUsed) < requiredSize)
+            if ((uint)(this.Bytes.Length - oldUsed) < requiredSize &&
+                !this.Grow(requiredSize))
             {
-                // Grow will always throw if requiredSize > int.MaxValue.
-                this.Grow(requiredSize);
+                return -1;
             }
 
             this.Used = oldUsed + (int)requiredSize;
             return oldUsed;
         }
 
+        /// <summary>
+        /// Returns empty if resulting buffer would exceed 64KB.
+        /// </summary>
         public Span<byte> ReserveSpanFor(uint requiredSize)
         {
             int oldUsed = this.Used;
             Debug.Assert(this.Bytes.Length >= oldUsed);
 
             // condition will always be true if requiredSize > int.MaxValue.
-            if ((uint)(this.Bytes.Length - oldUsed) < requiredSize)
+            if ((uint)(this.Bytes.Length - oldUsed) < requiredSize &&
+                !this.Grow(requiredSize))
             {
-                // Grow will always throw if requiredSize > int.MaxValue.
-                this.Grow(requiredSize);
+                return default;
             }
 
             this.Used = oldUsed + (int)requiredSize;
@@ -2615,18 +2786,20 @@ public class EventHeaderDynamicBuilder : IDisposable
             this.Used = newUsed;
         }
 
-        private void Grow(uint requiredSize)
+        /// <summary>
+        /// Returns false if resulting buffer would exceed 64KB.
+        /// </summary>
+        private bool Grow(uint requiredSize)
         {
-            var oldCapacity = this.Bytes.Length;
-            if (oldCapacity <= 0)
+            if (this.Bytes.Length <= 0)
             {
                 throw new ObjectDisposedException(nameof(EventHeaderDynamicBuilder));
             }
 
-            var newCapacity = (uint)oldCapacity + requiredSize;
+            var newCapacity = (uint)this.Used + requiredSize;
             if (newCapacity < requiredSize || newCapacity > 65536)
             {
-                throw new InvalidOperationException("Event too large");
+                return false;
             }
 
             var sharedPool = ArrayPool<byte>.Shared;
@@ -2636,6 +2809,7 @@ public class EventHeaderDynamicBuilder : IDisposable
             Buffer.BlockCopy(oldArray, 0, newArray, 0, this.Used);
             this.Bytes = newArray;
             sharedPool.Return(oldArray);
+            return true;
         }
     }
 }

@@ -204,7 +204,7 @@ namespace Microsoft.LinuxTracepoints
         /// Pointer-size and Endian flags as appropriate for the currently-running process,
         /// no extension blocks present.
         /// </summary>
-        public static readonly EventHeaderFlags DefaultFlags = EventHeaderFlags.None |
+        public static readonly EventHeaderFlags DefaultFlags =
             (IntPtr.Size == 8 ? EventHeaderFlags.Pointer64 : EventHeaderFlags.None) |
             (BitConverter.IsLittleEndian ? EventHeaderFlags.LittleEndian : EventHeaderFlags.None);
 

@@ -151,6 +151,11 @@ public sealed class EventHeaderDynamicTracepoint : IDisposable
         in Guid* activityId,
         in Guid* relatedId)
     {
+        if (builder.TooBig)
+        {
+            return TracepointHandle.EventTooBigError;
+        }
+
         if (this.enablementArray[0] == 0)
         {
             return TracepointHandle.DisabledEventError;

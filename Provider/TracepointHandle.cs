@@ -21,6 +21,11 @@ internal sealed class TracepointHandle : SafeHandle
     /// </summary>
     public const int DisabledEventError = 9;
 
+    /// <summary>
+    /// The error to return from Write of an event that is too big = E2BIG = 7.
+    /// </summary>
+    public const int EventTooBigError = 7;
+
     private const byte EnableSize = sizeof(UInt32);
 
     private const int EBADF = 9;
@@ -263,14 +268,11 @@ internal sealed class TracepointHandle : SafeHandle
         Debug.Assert(relatedId == null || activityId != null);
 
         // Precondition: eventHeader.Flags must match up with presence of first extension.
-        Debug.Assert(activityId == null || metaLength == 0 ||
+        Debug.Assert((activityId == null && metaLength == 0) ||
             eventHeader.Flags == (EventHeader.DefaultFlags | EventHeaderFlags.Extension));
 
         // Precondition: metaLength implies metadata extension block data.
         Debug.Assert(metaLength == 0 || data.Length > 1);
-
-        // Precondition: EventHeader metadata in data[1].
-        Debug.Assert(data[1].Length != 0);
 
         var userEventsData = userEventsDataStatic;
         Debug.Assert(userEventsData != null); // Otherwise there would be no TracepointHandle instance.

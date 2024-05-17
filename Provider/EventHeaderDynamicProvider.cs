@@ -37,6 +37,7 @@ public class EventHeaderDynamicProvider : IDisposable
 
     private readonly ReaderWriterLockSlim mutex;
     private readonly Dictionary<LevelKeyword, EventHeaderDynamicTracepoint> tracepoints;
+    private int disposed;
 
     /// <summary>
     /// Initializes a new provider with the specified provider name and options.
@@ -93,7 +94,7 @@ public class EventHeaderDynamicProvider : IDisposable
     public string Options { get; }
 
     /// <summary>
-    /// Returns "ProviderName_LnKn" or "ProviderName_LnKnGgroup".
+    /// Returns e.g. "ProviderName_L*K*" or "ProviderName_L*K*Ggroup".
     /// </summary>
     public override string ToString()
     {
@@ -224,7 +225,7 @@ public class EventHeaderDynamicProvider : IDisposable
     /// </exception>
     protected virtual void Dispose(bool disposing)
     {
-        if (disposing)
+        if (disposing && 0 == Interlocked.Exchange(ref this.disposed, 1))
         {
             this.mutex.Dispose();
             foreach (var kv in this.tracepoints)

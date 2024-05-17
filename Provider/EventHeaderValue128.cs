@@ -34,7 +34,6 @@
         /// Casts the specified byte span to an EventHeaderValue128.
         /// </summary>
         /// <param name="source">A span of 16 or more bytes.</param>
-        /// <returns>A reference to the bytes in the span, treated as an EventHeaderValue128.</returns>
         /// <exception cref="ArgumentOutOfRangeException">source.Length is less than 16.</exception>
         public EventHeaderValue128(ReadOnlySpan<byte> source)
         {

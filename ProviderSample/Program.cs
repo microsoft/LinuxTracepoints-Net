@@ -371,6 +371,7 @@ internal static class Program
                     }
                 }
                 builder.SetStructFieldCount(metadataPos, fieldCount)
+                    .AddInt16("AfterStruct", 5)
                     .Write(tpVerbose1);
             }
         }
