@@ -12,12 +12,12 @@
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
-    <RollForward>LatestMajor</RollForward>
     <OutputType>Library</OutputType>
     <AssemblyName>Microsoft.LinuxTracepoints.Provider</AssemblyName>
     <RootNamespace>Microsoft.LinuxTracepoints.Provider</RootNamespace>
-    <GenerateDocumentationFile>False</GenerateDocumentationFile>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <RollForward>LatestMajor</RollForward>
   </PropertyGroup>
 
   <ItemGroup>

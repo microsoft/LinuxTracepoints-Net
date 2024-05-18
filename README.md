@@ -6,6 +6,8 @@ events, including events that use the [EventHeader](Types/README.md#eventheader)
 
 ## Overview
 
+- [Provider](Provider) - library for generating Linux user_events tracepoint events._
+
 - [Decode](Decode) - library for parsing `perf.data` files and decoding tracepoint
   events.
 
@@ -18,6 +20,9 @@ events, including events that use the [EventHeader](Types/README.md#eventheader)
 
 - [Types](Types) - library with types used by the `Decode` library. This includes the
   definitions for the `EventHeader` encoding.
+
+See also [PerfDataExtension](https://github.com/microsoft/Microsoft-Performance-Tools-Linux-Android/tree/develop/PerfDataExtension)
+for a Windows Performance Toolkit plugin to decode `perf.data` files using this library.
 
 ## Contributing
 

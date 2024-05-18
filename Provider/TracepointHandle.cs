@@ -21,6 +21,11 @@ internal sealed class TracepointHandle : SafeHandle
     /// </summary>
     public const int DisabledEventError = 9;
 
+    /// <summary>
+    /// The error to return from Write of an event that is too big = E2BIG = 7.
+    /// </summary>
+    public const int EventTooBigError = 7;
+
     private const byte EnableSize = sizeof(UInt32);
 
     private const int EBADF = 9;
@@ -91,7 +96,7 @@ internal sealed class TracepointHandle : SafeHandle
     /// IsInvalid == true, IsEnabled == false, RegisterResult != 0,
     /// Write will always return EBADF.
     /// </summary>
-    public static TracepointHandle Register(ReadOnlySpan<char> nameArgs, UInt16 flags = 0)
+    public static TracepointHandle Register(ReadOnlySpan<char> nameArgs, PerfUserEventReg flags = 0)
     {
         Span<byte> nulTerminatedNameArgs = stackalloc byte[nameArgs.Length + 1];
         for (var i = 0; i < nameArgs.Length; i += 1)
@@ -118,7 +123,7 @@ internal sealed class TracepointHandle : SafeHandle
     /// IsInvalid == true, IsEnabled == false, RegisterResult != 0,
     /// Write will always return EBADF.
     /// </summary>
-    public static TracepointHandle Register(ReadOnlySpan<byte> nulTerminatedNameArgs, UInt16 flags = 0)
+    public static TracepointHandle Register(ReadOnlySpan<byte> nulTerminatedNameArgs, PerfUserEventReg flags = 0)
     {
         Debug.Assert(0 <= nulTerminatedNameArgs.LastIndexOf((byte)0));
 
@@ -195,8 +200,8 @@ internal sealed class TracepointHandle : SafeHandle
     }
 
     /// <summary>
-    /// Sends the data to the user_events_data file (does not check IsEnabled).
-    /// Uses data[0] for headers.
+    /// Sends tracepoint data to the user_events_data file. Uses data[0] for headers.
+    /// Returns EBADF if closed. Does NOT check IsEnabled (caller should do that).
     /// <br/>
     /// Requires: data[0].Length == 0 (data[0] will be used for headers).
     /// </summary>
@@ -209,10 +214,118 @@ internal sealed class TracepointHandle : SafeHandle
         Debug.Assert(userEventsData != null); // Otherwise there would be no TracepointHandle instance.
         Debug.Assert(userEventsData.OpenResult == 0); // Otherwise Enabled would be false.
 
+        var writeIndex = new WriteIndexPlus { WriteIndex = (Int32)(nint)this.handle, Padding = 0 };
+        unsafe
+        {
+            // Workaround: On old kernels, events with 0 bytes of data don't get written.
+            // If event has 0 bytes of data, add a byte to avoid the problem.
+            data[0] = new DataSegment(&writeIndex, sizeof(Int32) + (data.Length == 1 ? 1u : 0u));
+        }
+
+        if (this.IsClosed)
+        {
+            return DisabledEventError;
+        }
+
+        // Ignore race condition: if we're disposed between checking IsClosed and calling WriteV,
+        // we will write the data using a write_index that doesn't belong to us. That's not great,
+        // but it's not fatal and probably not worth degrading performance to avoid it. The
+        // write_index is unlikely to be recycled during the race condition, and even if it is
+        // recycled, the worst consequence would be a garbage event in a trace. Could avoid with:
+        // try { AddRef; WriteV; } catch { return EBADF; } finally { Release; }.
+
+        var writevResult = userEventsData.WriteV(data);
+        return writevResult >= 0 ? 0 : Marshal.GetLastWin32Error();
+    }
+
+    /// <summary>
+    /// Sends tracepoint with EventHeader to the user_events_data file. Uses data[0] for headers.
+    /// Returns EBADF if closed. Does NOT check IsEnabled (caller should do that).
+    /// <br/>
+    /// Fills in data[0] with writeIndex + eventHeader + activityIdBlock? + metadataHeader?. Sets the extension
+    /// block's flags based on metaLength.
+    /// <br/>
+    /// Requires: data[0].Length == 0 (data[0] will be used for headers).
+    /// <br/>
+    /// Requires: relatedId cannot be present unless activityId is present.
+    /// <br/>
+    /// Requires: If activityId is present or metaLength != 0 then
+    /// eventHeader.Flags must equal DefaultWithExtension.
+    /// <br/>
+    /// Requires: If metaLength != 0 then data[1] starts with metadata extension block data.
+    /// </summary>
+    public unsafe int WriteEventHeader(
+        EventHeader eventHeader,
+        Guid* activityId,
+        Guid* relatedId,
+        ushort metaLength,
+        Span<DataSegment> data)
+    {
+        // Precondition: slot for write_index in data[0].
+        Debug.Assert(data[0].Length == 0);
+
+        // Precondition: relatedId cannot be present unless activityId is present.
+        Debug.Assert(relatedId == null || activityId != null);
+
+        // Precondition: eventHeader.Flags must match up with presence of first extension.
+        Debug.Assert((activityId == null && metaLength == 0) ||
+            eventHeader.Flags == (EventHeader.DefaultFlags | EventHeaderFlags.Extension));
+
+        // Precondition: metaLength implies metadata extension block data.
+        Debug.Assert(metaLength == 0 || data.Length > 1);
+
+        var userEventsData = userEventsDataStatic;
+        Debug.Assert(userEventsData != null); // Otherwise there would be no TracepointHandle instance.
+        Debug.Assert(userEventsData.OpenResult == 0); // Otherwise Enabled would be false.
+
+        const byte HeadersMax = sizeof(Int32)               // writeIndex
+            + EventHeader.SizeOfStruct                      // eventHeader
+            + EventHeaderExtension.SizeOfStruct + 16 + 16   // activityId header + activityId + relatedId
+            + EventHeaderExtension.SizeOfStruct;            // metadata header
         var writeIndex = (Int32)(nint)this.handle;
         unsafe
         {
-            data[0] = new DataSegment(&writeIndex, sizeof(Int32));
+            uint* headersUInt32 = stackalloc UInt32[HeadersMax / sizeof(UInt32)]; // Ensure 4-byte alignment.
+            byte* headers = (byte*)headersUInt32;
+            uint pos = 0;
+
+            *(Int32*)&headers[pos] = (Int32)(nint)this.handle;
+            pos += sizeof(Int32);
+
+            *(EventHeader*)&headers[pos] = eventHeader;
+            pos += EventHeader.SizeOfStruct;
+
+            if (activityId != null)
+            {
+                var kind = EventHeaderExtensionKind.ActivityId | (metaLength == 0 ? 0 : EventHeaderExtensionKind.ChainFlag);
+                if (relatedId != null)
+                {
+                    *(EventHeaderExtension*)&headers[pos] = new EventHeaderExtension { Kind = kind, Size = 32 };
+                    pos += EventHeaderExtension.SizeOfStruct;
+                    Utility.WriteGuidBigEndian(new Span<byte>(&headers[pos], 16), *activityId);
+                    pos += 16;
+                    Utility.WriteGuidBigEndian(new Span<byte>(&headers[pos], 16), *relatedId);
+                    pos += 16;
+                }
+                else
+                {
+                    *(EventHeaderExtension*)&headers[pos] = new EventHeaderExtension { Kind = kind, Size = 16 };
+                    pos += EventHeaderExtension.SizeOfStruct;
+                    Utility.WriteGuidBigEndian(new Span<byte>(&headers[pos], 16), *activityId);
+                    pos += 16;
+                }
+            }
+
+            if (metaLength != 0)
+            {
+                *(EventHeaderExtension*)&headers[pos] = new EventHeaderExtension {
+                    Kind = EventHeaderExtensionKind.Metadata, // Last one, so no chain flag.
+                    Size = metaLength,
+                };
+                pos += EventHeaderExtension.SizeOfStruct;
+            }
+
+            data[0] = new DataSegment(headers, pos);
         }
 
         if (this.IsClosed)
@@ -239,7 +352,7 @@ internal sealed class TracepointHandle : SafeHandle
     /// When this.IsInvalid, the array is shared by all other invalid handles and is a normal allocation.
     /// When !this.IsInvalid, there is a separate array for each handle and is a pinned allocation.
     /// </summary>
-    public Int32[] DangerousGetEnablementPointer()
+    public Int32[] DangerousGetEnablementArray()
     {
         return this.enabledPinned;
     }
@@ -286,13 +399,7 @@ internal sealed class TracepointHandle : SafeHandle
         RawFileHandle? newHandle = null;
         try
         {
-            // "/sys/kernel/tracing/user_events_data\0"
-            ReadOnlySpan<byte> sysKernelTracingUserEventsData0 = stackalloc byte[] {
-                0x2F,0x73,0x79,0x73,0x2F,0x6B,0x65,0x72,0x6E,0x65,0x6C,0x2F,0x74,0x72,0x61,0x63,
-                0x69,0x6E,0x67,0x2F,0x75,0x73,0x65,0x72,0x5F,0x65,0x76,0x65,0x6E,0x74,0x73,0x5F,
-                0x64,0x61,0x74,0x61,0x00, };
-
-            newHandle = RawFileHandle.OpenWRONLY(sysKernelTracingUserEventsData0);
+            newHandle = RawFileHandle.OpenWRONLY("/sys/kernel/tracing/user_events_data\0"u8);
             if (newHandle.OpenResult == 0)
             {
                 // Success.
@@ -303,24 +410,6 @@ internal sealed class TracepointHandle : SafeHandle
             }
             else
             {
-                // "tracefs"
-                ReadOnlySpan<byte> tracefs = stackalloc byte[] {
-                    0x74,0x72,0x61,0x63,0x65,0x66,0x73, };
-
-                // "/user_events_data\0"
-                ReadOnlySpan<byte> tracefsSuffix0 = stackalloc byte[] {
-                    0x2F,0x75,0x73,0x65,0x72,0x5F,0x65,0x76,0x65,0x6E,0x74,0x73,0x5F,0x64,0x61,0x74,
-                    0x61,0x00, };
-
-                // "debugfs"
-                ReadOnlySpan<byte> debugfs = stackalloc byte[] {
-                    0x64,0x65,0x62,0x75,0x67,0x66,0x73, };
-
-                // "/tracing/user_events_data\0"
-                ReadOnlySpan<byte> debugfsSuffix0 = stackalloc byte[] {
-                    0x2F,0x74,0x72,0x61,0x63,0x69,0x6E,0x67,0x2F,0x75,0x73,0x65,0x72,0x5F,0x65,0x76,
-                    0x65,0x6E,0x74,0x73,0x5F,0x64,0x61,0x74,0x61,0x00, };
-
                 Span<byte> path = stackalloc byte[274]; // 256 + sizeof("/user_events_data\0")
                 FileStream? mounts = null;
                 try
@@ -399,12 +488,12 @@ internal sealed class TracepointHandle : SafeHandle
 
                         bool foundTraceFS;
                         var fs = line.Slice(fsBegin, fsEnd - fsBegin);
-                        if (fs.SequenceEqual(tracefs))
+                        if (fs.SequenceEqual("tracefs"u8))
                         {
                             // "tracefsMountPoint/user_events_data"
                             foundTraceFS = true;
                         }
-                        else if (path[0] == 0 && fs.SequenceEqual(debugfs))
+                        else if (path[0] == 0 && fs.SequenceEqual("debugfs"u8))
                         {
                             // "debugfsMountPoint/tracing/user_events_data"
                             foundTraceFS = false;
@@ -414,7 +503,9 @@ internal sealed class TracepointHandle : SafeHandle
                             continue;
                         }
 
-                        var pathSuffix0 = (foundTraceFS ? tracefsSuffix0 : debugfsSuffix0);
+                        var pathSuffix0 = foundTraceFS
+                            ? "/user_events_data\0"u8
+                            : "/tracing/user_events_data\0"u8;
 
                         var mountLen = mountEnd - mountBegin;
                         var pathLen = mountLen + pathSuffix0.Length; // Includes NUL
@@ -511,7 +602,7 @@ internal sealed class TracepointHandle : SafeHandle
         public UInt32 size;
         public byte enable_bit;
         public byte enable_size;
-        public UInt16 flags;
+        public PerfUserEventReg flags;
         public UInt64 enable_addr;
         public UInt64 name_args;
         public Int32 write_index;
@@ -526,5 +617,12 @@ internal sealed class TracepointHandle : SafeHandle
         public byte reserved;
         public UInt16 reserved2;
         public UInt64 disable_addr;
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    private struct WriteIndexPlus
+    {
+        public Int32 WriteIndex;
+        public UInt32 Padding;
     }
 }
