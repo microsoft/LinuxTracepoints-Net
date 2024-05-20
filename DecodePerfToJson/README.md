@@ -82,6 +82,11 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
+### 0.1.3 (2024-05-20)
+
+- When system/event name is not available via `EVENT_DESC` header, fall back to
+  system/event name from sample format info instead of names as missing.
+
 ### 0.1.2 (2024-05-06)
 
 - Fix TID field for non-Sample events.

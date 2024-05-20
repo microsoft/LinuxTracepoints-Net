@@ -6,7 +6,7 @@ events, including events that use the [EventHeader](Types/README.md#eventheader)
 
 ## Overview
 
-- [Provider](Provider) - library for generating Linux user_events tracepoint events._
+- [Provider](Provider) - library for generating Linux user_events tracepoint events.
 
 - [Decode](Decode) - library for parsing `perf.data` files and decoding tracepoint
   events.

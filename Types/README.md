@@ -277,6 +277,12 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
+### 0.1.3 (2024-05-20)
+
+- Add static helper constants to the `EventHeader` struct: `DefaultFlags` and `IntPtrEncoding`.
+- Setting invalid `Opcode` or `Level` property now throws `OverflowException` instead of
+  silently truncating the value.
+
 ### 0.1.2 (2024-05-06)
 
 - NuGet cleanup.

@@ -119,6 +119,15 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
+### 0.1.3 (2024-05-20)
+
+- Fix error when using `GetSampleEventInfo` or `GetNonSampleEventInfo` with
+  C# language 11 or later.
+- Formatting functions fall back to system/tracepoint name from format info if
+  the system/tracepoint name is not available from the `EVENT_DESC` header (e.g.
+  `AppendJsonEventInfoTo`, `AppendJsonEventIdentityTo`, `ToString`). Provide
+  helpers to make it easier for clients to have the same fallback behavior.
+
 ### 0.1.2 (2024-05-06)
 
 - Fix invalid TID returned from `GetNonSampleEventInfo`.
