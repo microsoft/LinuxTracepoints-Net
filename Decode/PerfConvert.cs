@@ -887,7 +887,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Returns the number of chars required to convertOptions the provided byte array as a string
+        /// Returns the number of chars required to convert the provided byte array as a string
         /// of hexadecimal bytes (e.g. "0D 0A").
         /// If bytesLength is 0, returns 0. Otherwise returns (3 * bytesLength - 1).
         /// </summary>
@@ -1096,7 +1096,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Formats the provided 16-byte value as an IPv6 address.
         /// Requires appropriately-sized destination buffer, up to IPv6MaxChars.
         /// Returns the formatted string (the filled portion of destination).
-        /// Note: Allocates an IPAddress object to convertOptions the address.
+        /// Note: Allocates an IPAddress object to convert the address.
         /// </summary>
         public static Span<char> IPv6Format(Span<char> destination, ReadOnlySpan<byte> ipv6)
         {

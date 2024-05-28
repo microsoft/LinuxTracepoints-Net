@@ -299,10 +299,11 @@
             }
             return new PerfItemValue(
                 bytes,
-                new PerfItemType(
+                new PerfItemMetadata(
                     new PerfByteReader(fromBigEndian),
                     encoding,
                     format,
+                    true,
                     typeSize,
                     1));
         }
@@ -315,10 +316,11 @@
         {
             return new PerfItemValue(
                 bytes,
-                new PerfItemType(
+                new PerfItemMetadata(
                     new PerfByteReader(fromBigEndian),
                     encoding,
                     format,
+                    true,
                     0,
                     1));
         }

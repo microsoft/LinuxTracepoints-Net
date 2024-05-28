@@ -238,14 +238,14 @@ namespace DecodePerfToJson
                                 switch (this.enumerator.State)
                                 {
                                     case EventHeaderEnumeratorState.Value:
-                                        if (!item.Value.Type.IsArrayOrElement)
+                                        if (!item.Value.Metadata.IsElement)
                                         {
                                             this.JsonWriter.WritePropertyName(MakeName(item, ref charBuf));
                                         }
                                         this.WriteValue(item.Value, ref charBuf);
                                         break;
                                     case EventHeaderEnumeratorState.StructBegin:
-                                        if (!item.Value.Type.IsArrayOrElement)
+                                        if (!item.Value.Metadata.IsElement)
                                         {
                                             this.JsonWriter.WritePropertyName(MakeName(item, ref charBuf));
                                         }
@@ -257,7 +257,7 @@ namespace DecodePerfToJson
                                     case EventHeaderEnumeratorState.ArrayBegin:
                                         this.JsonWriter.WritePropertyName(MakeName(item, ref charBuf));
                                         this.JsonWriter.WriteStartArray();
-                                        if (item.Value.Type.TypeSize != 0)
+                                        if (item.Value.Metadata.TypeSize != 0)
                                         {
                                             // Process the simple array directly without using the enumerator.
                                             WriteSimpleArrayValues(item.Value, ref charBuf);
@@ -370,7 +370,7 @@ namespace DecodePerfToJson
         {
             var fieldFormat = sampleEventInfo.Format.Fields[i];
             var fieldValue = fieldFormat.GetFieldValue(sampleEventInfo.RawDataSpan, sampleEventInfo.ByteReader);
-            if (!fieldValue.Type.IsArrayOrElement)
+            if (fieldValue.Metadata.IsScalar)
             {
                 this.JsonWriter.WritePropertyName(fieldFormat.Name);
                 this.WriteValue(fieldValue, ref charBuf);
@@ -494,7 +494,7 @@ namespace DecodePerfToJson
 
         private void WriteValue(in PerfItemValue item, ref Span<char> charBuf)
         {
-            switch (item.Type.Encoding)
+            switch (item.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -504,7 +504,7 @@ namespace DecodePerfToJson
                 case EventHeaderFieldEncoding.Struct:
                     throw new InvalidOperationException("Invalid encoding for FormatScalar.");
                 case EventHeaderFieldEncoding.Value8:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -528,7 +528,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value16:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -555,7 +555,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value32:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -591,7 +591,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value64:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -614,7 +614,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value128:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.HexBytes:
@@ -629,7 +629,7 @@ namespace DecodePerfToJson
                     }
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.StringLength16Char8:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             WriteHexBytesValue(item.Bytes, ref charBuf);
@@ -654,7 +654,7 @@ namespace DecodePerfToJson
                     }
                 case EventHeaderFieldEncoding.ZStringChar16:
                 case EventHeaderFieldEncoding.StringLength16Char16:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             WriteHexBytesValue(item.Bytes, ref charBuf);
@@ -686,7 +686,7 @@ namespace DecodePerfToJson
                     }
                 case EventHeaderFieldEncoding.ZStringChar32:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             WriteHexBytesValue(item.Bytes, ref charBuf);
@@ -718,8 +718,8 @@ namespace DecodePerfToJson
         /// </summary>
         private void WriteSimpleArrayValues(in PerfItemValue item, ref Span<char> charBuf)
         {
-            var elementCount = item.Type.ElementCount;
-            switch (item.Type.Encoding)
+            var elementCount = item.Metadata.ElementCount;
+            switch (item.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -733,7 +733,7 @@ namespace DecodePerfToJson
                 case EventHeaderFieldEncoding.StringLength16Char32:
                     throw new InvalidOperationException("Invalid encoding for WriteSimpleArray.");
                 case EventHeaderFieldEncoding.Value8:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -776,7 +776,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value16:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -825,7 +825,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value32:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -891,7 +891,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value64:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -932,7 +932,7 @@ namespace DecodePerfToJson
                             return;
                     }
                 case EventHeaderFieldEncoding.Value128:
-                    switch (item.Type.Format)
+                    switch (item.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.HexBytes:
@@ -1145,7 +1145,7 @@ namespace DecodePerfToJson
 
         private ReadOnlySpan<byte> MakeName(in EventHeaderItemInfo item, ref Span<char> charBuf)
         {
-            var tag = item.Value.Type.FieldTag;
+            var tag = item.Value.Metadata.FieldTag;
             var nameBytes = item.NameBytes;
             if (!this.JsonOptions.HasFlag(PerfConvertOptions.FieldTag) || tag == 0)
             {

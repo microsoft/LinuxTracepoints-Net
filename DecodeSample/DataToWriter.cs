@@ -134,15 +134,7 @@ namespace DecodeSample
                             // formats. TraceFS fields are always scalars or arrays of fixed-size elements, so
                             // the following will work to get the data as a JSON value.
                             this.scratch.Clear();
-                            if (fieldValue.Type.IsArrayOrElement)
-                            {
-                                fieldValue.AppendJsonSimpleArrayTo(this.scratch);
-                            }
-                            else
-                            {
-                                fieldValue.AppendJsonScalarTo(this.scratch);
-                            }
-
+                            fieldValue.AppendJsonTo(this.scratch);
                             this.writer.WriteLine($"  {fieldFormat.Name} = {this.scratch}");
                         }
                     }

@@ -119,6 +119,24 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
+### 0.1.4 (TBD)
+
+- Renamed `PerfItemType` to `PerfItemMetadata`. Renamed corresponding
+  methods and properties, `GetItemType()` ==> `GetItemMetadata()`,
+  `PerfItemValue.Type` ==> `PerfItemValue.Metadata`.
+- Fixed incorrect `PerfItemType.ElementCount` value for struct element.
+- Fixed handling of nul-terminated strings that are not terminated before
+  end of the event. Old behavior would treat field as invalid. New behavior
+  treats field as terminated at end of event.
+- Fixed some comments that had been corrupted by over-active
+  search-and-replace (i.e. Visual Studio rename incorrectly updated them).
+- Renamed item metadata's `ArrayFlags` property to `ArrayFlag` since only
+  one flag should be set at a time.
+- Added item metadata `IsScalar` and `IsElement` properties.
+- Removed item metadata `IsArrayOrElement` and `EncodingAndArrayFlags`
+  properties.
+- Added item value `AppendJsonTo()` method.
+
 ### 0.1.3 (2024-05-20)
 
 - Fix error when using `GetSampleEventInfo` or `GetNonSampleEventInfo` with

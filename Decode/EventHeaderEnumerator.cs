@@ -876,10 +876,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Note that metadata enumeration gives a flat view of arrays and structures.
         /// There are only Value and ArrayBegin items, no ArrayEnd, StructBegin, StructEnd.
         /// A struct shows up as a value with Encoding = Struct (Format holds field count).
-        /// An array shows up as an ArrayBegin with ArrayFlags != 0, and ElementCount is either zero
+        /// An array shows up as an ArrayBegin with ArrayFlag != 0, and ElementCount is either zero
         /// (indicating a runtime-variable array length) or nonzero (indicating a compile-time
         /// constant array length). An array of struct is a ArrayBegin with Encoding = Struct and
-        /// ArrayFlags != 0. ValueBytes will always be empty. ArrayIndex and TypeSize
+        /// ArrayFlag != 0. ValueBytes will always be empty. ArrayIndex and TypeSize
         /// will always be zero.
         /// </para><para>
         /// Note that when enumerating metadata for a structure, the enumeration may end before
@@ -1083,7 +1083,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// <para>
-        /// Gets type information of the current item. This is a subset of
+        /// Gets metadata of the current item. This is a subset of
         /// the information returned by GetItemInfo().
         /// The current item changes each time MoveNext() is called.
         /// </para><para>
@@ -1092,19 +1092,23 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </para>
         /// </summary>
         /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
-        public PerfItemType GetItemType()
+        public PerfItemMetadata GetItemMetadata()
         {
             if (m_state <= EventHeaderEnumeratorState.BeforeFirstItem)
             {
                 throw new InvalidOperationException(); // PRECONDITION
             }
 
-            return new PerfItemType(
+            var isScalar =
+                m_state < EventHeaderEnumeratorState.ArrayBegin ||
+                m_state > EventHeaderEnumeratorState.ArrayEnd;
+            return new PerfItemMetadata(
                 m_byteReader,
                 m_fieldType.Encoding,
                 m_fieldType.Format,
+                isScalar,
                 m_elementSize,
-                m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
+                isScalar ? (ushort)1 : m_stackTop.ArrayCount,
                 m_fieldType.Tag);
         }
 
@@ -1148,25 +1152,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         public EventHeaderItemInfo GetItemInfo(ReadOnlySpan<byte> eventDataSpan)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
-
-            if (m_state <= EventHeaderEnumeratorState.BeforeFirstItem)
-            {
-                throw new InvalidOperationException(); // PRECONDITION
-            }
-
             return new EventHeaderItemInfo(
                 eventDataSpan,
                 m_stackTop.NameOffset,
                 m_stackTop.NameSize,
                 new PerfItemValue(
                     eventDataSpan.Slice(m_dataPosCooked, m_itemSizeCooked),
-                    new PerfItemType(
-                        m_byteReader,
-                        m_fieldType.Encoding,
-                        m_fieldType.Format,
-                        m_elementSize,
-                        m_state == EventHeaderEnumeratorState.Value ? (ushort)1 : m_stackTop.ArrayCount,
-                        m_fieldType.Tag)));
+                    this.GetItemMetadata()));
         }
 
         /// <summary>
@@ -1181,7 +1173,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// whether the event contains any trailing data (data not described by the
         /// decoding information). Up to 7 bytes of trailing data is normal (padding
         /// between events), but 8 or more bytes of trailing data might indicate some
-        /// decodingStyle of encoding problem or data corruption.
+        /// kind of encoding problem or data corruption.
         /// </para>
         /// </summary>
         /// <exception cref="InvalidOperationException">Called in invalid State.</exception>
@@ -1545,9 +1537,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                     case EventHeaderEnumeratorState.Value:
 
                         itemInfo = GetItemInfo(eventDataSpan);
-                        if (wantName && !itemInfo.Value.Type.IsArrayOrElement)
+                        if (wantName && !itemInfo.Value.Metadata.IsElement)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Metadata.FieldTag);
                         }
 
                         itemInfo.Value.AppendJsonScalarTo(w.WriteValue());
@@ -1558,10 +1550,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                         itemInfo = GetItemInfo(eventDataSpan);
                         if (wantName)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Metadata.FieldTag);
                         }
 
-                        if (itemInfo.Value.Type.TypeSize != 0)
+                        if (itemInfo.Value.Metadata.TypeSize != 0)
                         {
                             itemInfo.Value.AppendJsonSimpleArrayTo(w.WriteValue(), convertOptions);
                             ok = MoveNextSibling(eventDataSpan);
@@ -1582,9 +1574,9 @@ namespace Microsoft.LinuxTracepoints.Decode
 
                         itemInfo = GetItemInfo(eventDataSpan);
 
-                        if (wantName && !itemInfo.Value.Type.IsArrayOrElement)
+                        if (wantName && !itemInfo.Value.Metadata.IsElement)
                         {
-                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Type.FieldTag);
+                            w.WritePropertyName(itemInfo.NameBytes, itemInfo.Value.Metadata.FieldTag);
                         }
 
                         w.WriteStartObject();
@@ -2107,8 +2099,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            m_itemSizeCooked = eventDataSpan.Length;
-            m_itemSizeRaw = eventDataSpan.Length;
+            m_itemSizeCooked = eventDataSpan.Length - m_dataPosRaw;
+            m_itemSizeRaw = eventDataSpan.Length - m_dataPosRaw;
         }
 
         private void StartValueStringNul32(ReadOnlySpan<byte> eventDataSpan)
@@ -2124,8 +2116,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            m_itemSizeCooked = eventDataSpan.Length;
-            m_itemSizeRaw = eventDataSpan.Length;
+            m_itemSizeCooked = eventDataSpan.Length - m_dataPosRaw;
+            m_itemSizeRaw = eventDataSpan.Length - m_dataPosRaw;
         }
 
         private void StartValueStringLength16(ReadOnlySpan<byte> eventDataSpan, byte charSizeShift)

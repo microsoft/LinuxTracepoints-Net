@@ -28,7 +28,7 @@
                 var encoding = (EventHeaderFieldEncoding)value;
                 Assert.AreEqual(value, (byte)encoding);
                 Assert.AreEqual(value & 0x1F, (byte)encoding.BaseEncoding());
-                Assert.AreEqual(value & 0x60, (byte)encoding.ArrayFlags());
+                Assert.AreEqual(value & 0x60, (byte)encoding.ArrayFlag());
                 Assert.AreEqual((value & 0x20) != 0, encoding.IsCArray());
                 Assert.AreEqual((value & 0x40) != 0, encoding.IsVArray());
                 Assert.AreEqual((value & 0x60) != 0, encoding.IsArray());
