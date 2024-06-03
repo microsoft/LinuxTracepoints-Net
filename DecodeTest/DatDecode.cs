@@ -73,7 +73,7 @@
                     {
                         var item = e.GetItemInfo();
                         _ = item.ToString(); // Exercise ToString.
-                        var itemType = item.Value.Type;
+                        var itemType = item.Value.Metadata;
                         this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                         this.writer.WriteStartObject();
 
@@ -103,7 +103,7 @@
                             this.writer.WriteRaw("BadFixedSize", itemType.TypeSize.ToString(CultureInfo.InvariantCulture));
                         }
 
-                        if (itemType.ArrayFlags != 0)
+                        if (itemType.ArrayFlag != 0)
                         {
                             this.writer.WriteRaw("ElementCount", itemType.ElementCount.ToString(CultureInfo.InvariantCulture));
                         }
@@ -226,18 +226,18 @@
                 while (true)
                 {
                     var item = e.GetItemInfo();
-                    var itemType = item.Value.Type;
+                    var itemType = item.Value.Metadata;
                     switch (e.State)
                     {
                         case EventHeaderEnumeratorState.Value:
-                            if (!itemType.IsArrayOrElement)
+                            if (!itemType.IsElement)
                             {
                                 this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             item.Value.AppendJsonScalarTo(this.writer.WriteRawValueBuilder());
                             break;
                         case EventHeaderEnumeratorState.StructBegin:
-                            if (!itemType.IsArrayOrElement)
+                            if (!itemType.IsElement)
                             {
                                 this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
@@ -284,18 +284,18 @@
                 while (true)
                 {
                     var item = e.GetItemInfo();
-                    var itemType = item.Value.Type;
+                    var itemType = item.Value.Metadata;
                     switch (e.State)
                     {
                         case EventHeaderEnumeratorState.Value:
-                            if (!itemType.IsArrayOrElement)
+                            if (!itemType.IsElement)
                             {
                                 this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }
                             this.writer.WriteStringValue(item.Value.ToString());
                             break;
                         case EventHeaderEnumeratorState.StructBegin:
-                            if (!itemType.IsArrayOrElement)
+                            if (!itemType.IsElement)
                             {
                                 this.writer.WritePropertyNameOnNewLine(MakeName(item.GetNameAsString(), itemType.FieldTag));
                             }

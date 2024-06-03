@@ -10,58 +10,115 @@ namespace Microsoft.LinuxTracepoints.Decode
     using Text = System.Text;
 
     /// <summary>
-    /// Provides access to the type and content of a perf event item. An item is a field of
-    /// the event or an element of an array field of the event. The item may represent
-    /// one of the following, determined by the context that produced this PerfItemValue:
+    /// Provides access to the metadata
+    /// and content
+    /// of a perf event item. An item is a field of the event or an element of an
+    /// array field of the event.
+    /// <br/>
+    /// The item may represent one of the following, determined by the
+    /// <c>Metadata.IsScalar</c> and <c>Metadata.TypeSize</c>
+    /// properties:
+    ///
     /// <list type="bullet">
+    ///
     /// <item>
-    /// Scalar (non-array field, or one element of an array field):
-    /// Bytes contains the scalar value in event-endian byte order.
-    /// Type contains type information for the field or element.
+    /// <b>Simple scalar:</b> <c>IsScalar &amp;&amp; TypeSize != 0</c>
+    /// <br/>
+    /// Non-array field, or one element of an array field.
+    /// Value type is simple (fixed-size value).
+    /// <br/>
+    /// <c>ElementCount</c> is always 1.
+    /// <br/>
+    /// <c>Format</c> is significant and <c>StructFieldCount</c> should be ignored
+    /// (simple type is never <c>Struct</c>).
+    /// <br/>
+    /// <c>Bytes</c> contains the field's value and
+    /// <c>Bytes.Length == TypeSize</c>,
+    /// e.g. for a <c>Value32</c>, <c>TypeSize == 4</c> and <c>Bytes.Length == 4</c>.
     /// </item>
+    ///
     /// <item>
-    /// The beginning or end of a structure (non-array field, or one element of an array field):
-    /// Bytes is empty (the structure's fields are accessed via the event enumerator).
-    /// Type contains type information for the structure.
+    /// <b>Complex scalar:</b> <c>IsScalar &amp;&amp; TypeSize == 0</c>
+    /// <br/>
+    /// Non-array field, or one element of an array field.
+    /// Value type is complex (variable-size or struct value).
+    /// <br/>
+    /// <c>ElementCount</c> is always 1.
+    /// <br/>
+    /// If <c>Encoding == Struct</c>, this is the beginning or end of a structure,
+    /// <c>Format</c> should be ignored, and <c>StructFieldCount</c> is significant.
+    /// Otherwise, this is a variable-length value, <c>Format</c> is significant,
+    /// and <c>StructFieldCount</c> should be ignored.
+    /// <br/>
+    /// If <c>Encoding == Struct</c> then <c>Bytes</c> will be empty and you should use
+    /// <see cref="EventHeaderEnumerator"/><c>.MoveNext()</c> to visit the struct's member fields.
+    /// Otherwise, <c>Bytes</c> will contain the field's variable-length value without any length
+    /// prefix or nul-termination suffix.
     /// </item>
+    ///
     /// <item>
-    /// The beginning of an array of simple type (non-struct, element's type is fixed-size):
-    /// Bytes contains the element values in event-endian byte order (Length = ElementCount * TypeSize).
-    /// Type contains type information for the array.
+    /// <b>Simple array:</b> <c>!IsScalar &amp;&amp; TypeSize != 0</c>
+    /// <br/>
+    /// Array field (array-begin or array-end item).
+    /// Array element type is simple (fixed-size element).
+    /// <br/>
+    /// <c>ElementCount</c> is the number of elements in the array.
+    /// <br/>
+    /// <c>Format</c> is significant and <c>StructFieldCount</c> should be ignored
+    /// (simple type is never <c>Struct</c>).
+    /// <br/>
+    /// For array-end, <c>Bytes</c> will be empty.
+    /// <br/>
+    /// For array-begin, <c>Bytes</c> contains the field's values and
+    /// <c>Bytes.Length == TypeSize * ElementCount</c>,
+    /// e.g. for a <c>Value32</c>, <c>TypeSize == 4</c> and <c>Bytes.Length == 4 * ElementCount</c>.
+    /// You may use <see cref="EventHeaderEnumerator"/><c>.MoveNext()</c> to visit the array elements,
+    /// or you may process the array values directly and then use
+    /// <see cref="EventHeaderEnumerator"/><c>.MoveNextSibling()</c> to skip the array elements.
     /// </item>
+    ///
     /// <item>
-    /// The end of an array of simple type:
-    /// Bytes is empty.
-    /// Type contains type information for the array.
+    /// <b>Complex array:</b> <c>!IsScalar &amp;&amp; TypeSize == 0</c>
+    /// <br/>
+    /// Array field (array-begin or array-end item).
+    /// Array element type is complex (variable-size or struct element).
+    /// <br/>
+    /// <c>ElementCount</c> is the number of elements in the array.
+    /// <br/>
+    /// If <c>Encoding == Struct</c>, this is the beginning or end of an array of structures,
+    /// <c>Format</c> should be ignored, and <c>StructFieldCount</c> is significant.
+    /// Otherwise, this is an array of variable-length values, <c>Format</c> is significant,
+    /// and <c>StructFieldCount</c> should be ignored.
+    /// <br/>
+    /// <c>Bytes</c> will be empty. Use <see cref="EventHeaderEnumerator"/><c>.MoveNext()</c>
+    /// to visit the array elements.
     /// </item>
-    /// <item>
-    /// The beginning or end of an array of complex elements:
-    /// Bytes is empty (array elements are accessed via the event enumerator).
-    /// Type contains type information for the array.
-    /// </item>
+    ///
     /// </list>
     /// </summary>
     public readonly ref struct PerfItemValue
     {
         /// <summary>
-        /// Initializes a new instance of the PerfItemValue struct. These are normally created
-        /// by EventHeaderEnumerator.GetItemInfo() or by PerfFieldFormat.GetFieldValue().
+        /// Initializes a new instance of the PerfItemValue struct.
+        /// These are not normally created directly. You'll normally get instances of this struct from
+        /// <see cref="EventHeaderEnumerator"/><c>.GetItemInfo()</c> or
+        /// <see cref="PerfFieldFormat"/><c>.GetFieldValue()</c>.
         /// </summary>
         public PerfItemValue(
             ReadOnlySpan<byte> bytes,
-            PerfItemType type)
+            PerfItemMetadata metadata)
         {
             this.Bytes = bytes;
-            this.Type = type;
+            this.Metadata = metadata;
 
 #if DEBUG
             // If type has known size, validate bytes.Length.
-            if (type.TypeSize != 0 && !bytes.IsEmpty)
+            if (metadata.TypeSize != 0 && !bytes.IsEmpty)
             {
-                Debug.Assert(bytes.Length == type.ElementCount * type.TypeSize);
+                Debug.Assert(bytes.Length == metadata.ElementCount * metadata.TypeSize);
             }
 
-            if (type.Encoding == EventHeaderFieldEncoding.Struct)
+            if (metadata.Encoding == EventHeaderFieldEncoding.Struct)
             {
                 Debug.Assert(bytes.Length == 0);
             }
@@ -77,21 +134,21 @@ namespace Microsoft.LinuxTracepoints.Decode
         public ReadOnlySpan<byte> Bytes { get; }
 
         /// <summary>
-        /// The type of this item. Has properties such as ElementCount, FieldTag, TypeSize, Encoding, Format, etc.
+        /// The metadata of this item. Has properties such as ElementCount, FieldTag, TypeSize, Encoding, Format, etc.
         /// </summary>
-        public PerfItemType Type { get; }
+        public PerfItemMetadata Metadata { get; }
 
         /// <summary>
-        /// A ByteReader that can be used to fix the byte order of this value's data.
-        /// This is the same as this.Type.ByteReader.
+        /// A PerfByteReader that can be used to fix the byte order of this value's data.
+        /// This is the same as this.Metadata.ByteReader.
         /// </summary>
-        public PerfByteReader ByteReader => this.Type.ByteReader;
+        public PerfByteReader ByteReader => this.Metadata.ByteReader;
 
         /// <summary>
         /// True if this value's data uses big-endian byte order.
-        /// This is the same as this.Type.ByteReader.FromBigEndian.
+        /// This is the same as this.Metadata.ByteReader.FromBigEndian.
         /// </summary>
-        public bool FromBigEndian => this.Type.ByteReader.FromBigEndian;
+        public bool FromBigEndian => this.Metadata.ByteReader.FromBigEndian;
 
         /// <summary>
         /// For Value8: Gets 1-byte span starting at offset 0.
@@ -461,7 +518,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public ReadOnlySpan<byte> GetStringBytes(out Text.Encoding encoding)
         {
             ReadOnlySpan<byte> result;
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 case EventHeaderFieldFormat.String8:
                     result = this.Bytes;
@@ -481,7 +538,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldFormat.StringUtf:
                 default:
                     result = this.Bytes;
-                    switch (this.Type.Encoding)
+                    switch (this.Metadata.Encoding)
                     {
                         default:
                             encoding = PerfConvert.EncodingLatin1;
@@ -545,9 +602,9 @@ namespace Microsoft.LinuxTracepoints.Decode
             StringBuilder sb,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            Debug.Assert(this.Type.TypeSize <= this.Bytes.Length);
+            Debug.Assert(this.Metadata.TypeSize <= this.Bytes.Length);
             Text.Encoding? encodingFromBom;
-            switch (this.Type.EncodingAndArrayFlags.BaseEncoding())
+            switch (this.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -573,7 +630,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.StringLength16Char8:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             PerfConvert.HexBytesAppend(sb, this.Bytes);
@@ -599,7 +656,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.ZStringChar16:
                 case EventHeaderFieldEncoding.StringLength16Char16:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             PerfConvert.HexBytesAppend(sb, this.Bytes);
@@ -626,7 +683,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.ZStringChar32:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             PerfConvert.HexBytesAppend(sb, this.Bytes);
@@ -671,7 +728,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             int elementIndex,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            switch (this.Type.EncodingAndArrayFlags.BaseEncoding())
+            switch (this.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -719,11 +776,11 @@ namespace Microsoft.LinuxTracepoints.Decode
             StringBuilder sb,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            Debug.Assert(this.Type.TypeSize > 0);
+            Debug.Assert(this.Metadata.TypeSize > 0);
             string separator = convertOptions.HasFlag(PerfConvertOptions.Space) ? ", " : ",";
 
             int count;
-            switch (this.Type.EncodingAndArrayFlags.BaseEncoding())
+            switch (this.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -737,7 +794,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     throw new InvalidOperationException("Invalid encoding for AppendSimpleArrayTo.");
                 case EventHeaderFieldEncoding.Value8:
                     count = this.Bytes.Length;
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -786,7 +843,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value16:
                     count = this.Bytes.Length / sizeof(UInt16);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -842,7 +899,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value32:
                     count = this.Bytes.Length / sizeof(UInt32);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -920,7 +977,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value64:
                     count = this.Bytes.Length / sizeof(UInt64);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -969,7 +1026,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value128:
                     count = this.Bytes.Length / 16;
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.HexBytes:
@@ -1001,6 +1058,44 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// Converts this to a JSON value and appends it to sb. Returns sb.
+        /// <br/>
+        /// Cannot be used for struct or complex array.
+        /// <br/>
+        /// For example:
+        /// <list type="bullet"><item>
+        /// If the value is a scalar decimal integer or a finite float, appends a JSON number
+        /// like <c>123</c> or <c>-123.456</c>.
+        /// </item><item>
+        /// If the value is a scalar boolean, appends a bool <c>false</c> (for 0), <c>true</c> (for 1),
+        /// a string like <c>"BOOL(-123)"</c> if convertOptions has BoolOutOfRangeAsString, or a number
+        /// like <c>-123</c> otherwise.
+        /// </item><item>
+        /// If the value is a scalar string, appends a JSON-escaped string like <c>"abc\nxyz"</c>.
+        /// </item><item>
+        /// If the value is a simple array, appends a JSON array like <c>[ 1, 2, 4, 8 ]</c>.
+        /// </item></list>
+        /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Encoding is not recognized.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Item is a struct.
+        /// <br/>
+        /// OR
+        /// <br/>
+        /// Item is an array and encoding is a complex type (variable-length or struct).
+        /// </exception>
+        public StringBuilder AppendJsonTo(
+            StringBuilder sb,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
+        {
+            return this.Metadata.IsScalar
+                ? this.AppendJsonScalarTo(sb, convertOptions)
+                : this.AppendJsonSimpleArrayTo(sb, convertOptions);
+        }
+
+        /// <summary>
         /// Interprets this as a scalar, converts it to a JSON value, and appends it to sb.
         /// Returns sb.
         /// <br/>
@@ -1008,21 +1103,29 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <br/>
         /// For example:
         /// <list type="bullet"><item>
-        /// If the value is a decimal integer or a finite float, appends a JSON number 123 or -123.456.
+        /// If the value is a decimal integer or a finite float, appends a JSON number
+        /// like <c>123</c> or <c>-123.456</c>.
         /// </item><item>
-        /// If the value is a boolean, appends a bool false (for 0), true (for 1), a string like
-        /// "BOOL(-123)" if convertOptions has BoolOutOfRangeAsString, or a number like -123 otherwise.
+        /// If the value is a boolean, appends a bool <c>false</c> (for 0), <c>true</c> (for 1),
+        /// a string like <c>"BOOL(-123)"</c> if convertOptions has BoolOutOfRangeAsString, or a number
+        /// like <c>-123</c> otherwise.
         /// </item><item>
-        /// If the value is a string, appends a JSON-escaped string like "abc\nxyz".
+        /// If the value is a string, appends a JSON-escaped string like <c>"abc\nxyz"</c>.
         /// </item></list>
         /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Encoding is not recognized.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Item is a struct.
+        /// </exception>
         public StringBuilder AppendJsonScalarTo(
             StringBuilder sb,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            Debug.Assert(this.Type.TypeSize <= this.Bytes.Length);
+            Debug.Assert(this.Metadata.TypeSize <= this.Bytes.Length);
             Text.Encoding? encodingFromBom;
-            switch (this.Type.EncodingAndArrayFlags.BaseEncoding())
+            switch (this.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -1048,7 +1151,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.StringLength16Char8:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             HexBytesAppendJson(sb, this.Bytes);
@@ -1074,7 +1177,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.ZStringChar16:
                 case EventHeaderFieldEncoding.StringLength16Char16:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             HexBytesAppendJson(sb, this.Bytes);
@@ -1100,7 +1203,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.ZStringChar32:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             HexBytesAppendJson(sb, this.Bytes);
@@ -1139,12 +1242,15 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <br/>
         /// The element is formatted as described for AppendJsonScalarTo.
         /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Encoding is not recognized.
+        /// </exception>
         public StringBuilder AppendJsonSimpleElementTo(
             StringBuilder sb,
             int elementIndex,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            switch (this.Type.EncodingAndArrayFlags.BaseEncoding())
+            switch (this.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -1188,15 +1294,21 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <br/>
         /// Each array element is formatted as described for AppendJsonScalarTo.
         /// </summary>
+        /// <exception cref="NotSupportedException">
+        /// Encoding is not recognized.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Encoding is a complex type (variable-length or struct).
+        /// </exception>
         public StringBuilder AppendJsonSimpleArrayTo(
             StringBuilder sb,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            Debug.Assert(this.Type.TypeSize > 0);
+            Debug.Assert(this.Metadata.TypeSize > 0);
             bool space = convertOptions.HasFlag(PerfConvertOptions.Space);
 
             int count;
-            switch (this.Type.EncodingAndArrayFlags.BaseEncoding())
+            switch (this.Metadata.Encoding)
             {
                 default:
                     throw new NotSupportedException("Unknown encoding.");
@@ -1211,7 +1323,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.Value8:
                     sb.Append('[');
                     count = this.Bytes.Length;
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1267,7 +1379,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.Value16:
                     sb.Append('[');
                     count = this.Bytes.Length / sizeof(UInt16);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1331,7 +1443,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.Value32:
                     sb.Append('[');
                     count = this.Bytes.Length / sizeof(UInt32);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1420,7 +1532,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.Value64:
                     sb.Append('[');
                     count = this.Bytes.Length / sizeof(UInt64);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1476,7 +1588,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.Value128:
                     sb.Append('[');
                     count = this.Bytes.Length / 16;
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
                         case EventHeaderFieldFormat.HexBytes:
@@ -1529,8 +1641,8 @@ namespace Microsoft.LinuxTracepoints.Decode
             const string Separator = ", ";
             int count;
             Text.Encoding? encodingFromBom;
-            var baseEncoding = this.Type.EncodingAndArrayFlags.BaseEncoding();
-            switch (this.Type.EncodingAndArrayFlags.BaseEncoding())
+            var baseEncoding = this.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
                     sb.Append(baseEncoding.ToString());
@@ -1546,10 +1658,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value8:
                     count = this.Bytes.Length / sizeof(Byte);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.UnsignedInt;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1604,10 +1716,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value16:
                     count = this.Bytes.Length / sizeof(UInt16);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.UnsignedInt;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1670,10 +1782,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value32:
                     count = this.Bytes.Length / sizeof(UInt32);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.UnsignedInt;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1764,10 +1876,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value64:
                     count = this.Bytes.Length / sizeof(UInt64);
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.UnsignedInt;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.UnsignedInt:
@@ -1822,10 +1934,10 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 case EventHeaderFieldEncoding.Value128:
                     count = this.Bytes.Length / 16;
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.HexBytes;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.HexBytes:
@@ -1858,7 +1970,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     sb.Append('Z');
                     goto case EventHeaderFieldEncoding.StringLength16Char8;
                 case EventHeaderFieldEncoding.StringLength16Char8:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             sb.Append("HexBytes8: ");
@@ -1885,7 +1997,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.StringUtf;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.StringUtf:
@@ -1899,7 +2011,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     sb.Append('Z');
                     goto case EventHeaderFieldEncoding.StringLength16Char16;
                 case EventHeaderFieldEncoding.StringLength16Char16:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             sb.Append("HexBytes16: ");
@@ -1922,7 +2034,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.StringUtf;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.StringUtf:
@@ -1940,7 +2052,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     sb.Append('Z');
                     goto case EventHeaderFieldEncoding.StringLength16Char32;
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    switch (this.Type.Format)
+                    switch (this.Metadata.Format)
                     {
                         case EventHeaderFieldFormat.HexBytes:
                             sb.Append("HexBytes32: ");
@@ -1963,7 +2075,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                             PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
                             break;
                         default:
-                            sb.Append(this.Type.Format.ToString());
+                            sb.Append(this.Metadata.Format.ToString());
                             goto case EventHeaderFieldFormat.StringUtf;
                         case EventHeaderFieldFormat.Default:
                         case EventHeaderFieldFormat.StringUtf:
@@ -1993,7 +2105,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value8Append(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2019,7 +2131,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value16Append(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2048,7 +2160,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value32Append(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2087,7 +2199,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value64Append(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2113,7 +2225,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value128Append(StringBuilder sb, int elementIndex)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.HexBytes:
@@ -2130,7 +2242,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value8AppendJson(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2156,7 +2268,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value16AppendJson(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2185,7 +2297,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value32AppendJson(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2224,7 +2336,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value64AppendJson(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.UnsignedInt:
@@ -2250,7 +2362,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void Value128AppendJson(StringBuilder sb, int elementIndex)
         {
-            switch (this.Type.Format)
+            switch (this.Metadata.Format)
             {
                 default:
                 case EventHeaderFieldFormat.HexBytes:

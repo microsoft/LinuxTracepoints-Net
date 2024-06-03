@@ -6,58 +6,111 @@ namespace Microsoft.LinuxTracepoints.Decode
     using System.Diagnostics;
 
     /// <summary>
-    /// Provides access to the type of a perf event item. An item is a field of the event
-    /// or an element of an array field of the event. The item may represent one of the
-    /// following, determined by the context that produced this PerfItemType:
+    /// Provides access to the metadata
+    /// of a perf event item. An item is a field of the event or an element of an
+    /// array field of the event.
+    /// <br/>
+    /// The item may represent one of the following, determined by the
+    /// <c>Metadata.IsScalar</c> and <c>Metadata.TypeSize</c>
+    /// properties:
+    ///
     /// <list type="bullet">
+    ///
     /// <item>
-    /// Scalar (non-array field, or one element of an array field):
-    /// ElementCount is 1.
-    /// TypeSize is the size of the item's type (itemValue.Bytes.Length == TypeSize) if
-    /// the type has a constant size (e.g. a UInt32), or 0 if the type is variable-size
-    /// (e.g. a string).
-    /// Format is significant.
-    /// StructFieldCount should be ignored.
+    /// <b>Simple scalar:</b> <c>IsScalar &amp;&amp; TypeSize != 0</c>
+    /// <br/>
+    /// Non-array field, or one element of an array field.
+    /// Value type is simple (fixed-size value).
+    /// <br/>
+    /// <c>ElementCount</c> is always 1.
+    /// <br/>
+    /// <c>Format</c> is significant and <c>StructFieldCount</c> should be ignored
+    /// (simple type is never <c>Struct</c>).
     /// </item>
+    ///
     /// <item>
-    /// The beginning or end of a structure (non-array field, or one element of an array field):
-    /// ElementCount is 1.
-    /// TypeSize is 0.
-    /// Format should be ignored.
-    /// StructFieldCount is significant.
+    /// <b>Complex scalar:</b> <c>IsScalar &amp;&amp; TypeSize == 0</c>
+    /// <br/>
+    /// Non-array field, or one element of an array field.
+    /// Value type is complex (variable-size or struct value).
+    /// <br/>
+    /// <c>ElementCount</c> is always 1.
+    /// <br/>
+    /// If <c>Encoding == Struct</c>, this is the beginning or end of a structure,
+    /// <c>Format</c> should be ignored, and <c>StructFieldCount</c> is significant.
+    /// Otherwise, this is a variable-length value, <c>Format</c> is significant,
+    /// and <c>StructFieldCount</c> should be ignored.
     /// </item>
+    ///
     /// <item>
-    /// The beginning of an array of simple type (non-struct, element's type is fixed-size):
-    /// ElementCount is the number of elements in the array.
-    /// TypeSize is the size of the element's type.
-    /// Format is significant.
-    /// StructFieldCount should be ignored.
+    /// <b>Simple array:</b> <c>!IsScalar &amp;&amp; TypeSize != 0</c>
+    /// <br/>
+    /// Array field (array-begin or array-end item).
+    /// Array element type is simple (fixed-size element).
+    /// <br/>
+    /// <c>ElementCount</c> is the number of elements in the array.
+    /// <br/>
+    /// <c>Format</c> is significant and <c>StructFieldCount</c> should be ignored
+    /// (simple type is never <c>Struct</c>).
     /// </item>
+    ///
     /// <item>
-    /// The end of an array of simple type:
-    /// ElementCount is the number of elements in the array.
-    /// TypeSize is the size of the element's type.
-    /// Format is significant.
-    /// StructFieldCount should be ignored.
+    /// <b>Complex array:</b> <c>!IsScalar &amp;&amp; TypeSize == 0</c>
+    /// <br/>
+    /// Array field (array-begin or array-end item).
+    /// Array element type is complex (variable-size or struct element).
+    /// <br/>
+    /// <c>ElementCount</c> is the number of elements in the array.
+    /// <br/>
+    /// If <c>Encoding == Struct</c>, this is the beginning or end of an array of structures,
+    /// <c>Format</c> should be ignored, and <c>StructFieldCount</c> is significant.
+    /// Otherwise, this is an array of variable-length values, <c>Format</c> is significant,
+    /// and <c>StructFieldCount</c> should be ignored.
     /// </item>
-    /// <item>
-    /// The beginning or end of an array of complex elements:
-    /// ElementCount is the number of elements in the array.
-    /// TypeSize is 0.
-    /// Either Format or StructFieldCount is significant, depending on whether the Encoding is Struct.
-    /// </item>
+    ///
     /// </list>
     /// </summary>
-    public readonly ref struct PerfItemType
+    public readonly ref struct PerfItemMetadata
     {
         /// <summary>
-        /// Initializes a new instance of the EventHeaderItemType struct. These are normally created
-        /// by EventHeaderEnumerator.GetItemType().
+        /// Initializes a new instance of the PerfItemMetadata struct.
+        /// <br/>
+        /// These are not normally created directly. You'll normally get instances of this struct from
+        /// <see cref="EventHeaderEnumerator"/><c>.GetItemMetadata()</c> or
+        /// <see cref="PerfFieldFormat"/><c>.GetFieldValue()</c>.
         /// </summary>
-        public PerfItemType(
+        /// <param name="byteReader">
+        /// Reader that is configured for the event data's byte order.
+        /// </param>
+        /// <param name="encodingAndArrayFlag">
+        /// The field encoding, including the appropriate array flag if the field is an array element,
+        /// array-begin, or array-end. The chain flag must be unset.
+        /// </param>
+        /// <param name="format">
+        /// The field format. The chain flag must be unset.
+        /// </param>
+        /// <param name="isScalar">
+        /// True if this represents a non-array value or a single element of an array.
+        /// False if this represents an array-begin or an array-end.
+        /// </param>
+        /// <param name="typeSize">
+        /// For simple encodings (e.g. Value8, Value16, Value32, Value64, Value128),
+        /// this is the size of one element in bytes (1, 2, 4, 8, 16). For complex types
+        /// (e.g. Struct or string), this is 0.
+        /// </param>
+        /// <param name="elementCount">
+        /// For array-begin or array-end, this is number of elements in the array.
+        /// For non-array or for array element, this is 1.
+        /// This may be 0 in the case of a variable-length array of length 0.
+        /// </param>
+        /// <param name="fieldTag">
+        /// Field tag, or 0 if none.
+        /// </param>
+        public PerfItemMetadata(
             PerfByteReader byteReader,
-            EventHeaderFieldEncoding encodingAndArrayFlags,
+            EventHeaderFieldEncoding encodingAndArrayFlag,
             EventHeaderFieldFormat format,
+            bool isScalar,
             byte typeSize,
             ushort elementCount,
             ushort fieldTag = 0)
@@ -65,31 +118,39 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.ElementCount = elementCount;
             this.FieldTag = fieldTag;
             this.TypeSize = typeSize;
-            this.EncodingAndArrayFlags = encodingAndArrayFlags;
+            this.EncodingAndArrayFlagAndIsScalar = encodingAndArrayFlag | (isScalar ? EventHeaderFieldEncoding.ChainFlag : 0);
             this.Format = format;
             this.ByteReader = byteReader;
 
 #if DEBUG
-            // Chain flags must be masked-out by caller.
-            Debug.Assert(!encodingAndArrayFlags.HasChainFlag());
+            // chain flag must be masked-out by caller.
+            Debug.Assert(!encodingAndArrayFlag.HasChainFlag());
             Debug.Assert(!format.HasChainFlag());
 
-            // If not an array, elementCount must be 1.
-            if ((encodingAndArrayFlags & EventHeaderFieldEncoding.FlagMask) == 0)
+            // Cannot set both VArrayFlag and CArrayFlag.
+            Debug.Assert(encodingAndArrayFlag.ArrayFlag() != EventHeaderFieldEncoding.ArrayFlagMask);
+
+            if (isScalar)
             {
+                // If scalar, elementCount must be 1.
                 Debug.Assert(elementCount == 1);
             }
-
-            if (encodingAndArrayFlags.BaseEncoding() == EventHeaderFieldEncoding.Struct)
+            else
             {
-                Debug.Assert(typeSize == 0);
+                // If non-scalar, must be an array.
+                Debug.Assert(encodingAndArrayFlag.IsArray());
+            }
+
+            if (encodingAndArrayFlag.BaseEncoding() == EventHeaderFieldEncoding.Struct)
+            {
+                Debug.Assert(typeSize == 0); // Structs are not simple types.
                 Debug.Assert(format != 0); // No zero-length structs.
             }
 #endif
         }
 
         /// <summary>
-        /// For begin array or end array, this is number of elements in the array.
+        /// For array-begin or array-end item, this is number of elements in the array.
         /// For non-array or for element of an array, this is 1.
         /// This may be 0 in the case of a variable-length array of length 0.
         /// </summary>
@@ -103,37 +164,52 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// For simple encodings (e.g. Value8, Value16, Value32, Value64, Value128),
         /// this is the size of one element in bytes (1, 2, 4, 8, 16). For complex types
-        /// (e.g. Struct or string), this is 0.
+        /// (e.g. Struct or String), this is 0.
         /// </summary>
         public byte TypeSize { get; }
 
         /// <summary>
+        /// Returns Encoding | ArrayFlag | (IsScalar ? ChainFlag : 0).
+        /// </summary>
+        private EventHeaderFieldEncoding EncodingAndArrayFlagAndIsScalar { get; }
+
+        /// <summary>
         /// Item's underlying encoding. The encoding indicates how to determine the item's
         /// size. The Encoding also implies a default formatting that should be used if
-        /// the specified convertOptions is Default (0), unrecognized, or unsupported. The value
+        /// the specified Format is Default (0), unrecognized, or unsupported. The value
         /// returned by this property does not include any flags.
         /// </summary>
         public EventHeaderFieldEncoding Encoding =>
-            this.EncodingAndArrayFlags & EventHeaderFieldEncoding.ValueMask;
+            this.EncodingAndArrayFlagAndIsScalar & EventHeaderFieldEncoding.ValueMask;
 
         /// <summary>
-        /// Contains CArrayFlag or VArrayFlag if the item represents an array begin,
-        /// array end, or an element within an array. 0 for a non-array item.
+        /// Returns the field's CArrayFlag or VArrayFlag if the item represents an array-begin
+        /// field, an array-end field, or an element within an array field.
+        /// Returns 0 for a non-array item.
         /// </summary>
-        public EventHeaderFieldEncoding ArrayFlags =>
-            this.EncodingAndArrayFlags & ~EventHeaderFieldEncoding.ValueMask;
+        public EventHeaderFieldEncoding ArrayFlag =>
+            this.EncodingAndArrayFlagAndIsScalar & EventHeaderFieldEncoding.ArrayFlagMask;
 
         /// <summary>
-        /// Returns Encoding | ArrayFlags.
+        /// Returns true if this item is a scalar (a non-array field or a single element of an array field).
+        /// Returns false if this item is an array (an array-begin or an array-end item).
         /// </summary>
-        public EventHeaderFieldEncoding EncodingAndArrayFlags { get; }
+        public bool IsScalar =>
+            0 != (this.EncodingAndArrayFlagAndIsScalar & EventHeaderFieldEncoding.ChainFlag);
 
         /// <summary>
-        /// true if this item represents an array begin, array end, or an element within
-        /// an array. false for a non-array item.
+        /// Returns true if this item represents an element within an array.
+        /// Returns false if this item is a non-array field, an array-begin, or an array-end.
         /// </summary>
-        public bool IsArrayOrElement =>
-            0 != (this.EncodingAndArrayFlags & ~EventHeaderFieldEncoding.ValueMask);
+        public bool IsElement
+        {
+            get
+            {
+                var enc = this.EncodingAndArrayFlagAndIsScalar;
+                return 0 != (enc & EventHeaderFieldEncoding.ChainFlag) && // ItemIsScalar
+                    0 != (enc & EventHeaderFieldEncoding.ArrayFlagMask);  // FieldIsArray
+            }
+        }
 
         /// <summary>
         /// Field's semantic type. May be Default, in which case the semantic type should be
@@ -149,7 +225,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public byte StructFieldCount => (byte)this.Format;
 
         /// <summary>
-        /// A ByteReader that can be used to fix the byte order of this item's data.
+        /// A PerfByteReader that can be used to fix the byte order of this item's data.
         /// This is the same as PerfByteReader(this.FromBigEndian).
         /// </summary>
         public PerfByteReader ByteReader { get; }

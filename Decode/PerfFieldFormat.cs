@@ -1026,12 +1026,14 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         FixedSize:
 
+            var deducedEncoding = this.DeducedEncoding;
             return new PerfItemValue(
                 bytes,
-                new PerfItemType(
+                new PerfItemMetadata(
                     byteReader,
-                    this.DeducedEncoding,
+                    deducedEncoding,
                     this.DeducedFormat,
+                    0 == (deducedEncoding & EventHeaderFieldEncoding.ArrayFlagMask),
                     unchecked((byte)(1 << this.ElementSizeShift)),
                     arrayCount));
         }

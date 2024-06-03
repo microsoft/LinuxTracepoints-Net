@@ -47,10 +47,10 @@ public enum PerfUserEventReg : UInt16
 /// Normal usage:
 /// <code>
 /// Tracepoint tp = new PerfTracepoint("MyEventName int MyField1; int MyField2");
-/// 
+///
 /// // To log an event where preparing the data is very simple:
 /// tp.Write(data...);
-/// 
+///
 /// // To log an event where preparing the data is expensive:
 /// if (tp.IsEnabled) // Skip preparing data and calling Write if the tracepoint is not enabled.
 /// {

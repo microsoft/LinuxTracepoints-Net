@@ -41,6 +41,11 @@ namespace Microsoft.LinuxTracepoints
         FlagMask = 0xE0,
 
         /// <summary>
+        /// Mask for the array flags: CArrayFlag, VArrayFlag.
+        /// </summary>
+        ArrayFlagMask = 0x60,
+
+        /// <summary>
         /// Constant-length array: 16-bit element count in metadata (must not be 0).
         /// </summary>
         CArrayFlag = 0x20,
@@ -142,14 +147,14 @@ namespace Microsoft.LinuxTracepoints
         /// <summary>
         /// Returns the array flags of the encoding (VArrayFlag or CArrayFlag, if set).
         /// </summary>
-        public static EventHeaderFieldEncoding ArrayFlags(this EventHeaderFieldEncoding encoding) =>
-            encoding & (EventHeaderFieldEncoding.VArrayFlag | EventHeaderFieldEncoding.CArrayFlag);
+        public static EventHeaderFieldEncoding ArrayFlag(this EventHeaderFieldEncoding encoding) =>
+            encoding & EventHeaderFieldEncoding.ArrayFlagMask;
 
         /// <summary>
         /// Returns true if any ArrayFlag is present (constant-length or variable-length array).
         /// </summary>
         public static bool IsArray(this EventHeaderFieldEncoding encoding) =>
-            0 != (encoding & (EventHeaderFieldEncoding.VArrayFlag | EventHeaderFieldEncoding.CArrayFlag));
+            0 != (encoding & EventHeaderFieldEncoding.ArrayFlagMask);
 
         /// <summary>
         /// Returns true if CArrayFlag is present (constant-length array).

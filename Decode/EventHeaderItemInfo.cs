@@ -54,9 +54,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         public PerfItemValue Value { get; }
 
         /// <summary>
-        /// Field type (same as Value.Type).
+        /// Field metadata (same as Value.Metadata).
         /// </summary>
-        public PerfItemType Type => this.Value.Type;
+        public PerfItemMetadata Metadata => this.Value.Metadata;
 
         /// <summary>
         /// UTF-8 encoded field name followed by 0 or more field attributes,
@@ -90,7 +90,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             PerfConvert.StringAppendWithControlCharsJsonEscape(sb, this.NameBytes, Encoding.UTF8);
 
-            var fieldTag = this.Value.Type.FieldTag;
+            var fieldTag = this.Value.Metadata.FieldTag;
             if (fieldTag == 0)
             {
                 sb.Append(" = ");
