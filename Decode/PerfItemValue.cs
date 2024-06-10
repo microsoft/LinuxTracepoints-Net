@@ -546,6 +546,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         case EventHeaderFieldEncoding.Value8:
                         case EventHeaderFieldEncoding.ZStringChar8:
                         case EventHeaderFieldEncoding.StringLength16Char8:
+                        case EventHeaderFieldEncoding.BinaryLength16Char8:
                             encoding = Text.Encoding.UTF8;
                             break;
                         case EventHeaderFieldEncoding.Value16:
@@ -581,10 +582,28 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
+        /// Appends a string representation of this value. Result is the same as from
+        /// this.ToString(convertOptions). Returns sb.
+        /// <br/>
+        /// This is the same as calling either AppendScalarTo or AppendSimpleArrayTo,
+        /// depending on the value of this.Metadata.IsScalar.
+        /// </summary>
+        public StringBuilder AppendTo(
+            StringBuilder sb,
+            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
+        {
+            return this.Bytes.IsEmpty
+                ? sb
+                : this.Metadata.IsScalar
+                ? this.AppendScalarTo(sb, convertOptions)
+                : this.AppendSimpleArrayTo(sb, convertOptions);
+        }
+
+        /// <summary>
         /// Interprets this as a scalar, converts it to a string, and appends it to sb.
         /// Returns sb.
         /// <br/>
-        /// Requires TypeSize &lt;= Bytes.Length, Encoding != Struct, Encoding &lt; Max.
+        /// Requires TypeSize &lt;= Bytes.Length.
         /// <br/>
         /// For example:
         /// <list type="bullet"><item>
@@ -603,15 +622,21 @@ namespace Microsoft.LinuxTracepoints.Decode
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             Debug.Assert(this.Metadata.TypeSize <= this.Bytes.Length);
-            Text.Encoding? encodingFromBom;
-            switch (this.Metadata.Encoding)
+            var baseEncoding = this.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
-                case EventHeaderFieldEncoding.Struct:
-                    throw new InvalidOperationException("Invalid encoding for AppendScalarTo.");
+                    sb.Append("Encoding[");
+                    PerfConvert.UInt32DecimalAppend(sb, (uint)baseEncoding);
+                    sb.Append(']');
+                    break;
                 case EventHeaderFieldEncoding.Invalid:
                     sb.Append("null");
+                    break;
+                case EventHeaderFieldEncoding.Struct:
+                    sb.Append("Struct[");
+                    PerfConvert.UInt32DecimalAppend(sb, this.Metadata.StructFieldCount);
+                    sb.Append(']');
                     break;
                 case EventHeaderFieldEncoding.Value8:
                     Value8Append(sb, 0, convertOptions);
@@ -629,82 +654,249 @@ namespace Microsoft.LinuxTracepoints.Decode
                     Value128Append(sb, 0);
                     break;
                 case EventHeaderFieldEncoding.ZStringChar8:
+                    this.StringAppend(sb, convertOptions, Text.Encoding.UTF8);
+                    break;
+                case EventHeaderFieldEncoding.ZStringChar16:
+                case EventHeaderFieldEncoding.StringLength16Char16:
+                    this.StringAppend(
+                        sb,
+                        convertOptions,
+                        this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode);
+                    break;
+                case EventHeaderFieldEncoding.ZStringChar32:
+                case EventHeaderFieldEncoding.StringLength16Char32:
+                    this.StringAppend(
+                        sb,
+                        convertOptions,
+                        this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32);
+                    break;
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
                 case EventHeaderFieldEncoding.StringLength16Char8:
                     switch (this.Metadata.Format)
                     {
+                        default:
+                        case EventHeaderFieldFormat.Default:
+                        EventHeaderFieldFormatDefault:
+                            if (baseEncoding == EventHeaderFieldEncoding.BinaryLength16Char8)
+                            {
+                                goto case EventHeaderFieldFormat.HexBytes;
+                            }
+                            else
+                            {
+                                goto case EventHeaderFieldFormat.StringUtf;
+                            }
+                        case EventHeaderFieldFormat.UnsignedInt:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetU8());
+                                    break;
+                                case 2:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetU16());
+                                    break;
+                                case 4:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetU32());
+                                    break;
+                                case 8:
+                                    PerfConvert.UInt64DecimalAppend(sb, this.GetU64());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.SignedInt:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI8());
+                                    break;
+                                case 2:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI16());
+                                    break;
+                                case 4:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI32());
+                                    break;
+                                case 8:
+                                    PerfConvert.Int64DecimalAppend(sb, this.GetI64());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexInt:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.UInt32HexAppend(sb, this.GetU8());
+                                    break;
+                                case 2:
+                                    PerfConvert.UInt32HexAppend(sb, this.GetU16());
+                                    break;
+                                case 4:
+                                    PerfConvert.UInt32HexAppend(sb, this.GetU32());
+                                    break;
+                                case 8:
+                                    PerfConvert.UInt64HexAppend(sb, this.GetU64());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Errno:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.ErrnoAppend(sb, this.GetI32());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Pid:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI32());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Time:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.UnixTime32Append(sb, this.GetI32());
+                                    break;
+                                case 8:
+                                    PerfConvert.UnixTime64Append(sb, this.GetI64(), convertOptions);
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Boolean:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.BooleanAppend(sb, this.GetU8(), convertOptions);
+                                    break;
+                                case 2:
+                                    PerfConvert.BooleanAppend(sb, this.GetU16(), convertOptions);
+                                    break;
+                                case 4:
+                                    PerfConvert.BooleanAppend(sb, this.GetU32(), convertOptions);
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Float:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.Float32Append(sb, this.GetF32(), convertOptions);
+                                    break;
+                                case 8:
+                                    PerfConvert.Float64Append(sb, this.GetF64(), convertOptions);
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
                         case EventHeaderFieldFormat.HexBytes:
                             PerfConvert.HexBytesAppend(sb, this.Bytes);
                             break;
                         case EventHeaderFieldFormat.String8:
                             PerfConvert.StringLatin1AppendWithControlChars(sb, this.Bytes, convertOptions);
                             break;
-                        case EventHeaderFieldFormat.StringUtfBom:
-                        case EventHeaderFieldFormat.StringXml:
-                        case EventHeaderFieldFormat.StringJson:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
-                            if (encodingFromBom == null)
-                            {
-                                goto case EventHeaderFieldFormat.StringUtf;
-                            }
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
-                            break;
-                        default:
-                        case EventHeaderFieldFormat.StringUtf:
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes, Text.Encoding.UTF8, convertOptions);
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.ZStringChar16:
-                case EventHeaderFieldEncoding.StringLength16Char16:
-                    switch (this.Metadata.Format)
-                    {
-                        case EventHeaderFieldFormat.HexBytes:
-                            PerfConvert.HexBytesAppend(sb, this.Bytes);
-                            break;
-                        case EventHeaderFieldFormat.StringUtfBom:
-                        case EventHeaderFieldFormat.StringXml:
-                        case EventHeaderFieldFormat.StringJson:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
-                            if (encodingFromBom == null)
-                            {
-                                goto case EventHeaderFieldFormat.StringUtf;
-                            }
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
-                            break;
-                        default:
                         case EventHeaderFieldFormat.StringUtf:
                             PerfConvert.StringAppendWithControlChars(
                                 sb,
                                 this.Bytes,
-                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode,
+                                Text.Encoding.UTF8,
                                 convertOptions);
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.ZStringChar32:
-                case EventHeaderFieldEncoding.StringLength16Char32:
-                    switch (this.Metadata.Format)
-                    {
-                        case EventHeaderFieldFormat.HexBytes:
-                            PerfConvert.HexBytesAppend(sb, this.Bytes);
                             break;
                         case EventHeaderFieldFormat.StringUtfBom:
                         case EventHeaderFieldFormat.StringXml:
                         case EventHeaderFieldFormat.StringJson:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
+                            var encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
                             if (encodingFromBom == null)
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
-                            break;
-                        default:
-                        case EventHeaderFieldFormat.StringUtf:
                             PerfConvert.StringAppendWithControlChars(
                                 sb,
-                                this.Bytes,
-                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32,
+                                this.Bytes.Slice(encodingFromBom.Preamble.Length),
+                                encodingFromBom,
                                 convertOptions);
+                            break;
+                        case EventHeaderFieldFormat.Uuid:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 16:
+                                    PerfConvert.GuidAppend(sb, this.GetGuid());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Port:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 2:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetPort());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.IPv4Append(sb, this.GetIPv4());
+                                    break;
+                                case 16:
+                                    PerfConvert.IPv6Append(sb, this.GetIPv6());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
                             break;
                     }
                     break;
@@ -728,10 +920,10 @@ namespace Microsoft.LinuxTracepoints.Decode
             int elementIndex,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            switch (this.Metadata.Encoding)
+            var baseEncoding = this.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
                 case EventHeaderFieldEncoding.Struct:
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.ZStringChar16:
@@ -739,7 +931,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.StringLength16Char8:
                 case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    throw new InvalidOperationException("Invalid encoding for AppendSimpleElementTo.");
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
+                    sb.Append("Encoding[");
+                    PerfConvert.UInt32DecimalAppend(sb, (uint)baseEncoding);
+                    sb.Append(']');
+                    break;
                 case EventHeaderFieldEncoding.Invalid:
                     sb.Append("null");
                     break;
@@ -780,10 +976,10 @@ namespace Microsoft.LinuxTracepoints.Decode
             string separator = convertOptions.HasFlag(PerfConvertOptions.Space) ? ", " : ",";
 
             int count;
-            switch (this.Metadata.Encoding)
+            var baseEncoding = this.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
                 case EventHeaderFieldEncoding.Struct:
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.ZStringChar16:
@@ -791,7 +987,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.StringLength16Char8:
                 case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    throw new InvalidOperationException("Invalid encoding for AppendSimpleArrayTo.");
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
+                    sb.Append("Encoding[");
+                    PerfConvert.UInt32DecimalAppend(sb, (uint)baseEncoding);
+                    sb.Append(']');
+                    break;
                 case EventHeaderFieldEncoding.Value8:
                     count = this.Bytes.Length;
                     switch (this.Metadata.Format)
@@ -966,7 +1166,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 PerfConvert.Char32AppendWithControlChars(sb, this.GetU32(i), convertOptions);
                             }
                             break;
-                        case EventHeaderFieldFormat.IPv4:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(separator);
@@ -1043,7 +1244,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 PerfConvert.GuidAppend(sb, this.GetGuid(i));
                             }
                             break;
-                        case EventHeaderFieldFormat.IPv6:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(separator);
@@ -1076,21 +1278,13 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// If the value is a simple array, appends a JSON array like <c>[ 1, 2, 4, 8 ]</c>.
         /// </item></list>
         /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Encoding is not recognized.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// Item is a struct.
-        /// <br/>
-        /// OR
-        /// <br/>
-        /// Item is an array and encoding is a complex type (variable-length or struct).
-        /// </exception>
         public StringBuilder AppendJsonTo(
             StringBuilder sb,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return this.Metadata.IsScalar
+            return this.Bytes.IsEmpty
+                ? sb
+                : this.Metadata.IsScalar
                 ? this.AppendJsonScalarTo(sb, convertOptions)
                 : this.AppendJsonSimpleArrayTo(sb, convertOptions);
         }
@@ -1099,7 +1293,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Interprets this as a scalar, converts it to a JSON value, and appends it to sb.
         /// Returns sb.
         /// <br/>
-        /// Requires TypeSize &lt;= Bytes.Length, Encoding != Struct, Encoding &lt; Max.
+        /// Requires TypeSize &lt;= Bytes.Length.
         /// <br/>
         /// For example:
         /// <list type="bullet"><item>
@@ -1113,26 +1307,24 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// If the value is a string, appends a JSON-escaped string like <c>"abc\nxyz"</c>.
         /// </item></list>
         /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Encoding is not recognized.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// Item is a struct.
-        /// </exception>
         public StringBuilder AppendJsonScalarTo(
             StringBuilder sb,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             Debug.Assert(this.Metadata.TypeSize <= this.Bytes.Length);
-            Text.Encoding? encodingFromBom;
-            switch (this.Metadata.Encoding)
+            var baseEncoding = this.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
-                case EventHeaderFieldEncoding.Struct:
-                    throw new InvalidOperationException("Invalid encoding for AppendJsonScalarTo.");
+                    sb.Append("\"Encoding[");
+                    PerfConvert.UInt32DecimalAppend(sb, (uint)baseEncoding);
+                    sb.Append("]\"");
+                    break;
                 case EventHeaderFieldEncoding.Invalid:
                     sb.Append("null");
+                    break;
+                case EventHeaderFieldEncoding.Struct:
+                    sb.Append("{}");
                     break;
                 case EventHeaderFieldEncoding.Value8:
                     Value8AppendJson(sb, 0, convertOptions);
@@ -1150,80 +1342,235 @@ namespace Microsoft.LinuxTracepoints.Decode
                     Value128AppendJson(sb, 0);
                     break;
                 case EventHeaderFieldEncoding.ZStringChar8:
+                    this.StringAppendJson(sb, Text.Encoding.UTF8);
+                    break;
+                case EventHeaderFieldEncoding.ZStringChar16:
+                case EventHeaderFieldEncoding.StringLength16Char16:
+                    this.StringAppendJson(sb, this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode);
+                    break;
+                case EventHeaderFieldEncoding.ZStringChar32:
+                case EventHeaderFieldEncoding.StringLength16Char32:
+                    this.StringAppendJson(sb, this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32);
+                    break;
                 case EventHeaderFieldEncoding.StringLength16Char8:
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
                     switch (this.Metadata.Format)
                     {
+                        default:
+                        case EventHeaderFieldFormat.Default:
+                        EventHeaderFieldFormatDefault:
+                            if (baseEncoding == EventHeaderFieldEncoding.BinaryLength16Char8)
+                            {
+                                goto case EventHeaderFieldFormat.HexBytes;
+                            }
+                            else
+                            {
+                                goto case EventHeaderFieldFormat.StringUtf;
+                            }
+                        case EventHeaderFieldFormat.UnsignedInt:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetU8());
+                                    break;
+                                case 2:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetU16());
+                                    break;
+                                case 4:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetU32());
+                                    break;
+                                case 8:
+                                    PerfConvert.UInt64DecimalAppend(sb, this.GetU64());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.SignedInt:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI8());
+                                    break;
+                                case 2:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI16());
+                                    break;
+                                case 4:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI32());
+                                    break;
+                                case 8:
+                                    PerfConvert.Int64DecimalAppend(sb, this.GetI64());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.HexInt:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.UInt32HexAppendJson(sb, this.GetU8());
+                                    break;
+                                case 2:
+                                    PerfConvert.UInt32HexAppendJson(sb, this.GetU16());
+                                    break;
+                                case 4:
+                                    PerfConvert.UInt32HexAppendJson(sb, this.GetU32());
+                                    break;
+                                case 8:
+                                    PerfConvert.UInt64HexAppendJson(sb, this.GetU64());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Errno:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.ErrnoAppendJson(sb, this.GetI32(), convertOptions);
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Pid:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.Int32DecimalAppend(sb, this.GetI32());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Time:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.UnixTime32AppendJson(sb, this.GetI32(), convertOptions);
+                                    break;
+                                case 8:
+                                    PerfConvert.UnixTime64AppendJson(sb, this.GetI64(), convertOptions);
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Boolean:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 1:
+                                    PerfConvert.BooleanAppendJson(sb, this.GetU8());
+                                    break;
+                                case 2:
+                                    PerfConvert.BooleanAppendJson(sb, this.GetU16());
+                                    break;
+                                case 4:
+                                    PerfConvert.BooleanAppendJson(sb, this.GetU32());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.Float:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    PerfConvert.Float32AppendJson(sb, this.GetF32(), convertOptions);
+                                    break;
+                                case 8:
+                                    PerfConvert.Float64AppendJson(sb, this.GetF64(), convertOptions);
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
                         case EventHeaderFieldFormat.HexBytes:
                             HexBytesAppendJson(sb, this.Bytes);
                             break;
                         case EventHeaderFieldFormat.String8:
                             PerfConvert.StringLatin1AppendJson(sb, this.Bytes);
                             break;
-                        case EventHeaderFieldFormat.StringUtfBom:
-                        case EventHeaderFieldFormat.StringXml:
-                        case EventHeaderFieldFormat.StringJson:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
-                            if (encodingFromBom == null)
-                            {
-                                goto case EventHeaderFieldFormat.StringUtf;
-                            }
-                            PerfConvert.StringAppendJson(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
-                            break;
-                        default:
                         case EventHeaderFieldFormat.StringUtf:
                             PerfConvert.StringAppendJson(sb, this.Bytes, Text.Encoding.UTF8);
                             break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.ZStringChar16:
-                case EventHeaderFieldEncoding.StringLength16Char16:
-                    switch (this.Metadata.Format)
-                    {
-                        case EventHeaderFieldFormat.HexBytes:
-                            HexBytesAppendJson(sb, this.Bytes);
-                            break;
                         case EventHeaderFieldFormat.StringUtfBom:
                         case EventHeaderFieldFormat.StringXml:
                         case EventHeaderFieldFormat.StringJson:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
+                            var encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
                             if (encodingFromBom == null)
                             {
                                 goto case EventHeaderFieldFormat.StringUtf;
                             }
                             PerfConvert.StringAppendJson(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
                             break;
-                        default:
-                        case EventHeaderFieldFormat.StringUtf:
-                            PerfConvert.StringAppendJson(
-                                sb,
-                                this.Bytes,
-                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode);
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.ZStringChar32:
-                case EventHeaderFieldEncoding.StringLength16Char32:
-                    switch (this.Metadata.Format)
-                    {
-                        case EventHeaderFieldFormat.HexBytes:
-                            HexBytesAppendJson(sb, this.Bytes);
-                            break;
-                        case EventHeaderFieldFormat.StringUtfBom:
-                        case EventHeaderFieldFormat.StringXml:
-                        case EventHeaderFieldFormat.StringJson:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
-                            if (encodingFromBom == null)
+                        case EventHeaderFieldFormat.Uuid:
+                            switch (this.Bytes.Length)
                             {
-                                goto case EventHeaderFieldFormat.StringUtf;
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 16:
+                                    GuidAppendJson(sb, this.GetGuid());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
                             }
-                            PerfConvert.StringAppendJson(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
                             break;
-                        default:
-                        case EventHeaderFieldFormat.StringUtf:
-                            PerfConvert.StringAppendJson(
-                                sb,
-                                this.Bytes,
-                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32);
+                        case EventHeaderFieldFormat.Port:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 2:
+                                    PerfConvert.UInt32DecimalAppend(sb, this.GetPort());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                            break;
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
+                            switch (this.Bytes.Length)
+                            {
+                                case 0:
+                                    sb.Append("null");
+                                    break;
+                                case 4:
+                                    IPv4AppendJson(sb, this.GetIPv4());
+                                    break;
+                                case 16:
+                                    IPv6AppendJson(sb, this.GetIPv6());
+                                    break;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
                             break;
                     }
                     break;
@@ -1242,18 +1589,15 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <br/>
         /// The element is formatted as described for AppendJsonScalarTo.
         /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Encoding is not recognized.
-        /// </exception>
         public StringBuilder AppendJsonSimpleElementTo(
             StringBuilder sb,
             int elementIndex,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            switch (this.Metadata.Encoding)
+            var baseEncoding = this.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
                 case EventHeaderFieldEncoding.Struct:
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.ZStringChar16:
@@ -1261,7 +1605,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.StringLength16Char8:
                 case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    throw new InvalidOperationException("Invalid encoding for AppendJsonSimpleElementTo.");
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
+                    sb.Append("\"Encoding[");
+                    PerfConvert.UInt32DecimalAppend(sb, (uint)baseEncoding);
+                    sb.Append("]\"");
+                    break;
                 case EventHeaderFieldEncoding.Invalid:
                     sb.Append("null");
                     break;
@@ -1294,12 +1642,6 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <br/>
         /// Each array element is formatted as described for AppendJsonScalarTo.
         /// </summary>
-        /// <exception cref="NotSupportedException">
-        /// Encoding is not recognized.
-        /// </exception>
-        /// <exception cref="InvalidOperationException">
-        /// Encoding is a complex type (variable-length or struct).
-        /// </exception>
         public StringBuilder AppendJsonSimpleArrayTo(
             StringBuilder sb,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
@@ -1308,10 +1650,10 @@ namespace Microsoft.LinuxTracepoints.Decode
             bool space = convertOptions.HasFlag(PerfConvertOptions.Space);
 
             int count;
-            switch (this.Metadata.Encoding)
+            var baseEncoding = this.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
                 case EventHeaderFieldEncoding.Struct:
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.ZStringChar16:
@@ -1319,7 +1661,11 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.StringLength16Char8:
                 case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    throw new InvalidOperationException("Invalid encoding for AppendJsonSimpleArrayTo.");
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
+                    sb.Append(space ? "[ \"Encoding[" : "[\"Encoding[");
+                    PerfConvert.UInt32DecimalAppend(sb, (uint)baseEncoding);
+                    sb.Append("]\"");
+                    break;
                 case EventHeaderFieldEncoding.Value8:
                     sb.Append('[');
                     count = this.Bytes.Length;
@@ -1519,7 +1865,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 Char32AppendJson(sb, this.GetU32(i));
                             }
                             break;
-                        case EventHeaderFieldFormat.IPv4:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(',');
@@ -1607,7 +1954,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                                 GuidAppendJson(sb, this.GetGuid(i));
                             }
                             break;
-                        case EventHeaderFieldFormat.IPv6:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             for (int i = 0; i < count; i += 1)
                             {
                                 if (i != 0) sb.Append(',');
@@ -1624,483 +1972,21 @@ namespace Microsoft.LinuxTracepoints.Decode
         }
 
         /// <summary>
-        /// Appends a string representation of this value (suitable for diagnostic use) like
-        /// "Type:Value" or "Type:Value1,Value2". Result is the same as from this.ToString(convertOptions).
-        /// Returns sb.
-        /// </summary>
-        public StringBuilder AppendTo(
-            StringBuilder sb)
-        {
-            const PerfConvertOptions convertOptions =
-                PerfConvertOptions.Space |
-                PerfConvertOptions.FloatNonFiniteAsString |
-                PerfConvertOptions.IntHexAsString |
-                PerfConvertOptions.UnixTimeWithinRangeAsString |
-                PerfConvertOptions.ErrnoKnownAsString |
-                PerfConvertOptions.StringControlCharsJsonEscape;
-            const string Separator = ", ";
-            int count;
-            Text.Encoding? encodingFromBom;
-            var baseEncoding = this.Metadata.Encoding;
-            switch (baseEncoding)
-            {
-                default:
-                    sb.Append(baseEncoding.ToString());
-                    goto Nothing;
-                case EventHeaderFieldEncoding.Invalid:
-                    sb.Append("Invalid");
-                    goto Nothing;
-                case EventHeaderFieldEncoding.Struct:
-                    sb.Append("Struct");
-                Nothing:
-                    sb.Append(": ");
-                    PerfConvert.HexBytesAppend(sb, this.Bytes);
-                    break;
-                case EventHeaderFieldEncoding.Value8:
-                    count = this.Bytes.Length / sizeof(Byte);
-                    switch (this.Metadata.Format)
-                    {
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.UnsignedInt;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            sb.Append("UInt8: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt32DecimalAppend(sb, this.GetU8(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.SignedInt:
-                            sb.Append("Int8: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.Int32DecimalAppend(sb, this.GetI8(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexInt:
-                            sb.Append("Hex8: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt32HexAppend(sb, this.GetU8(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Boolean:
-                            sb.Append("Bool8: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.BooleanAppend(sb, this.GetU8(i), convertOptions);
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexByte8: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexBytesAppend(sb, this.GetSpan8(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.String8:
-                            sb.Append("Char8: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                sb.Append((char)this.GetU8(i));
-                            }
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.Value16:
-                    count = this.Bytes.Length / sizeof(UInt16);
-                    switch (this.Metadata.Format)
-                    {
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.UnsignedInt;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            sb.Append("UInt16: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt32DecimalAppend(sb, this.GetU16(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.SignedInt:
-                            sb.Append("Int16: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.Int32DecimalAppend(sb, this.GetI16(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexInt:
-                            sb.Append("Hex16: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt32HexAppend(sb, this.GetU16(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Boolean:
-                            sb.Append("Bool16: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.BooleanAppend(sb, this.GetU16(i), convertOptions);
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexByte16: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexBytesAppend(sb, this.GetSpan16(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.StringUtf:
-                            sb.Append("Char16: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                sb.Append((char)this.GetU16(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Port:
-                            sb.Append("Port: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt32DecimalAppend(sb, this.GetPort(i));
-                            }
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.Value32:
-                    count = this.Bytes.Length / sizeof(UInt32);
-                    switch (this.Metadata.Format)
-                    {
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.UnsignedInt;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            sb.Append("UInt32: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt32DecimalAppend(sb, this.GetU32(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Pid:
-                            sb.Append("Pid: ");
-                            goto SignedInt32;
-                        case EventHeaderFieldFormat.SignedInt:
-                            sb.Append("Int32: ");
-                        SignedInt32:
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.Int32DecimalAppend(sb, this.GetI32(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexInt:
-                            sb.Append("Hex32: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt32HexAppend(sb, this.GetU32(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Errno:
-                            sb.Append("Errno: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.ErrnoAppend(sb, this.GetI32(i), convertOptions);
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Time:
-                            sb.Append("Time32: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UnixTime32Append(sb, this.GetI32(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Boolean:
-                            sb.Append("Bool32: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.BooleanAppend(sb, this.GetU32(i), convertOptions);
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Float:
-                            sb.Append("Float32: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.Float32Append(sb, this.GetF32(i), convertOptions);
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexByte32: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexBytesAppend(sb, this.GetSpan32(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.StringUtf:
-                            sb.Append("Char32: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.Char32Append(sb, this.GetU32(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.IPv4:
-                            sb.Append("IPv4: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.IPv4Append(sb, this.GetIPv4(i));
-                            }
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.Value64:
-                    count = this.Bytes.Length / sizeof(UInt64);
-                    switch (this.Metadata.Format)
-                    {
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.UnsignedInt;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.UnsignedInt:
-                            sb.Append("UInt64: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt64DecimalAppend(sb, this.GetU64(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.SignedInt:
-                            sb.Append("Int64: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.Int64DecimalAppend(sb, this.GetI64(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexInt:
-                            sb.Append("Hex64: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UInt64HexAppend(sb, this.GetU64(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Time:
-                            sb.Append("Time64: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.UnixTime64Append(sb, this.GetI64(i), convertOptions);
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Float:
-                            sb.Append("Float64: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.Float64Append(sb, this.GetF64(i), convertOptions);
-                            }
-                            break;
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexByte64: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexBytesAppend(sb, this.GetSpan64(i));
-                            }
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.Value128:
-                    count = this.Bytes.Length / 16;
-                    switch (this.Metadata.Format)
-                    {
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.HexBytes;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexByte128: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.HexBytesAppend(sb, this.GetSpan128(i));
-                            }
-                            break;
-                        case EventHeaderFieldFormat.Uuid:
-                            sb.Append("Guid: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                sb.Append(PerfConvert.ReadGuidBigEndian(this.GetSpan128(i)).ToString());
-                            }
-                            break;
-                        case EventHeaderFieldFormat.IPv6:
-                            sb.Append("IPv6: ");
-                            for (int i = 0; i < count; i += 1)
-                            {
-                                if (i != 0) sb.Append(Separator);
-                                PerfConvert.IPv6Append(sb, this.GetSpan128(i));
-                            }
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.ZStringChar8:
-                    sb.Append('Z');
-                    goto case EventHeaderFieldEncoding.StringLength16Char8;
-                case EventHeaderFieldEncoding.StringLength16Char8:
-                    switch (this.Metadata.Format)
-                    {
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexBytes8: ");
-                            PerfConvert.HexBytesAppend(sb, this.Bytes);
-                            break;
-                        case EventHeaderFieldFormat.String8:
-                            sb.Append("String8: ");
-                            PerfConvert.StringLatin1AppendWithControlChars(sb, this.Bytes, convertOptions);
-                            break;
-                        case EventHeaderFieldFormat.StringXml:
-                            sb.Append("StringXml8: ");
-                            goto UtfBom8;
-                        case EventHeaderFieldFormat.StringJson:
-                            sb.Append("StringJson8: ");
-                            goto UtfBom8;
-                        case EventHeaderFieldFormat.StringUtfBom:
-                            sb.Append("StringUtfBom8: ");
-                        UtfBom8:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
-                            if (encodingFromBom == null)
-                            {
-                                goto Utf8;
-                            }
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
-                            break;
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.StringUtf;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.StringUtf:
-                            sb.Append("StringUtf8: ");
-                        Utf8:
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes, Text.Encoding.UTF8, convertOptions);
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.ZStringChar16:
-                    sb.Append('Z');
-                    goto case EventHeaderFieldEncoding.StringLength16Char16;
-                case EventHeaderFieldEncoding.StringLength16Char16:
-                    switch (this.Metadata.Format)
-                    {
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexBytes16: ");
-                            PerfConvert.HexBytesAppend(sb, this.Bytes);
-                            break;
-                        case EventHeaderFieldFormat.StringXml:
-                            sb.Append("StringXml16: ");
-                            goto UtfBom16;
-                        case EventHeaderFieldFormat.StringJson:
-                            sb.Append("StringJson16: ");
-                            goto UtfBom16;
-                        case EventHeaderFieldFormat.StringUtfBom:
-                            sb.Append("StringUtfBom16: ");
-                        UtfBom16:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
-                            if (encodingFromBom == null)
-                            {
-                                goto Utf16;
-                            }
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
-                            break;
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.StringUtf;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.StringUtf:
-                            sb.Append("StringUtf16: ");
-                        Utf16:
-                            PerfConvert.StringAppendWithControlChars(
-                                sb,
-                                this.Bytes,
-                                this.ByteReader.FromBigEndian ? Text.Encoding.BigEndianUnicode : Text.Encoding.Unicode,
-                                convertOptions);
-                            break;
-                    }
-                    break;
-                case EventHeaderFieldEncoding.ZStringChar32:
-                    sb.Append('Z');
-                    goto case EventHeaderFieldEncoding.StringLength16Char32;
-                case EventHeaderFieldEncoding.StringLength16Char32:
-                    switch (this.Metadata.Format)
-                    {
-                        case EventHeaderFieldFormat.HexBytes:
-                            sb.Append("HexBytes32: ");
-                            PerfConvert.HexBytesAppend(sb, this.Bytes);
-                            break;
-                        case EventHeaderFieldFormat.StringXml:
-                            sb.Append("StringXml32: ");
-                            goto UtfBom32;
-                        case EventHeaderFieldFormat.StringJson:
-                            sb.Append("StringJson32: ");
-                            goto UtfBom32;
-                        case EventHeaderFieldFormat.StringUtfBom:
-                            sb.Append("StringUtfBom32: ");
-                        UtfBom32:
-                            encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
-                            if (encodingFromBom == null)
-                            {
-                                goto Utf32;
-                            }
-                            PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
-                            break;
-                        default:
-                            sb.Append(this.Metadata.Format.ToString());
-                            goto case EventHeaderFieldFormat.StringUtf;
-                        case EventHeaderFieldFormat.Default:
-                        case EventHeaderFieldFormat.StringUtf:
-                            sb.Append("StringUtf32: ");
-                        Utf32:
-                            PerfConvert.StringAppendWithControlChars(
-                                sb,
-                                this.Bytes,
-                                this.ByteReader.FromBigEndian ? PerfConvert.EncodingUTF32BE : Text.Encoding.UTF32,
-                                convertOptions);
-                            break;
-                    }
-                    break;
-            }
-
-            return sb;
-        }
-
-        /// <summary>
-        /// Returns a string representation of this value suitable for diagnostic use like
-        /// "Type:Value" or "Type:Value1,Value2". Result is the same as from this.AppendTo().
+        /// Returns a string representation of this value. Result is the same as from
+        /// this.AppendTo(PerfConvertOptions.Default).
         /// </summary>
         public override string ToString()
         {
-            return this.AppendTo(new StringBuilder()).ToString();
+            return this.AppendTo(new StringBuilder(), PerfConvertOptions.Default).ToString();
+        }
+
+        /// <summary>
+        /// Returns a string representation of this value. Result is the same as from
+        /// this.AppendTo(convertOptions).
+        /// </summary>
+        public string ToString(PerfConvertOptions convertOptions)
+        {
+            return this.AppendTo(new StringBuilder(), convertOptions).ToString();
         }
 
         private void Value8Append(StringBuilder sb, int elementIndex, PerfConvertOptions convertOptions)
@@ -2191,7 +2077,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldFormat.StringUtf:
                     PerfConvert.Char32AppendWithControlChars(sb, this.GetU32(elementIndex), convertOptions);
                     break;
-                case EventHeaderFieldFormat.IPv4:
+                case EventHeaderFieldFormat.IPAddress:
+                case EventHeaderFieldFormat.IPAddressObsolete:
                     PerfConvert.IPv4Append(sb, this.GetIPv4(elementIndex));
                     break;
             }
@@ -2234,8 +2121,40 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldFormat.Uuid:
                     PerfConvert.GuidAppend(sb, this.GetGuid(elementIndex));
                     break;
-                case EventHeaderFieldFormat.IPv6:
+                case EventHeaderFieldFormat.IPAddress:
+                case EventHeaderFieldFormat.IPAddressObsolete:
                     PerfConvert.IPv6Append(sb, this.GetIPv6(elementIndex));
+                    break;
+            }
+        }
+
+        private void StringAppend(StringBuilder sb, PerfConvertOptions convertOptions, Text.Encoding defaultEncoding)
+        {
+            switch (this.Metadata.Format)
+            {
+                case EventHeaderFieldFormat.HexBytes:
+                    PerfConvert.HexBytesAppend(sb, this.Bytes);
+                    break;
+                case EventHeaderFieldFormat.String8:
+                    PerfConvert.StringLatin1AppendWithControlChars(sb, this.Bytes, convertOptions);
+                    break;
+                case EventHeaderFieldFormat.StringUtfBom:
+                case EventHeaderFieldFormat.StringXml:
+                case EventHeaderFieldFormat.StringJson:
+                    var encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
+                    if (encodingFromBom == null)
+                    {
+                        goto case EventHeaderFieldFormat.StringUtf;
+                    }
+                    PerfConvert.StringAppendWithControlChars(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom, convertOptions);
+                    break;
+                default:
+                case EventHeaderFieldFormat.StringUtf:
+                    PerfConvert.StringAppendWithControlChars(
+                        sb,
+                        this.Bytes,
+                        defaultEncoding,
+                        convertOptions);
                     break;
             }
         }
@@ -2328,7 +2247,8 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldFormat.StringUtf:
                     Char32AppendJson(sb, this.GetU32(elementIndex));
                     break;
-                case EventHeaderFieldFormat.IPv4:
+                case EventHeaderFieldFormat.IPAddress:
+                case EventHeaderFieldFormat.IPAddressObsolete:
                     IPv4AppendJson(sb, this.GetIPv4(elementIndex));
                     break;
             }
@@ -2371,8 +2291,33 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldFormat.Uuid:
                     GuidAppendJson(sb, this.GetGuid(elementIndex));
                     break;
-                case EventHeaderFieldFormat.IPv6:
+                case EventHeaderFieldFormat.IPAddress:
+                case EventHeaderFieldFormat.IPAddressObsolete:
                     IPv6AppendJson(sb, this.GetIPv6(elementIndex));
+                    break;
+            }
+        }
+
+        private void StringAppendJson(StringBuilder sb, Text.Encoding defaultEncoding)
+        {
+            switch (this.Metadata.Format)
+            {
+                case EventHeaderFieldFormat.HexBytes:
+                    HexBytesAppendJson(sb, this.Bytes);
+                    break;
+                case EventHeaderFieldFormat.StringUtfBom:
+                case EventHeaderFieldFormat.StringXml:
+                case EventHeaderFieldFormat.StringJson:
+                    var encodingFromBom = PerfConvert.EncodingFromBom(this.Bytes);
+                    if (encodingFromBom == null)
+                    {
+                        goto case EventHeaderFieldFormat.StringUtf;
+                    }
+                    PerfConvert.StringAppendJson(sb, this.Bytes.Slice(encodingFromBom.Preamble.Length), encodingFromBom);
+                    break;
+                default:
+                case EventHeaderFieldFormat.StringUtf:
+                    PerfConvert.StringAppendJson(sb, this.Bytes, defaultEncoding);
                     break;
             }
         }

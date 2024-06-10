@@ -494,15 +494,18 @@ namespace DecodePerfToJson
 
         private void WriteValue(in PerfItemValue item, ref Span<char> charBuf)
         {
-            switch (item.Metadata.Encoding)
+            var baseEncoding = item.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
+                    this.JsonWriter.WriteStringValue(
+                        "UnknownEncoding" + PerfConvert.UInt32DecimalToString((byte)baseEncoding)); // Garbage
+                    return;
                 case EventHeaderFieldEncoding.Invalid:
                     this.JsonWriter.WriteNullValue();
                     return;
                 case EventHeaderFieldEncoding.Struct:
-                    throw new InvalidOperationException("Invalid encoding for FormatScalar.");
+                    throw new InvalidOperationException("Invalid encoding for WriteValue.");
                 case EventHeaderFieldEncoding.Value8:
                     switch (item.Metadata.Format)
                     {
@@ -586,7 +589,8 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.StringUtf:
                             this.JsonWriter.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32()));
                             return;
-                        case EventHeaderFieldFormat.IPv4:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             this.JsonWriter.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4()));
                             return;
                     }
@@ -623,14 +627,26 @@ namespace DecodePerfToJson
                         case EventHeaderFieldFormat.Uuid:
                             this.JsonWriter.WriteStringValue(item.GetGuid());
                             return;
-                        case EventHeaderFieldFormat.IPv6:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             this.WriteIPv6Value(charBuf, item.GetIPv6());
                             return;
                     }
                 case EventHeaderFieldEncoding.ZStringChar8:
                 case EventHeaderFieldEncoding.StringLength16Char8:
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
                     switch (item.Metadata.Format)
                     {
+                        default:
+                        EventHeaderFieldFormatDefault:
+                            if (baseEncoding == EventHeaderFieldEncoding.BinaryLength16Char8)
+                            {
+                                goto case EventHeaderFieldFormat.HexBytes;
+                            }
+                            else
+                            {
+                                goto case EventHeaderFieldFormat.StringUtf;
+                            }
                         case EventHeaderFieldFormat.HexBytes:
                             WriteHexBytesValue(item.Bytes, ref charBuf);
                             return;
@@ -647,10 +663,184 @@ namespace DecodePerfToJson
                             }
                             WriteBomStringValue(item.Bytes, encoding, ref charBuf);
                             return;
-                        default:
                         case EventHeaderFieldFormat.StringUtf:
                             this.JsonWriter.WriteStringValue(item.Bytes); // UTF-8
                             return;
+                        case EventHeaderFieldFormat.UnsignedInt:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 1:
+                                    this.JsonWriter.WriteNumberValue(item.GetU8());
+                                    return;
+                                case 2:
+                                    this.JsonWriter.WriteNumberValue(item.GetU16());
+                                    return;
+                                case 4:
+                                    this.JsonWriter.WriteNumberValue(item.GetU32());
+                                    return;
+                                case 8:
+                                    this.JsonWriter.WriteNumberValue(item.GetU64());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.SignedInt:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 1:
+                                    this.JsonWriter.WriteNumberValue(item.GetI8());
+                                    return;
+                                case 2:
+                                    this.JsonWriter.WriteNumberValue(item.GetI16());
+                                    return;
+                                case 4:
+                                    this.JsonWriter.WriteNumberValue(item.GetI32());
+                                    return;
+                                case 8:
+                                    this.JsonWriter.WriteNumberValue(item.GetI64());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.HexInt:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 1:
+                                    this.WriteHex32Value(charBuf, item.GetU8());
+                                    return;
+                                case 2:
+                                    this.WriteHex32Value(charBuf, item.GetU16());
+                                    return;
+                                case 4:
+                                    this.WriteHex32Value(charBuf, item.GetU32());
+                                    return;
+                                case 8:
+                                    this.WriteHex64Value(charBuf, item.GetU64());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.Errno:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 4:
+                                    this.WriteErrnoValue(charBuf, item.GetI32());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.Pid:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 4:
+                                    this.JsonWriter.WriteNumberValue(item.GetI32());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.Time:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 4:
+                                    this.WriteUnixTime32Value(item.GetI32());
+                                    return;
+                                case 8:
+                                    this.WriteUnixTime64Value(charBuf, item.GetI64());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.Boolean:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 1:
+                                    this.WriteBooleanValue(charBuf, item.GetU8());
+                                    return;
+                                case 2:
+                                    this.WriteBooleanValue(charBuf, item.GetU16());
+                                    return;
+                                case 4:
+                                    this.WriteBooleanValue(charBuf, item.GetU32());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.Float:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 4:
+                                    this.WriteFloat32Value(charBuf, item.GetF32());
+                                    return;
+                                case 8:
+                                    this.WriteFloat64Value(charBuf, item.GetF64());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.Uuid:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 16:
+                                    this.JsonWriter.WriteStringValue(item.GetGuid());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.Port:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 2:
+                                    this.JsonWriter.WriteNumberValue(item.GetPort());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
+                            switch (item.Bytes.Length)
+                            {
+                                case 0:
+                                    this.JsonWriter.WriteNullValue();
+                                    return;
+                                case 4:
+                                    this.JsonWriter.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4()));
+                                    return;
+                                case 16:
+                                    this.WriteIPv6Value(charBuf, item.GetIPv6());
+                                    return;
+                                default:
+                                    goto EventHeaderFieldFormatDefault;
+                            }
                     }
                 case EventHeaderFieldEncoding.ZStringChar16:
                 case EventHeaderFieldEncoding.StringLength16Char16:
@@ -719,10 +909,13 @@ namespace DecodePerfToJson
         private void WriteSimpleArrayValues(in PerfItemValue item, ref Span<char> charBuf)
         {
             var elementCount = item.Metadata.ElementCount;
-            switch (item.Metadata.Encoding)
+            var baseEncoding = item.Metadata.Encoding;
+            switch (baseEncoding)
             {
                 default:
-                    throw new NotSupportedException("Unknown encoding.");
+                    this.JsonWriter.WriteStringValue(
+                        "UnknownEncoding" + PerfConvert.UInt32DecimalToString((byte)baseEncoding)); // Garbage
+                    return;
                 case EventHeaderFieldEncoding.Invalid:
                 case EventHeaderFieldEncoding.Struct:
                 case EventHeaderFieldEncoding.ZStringChar8:
@@ -731,7 +924,8 @@ namespace DecodePerfToJson
                 case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.ZStringChar32:
                 case EventHeaderFieldEncoding.StringLength16Char32:
-                    throw new InvalidOperationException("Invalid encoding for WriteSimpleArray.");
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
+                    throw new InvalidOperationException("Invalid encoding for WriteSimpleArrayValues.");
                 case EventHeaderFieldEncoding.Value8:
                     switch (item.Metadata.Format)
                     {
@@ -883,7 +1077,8 @@ namespace DecodePerfToJson
                                 this.JsonWriter.WriteStringValue(PerfConvert.Char32Format(charBuf, item.GetU32(i)));
                             }
                             return;
-                        case EventHeaderFieldFormat.IPv4:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             for (int i = 0; i < elementCount; i += 1)
                             {
                                 this.JsonWriter.WriteStringValue(PerfConvert.IPv4Format(charBuf, item.GetIPv4(i)));
@@ -947,7 +1142,8 @@ namespace DecodePerfToJson
                                 this.JsonWriter.WriteStringValue(item.GetGuid(i));
                             }
                             return;
-                        case EventHeaderFieldFormat.IPv6:
+                        case EventHeaderFieldFormat.IPAddress:
+                        case EventHeaderFieldFormat.IPAddressObsolete:
                             for (int i = 0; i < elementCount; i += 1)
                             {
                                 this.WriteIPv6Value(charBuf, item.GetIPv6(i));

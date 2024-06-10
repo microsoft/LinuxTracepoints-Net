@@ -133,15 +133,17 @@ namespace Microsoft.LinuxTracepoints
         Port,
 
         /// <summary>
-        /// IPv4 address, network byte order (in_addr layout).
-        /// Use with Value32 encoding.
+        /// IP address, network byte order (in_addr/in6_addr layout).
+        /// Use with Value32 or Value128 encoding.
         /// </summary>
-        IPv4,
+        IPAddress,
 
         /// <summary>
-        /// IPv6 address, in6_addr layout. Use with Value128 encoding.
+        /// Deprecated: Alternate format for IPAddress.
+        /// Do not generate events with this format.
+        /// Decode this format as IPAddress.
         /// </summary>
-        IPv6,
+        IPAddressObsolete,
     }
 
     /// <summary>
@@ -152,7 +154,7 @@ namespace Microsoft.LinuxTracepoints
         /// <summary>
         /// Returns the format without any flags (format &amp; ValueMask).
         /// </summary>
-        public static EventHeaderFieldFormat BaseFormat(this EventHeaderFieldFormat format) =>
+        public static EventHeaderFieldFormat WithoutFlags(this EventHeaderFieldFormat format) =>
             format & EventHeaderFieldFormat.ValueMask;
 
         /// <summary>

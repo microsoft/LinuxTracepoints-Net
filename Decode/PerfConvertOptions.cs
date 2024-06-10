@@ -41,8 +41,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         FloatExtraPrecision = 0x10,
 
         /// <summary>
-        /// If set, non-finite float will format as a string like "NaN" or "-Infinity".
-        /// If unset, non-finite float will format as a null.
+        /// If set, non-finite float will format in JSON as a string like "NaN" or "-Infinity".
+        /// If unset, non-finite float will format in JSON as a null.
         /// </summary>
         FloatNonFiniteAsString = 0x20,
 
@@ -71,8 +71,8 @@ namespace Microsoft.LinuxTracepoints.Decode
         UnixTimeOutOfRangeAsString = 0x200,
 
         /// <summary>
-        /// If set, Errno within 0..133 will format as a string like "ERRNO(0)" or "ENOENT(2)".
-        /// If unset, Errno within 0..133 will format as a number like 0 or 2.
+        /// If set, Errno within 0..133 will format in JSON as a string like "ERRNO(0)" or "ENOENT(2)".
+        /// If unset, Errno within 0..133 will format in JSON as a number like 0 or 2.
         /// </summary>
         ErrnoKnownAsString = 0x400,
 

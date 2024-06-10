@@ -46,6 +46,7 @@
         [TestMethod]
         public void Strings()
         {
+            const EventHeaderFieldEncoding BIN = EventHeaderFieldEncoding.BinaryLength16Char8; // TODO
             const EventHeaderFieldEncoding B8 = EventHeaderFieldEncoding.StringLength16Char8;
             const EventHeaderFieldEncoding B16 = EventHeaderFieldEncoding.StringLength16Char16;
             const EventHeaderFieldEncoding B32 = EventHeaderFieldEncoding.StringLength16Char32;
@@ -58,128 +59,141 @@
             var utf32LE = Encoding.UTF32;
             var utf32BE = PerfConvert.EncodingUTF32BE;
 
+            var abcBINS8 = MakeStringValue(latin1.GetBytes("abc"), BIN, F8);
+            Assert.AreEqual(JsonABC, BuilderToString(abcBINS8.AppendJsonScalarTo(builder)));
+            Assert.AreEqual("abc", abcBINS8.ToString());
+            CheckStringBytes(abcBINS8, latin1, 0);
+
+            var abcBINSUtf = MakeStringValue(utf8.GetBytes("abc"), BIN, FUtf);
+            Assert.AreEqual(JsonABC, BuilderToString(abcBINSUtf.AppendJsonScalarTo(builder)));
+            Assert.AreEqual("abc", abcBINSUtf.ToString());
+            CheckStringBytes(abcBINSUtf, utf8, 0);
+
             var abcB8S8 = MakeStringValue(latin1.GetBytes("abc"), B8, F8);
             Assert.AreEqual(JsonABC, BuilderToString(abcB8S8.AppendJsonScalarTo(builder)));
-            Assert.AreEqual("String8: abc", abcB8S8.ToString());
+            Assert.AreEqual("abc", abcB8S8.ToString());
             CheckStringBytes(abcB8S8, latin1, 0);
 
             var abcB8SUtf = MakeStringValue(utf8.GetBytes("abc"), B8, FUtf);
             Assert.AreEqual(JsonABC, BuilderToString(abcB8SUtf.AppendJsonScalarTo(builder)));
-            Assert.AreEqual("StringUtf8: abc", abcB8SUtf.ToString());
+            Assert.AreEqual("abc", abcB8SUtf.ToString());
             CheckStringBytes(abcB8SUtf, utf8, 0);
 
             var abcB16SUtfLE = MakeStringValue(utf16LE.GetBytes("abc"), B16, FUtf, false);
             Assert.AreEqual(JsonABC, BuilderToString(abcB16SUtfLE.AppendJsonScalarTo(builder)));
-            Assert.AreEqual("StringUtf16: abc", abcB16SUtfLE.ToString());
+            Assert.AreEqual("abc", abcB16SUtfLE.ToString());
             CheckStringBytes(abcB16SUtfLE, utf16LE, 0);
 
             var abcB16SUtfBE = MakeStringValue(utf16BE.GetBytes("abc"), B16, FUtf, true);
             Assert.AreEqual(JsonABC, BuilderToString(abcB16SUtfBE.AppendJsonScalarTo(builder)));
-            Assert.AreEqual("StringUtf16: abc", abcB16SUtfBE.ToString());
+            Assert.AreEqual("abc", abcB16SUtfBE.ToString());
             CheckStringBytes(abcB16SUtfBE, utf16BE, 0);
 
             var abcB32SUtfLE = MakeStringValue(utf32LE.GetBytes("abc"), B32, FUtf, false);
             Assert.AreEqual(JsonABC, BuilderToString(abcB32SUtfLE.AppendJsonScalarTo(builder)));
-            Assert.AreEqual("StringUtf32: abc", abcB32SUtfLE.ToString());
+            Assert.AreEqual("abc", abcB32SUtfLE.ToString());
             CheckStringBytes(abcB32SUtfLE, utf32LE, 0);
 
             var abcB32SUtfBE = MakeStringValue(utf32BE.GetBytes("abc"), B32, FUtf, true);
             Assert.AreEqual(JsonABC, BuilderToString(abcB32SUtfBE.AppendJsonScalarTo(builder)));
-            Assert.AreEqual("StringUtf32: abc", abcB32SUtfBE.ToString());
+            Assert.AreEqual("abc", abcB32SUtfBE.ToString());
             CheckStringBytes(abcB32SUtfBE, utf32BE, 0);
 
             for (var fUtfBom = EventHeaderFieldFormat.StringUtfBom; fUtfBom <= EventHeaderFieldFormat.StringJson; fUtfBom += 1)
             {
-                var fstr = fUtfBom.ToString();
+                var abcBIN = MakeStringValue(utf8.GetBytes("abc"), BIN, fUtfBom);
+                Assert.AreEqual(JsonABC, BuilderToString(abcBIN.AppendJsonScalarTo(builder)));
+                Assert.AreEqual("abc", abcBIN.ToString());
+                CheckStringBytes(abcBIN, utf8, 0);
 
                 var abcB8 = MakeStringValue(utf8.GetBytes("abc"), B8, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB8.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "8: abc", abcB8.ToString());
+                Assert.AreEqual("abc", abcB8.ToString());
                 CheckStringBytes(abcB8, utf8, 0);
 
                 var abcB16LE = MakeStringValue(utf16LE.GetBytes("abc"), B16, fUtfBom, false);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB16LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "16: abc", abcB16LE.ToString());
+                Assert.AreEqual("abc", abcB16LE.ToString());
                 CheckStringBytes(abcB16LE, utf16LE, 0);
 
                 var abcB16BE = MakeStringValue(utf16BE.GetBytes("abc"), B16, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB16BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "16: abc", abcB16BE.ToString());
+                Assert.AreEqual("abc", abcB16BE.ToString());
                 CheckStringBytes(abcB16BE, utf16BE, 0);
 
                 var abcB32LE = MakeStringValue(utf32LE.GetBytes("abc"), B32, fUtfBom, false);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB32LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "32: abc", abcB32LE.ToString());
+                Assert.AreEqual("abc", abcB32LE.ToString());
                 CheckStringBytes(abcB32LE, utf32LE, 0);
 
                 var abcB32BE = MakeStringValue(utf32BE.GetBytes("abc"), B32, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB32BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "32: abc", abcB32BE.ToString());
+                Assert.AreEqual("abc", abcB32BE.ToString());
                 CheckStringBytes(abcB32BE, utf32BE, 0);
 
                 var abcB8Bom8 = MakeStringValue(utf8.GetBytes("\uFEFFabc"), B8, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB8Bom8.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "8: abc", abcB8Bom8.ToString());
+                Assert.AreEqual("abc", abcB8Bom8.ToString());
                 CheckStringBytes(abcB8Bom8, utf8, 3);
 
                 var abcB8Bom16LE = MakeStringValue(utf16LE.GetBytes("\uFEFFabc"), B8, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB8Bom16LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "8: abc", abcB8Bom16LE.ToString());
+                Assert.AreEqual("abc", abcB8Bom16LE.ToString());
                 CheckStringBytes(abcB8Bom16LE, utf16LE, 2);
 
                 var abcB8Bom16BE = MakeStringValue(utf16BE.GetBytes("\uFEFFabc"), B8, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB8Bom16BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "8: abc", abcB8Bom16BE.ToString());
+                Assert.AreEqual("abc", abcB8Bom16BE.ToString());
                 CheckStringBytes(abcB8Bom16BE, utf16BE, 2);
 
                 var abcB8Bom32LE = MakeStringValue(utf32LE.GetBytes("\uFEFFabc"), B8, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB8Bom32LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "8: abc", abcB8Bom32LE.ToString());
+                Assert.AreEqual("abc", abcB8Bom32LE.ToString());
                 CheckStringBytes(abcB8Bom32LE, utf32LE, 4);
 
                 var abcB8Bom32BE = MakeStringValue(utf32BE.GetBytes("\uFEFFabc"), B8, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB8Bom32BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "8: abc", abcB8Bom32BE.ToString());
+                Assert.AreEqual("abc", abcB8Bom32BE.ToString());
                 CheckStringBytes(abcB8Bom32BE, utf32BE, 4);
 
                 var abcB16Bom16LE = MakeStringValue(utf16LE.GetBytes("\uFEFFabc"), B16, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB16Bom16LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "16: abc", abcB16Bom16LE.ToString());
+                Assert.AreEqual("abc", abcB16Bom16LE.ToString());
                 CheckStringBytes(abcB16Bom16LE, utf16LE, 2);
 
                 var abcB16Bom16BE = MakeStringValue(utf16BE.GetBytes("\uFEFFabc"), B16, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB16Bom16BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "16: abc", abcB16Bom16BE.ToString());
+                Assert.AreEqual("abc", abcB16Bom16BE.ToString());
                 CheckStringBytes(abcB16Bom16BE, utf16BE, 2);
 
                 var abcB16Bom32LE = MakeStringValue(utf32LE.GetBytes("\uFEFFabc"), B16, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB16Bom32LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "16: abc", abcB16Bom32LE.ToString());
+                Assert.AreEqual("abc", abcB16Bom32LE.ToString());
                 CheckStringBytes(abcB16Bom32LE, utf32LE, 4);
 
                 var abcB16Bom32BE = MakeStringValue(utf32BE.GetBytes("\uFEFFabc"), B16, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB16Bom32BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "16: abc", abcB16Bom32BE.ToString());
+                Assert.AreEqual("abc", abcB16Bom32BE.ToString());
                 CheckStringBytes(abcB16Bom32BE, utf32BE, 4);
 
                 var abcB32Bom16LE = MakeStringValue(utf16LE.GetBytes("\uFEFFabc"), B32, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB32Bom16LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "32: abc", abcB32Bom16LE.ToString());
+                Assert.AreEqual("abc", abcB32Bom16LE.ToString());
                 CheckStringBytes(abcB32Bom16LE, utf16LE, 2);
 
                 var abcB32Bom16BE = MakeStringValue(utf16BE.GetBytes("\uFEFFabc"), B32, fUtfBom);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB32Bom16BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "32: abc", abcB32Bom16BE.ToString());
+                Assert.AreEqual("abc", abcB32Bom16BE.ToString());
                 CheckStringBytes(abcB32Bom16BE, utf16BE, 2);
 
                 var abcB32Bom32LE = MakeStringValue(utf32LE.GetBytes("\uFEFFabc"), B32, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB32Bom32LE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "32: abc", abcB32Bom32LE.ToString());
+                Assert.AreEqual("abc", abcB32Bom32LE.ToString());
                 CheckStringBytes(abcB32Bom32LE, utf32LE, 4);
 
                 var abcB32Bom32BE = MakeStringValue(utf32BE.GetBytes("\uFEFFabc"), B32, fUtfBom, true);
                 Assert.AreEqual(JsonABC, BuilderToString(abcB32Bom32BE.AppendJsonScalarTo(builder)));
-                Assert.AreEqual(fstr + "32: abc", abcB32Bom32BE.ToString());
+                Assert.AreEqual("abc", abcB32Bom32BE.ToString());
                 CheckStringBytes(abcB32Bom32BE, utf32BE, 4);
             }
         }
@@ -207,7 +221,16 @@
         private void CheckIPv6(IPAddress address)
         {
             var jsonString = '"' + address.ToString() + '"';
-            var value = MakeValue(address.GetAddressBytes(), EventHeaderFieldEncoding.Value128, EventHeaderFieldFormat.IPv6);
+            PerfItemValue value;
+            
+            value = MakeValue(address.GetAddressBytes(), EventHeaderFieldEncoding.Value128, EventHeaderFieldFormat.IPAddress);
+            Assert.AreEqual(address, new IPAddress(value.GetIPv6()));
+            Assert.AreEqual(address, new IPAddress(value.GetIPv6(0)));
+            Assert.AreEqual(jsonString, BuilderToString(value.AppendJsonScalarTo(builder)));
+            Assert.AreEqual(jsonString, BuilderToString(value.AppendJsonSimpleElementTo(builder, 0)));
+            Assert.AreEqual("[ " + jsonString + " ]", BuilderToString(value.AppendJsonSimpleArrayTo(builder)));
+
+            value = MakeValue(address.GetAddressBytes(), EventHeaderFieldEncoding.Value128, EventHeaderFieldFormat.IPAddressObsolete);
             Assert.AreEqual(address, new IPAddress(value.GetIPv6()));
             Assert.AreEqual(address, new IPAddress(value.GetIPv6(0)));
             Assert.AreEqual(jsonString, BuilderToString(value.AppendJsonScalarTo(builder)));

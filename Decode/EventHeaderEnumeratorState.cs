@@ -59,4 +59,28 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// </summary>
         StructEnd,
     }
+
+    /// <summary>
+    /// Extension methods for <see cref="EventHeaderEnumeratorState"/>
+    /// </summary>
+    public static class EventHeaderEnumeratorStateExtensions
+    {
+        /// <summary>
+        /// Returns true if `state >= EventHeaderEnumeratorState.BeforeFirstItem`,
+        /// i.e. if <see cref="EventHeaderEnumerator.MoveNext()"/> is a valid operation.
+        /// </summary>
+        public static bool CanMoveNext(this EventHeaderEnumeratorState state)
+        {
+            return state >= EventHeaderEnumeratorState.BeforeFirstItem;
+        }
+
+        /// <summary>
+        /// Returns true if `state > EventHeaderEnumeratorState.BeforeFirstItem`,
+        /// i.e. if <see cref="EventHeaderEnumerator.GetItemInfo()"/> is a valid operation.
+        /// </summary>
+        public static bool CanGetItemInfo(this EventHeaderEnumeratorState state)
+        {
+            return state > EventHeaderEnumeratorState.BeforeFirstItem;
+        }
+    }
 }

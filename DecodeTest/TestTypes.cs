@@ -27,21 +27,22 @@
             {
                 var encoding = (EventHeaderFieldEncoding)value;
                 Assert.AreEqual(value, (byte)encoding);
-                Assert.AreEqual(value & 0x1F, (byte)encoding.BaseEncoding());
-                Assert.AreEqual(value & 0x60, (byte)encoding.ArrayFlag());
+                Assert.AreEqual(value & 0x1F, (byte)encoding.WithoutFlags());
+                Assert.AreEqual(value & 0x60, (byte)encoding.ArrayFlags());
                 Assert.AreEqual((value & 0x20) != 0, encoding.IsCArray());
                 Assert.AreEqual((value & 0x40) != 0, encoding.IsVArray());
                 Assert.AreEqual((value & 0x60) != 0, encoding.IsArray());
                 Assert.AreEqual((value & 0x80) != 0, encoding.HasChainFlag());
 
-                var baseEnc = encoding.BaseEncoding();
+                var baseEnc = encoding.WithoutFlags();
                 var fmt = encoding.DefaultFormat();
                 if (baseEnc >= EventHeaderFieldEncoding.Value8 &&
                     baseEnc <= EventHeaderFieldEncoding.Value64)
                 {
                     Assert.AreEqual(EventHeaderFieldFormat.UnsignedInt, fmt);
                 }
-                else if (baseEnc == EventHeaderFieldEncoding.Value128)
+                else if (baseEnc == EventHeaderFieldEncoding.Value128 ||
+                    baseEnc == EventHeaderFieldEncoding.BinaryLength16Char8)
                 {
                     Assert.AreEqual(EventHeaderFieldFormat.HexBytes, fmt);
                 }
@@ -65,7 +66,7 @@
             {
                 var format = (EventHeaderFieldFormat)value;
                 Assert.AreEqual(value, (byte)format);
-                Assert.AreEqual(value & 0x7F, (byte)format.BaseFormat());
+                Assert.AreEqual(value & 0x7F, (byte)format.WithoutFlags());
                 Assert.AreEqual((value & 0x80) != 0, format.HasChainFlag());
             }
         }

@@ -62,7 +62,8 @@
                 }
                 else
                 {
-                    this.writer.WriteCommentValue(" " + e.GetEventInfo().ToString() + " ");
+                    var eventInfo = e.GetEventInfo();
+                    this.writer.WriteCommentValue(" " + eventInfo.ToString() + " ");
                     this.writer.WriteStartObjectOnNewLine();
 
                     // Metadata enumeration
@@ -128,7 +129,7 @@
                     this.writer.WriteStartObject(); // AppendJsonItemN
 
                     this.writer.WritePropertyNameOnNewLine("n");
-                    e.AppendJsonEventIdentityTo(this.writer.WriteRawValueBuilder());
+                    eventInfo.AppendJsonEventIdentityTo(this.writer.WriteRawValueBuilder());
 
                     e.MoveNext(); // Move past BeforeFirstItem.
                     while (e.State >= EventHeaderEnumeratorState.BeforeFirstItem)
@@ -145,7 +146,7 @@
                     this.writer.WritePropertyNameOnNewLine("info");
                     this.writer.WriteStartObject();
 
-                    e.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false, PerfInfoOptions.All, PerfConvertOptions.All);
+                    eventInfo.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false, PerfInfoOptions.All, PerfConvertOptions.All);
 
                     this.writer.WriteEndObject(); // info
                     this.writer.WriteEndObjectOnNewLine(); // AppendJsonItemN
@@ -173,7 +174,7 @@
                     this.writer.WritePropertyNameOnNewLine("info");
                     this.writer.WriteStartObject();
 
-                    e.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false,
+                    eventInfo.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false,
                         PerfInfoOptions.Default & ~PerfInfoOptions.Level,
                         PerfConvertOptions.None);
 

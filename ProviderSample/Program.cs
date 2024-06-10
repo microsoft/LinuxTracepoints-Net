@@ -455,7 +455,7 @@ internal static class Program
         b.Reset("Value128")
             .AddValue128("Bytes", new EventHeaderValue128(bytes))
             .AddValue128Array("Array", [new EventHeaderValue128(bytes), default])
-            .AddValue128("IPv6", new EventHeaderValue128(bytes), EventHeaderFieldFormat.IPv6)
+            .AddValue128("IPv6", new EventHeaderValue128(bytes), EventHeaderFieldFormat.IPAddress)
             .Write(tp);
         b.Reset("ZString8")
             .AddZString8("Bytes[1]", bytes.Slice(1))

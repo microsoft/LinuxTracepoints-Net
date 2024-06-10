@@ -8,9 +8,48 @@ namespace Microsoft.LinuxTracepoints
     /// Values for the Encoding byte of a field definition.
     /// </para><para>
     /// The low 5 bits of the Encoding byte contain the field's encoding. The encoding
-    /// indicates how a decoder should determine the size of the field. It also
-    /// indicates a default format behavior that should be used if the field has no
-    /// format specified or if the specified format is 0, unrecognized, or unsupported.
+    /// indicates the following information about the field:
+    /// <list type="bullet"><item>
+    /// How the decoder should determine the size of the field. For example,
+    /// <c>Value32</c> indicates a 4-byte field, <c>Value128</c> indicates a 16-byte
+    /// field, <c>ZStringChar8</c> indicates that the field ends at the first char8 unit
+    /// with value 0, and <c>BinaryLength16Char8</c> indicates that the first 16 bits of
+    /// the field are the uint16 <c>Length</c> and that the subsequent <c>Length</c>
+    /// char8 units are the field value.
+    /// <item></item>
+    /// How the field should be formatted if the field's format is
+    /// <see cref="EventHeaderFieldFormat.Default"/>, unrecognized, or unsupported. For
+    /// example, a <c>Value32</c> encoding with <c>Default</c> or unrecognized format
+    /// should be treated as if it had <c>UnsignedInt</c> format. A
+    /// <c>StringLength16Char8</c> encoding with <c>Default</c> or unrecognized format
+    /// should be treated as if it had <c>StringUtf</c> format. A
+    /// <c>BinaryLength16Char8</c> encoding with <c>Default</c> or unrecognized format
+    /// should be treated as if it had <c>HexBytes</c> format.
+    /// </item>
+    /// </list>
+    /// The <c>StringLength16Char8</c> and <c>BinaryLength16Char8</c> are special. These
+    /// encodings can be used with both variable-length (e.g. <c>HexBytes</c> and
+    /// <c>String</c>) formats as well as with fixed-length (e.g. <c>UnsignedInt</c>,
+    /// <c>Float</c>, <c>IPAddress</c>) formats. When used with fixed-length formats,
+    /// the semantics depend on the field's variable Length (as determined from the first
+    /// two bytes of the field):
+    /// <list type="bullet"><item>
+    /// If the Length is 0, the field is formatted as <c>null</c>. For example, a field
+    /// with encoding = <c>BinaryLength16Char8</c>, format = <c>SignedInt</c>, and
+    /// Length = 0 would be formatted as a null value.
+    /// </item><item>
+    /// If the Length is appropriate for the format, the field is formatted as if it had
+    /// the Value8, Value16, Value32, Value64, or Value128 encoding corresponding to its
+    /// size. For example, a field with encoding = <c>BinaryLength16Char8</c>,
+    /// format = <c>SignedInt</c>, and Length = 4 would be formatted as an Int32 field.
+    /// </item><item>
+    /// If the Length is not appropriate for the format, the field is formatted as if it
+    /// had the default format for the encoding. For example, a field with
+    /// encoding = <c>BinaryLength16Char8</c>, format = <c>SignedInt</c>, and Length = 16
+    /// would be formatted as a <c>HexBytes</c> field since 16 is not a supported size
+    /// for the <c>SignedInt</c> format and the default format for
+    /// <c>BinaryLength16Char8</c> is <c>HexBytes</c>.
+    /// </item></list>
     /// </para><para>
     /// The top 3 bits of the field encoding byte are flags:
     /// </para><list type="bullet"><item>
@@ -113,7 +152,8 @@ namespace Microsoft.LinuxTracepoints
 
         /// <summary>
         /// uint16 Length followed by uint8 Data[Length], default format StringUtf.
-        /// Also used for binary data (format HexBytes).
+        /// This should be treated exactly the same as BinaryLength16Char8 except that it
+        /// has a different default format.
         /// </summary>
         StringLength16Char8,
 
@@ -126,6 +166,13 @@ namespace Microsoft.LinuxTracepoints
         /// uint16 Length followed by uint32 Data[Length], default format StringUtf.
         /// </summary>
         StringLength16Char32,
+
+        /// <summary>
+        /// uint16 Length followed by uint8 Data[Length], default format HexBytes.
+        /// This should be treated exactly the same as StringLength16Char8 except that it
+        /// has a different default format.
+        /// </summary>
+        BinaryLength16Char8,
 
         /// <summary>
         /// Invalid encoding value. Value will change in future versions of this header.
@@ -141,13 +188,19 @@ namespace Microsoft.LinuxTracepoints
         /// <summary>
         /// Returns the encoding without any flags (encoding &amp; ValueMask).
         /// </summary>
-        public static EventHeaderFieldEncoding BaseEncoding(this EventHeaderFieldEncoding encoding) =>
+        public static EventHeaderFieldEncoding WithoutFlags(this EventHeaderFieldEncoding encoding) =>
             encoding & EventHeaderFieldEncoding.ValueMask;
+
+        /// <summary>
+        /// Returns the encoding without the chain flag (encoding &amp; ~ChainFlag).
+        /// </summary>
+        public static EventHeaderFieldEncoding WithoutChainFlag(this EventHeaderFieldEncoding encoding) =>
+            encoding & ~EventHeaderFieldEncoding.ChainFlag;
 
         /// <summary>
         /// Returns the array flags of the encoding (VArrayFlag or CArrayFlag, if set).
         /// </summary>
-        public static EventHeaderFieldEncoding ArrayFlag(this EventHeaderFieldEncoding encoding) =>
+        public static EventHeaderFieldEncoding ArrayFlags(this EventHeaderFieldEncoding encoding) =>
             encoding & EventHeaderFieldEncoding.ArrayFlagMask;
 
         /// <summary>
@@ -204,6 +257,8 @@ namespace Microsoft.LinuxTracepoints
                 case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.StringLength16Char32:
                     return EventHeaderFieldFormat.StringUtf;
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
+                    return EventHeaderFieldFormat.HexBytes;
                 default:
                     return EventHeaderFieldFormat.Default;
             }

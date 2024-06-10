@@ -82,6 +82,12 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
+### 0.2.0 (TBD)
+
+- Add support for `BinaryLength16Char8` encoding.
+- Add support for extended formats for `StringLength16Char8` encoding.
+- Add support for `IPAddress` format.
+
 ### 0.1.3 (2024-05-20)
 
 - When system/event name is not available via `EVENT_DESC` header, fall back to
