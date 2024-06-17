@@ -39,7 +39,7 @@
       "enabled": true
     },
     "ToString": {
-      "enabled": "Bool8: true"
+      "enabled": "true"
     }
   },
   /* TestProviderCpp_L5K0Gmsft */
@@ -63,7 +63,7 @@
       "enabled": true
     },
     "ToString": {
-      "enabled": "Bool8: true"
+      "enabled": "true"
     }
   },
   /* TestProviderC_L5K0 */
@@ -132,8 +132,8 @@
     },
     "ToString": {
       "Struct20;tag=0xBEEF": {
-        "hi;tag=0x12": "ZString8: hi",
-        "ch10;tag=0x10": "Char8: H, o, w" }
+        "hi;tag=0x12": "hi",
+        "ch10;tag=0x10": "H, o, w" }
     }
   },
   /* TestProviderC_L5K0 */
@@ -218,8 +218,8 @@
       "(-128)": -128
     },
     "ToString": {
-      "i8": "Int8: 100",
-      "(-128)": "Int8: -128"
+      "i8": "100",
+      "(-128)": "-128"
     }
   },
   /* TestProviderC_L5K0 */
@@ -247,8 +247,8 @@
       "(255)": 255
     },
     "ToString": {
-      "u8": "UInt8: 200",
-      "(255)": "UInt8: 255"
+      "u8": "200",
+      "(255)": "255"
     }
   },
   /* TestProviderC_L5K0 */
@@ -276,8 +276,8 @@
       "(-32767-1)": -32768
     },
     "ToString": {
-      "i16": "Int16: 30000",
-      "(-32767-1)": "Int16: -32768"
+      "i16": "30000",
+      "(-32767-1)": "-32768"
     }
   },
   /* TestProviderC_L5K0 */
@@ -305,8 +305,8 @@
       "(65535)": 65535
     },
     "ToString": {
-      "u16": "UInt16: 60000",
-      "(65535)": "UInt16: 65535"
+      "u16": "60000",
+      "(65535)": "65535"
     }
   },
   /* TestProviderC_L5K0 */
@@ -334,8 +334,8 @@
       "(-2147483647-1)": -2147483648
     },
     "ToString": {
-      "i32": "Int32: 2000000000",
-      "(-2147483647-1)": "Int32: -2147483648"
+      "i32": "2000000000",
+      "(-2147483647-1)": "-2147483648"
     }
   },
   /* TestProviderC_L5K0 */
@@ -363,8 +363,8 @@
       "(4294967295U)": 4294967295
     },
     "ToString": {
-      "u32": "UInt32: 4000000000",
-      "(4294967295U)": "UInt32: 4294967295"
+      "u32": "4000000000",
+      "(4294967295U)": "4294967295"
     }
   },
   /* TestProviderC_L5K0 */
@@ -392,8 +392,8 @@
       "(-9223372036854775807L-1)": -9223372036854775808
     },
     "ToString": {
-      "i64": "Int64: 9000000000000000000",
-      "(-9223372036854775807L-1)": "Int64: -9223372036854775808"
+      "i64": "9000000000000000000",
+      "(-9223372036854775807L-1)": "-9223372036854775808"
     }
   },
   /* TestProviderC_L5K0 */
@@ -421,8 +421,8 @@
       "(18446744073709551615UL)": 18446744073709551615
     },
     "ToString": {
-      "u64": "UInt64: 18000000000000000000",
-      "(18446744073709551615UL)": "UInt64: 18446744073709551615"
+      "u64": "18000000000000000000",
+      "(18446744073709551615UL)": "18446744073709551615"
     }
   },
   /* TestProviderC_L5K0 */
@@ -450,8 +450,8 @@
       "(-9223372036854775807L-1)": -9223372036854775808
     },
     "ToString": {
-      "iptr": "Int64: 1234",
-      "(-9223372036854775807L-1)": "Int64: -9223372036854775808"
+      "iptr": "1234",
+      "(-9223372036854775807L-1)": "-9223372036854775808"
     }
   },
   /* TestProviderC_L5K0 */
@@ -479,8 +479,8 @@
       "(18446744073709551615UL)": 18446744073709551615
     },
     "ToString": {
-      "uptr": "UInt64: 4321",
-      "(18446744073709551615UL)": "UInt64: 18446744073709551615"
+      "uptr": "4321",
+      "(18446744073709551615UL)": "18446744073709551615"
     }
   },
   /* TestProviderC_L5K0 */
@@ -508,8 +508,8 @@
       "(-0x7fffffffffffffffL - 1L)": -9223372036854775808
     },
     "ToString": {
-      "iL": "Int64: 2000000000",
-      "(-0x7fffffffffffffffL - 1L)": "Int64: -9223372036854775808"
+      "iL": "2000000000",
+      "(-0x7fffffffffffffffL - 1L)": "-9223372036854775808"
     }
   },
   /* TestProviderC_L5K0 */
@@ -537,8 +537,8 @@
       "(0x7fffffffffffffffL * 2UL + 1UL)": 18446744073709551615
     },
     "ToString": {
-      "uL": "UInt64: 4000000000",
-      "(0x7fffffffffffffffL * 2UL + 1UL)": "UInt64: 18446744073709551615"
+      "uL": "4000000000",
+      "(0x7fffffffffffffffL * 2UL + 1UL)": "18446744073709551615"
     }
   },
   /* TestProviderC_L5K0 */
@@ -566,8 +566,8 @@
       "(-128)": "0x80"
     },
     "ToString": {
-      "i8": "Hex8: 0x64",
-      "(-128)": "Hex8: 0x80"
+      "i8": "0x64",
+      "(-128)": "0x80"
     }
   },
   /* TestProviderC_L5K0 */
@@ -595,8 +595,8 @@
       "(255)": "0xFF"
     },
     "ToString": {
-      "u8": "Hex8: 0xC8",
-      "(255)": "Hex8: 0xFF"
+      "u8": "0xC8",
+      "(255)": "0xFF"
     }
   },
   /* TestProviderC_L5K0 */
@@ -624,8 +624,8 @@
       "(-32767-1)": "0x8000"
     },
     "ToString": {
-      "i16": "Hex16: 0x7530",
-      "(-32767-1)": "Hex16: 0x8000"
+      "i16": "0x7530",
+      "(-32767-1)": "0x8000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -653,8 +653,8 @@
       "(65535)": "0xFFFF"
     },
     "ToString": {
-      "u16": "Hex16: 0xEA60",
-      "(65535)": "Hex16: 0xFFFF"
+      "u16": "0xEA60",
+      "(65535)": "0xFFFF"
     }
   },
   /* TestProviderC_L5K0 */
@@ -682,8 +682,8 @@
       "(-2147483647-1)": "0x80000000"
     },
     "ToString": {
-      "i32": "Hex32: 0x77359400",
-      "(-2147483647-1)": "Hex32: 0x80000000"
+      "i32": "0x77359400",
+      "(-2147483647-1)": "0x80000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -711,8 +711,8 @@
       "(4294967295U)": "0xFFFFFFFF"
     },
     "ToString": {
-      "u32": "Hex32: 0xEE6B2800",
-      "(4294967295U)": "Hex32: 0xFFFFFFFF"
+      "u32": "0xEE6B2800",
+      "(4294967295U)": "0xFFFFFFFF"
     }
   },
   /* TestProviderC_L5K0 */
@@ -740,8 +740,8 @@
       "(-9223372036854775807L-1)": "0x8000000000000000"
     },
     "ToString": {
-      "i64": "Hex64: 0x7CE66C50E2840000",
-      "(-9223372036854775807L-1)": "Hex64: 0x8000000000000000"
+      "i64": "0x7CE66C50E2840000",
+      "(-9223372036854775807L-1)": "0x8000000000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -769,8 +769,8 @@
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "u64": "Hex64: 0xF9CCD8A1C5080000",
-      "(18446744073709551615UL)": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "u64": "0xF9CCD8A1C5080000",
+      "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderC_L5K0 */
@@ -798,8 +798,8 @@
       "(-9223372036854775807L-1)": "0x8000000000000000"
     },
     "ToString": {
-      "iptr": "Hex64: 0x4D2",
-      "(-9223372036854775807L-1)": "Hex64: 0x8000000000000000"
+      "iptr": "0x4D2",
+      "(-9223372036854775807L-1)": "0x8000000000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -827,8 +827,8 @@
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "uptr": "Hex64: 0x10E1",
-      "(18446744073709551615UL)": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "uptr": "0x10E1",
+      "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderC_L5K0 */
@@ -856,8 +856,8 @@
       "(-0x7fffffffffffffffL - 1L)": "0x8000000000000000"
     },
     "ToString": {
-      "iL": "Hex64: 0x77359400",
-      "(-0x7fffffffffffffffL - 1L)": "Hex64: 0x8000000000000000"
+      "iL": "0x77359400",
+      "(-0x7fffffffffffffffL - 1L)": "0x8000000000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -885,8 +885,8 @@
       "(0x7fffffffffffffffL * 2UL + 1UL)": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "uL": "Hex64: 0xEE6B2800",
-      "(0x7fffffffffffffffL * 2UL + 1UL)": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "uL": "0xEE6B2800",
+      "(0x7fffffffffffffffL * 2UL + 1UL)": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderC_L5K0 */
@@ -922,10 +922,10 @@
       "-Inf": "-Infinity"
     },
     "ToString": {
-      "f32": "Float32: 3.14",
-      "1/3": "Float32: 0.33333334",
-      "NaN": "Float32: NaN",
-      "-Inf": "Float32: -Infinity"
+      "f32": "3.1400001",
+      "1/3": "0.333333343",
+      "NaN": "NaN",
+      "-Inf": "-Infinity"
     }
   },
   /* TestProviderC_L5K0 */
@@ -961,10 +961,10 @@
       "-Inf": "-Infinity"
     },
     "ToString": {
-      "f64": "Float64: 6.28",
-      "1/3": "Float64: 0.3333333333333333",
-      "NaN": "Float64: NaN",
-      "-Inf": "Float64: -Infinity"
+      "f64": "6.2800000000000002",
+      "1/3": "0.33333333333333331",
+      "NaN": "NaN",
+      "-Inf": "-Infinity"
     }
   },
   /* TestProviderC_L5K0 */
@@ -996,9 +996,9 @@
       "(255)": "BOOL(255)"
     },
     "ToString": {
-      "b0": "Bool8: false",
-      "b1": "Bool8: true",
-      "(255)": "Bool8: 255"
+      "b0": "false",
+      "b1": "true",
+      "(255)": "BOOL(255)"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1030,9 +1030,9 @@
       "(-2147483647-1)": "BOOL(-2147483648)"
     },
     "ToString": {
-      "b0": "Bool32: false",
-      "b1": "Bool32: true",
-      "(-2147483647-1)": "Bool32: -2147483648"
+      "b0": "false",
+      "b1": "true",
+      "(-2147483647-1)": "BOOL(-2147483648)"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1060,8 +1060,8 @@
       "FE": "þ"
     },
     "ToString": {
-      "ch": "Char8: A",
-      "FE": "Char8: þ"
+      "ch": "A",
+      "FE": "þ"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1089,8 +1089,8 @@
       "FFFE": "￾"
     },
     "ToString": {
-      "u16ch": "Char16: A",
-      "FFFE": "Char16: ￾"
+      "u16ch": "A",
+      "FFFE": "￾"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1126,10 +1126,10 @@
       "FFFEFDFC": "�"
     },
     "ToString": {
-      "u32ch": "Char32: A",
-      "FFFE": "Char32: ￾",
-      "10FFFF": "Char32: 􏿿",
-      "FFFEFDFC": "Char32: �"
+      "u32ch": "A",
+      "FFFE": "￾",
+      "10FFFF": "􏿿",
+      "FFFEFDFC": "�"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1165,10 +1165,10 @@
       "0x7fffffff": "�"
     },
     "ToString": {
-      "wch": "Char32: B",
-      "FFFE": "Char32: ￾",
-      "10FFFF": "Char32: 􏿿",
-      "0x7fffffff": "Char32: �"
+      "wch": "B",
+      "FFFE": "￾",
+      "10FFFF": "􏿿",
+      "0x7fffffff": "�"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1196,8 +1196,8 @@
       "UINTPTR_MAX": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "pSamplePtr": "Hex64: 0xFFFFFFFFFFFFCFC7",
-      "UINTPTR_MAX": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "pSamplePtr": "0xFFFFFFFFFFFFCFC7",
+      "UINTPTR_MAX": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1225,8 +1225,8 @@
       "(2147483647)": 2147483647
     },
     "ToString": {
-      "i32": "Pid: 2000000000",
-      "(2147483647)": "Pid: 2147483647"
+      "i32": "2000000000",
+      "(2147483647)": "2147483647"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1254,8 +1254,8 @@
       "(65535)": 65535
     },
     "ToString": {
-      "port80": "Port: 80",
-      "(65535)": "Port: 65535"
+      "port80": "80",
+      "(65535)": "65535"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1287,9 +1287,9 @@
       "131": "ENOTRECOVERABLE(131)"
     },
     "ToString": {
-      "(-2147483647-1)": "Errno: -2147483648",
-      "1": "Errno: EPERM(1)",
-      "131": "Errno: ENOTRECOVERABLE(131)"
+      "(-2147483647-1)": "ERRNO(-2147483648)",
+      "1": "EPERM(1)",
+      "131": "ENOTRECOVERABLE(131)"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1325,10 +1325,10 @@
       "0": "1970-01-01T00:00:00Z"
     },
     "ToString": {
-      "i32": "Time32: 2033-05-18T03:33:20Z",
-      "(-2147483647-1)": "Time32: 1901-12-13T20:45:52Z",
-      "(2147483647)": "Time32: 2038-01-19T03:14:07Z",
-      "0": "Time32: 1970-01-01T00:00:00Z"
+      "i32": "2033-05-18T03:33:20Z",
+      "(-2147483647-1)": "1901-12-13T20:45:52Z",
+      "(2147483647)": "2038-01-19T03:14:07Z",
+      "0": "1970-01-01T00:00:00Z"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1380,14 +1380,14 @@
       "910692730086": "TIME(910692730086)"
     },
     "ToString": {
-      "i64": "Time64: 9000000000000000000",
-      "(-9223372036854775807L-1)": "Time64: -9223372036854775808",
-      "(9223372036854775807L)": "Time64: 9223372036854775807",
-      "0": "Time64: 1970-01-01T00:00:00Z",
-      "-11644473600": "Time64: 1601-01-01T00:00:00Z",
-      "-11644473601": "Time64: 1600-12-31T23:59:59Z",
-      "910692730085": "Time64: 910692730085",
-      "910692730086": "Time64: 910692730086"
+      "i64": "TIME(9000000000000000000)",
+      "(-9223372036854775807L-1)": "TIME(-9223372036854775808)",
+      "(9223372036854775807L)": "TIME(9223372036854775807)",
+      "0": "1970-01-01T00:00:00Z",
+      "-11644473600": "1601-01-01T00:00:00Z",
+      "-11644473601": "1600-12-31T23:59:59Z",
+      "910692730085": "TIME(910692730085)",
+      "910692730086": "TIME(910692730086)"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1411,7 +1411,7 @@
       "guid": "01020304-0506-0708-0102-030405060708"
     },
     "ToString": {
-      "guid": "Guid: 01020304-0506-0708-0102-030405060708"
+      "guid": "01020304-0506-0708-0102-030405060708"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1439,8 +1439,8 @@
       "ch10": "HowAreU8?"
     },
     "ToString": {
-      "NULL": "ZString8: ",
-      "ch10": "ZString8: HowAreU8?"
+      "NULL": "",
+      "ch10": "HowAreU8?"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1468,8 +1468,8 @@
       "ch10": "HowAreU8?"
     },
     "ToString": {
-      "NULL": "ZStringUtf8: ",
-      "ch10": "ZStringUtf8: HowAreU8?"
+      "NULL": "",
+      "ch10": "HowAreU8?"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1497,8 +1497,8 @@
       "wch10": "Goodbye!!"
     },
     "ToString": {
-      "NULL": "ZStringUtf32: ",
-      "wch10": "ZStringUtf32: Goodbye!!"
+      "NULL": "",
+      "wch10": "Goodbye!!"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1526,8 +1526,8 @@
       "u16ch10": "HowAreU16"
     },
     "ToString": {
-      "NULL": "ZStringUtf16: ",
-      "u16ch10": "ZStringUtf16: HowAreU16"
+      "NULL": "",
+      "u16ch10": "HowAreU16"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1555,8 +1555,8 @@
       "u32ch10": "HowAreU32"
     },
     "ToString": {
-      "NULL": "ZStringUtf32: ",
-      "u32ch10": "ZStringUtf32: HowAreU32"
+      "NULL": "",
+      "u32ch10": "HowAreU32"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1584,8 +1584,8 @@
       "ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "String8: ",
-      "ch10": "String8: HowAr"
+      "NULL": "",
+      "ch10": "HowAr"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1613,8 +1613,8 @@
       "ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "StringUtf8: ",
-      "ch10": "StringUtf8: HowAr"
+      "NULL": "",
+      "ch10": "HowAr"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1642,8 +1642,8 @@
       "wch10": "Goodb"
     },
     "ToString": {
-      "NULL": "StringUtf32: ",
-      "wch10": "StringUtf32: Goodb"
+      "NULL": "",
+      "wch10": "Goodb"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1671,8 +1671,8 @@
       "u16ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "StringUtf16: ",
-      "u16ch10": "StringUtf16: HowAr"
+      "NULL": "",
+      "u16ch10": "HowAr"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1700,8 +1700,8 @@
       "u32ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "StringUtf32: ",
-      "u32ch10": "StringUtf32: HowAr"
+      "NULL": "",
+      "u32ch10": "HowAr"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1729,15 +1729,15 @@
       "ch10": "48 6F 77 41 72"
     },
     "ToString": {
-      "NULL": "HexBytes8: ",
-      "ch10": "HexBytes8: 48 6F 77 41 72"
+      "NULL": "",
+      "ch10": "48 6F 77 41 72"
     }
   },
   /* TestProviderC_L5K0 */
   {
     "MoveNextMetadata": {
-      "ipv4": { "Encoding": "Value32", "Format": "IPv4" },
-      "(4294967295U)": { "Encoding": "Value32", "Format": "IPv4" }
+      "ipv4": { "Encoding": "Value32", "Format": "IPAddress" },
+      "(4294967295U)": { "Encoding": "Value32", "Format": "IPAddress" }
     },
     "AppendJsonItemN": {
       "n": "TestProviderC:ipV4",
@@ -1758,15 +1758,15 @@
       "(4294967295U)": "255.255.255.255"
     },
     "ToString": {
-      "ipv4": "IPv4: 127.0.0.1",
-      "(4294967295U)": "IPv4: 255.255.255.255"
+      "ipv4": "127.0.0.1",
+      "(4294967295U)": "255.255.255.255"
     }
   },
   /* TestProviderC_L5K0 */
   {
     "MoveNextMetadata": {
-      "ipv6": { "Encoding": "Value128", "Format": "IPv6" },
-      "fefe..fe00": { "Encoding": "Value128", "Format": "IPv6" }
+      "ipv6": { "Encoding": "Value128", "Format": "IPAddressObsolete" },
+      "fefe..fe00": { "Encoding": "Value128", "Format": "IPAddressObsolete" }
     },
     "AppendJsonItemN": {
       "n": "TestProviderC:ipV6",
@@ -1787,8 +1787,8 @@
       "fefe..fe00": "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
     },
     "ToString": {
-      "ipv6": "IPv6: 102:304:506:708:90a:b0c:d0e:f10",
-      "fefe..fe00": "IPv6: fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
+      "ipv6": "102:304:506:708:90a:b0c:d0e:f10",
+      "fefe..fe00": "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1816,8 +1816,8 @@
       "s": [ 100 ]
     },
     "ToString": {
-      "a1": "Int8: 100",
-      "s": "Int8: 100"
+      "a1": "100",
+      "s": "100"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1845,8 +1845,8 @@
       "s": [ 200 ]
     },
     "ToString": {
-      "a1": "UInt8: 200",
-      "s": "UInt8: 200"
+      "a1": "200",
+      "s": "200"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1874,8 +1874,8 @@
       "s": [ 30000 ]
     },
     "ToString": {
-      "a1": "Int16: 30000",
-      "s": "Int16: 30000"
+      "a1": "30000",
+      "s": "30000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1903,8 +1903,8 @@
       "s": [ 60000 ]
     },
     "ToString": {
-      "a1": "UInt16: 60000",
-      "s": "UInt16: 60000"
+      "a1": "60000",
+      "s": "60000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1932,8 +1932,8 @@
       "s": [ 2000000000 ]
     },
     "ToString": {
-      "a1": "Int32: 2000000000",
-      "s": "Int32: 2000000000"
+      "a1": "2000000000",
+      "s": "2000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1961,8 +1961,8 @@
       "s": [ 4000000000 ]
     },
     "ToString": {
-      "a1": "UInt32: 4000000000",
-      "s": "UInt32: 4000000000"
+      "a1": "4000000000",
+      "s": "4000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -1990,8 +1990,8 @@
       "s": [ 9000000000000000000 ]
     },
     "ToString": {
-      "a1": "Int64: 9000000000000000000",
-      "s": "Int64: 9000000000000000000"
+      "a1": "9000000000000000000",
+      "s": "9000000000000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2019,8 +2019,8 @@
       "s": [ 18000000000000000000 ]
     },
     "ToString": {
-      "a1": "UInt64: 18000000000000000000",
-      "s": "UInt64: 18000000000000000000"
+      "a1": "18000000000000000000",
+      "s": "18000000000000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2048,8 +2048,8 @@
       "s": [ 1234 ]
     },
     "ToString": {
-      "a1": "Int64: 1234",
-      "s": "Int64: 1234"
+      "a1": "1234",
+      "s": "1234"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2077,8 +2077,8 @@
       "s": [ 4321 ]
     },
     "ToString": {
-      "a1": "UInt64: 4321",
-      "s": "UInt64: 4321"
+      "a1": "4321",
+      "s": "4321"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2106,8 +2106,8 @@
       "s": [ 2000000000 ]
     },
     "ToString": {
-      "a1": "Int64: 2000000000",
-      "s": "Int64: 2000000000"
+      "a1": "2000000000",
+      "s": "2000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2135,8 +2135,8 @@
       "s": [ 4000000000 ]
     },
     "ToString": {
-      "a1": "UInt64: 4000000000",
-      "s": "UInt64: 4000000000"
+      "a1": "4000000000",
+      "s": "4000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2164,8 +2164,8 @@
       "s": [ "0x64" ]
     },
     "ToString": {
-      "a1": "Hex8: 0x64",
-      "s": "Hex8: 0x64"
+      "a1": "0x64",
+      "s": "0x64"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2193,8 +2193,8 @@
       "s": [ "0xC8" ]
     },
     "ToString": {
-      "a1": "Hex8: 0xC8",
-      "s": "Hex8: 0xC8"
+      "a1": "0xC8",
+      "s": "0xC8"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2222,8 +2222,8 @@
       "s": [ "0x7530" ]
     },
     "ToString": {
-      "a1": "Hex16: 0x7530",
-      "s": "Hex16: 0x7530"
+      "a1": "0x7530",
+      "s": "0x7530"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2251,8 +2251,8 @@
       "s": [ "0xEA60" ]
     },
     "ToString": {
-      "a1": "Hex16: 0xEA60",
-      "s": "Hex16: 0xEA60"
+      "a1": "0xEA60",
+      "s": "0xEA60"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2280,8 +2280,8 @@
       "s": [ "0x77359400" ]
     },
     "ToString": {
-      "a1": "Hex32: 0x77359400",
-      "s": "Hex32: 0x77359400"
+      "a1": "0x77359400",
+      "s": "0x77359400"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2309,8 +2309,8 @@
       "s": [ "0xEE6B2800" ]
     },
     "ToString": {
-      "a1": "Hex32: 0xEE6B2800",
-      "s": "Hex32: 0xEE6B2800"
+      "a1": "0xEE6B2800",
+      "s": "0xEE6B2800"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2338,8 +2338,8 @@
       "s": [ "0x7CE66C50E2840000" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x7CE66C50E2840000",
-      "s": "Hex64: 0x7CE66C50E2840000"
+      "a1": "0x7CE66C50E2840000",
+      "s": "0x7CE66C50E2840000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2367,8 +2367,8 @@
       "s": [ "0xF9CCD8A1C5080000" ]
     },
     "ToString": {
-      "a1": "Hex64: 0xF9CCD8A1C5080000",
-      "s": "Hex64: 0xF9CCD8A1C5080000"
+      "a1": "0xF9CCD8A1C5080000",
+      "s": "0xF9CCD8A1C5080000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2396,8 +2396,8 @@
       "s": [ "0x4D2" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x4D2",
-      "s": "Hex64: 0x4D2"
+      "a1": "0x4D2",
+      "s": "0x4D2"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2425,8 +2425,8 @@
       "s": [ "0x10E1" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x10E1",
-      "s": "Hex64: 0x10E1"
+      "a1": "0x10E1",
+      "s": "0x10E1"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2454,8 +2454,8 @@
       "s": [ "0x77359400" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x77359400",
-      "s": "Hex64: 0x77359400"
+      "a1": "0x77359400",
+      "s": "0x77359400"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2483,8 +2483,8 @@
       "s": [ "0xEE6B2800" ]
     },
     "ToString": {
-      "a1": "Hex64: 0xEE6B2800",
-      "s": "Hex64: 0xEE6B2800"
+      "a1": "0xEE6B2800",
+      "s": "0xEE6B2800"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2512,8 +2512,8 @@
       "s": [ 3.1400001 ]
     },
     "ToString": {
-      "a1": "Float32: 3.14",
-      "s": "Float32: 3.14"
+      "a1": "3.1400001",
+      "s": "3.1400001"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2541,8 +2541,8 @@
       "s": [ 6.2800000000000002 ]
     },
     "ToString": {
-      "a1": "Float64: 6.28",
-      "s": "Float64: 6.28"
+      "a1": "6.2800000000000002",
+      "s": "6.2800000000000002"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2570,8 +2570,8 @@
       "s": [ true ]
     },
     "ToString": {
-      "a1": "Bool8: true",
-      "s": "Bool8: true"
+      "a1": "0x1",
+      "s": "0x1"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2599,8 +2599,8 @@
       "s": [ true ]
     },
     "ToString": {
-      "a1": "Bool32: true",
-      "s": "Bool32: true"
+      "a1": "true",
+      "s": "true"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2628,8 +2628,8 @@
       "s5": [ "H", "o", "w", "A", "r" ]
     },
     "ToString": {
-      "a4": "Char8: H, o, w, A",
-      "s5": "Char8: H, o, w, A, r"
+      "a4": "H, o, w, A",
+      "s5": "H, o, w, A, r"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2657,8 +2657,8 @@
       "s5": [ "H", "o", "w", "A", "r" ]
     },
     "ToString": {
-      "a4": "Char16: H, o, w, A",
-      "s5": "Char16: H, o, w, A, r"
+      "a4": "H, o, w, A",
+      "s5": "H, o, w, A, r"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2686,8 +2686,8 @@
       "s5": [ "H", "o", "w", "A", "r" ]
     },
     "ToString": {
-      "a4": "Char32: H, o, w, A",
-      "s5": "Char32: H, o, w, A, r"
+      "a4": "H, o, w, A",
+      "s5": "H, o, w, A, r"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2715,8 +2715,8 @@
       "s5": [ "G", "o", "o", "d", "b" ]
     },
     "ToString": {
-      "a4": "Char32: G, o, o, d",
-      "s5": "Char32: G, o, o, d, b"
+      "a4": "G, o, o, d",
+      "s5": "G, o, o, d, b"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2744,8 +2744,8 @@
       "s": [ "0xFFFFFFFFFFFFCFC7" ]
     },
     "ToString": {
-      "a1": "Hex64: 0xFFFFFFFFFFFFCFC7",
-      "s": "Hex64: 0xFFFFFFFFFFFFCFC7"
+      "a1": "0xFFFFFFFFFFFFCFC7",
+      "s": "0xFFFFFFFFFFFFCFC7"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2773,8 +2773,8 @@
       "s": [ 2000000000 ]
     },
     "ToString": {
-      "a1": "Pid: 2000000000",
-      "s": "Pid: 2000000000"
+      "a1": "2000000000",
+      "s": "2000000000"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2802,8 +2802,8 @@
       "s": [ 24810 ]
     },
     "ToString": {
-      "a1": "Port: 24810",
-      "s": "Port: 24810"
+      "a1": "24810",
+      "s": "24810"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2831,8 +2831,8 @@
       "s": [ "ERRNO(2000000000)" ]
     },
     "ToString": {
-      "a1": "Errno: 2000000000",
-      "s": "Errno: 2000000000"
+      "a1": "ERRNO(2000000000)",
+      "s": "ERRNO(2000000000)"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2860,8 +2860,8 @@
       "s": [ "2033-05-18T03:33:20Z" ]
     },
     "ToString": {
-      "a1": "Time32: 2033-05-18T03:33:20Z",
-      "s": "Time32: 2033-05-18T03:33:20Z"
+      "a1": "2033-05-18T03:33:20Z",
+      "s": "2033-05-18T03:33:20Z"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2889,8 +2889,8 @@
       "s": [ "TIME(9000000000000000000)" ]
     },
     "ToString": {
-      "a1": "Time64: 9000000000000000000",
-      "s": "Time64: 9000000000000000000"
+      "a1": "TIME(9000000000000000000)",
+      "s": "TIME(9000000000000000000)"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2918,8 +2918,8 @@
       "s1": [ "01020304-0506-0708-0102-030405060708" ]
     },
     "ToString": {
-      "s0": "Guid: ",
-      "s1": "Guid: 01020304-0506-0708-0102-030405060708"
+      "s0": "",
+      "s1": "01020304-0506-0708-0102-030405060708"
     }
   },
   /* TestProviderC_L5K0 */
@@ -2947,8 +2947,8 @@
       "s1": [ "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08" ]
     },
     "ToString": {
-      "s0": "HexByte128: ",
-      "s1": "HexByte128: 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
+      "s0": "",
+      "s1": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3012,17 +3012,17 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "V8": "UInt8: 200",
-      "V16": "UInt16: 60000",
-      "V32": "UInt32: 4000000000",
-      "V64": "UInt64: 18000000000000000000",
-      "V128": "HexByte128: 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
-      "NChar8": "ZStringUtf8: hjkl",
-      "NChar16": "ZStringUtf16: hjkl",
-      "NChar32": "ZStringUtf32: hjkl",
-      "LChar8": "StringUtf8: hjkl",
-      "LChar16": "StringUtf16: hjkl",
-      "LChar32": "StringUtf32: hjkl"
+      "V8": "200",
+      "V16": "60000",
+      "V32": "4000000000",
+      "V64": "18000000000000000000",
+      "V128": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3086,17 +3086,17 @@
       "LChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
     },
     "ToString": {
-      "V8": "HexByte8: 01",
-      "V16": "HexByte16: 01 02",
-      "V32": "HexByte32: 01 02 03 04",
-      "V64": "HexByte64: 01 02 03 04 05 06 07 08",
-      "V128": "HexByte128: 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
-      "NChar8": "ZHexBytes8: 68 6A 6B 6C",
-      "NChar16": "ZHexBytes16: 68 00 6A 00 6B 00 6C 00",
-      "NChar32": "ZHexBytes32: 68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
-      "LChar8": "HexBytes8: 68 6A 6B 6C",
-      "LChar16": "HexBytes16: 68 00 6A 00 6B 00 6C 00",
-      "LChar32": "HexBytes32: 68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
+      "V8": "01",
+      "V16": "01 02",
+      "V32": "01 02 03 04",
+      "V64": "01 02 03 04 05 06 07 08",
+      "V128": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
+      "NChar8": "68 6A 6B 6C",
+      "NChar16": "68 00 6A 00 6B 00 6C 00",
+      "NChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
+      "LChar8": "68 6A 6B 6C",
+      "LChar16": "68 00 6A 00 6B 00 6C 00",
+      "LChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3132,10 +3132,10 @@
       "i16": "BOOL(30000)"
     },
     "ToString": {
-      "false16": "Bool16: false",
-      "true16": "Bool16: true",
-      "u16": "Bool16: 60000",
-      "i16": "Bool16: 30000"
+      "false16": "false",
+      "true16": "true",
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3179,12 +3179,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtf8: hjkl",
-      "NChar16": "ZStringUtf16: hjkl",
-      "NChar32": "ZStringUtf32: hjkl",
-      "LChar8": "StringUtf8: hjkl",
-      "LChar16": "StringUtf16: hjkl",
-      "LChar32": "StringUtf32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3228,12 +3228,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtfBom8: hjkl",
-      "NChar16": "ZStringUtfBom16: hjkl",
-      "NChar32": "ZStringUtfBom32: hjkl",
-      "LChar8": "StringUtfBom8: hjkl",
-      "LChar16": "StringUtfBom16: hjkl",
-      "LChar32": "StringUtfBom32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3277,12 +3277,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringXml8: hjkl",
-      "NChar16": "ZStringXml16: hjkl",
-      "NChar32": "ZStringXml32: hjkl",
-      "LChar8": "StringXml8: hjkl",
-      "LChar16": "StringXml16: hjkl",
-      "LChar32": "StringXml32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3326,12 +3326,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringJson8: hjkl",
-      "NChar16": "ZStringJson16: hjkl",
-      "NChar32": "ZStringJson32: hjkl",
-      "LChar8": "StringJson8: hjkl",
-      "LChar16": "StringJson16: hjkl",
-      "LChar32": "StringJson32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3375,12 +3375,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtfBom8: hjkl",
-      "NChar16": "ZStringUtfBom16: hjkl",
-      "NChar32": "ZStringUtfBom32: hjkl",
-      "LChar8": "StringUtfBom8: hjkl",
-      "LChar16": "StringUtfBom16: hjkl",
-      "LChar32": "StringUtfBom32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3424,12 +3424,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringXml8: hjkl",
-      "NChar16": "ZStringXml16: hjkl",
-      "NChar32": "ZStringXml32: hjkl",
-      "LChar8": "StringXml8: hjkl",
-      "LChar16": "StringXml16: hjkl",
-      "LChar32": "StringXml32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3473,12 +3473,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringJson8: hjkl",
-      "NChar16": "ZStringJson16: hjkl",
-      "NChar32": "ZStringJson32: hjkl",
-      "LChar8": "StringJson8: hjkl",
-      "LChar16": "StringJson16: hjkl",
-      "LChar32": "StringJson32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3522,12 +3522,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtfBom8: hjkl",
-      "NChar16": "ZStringUtfBom16: hjkl",
-      "NChar32": "ZStringUtfBom32: hjkl",
-      "LChar8": "StringUtfBom8: hjkl",
-      "LChar16": "StringUtfBom16: hjkl",
-      "LChar32": "StringUtfBom32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3571,12 +3571,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringXml8: hjkl",
-      "NChar16": "ZStringXml16: hjkl",
-      "NChar32": "ZStringXml32: hjkl",
-      "LChar8": "StringXml8: hjkl",
-      "LChar16": "StringXml16: hjkl",
-      "LChar32": "StringXml32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3620,12 +3620,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringJson8: hjkl",
-      "NChar16": "ZStringJson16: hjkl",
-      "NChar32": "ZStringJson32: hjkl",
-      "LChar8": "StringJson8: hjkl",
-      "LChar16": "StringJson16: hjkl",
-      "LChar32": "StringJson32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3685,20 +3685,20 @@
       "five": 5
     },
     "ToString": {
-      "five": "Int32: 5",
+      "five": "5",
       "Struct1": {
-        "NChar8": "ZStringUtf8: hjkl" },
+        "NChar8": "hjkl" },
       "StructArray": [ {
           "Struct2": {
-            "K": "Char8: A",
-            "NChar16": "ZHexBytes16: 68 00 6A 00 6B 00 6C 00" } }, {
+            "K": "A",
+            "NChar16": "68 00 6A 00 6B 00 6C 00" } }, {
           "Struct2": {
-            "K": "Char8: B",
-            "NChar16": "ZHexBytes16: FF FE 68 00 6A 00 6B 00 6C 00" } }, {
+            "K": "B",
+            "NChar16": "FF FE 68 00 6A 00 6B 00 6C 00" } }, {
           "Struct2": {
-            "K": "Char8: C",
-            "NChar16": "ZHexBytes16: FE FF 00 68 00 6A 00 6B 00 6C" } } ],
-      "five": "Int32: 5"
+            "K": "C",
+            "NChar16": "FE FF 00 68 00 6A 00 6B 00 6C" } } ],
+      "five": "5"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3740,11 +3740,11 @@
       "five": 5
     },
     "ToString": {
-      "five": "Int32: 5",
+      "five": "5",
       "Struct1": {
-        "NChar8": "ZStringUtf8: hjkl" },
+        "NChar8": "hjkl" },
       "StructArray": [ ],
-      "five": "Int32: 5"
+      "five": "5"
     }
   },
   /* TestProviderC_L5K0 */
@@ -3776,9 +3776,9 @@
       "five": 5
     },
     "ToString": {
-      "five": "Int32: 5",
-      "MyStrings3": [ "ZStringUtf8: ABC" "ZStringUtf8: " "ZStringUtf8: XYZ" ],
-      "five": "Int32: 5"
+      "five": "5",
+      "MyStrings3": [ "ABC" "" "XYZ" ],
+      "five": "5"
     }
   },
   /* TestProviderC_L5K0Gmsft */
@@ -3802,7 +3802,7 @@
       "enabled": true
     },
     "ToString": {
-      "enabled": "Bool8: true"
+      "enabled": "true"
     }
   },
   /* TestProviderCpp_L5K0Gmsft */
@@ -3826,7 +3826,7 @@
       "enabled": true
     },
     "ToString": {
-      "enabled": "Bool8: true"
+      "enabled": "true"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -3895,8 +3895,8 @@
     },
     "ToString": {
       "Struct20;tag=0xBEEF": {
-        "hi;tag=0x12": "ZString8: hi",
-        "ch10;tag=0x10": "Char8: H, o, w" }
+        "hi;tag=0x12": "hi",
+        "ch10;tag=0x10": "H, o, w" }
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -3981,8 +3981,8 @@
       "(-128)": -128
     },
     "ToString": {
-      "i8": "Int8: 100",
-      "(-128)": "Int8: -128"
+      "i8": "100",
+      "(-128)": "-128"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4010,8 +4010,8 @@
       "(255)": 255
     },
     "ToString": {
-      "u8": "UInt8: 200",
-      "(255)": "UInt8: 255"
+      "u8": "200",
+      "(255)": "255"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4039,8 +4039,8 @@
       "(-32767-1)": -32768
     },
     "ToString": {
-      "i16": "Int16: 30000",
-      "(-32767-1)": "Int16: -32768"
+      "i16": "30000",
+      "(-32767-1)": "-32768"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4068,8 +4068,8 @@
       "(65535)": 65535
     },
     "ToString": {
-      "u16": "UInt16: 60000",
-      "(65535)": "UInt16: 65535"
+      "u16": "60000",
+      "(65535)": "65535"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4097,8 +4097,8 @@
       "(-2147483647-1)": -2147483648
     },
     "ToString": {
-      "i32": "Int32: 2000000000",
-      "(-2147483647-1)": "Int32: -2147483648"
+      "i32": "2000000000",
+      "(-2147483647-1)": "-2147483648"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4126,8 +4126,8 @@
       "(4294967295U)": 4294967295
     },
     "ToString": {
-      "u32": "UInt32: 4000000000",
-      "(4294967295U)": "UInt32: 4294967295"
+      "u32": "4000000000",
+      "(4294967295U)": "4294967295"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4155,8 +4155,8 @@
       "(-9223372036854775807L-1)": -9223372036854775808
     },
     "ToString": {
-      "i64": "Int64: 9000000000000000000",
-      "(-9223372036854775807L-1)": "Int64: -9223372036854775808"
+      "i64": "9000000000000000000",
+      "(-9223372036854775807L-1)": "-9223372036854775808"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4184,8 +4184,8 @@
       "(18446744073709551615UL)": 18446744073709551615
     },
     "ToString": {
-      "u64": "UInt64: 18000000000000000000",
-      "(18446744073709551615UL)": "UInt64: 18446744073709551615"
+      "u64": "18000000000000000000",
+      "(18446744073709551615UL)": "18446744073709551615"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4213,8 +4213,8 @@
       "(-9223372036854775807L-1)": -9223372036854775808
     },
     "ToString": {
-      "iptr": "Int64: 1234",
-      "(-9223372036854775807L-1)": "Int64: -9223372036854775808"
+      "iptr": "1234",
+      "(-9223372036854775807L-1)": "-9223372036854775808"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4242,8 +4242,8 @@
       "(18446744073709551615UL)": 18446744073709551615
     },
     "ToString": {
-      "uptr": "UInt64: 4321",
-      "(18446744073709551615UL)": "UInt64: 18446744073709551615"
+      "uptr": "4321",
+      "(18446744073709551615UL)": "18446744073709551615"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4271,8 +4271,8 @@
       "(-0x7fffffffffffffffL - 1L)": -9223372036854775808
     },
     "ToString": {
-      "iL": "Int64: 2000000000",
-      "(-0x7fffffffffffffffL - 1L)": "Int64: -9223372036854775808"
+      "iL": "2000000000",
+      "(-0x7fffffffffffffffL - 1L)": "-9223372036854775808"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4300,8 +4300,8 @@
       "(0x7fffffffffffffffL * 2UL + 1UL)": 18446744073709551615
     },
     "ToString": {
-      "uL": "UInt64: 4000000000",
-      "(0x7fffffffffffffffL * 2UL + 1UL)": "UInt64: 18446744073709551615"
+      "uL": "4000000000",
+      "(0x7fffffffffffffffL * 2UL + 1UL)": "18446744073709551615"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4329,8 +4329,8 @@
       "(-128)": "0x80"
     },
     "ToString": {
-      "i8": "Hex8: 0x64",
-      "(-128)": "Hex8: 0x80"
+      "i8": "0x64",
+      "(-128)": "0x80"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4358,8 +4358,8 @@
       "(255)": "0xFF"
     },
     "ToString": {
-      "u8": "Hex8: 0xC8",
-      "(255)": "Hex8: 0xFF"
+      "u8": "0xC8",
+      "(255)": "0xFF"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4387,8 +4387,8 @@
       "(-32767-1)": "0x8000"
     },
     "ToString": {
-      "i16": "Hex16: 0x7530",
-      "(-32767-1)": "Hex16: 0x8000"
+      "i16": "0x7530",
+      "(-32767-1)": "0x8000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4416,8 +4416,8 @@
       "(65535)": "0xFFFF"
     },
     "ToString": {
-      "u16": "Hex16: 0xEA60",
-      "(65535)": "Hex16: 0xFFFF"
+      "u16": "0xEA60",
+      "(65535)": "0xFFFF"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4445,8 +4445,8 @@
       "(-2147483647-1)": "0x80000000"
     },
     "ToString": {
-      "i32": "Hex32: 0x77359400",
-      "(-2147483647-1)": "Hex32: 0x80000000"
+      "i32": "0x77359400",
+      "(-2147483647-1)": "0x80000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4474,8 +4474,8 @@
       "(4294967295U)": "0xFFFFFFFF"
     },
     "ToString": {
-      "u32": "Hex32: 0xEE6B2800",
-      "(4294967295U)": "Hex32: 0xFFFFFFFF"
+      "u32": "0xEE6B2800",
+      "(4294967295U)": "0xFFFFFFFF"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4503,8 +4503,8 @@
       "(-9223372036854775807L-1)": "0x8000000000000000"
     },
     "ToString": {
-      "i64": "Hex64: 0x7CE66C50E2840000",
-      "(-9223372036854775807L-1)": "Hex64: 0x8000000000000000"
+      "i64": "0x7CE66C50E2840000",
+      "(-9223372036854775807L-1)": "0x8000000000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4532,8 +4532,8 @@
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "u64": "Hex64: 0xF9CCD8A1C5080000",
-      "(18446744073709551615UL)": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "u64": "0xF9CCD8A1C5080000",
+      "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4561,8 +4561,8 @@
       "(-9223372036854775807L-1)": "0x8000000000000000"
     },
     "ToString": {
-      "iptr": "Hex64: 0x4D2",
-      "(-9223372036854775807L-1)": "Hex64: 0x8000000000000000"
+      "iptr": "0x4D2",
+      "(-9223372036854775807L-1)": "0x8000000000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4590,8 +4590,8 @@
       "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "uptr": "Hex64: 0x10E1",
-      "(18446744073709551615UL)": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "uptr": "0x10E1",
+      "(18446744073709551615UL)": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4619,8 +4619,8 @@
       "(-0x7fffffffffffffffL - 1L)": "0x8000000000000000"
     },
     "ToString": {
-      "iL": "Hex64: 0x77359400",
-      "(-0x7fffffffffffffffL - 1L)": "Hex64: 0x8000000000000000"
+      "iL": "0x77359400",
+      "(-0x7fffffffffffffffL - 1L)": "0x8000000000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4648,8 +4648,8 @@
       "(0x7fffffffffffffffL * 2UL + 1UL)": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "uL": "Hex64: 0xEE6B2800",
-      "(0x7fffffffffffffffL * 2UL + 1UL)": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "uL": "0xEE6B2800",
+      "(0x7fffffffffffffffL * 2UL + 1UL)": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4685,10 +4685,10 @@
       "-Inf": "-Infinity"
     },
     "ToString": {
-      "f32": "Float32: 3.14",
-      "1/3": "Float32: 0.33333334",
-      "NaN": "Float32: NaN",
-      "-Inf": "Float32: -Infinity"
+      "f32": "3.1400001",
+      "1/3": "0.333333343",
+      "NaN": "NaN",
+      "-Inf": "-Infinity"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4724,10 +4724,10 @@
       "-Inf": "-Infinity"
     },
     "ToString": {
-      "f64": "Float64: 6.28",
-      "1/3": "Float64: 0.3333333333333333",
-      "NaN": "Float64: NaN",
-      "-Inf": "Float64: -Infinity"
+      "f64": "6.2800000000000002",
+      "1/3": "0.33333333333333331",
+      "NaN": "NaN",
+      "-Inf": "-Infinity"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4759,9 +4759,9 @@
       "(255)": "BOOL(255)"
     },
     "ToString": {
-      "b0": "Bool8: false",
-      "b1": "Bool8: true",
-      "(255)": "Bool8: 255"
+      "b0": "false",
+      "b1": "true",
+      "(255)": "BOOL(255)"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4793,9 +4793,9 @@
       "(-2147483647-1)": "BOOL(-2147483648)"
     },
     "ToString": {
-      "b0": "Bool32: false",
-      "b1": "Bool32: true",
-      "(-2147483647-1)": "Bool32: -2147483648"
+      "b0": "false",
+      "b1": "true",
+      "(-2147483647-1)": "BOOL(-2147483648)"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4823,8 +4823,8 @@
       "FE": "þ"
     },
     "ToString": {
-      "ch": "Char8: A",
-      "FE": "Char8: þ"
+      "ch": "A",
+      "FE": "þ"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4852,8 +4852,8 @@
       "FFFE": "￾"
     },
     "ToString": {
-      "u16ch": "Char16: A",
-      "FFFE": "Char16: ￾"
+      "u16ch": "A",
+      "FFFE": "￾"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4889,10 +4889,10 @@
       "FFFEFDFC": "�"
     },
     "ToString": {
-      "u32ch": "Char32: A",
-      "FFFE": "Char32: ￾",
-      "10FFFF": "Char32: 􏿿",
-      "FFFEFDFC": "Char32: �"
+      "u32ch": "A",
+      "FFFE": "￾",
+      "10FFFF": "􏿿",
+      "FFFEFDFC": "�"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4928,10 +4928,10 @@
       "0x7fffffff": "�"
     },
     "ToString": {
-      "wch": "Char32: B",
-      "FFFE": "Char32: ￾",
-      "10FFFF": "Char32: 􏿿",
-      "0x7fffffff": "Char32: �"
+      "wch": "B",
+      "FFFE": "￾",
+      "10FFFF": "􏿿",
+      "0x7fffffff": "�"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4959,8 +4959,8 @@
       "UINTPTR_MAX": "0xFFFFFFFFFFFFFFFF"
     },
     "ToString": {
-      "pSamplePtr": "Hex64: 0xFFFFFFFFFFFFCFC7",
-      "UINTPTR_MAX": "Hex64: 0xFFFFFFFFFFFFFFFF"
+      "pSamplePtr": "0xFFFFFFFFFFFFCFC7",
+      "UINTPTR_MAX": "0xFFFFFFFFFFFFFFFF"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -4988,8 +4988,8 @@
       "(2147483647)": 2147483647
     },
     "ToString": {
-      "i32": "Pid: 2000000000",
-      "(2147483647)": "Pid: 2147483647"
+      "i32": "2000000000",
+      "(2147483647)": "2147483647"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5017,8 +5017,8 @@
       "(65535)": 65535
     },
     "ToString": {
-      "port80": "Port: 80",
-      "(65535)": "Port: 65535"
+      "port80": "80",
+      "(65535)": "65535"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5050,9 +5050,9 @@
       "131": "ENOTRECOVERABLE(131)"
     },
     "ToString": {
-      "(-2147483647-1)": "Errno: -2147483648",
-      "1": "Errno: EPERM(1)",
-      "131": "Errno: ENOTRECOVERABLE(131)"
+      "(-2147483647-1)": "ERRNO(-2147483648)",
+      "1": "EPERM(1)",
+      "131": "ENOTRECOVERABLE(131)"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5088,10 +5088,10 @@
       "0": "1970-01-01T00:00:00Z"
     },
     "ToString": {
-      "i32": "Time32: 2033-05-18T03:33:20Z",
-      "(-2147483647-1)": "Time32: 1901-12-13T20:45:52Z",
-      "(2147483647)": "Time32: 2038-01-19T03:14:07Z",
-      "0": "Time32: 1970-01-01T00:00:00Z"
+      "i32": "2033-05-18T03:33:20Z",
+      "(-2147483647-1)": "1901-12-13T20:45:52Z",
+      "(2147483647)": "2038-01-19T03:14:07Z",
+      "0": "1970-01-01T00:00:00Z"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5143,14 +5143,14 @@
       "910692730086": "TIME(910692730086)"
     },
     "ToString": {
-      "i64": "Time64: 9000000000000000000",
-      "(-9223372036854775807L-1)": "Time64: -9223372036854775808",
-      "(9223372036854775807L)": "Time64: 9223372036854775807",
-      "0": "Time64: 1970-01-01T00:00:00Z",
-      "-11644473600": "Time64: 1601-01-01T00:00:00Z",
-      "-11644473601": "Time64: 1600-12-31T23:59:59Z",
-      "910692730085": "Time64: 910692730085",
-      "910692730086": "Time64: 910692730086"
+      "i64": "TIME(9000000000000000000)",
+      "(-9223372036854775807L-1)": "TIME(-9223372036854775808)",
+      "(9223372036854775807L)": "TIME(9223372036854775807)",
+      "0": "1970-01-01T00:00:00Z",
+      "-11644473600": "1601-01-01T00:00:00Z",
+      "-11644473601": "1600-12-31T23:59:59Z",
+      "910692730085": "TIME(910692730085)",
+      "910692730086": "TIME(910692730086)"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5174,7 +5174,7 @@
       "guid": "01020304-0506-0708-0102-030405060708"
     },
     "ToString": {
-      "guid": "Guid: 01020304-0506-0708-0102-030405060708"
+      "guid": "01020304-0506-0708-0102-030405060708"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5202,8 +5202,8 @@
       "ch10": "HowAreU8?"
     },
     "ToString": {
-      "NULL": "ZString8: ",
-      "ch10": "ZString8: HowAreU8?"
+      "NULL": "",
+      "ch10": "HowAreU8?"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5231,8 +5231,8 @@
       "ch10": "HowAreU8?"
     },
     "ToString": {
-      "NULL": "ZStringUtf8: ",
-      "ch10": "ZStringUtf8: HowAreU8?"
+      "NULL": "",
+      "ch10": "HowAreU8?"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5260,8 +5260,8 @@
       "wch10": "Goodbye!!"
     },
     "ToString": {
-      "NULL": "ZStringUtf32: ",
-      "wch10": "ZStringUtf32: Goodbye!!"
+      "NULL": "",
+      "wch10": "Goodbye!!"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5289,8 +5289,8 @@
       "u16ch10": "HowAreU16"
     },
     "ToString": {
-      "NULL": "ZStringUtf16: ",
-      "u16ch10": "ZStringUtf16: HowAreU16"
+      "NULL": "",
+      "u16ch10": "HowAreU16"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5318,8 +5318,8 @@
       "u32ch10": "HowAreU32"
     },
     "ToString": {
-      "NULL": "ZStringUtf32: ",
-      "u32ch10": "ZStringUtf32: HowAreU32"
+      "NULL": "",
+      "u32ch10": "HowAreU32"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5347,8 +5347,8 @@
       "ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "String8: ",
-      "ch10": "String8: HowAr"
+      "NULL": "",
+      "ch10": "HowAr"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5376,8 +5376,8 @@
       "ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "StringUtf8: ",
-      "ch10": "StringUtf8: HowAr"
+      "NULL": "",
+      "ch10": "HowAr"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5405,8 +5405,8 @@
       "wch10": "Goodb"
     },
     "ToString": {
-      "NULL": "StringUtf32: ",
-      "wch10": "StringUtf32: Goodb"
+      "NULL": "",
+      "wch10": "Goodb"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5434,8 +5434,8 @@
       "u16ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "StringUtf16: ",
-      "u16ch10": "StringUtf16: HowAr"
+      "NULL": "",
+      "u16ch10": "HowAr"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5463,8 +5463,8 @@
       "u32ch10": "HowAr"
     },
     "ToString": {
-      "NULL": "StringUtf32: ",
-      "u32ch10": "StringUtf32: HowAr"
+      "NULL": "",
+      "u32ch10": "HowAr"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5492,15 +5492,15 @@
       "ch10": "48 6F 77 41 72"
     },
     "ToString": {
-      "NULL": "HexBytes8: ",
-      "ch10": "HexBytes8: 48 6F 77 41 72"
+      "NULL": "",
+      "ch10": "48 6F 77 41 72"
     }
   },
   /* TestProviderCpp_L5K0 */
   {
     "MoveNextMetadata": {
-      "ipv4": { "Encoding": "Value32", "Format": "IPv4" },
-      "(4294967295U)": { "Encoding": "Value32", "Format": "IPv4" }
+      "ipv4": { "Encoding": "Value32", "Format": "IPAddress" },
+      "(4294967295U)": { "Encoding": "Value32", "Format": "IPAddress" }
     },
     "AppendJsonItemN": {
       "n": "TestProviderCpp:ipV4",
@@ -5521,15 +5521,15 @@
       "(4294967295U)": "255.255.255.255"
     },
     "ToString": {
-      "ipv4": "IPv4: 127.0.0.1",
-      "(4294967295U)": "IPv4: 255.255.255.255"
+      "ipv4": "127.0.0.1",
+      "(4294967295U)": "255.255.255.255"
     }
   },
   /* TestProviderCpp_L5K0 */
   {
     "MoveNextMetadata": {
-      "ipv6": { "Encoding": "Value128", "Format": "IPv6" },
-      "fefe..fe00": { "Encoding": "Value128", "Format": "IPv6" }
+      "ipv6": { "Encoding": "Value128", "Format": "IPAddressObsolete" },
+      "fefe..fe00": { "Encoding": "Value128", "Format": "IPAddressObsolete" }
     },
     "AppendJsonItemN": {
       "n": "TestProviderCpp:ipV6",
@@ -5550,8 +5550,8 @@
       "fefe..fe00": "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
     },
     "ToString": {
-      "ipv6": "IPv6: 102:304:506:708:90a:b0c:d0e:f10",
-      "fefe..fe00": "IPv6: fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
+      "ipv6": "102:304:506:708:90a:b0c:d0e:f10",
+      "fefe..fe00": "fefe:fefe:fefe:fefe:fefe:fefe:fefe:fe00"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5579,8 +5579,8 @@
       "s": [ 100 ]
     },
     "ToString": {
-      "a1": "Int8: 100",
-      "s": "Int8: 100"
+      "a1": "100",
+      "s": "100"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5608,8 +5608,8 @@
       "s": [ 200 ]
     },
     "ToString": {
-      "a1": "UInt8: 200",
-      "s": "UInt8: 200"
+      "a1": "200",
+      "s": "200"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5637,8 +5637,8 @@
       "s": [ 30000 ]
     },
     "ToString": {
-      "a1": "Int16: 30000",
-      "s": "Int16: 30000"
+      "a1": "30000",
+      "s": "30000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5666,8 +5666,8 @@
       "s": [ 60000 ]
     },
     "ToString": {
-      "a1": "UInt16: 60000",
-      "s": "UInt16: 60000"
+      "a1": "60000",
+      "s": "60000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5695,8 +5695,8 @@
       "s": [ 2000000000 ]
     },
     "ToString": {
-      "a1": "Int32: 2000000000",
-      "s": "Int32: 2000000000"
+      "a1": "2000000000",
+      "s": "2000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5724,8 +5724,8 @@
       "s": [ 4000000000 ]
     },
     "ToString": {
-      "a1": "UInt32: 4000000000",
-      "s": "UInt32: 4000000000"
+      "a1": "4000000000",
+      "s": "4000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5753,8 +5753,8 @@
       "s": [ 9000000000000000000 ]
     },
     "ToString": {
-      "a1": "Int64: 9000000000000000000",
-      "s": "Int64: 9000000000000000000"
+      "a1": "9000000000000000000",
+      "s": "9000000000000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5782,8 +5782,8 @@
       "s": [ 18000000000000000000 ]
     },
     "ToString": {
-      "a1": "UInt64: 18000000000000000000",
-      "s": "UInt64: 18000000000000000000"
+      "a1": "18000000000000000000",
+      "s": "18000000000000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5811,8 +5811,8 @@
       "s": [ 1234 ]
     },
     "ToString": {
-      "a1": "Int64: 1234",
-      "s": "Int64: 1234"
+      "a1": "1234",
+      "s": "1234"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5840,8 +5840,8 @@
       "s": [ 4321 ]
     },
     "ToString": {
-      "a1": "UInt64: 4321",
-      "s": "UInt64: 4321"
+      "a1": "4321",
+      "s": "4321"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5869,8 +5869,8 @@
       "s": [ 2000000000 ]
     },
     "ToString": {
-      "a1": "Int64: 2000000000",
-      "s": "Int64: 2000000000"
+      "a1": "2000000000",
+      "s": "2000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5898,8 +5898,8 @@
       "s": [ 4000000000 ]
     },
     "ToString": {
-      "a1": "UInt64: 4000000000",
-      "s": "UInt64: 4000000000"
+      "a1": "4000000000",
+      "s": "4000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5927,8 +5927,8 @@
       "s": [ "0x64" ]
     },
     "ToString": {
-      "a1": "Hex8: 0x64",
-      "s": "Hex8: 0x64"
+      "a1": "0x64",
+      "s": "0x64"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5956,8 +5956,8 @@
       "s": [ "0xC8" ]
     },
     "ToString": {
-      "a1": "Hex8: 0xC8",
-      "s": "Hex8: 0xC8"
+      "a1": "0xC8",
+      "s": "0xC8"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -5985,8 +5985,8 @@
       "s": [ "0x7530" ]
     },
     "ToString": {
-      "a1": "Hex16: 0x7530",
-      "s": "Hex16: 0x7530"
+      "a1": "0x7530",
+      "s": "0x7530"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6014,8 +6014,8 @@
       "s": [ "0xEA60" ]
     },
     "ToString": {
-      "a1": "Hex16: 0xEA60",
-      "s": "Hex16: 0xEA60"
+      "a1": "0xEA60",
+      "s": "0xEA60"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6043,8 +6043,8 @@
       "s": [ "0x77359400" ]
     },
     "ToString": {
-      "a1": "Hex32: 0x77359400",
-      "s": "Hex32: 0x77359400"
+      "a1": "0x77359400",
+      "s": "0x77359400"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6072,8 +6072,8 @@
       "s": [ "0xEE6B2800" ]
     },
     "ToString": {
-      "a1": "Hex32: 0xEE6B2800",
-      "s": "Hex32: 0xEE6B2800"
+      "a1": "0xEE6B2800",
+      "s": "0xEE6B2800"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6101,8 +6101,8 @@
       "s": [ "0x7CE66C50E2840000" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x7CE66C50E2840000",
-      "s": "Hex64: 0x7CE66C50E2840000"
+      "a1": "0x7CE66C50E2840000",
+      "s": "0x7CE66C50E2840000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6130,8 +6130,8 @@
       "s": [ "0xF9CCD8A1C5080000" ]
     },
     "ToString": {
-      "a1": "Hex64: 0xF9CCD8A1C5080000",
-      "s": "Hex64: 0xF9CCD8A1C5080000"
+      "a1": "0xF9CCD8A1C5080000",
+      "s": "0xF9CCD8A1C5080000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6159,8 +6159,8 @@
       "s": [ "0x4D2" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x4D2",
-      "s": "Hex64: 0x4D2"
+      "a1": "0x4D2",
+      "s": "0x4D2"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6188,8 +6188,8 @@
       "s": [ "0x10E1" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x10E1",
-      "s": "Hex64: 0x10E1"
+      "a1": "0x10E1",
+      "s": "0x10E1"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6217,8 +6217,8 @@
       "s": [ "0x77359400" ]
     },
     "ToString": {
-      "a1": "Hex64: 0x77359400",
-      "s": "Hex64: 0x77359400"
+      "a1": "0x77359400",
+      "s": "0x77359400"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6246,8 +6246,8 @@
       "s": [ "0xEE6B2800" ]
     },
     "ToString": {
-      "a1": "Hex64: 0xEE6B2800",
-      "s": "Hex64: 0xEE6B2800"
+      "a1": "0xEE6B2800",
+      "s": "0xEE6B2800"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6275,8 +6275,8 @@
       "s": [ 3.1400001 ]
     },
     "ToString": {
-      "a1": "Float32: 3.14",
-      "s": "Float32: 3.14"
+      "a1": "3.1400001",
+      "s": "3.1400001"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6304,8 +6304,8 @@
       "s": [ 6.2800000000000002 ]
     },
     "ToString": {
-      "a1": "Float64: 6.28",
-      "s": "Float64: 6.28"
+      "a1": "6.2800000000000002",
+      "s": "6.2800000000000002"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6333,8 +6333,8 @@
       "s": [ true ]
     },
     "ToString": {
-      "a1": "Bool8: true",
-      "s": "Bool8: true"
+      "a1": "0x1",
+      "s": "0x1"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6362,8 +6362,8 @@
       "s": [ true ]
     },
     "ToString": {
-      "a1": "Bool32: true",
-      "s": "Bool32: true"
+      "a1": "true",
+      "s": "true"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6391,8 +6391,8 @@
       "s5": [ "H", "o", "w", "A", "r" ]
     },
     "ToString": {
-      "a4": "Char8: H, o, w, A",
-      "s5": "Char8: H, o, w, A, r"
+      "a4": "H, o, w, A",
+      "s5": "H, o, w, A, r"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6420,8 +6420,8 @@
       "s5": [ "H", "o", "w", "A", "r" ]
     },
     "ToString": {
-      "a4": "Char16: H, o, w, A",
-      "s5": "Char16: H, o, w, A, r"
+      "a4": "H, o, w, A",
+      "s5": "H, o, w, A, r"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6449,8 +6449,8 @@
       "s5": [ "H", "o", "w", "A", "r" ]
     },
     "ToString": {
-      "a4": "Char32: H, o, w, A",
-      "s5": "Char32: H, o, w, A, r"
+      "a4": "H, o, w, A",
+      "s5": "H, o, w, A, r"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6478,8 +6478,8 @@
       "s5": [ "G", "o", "o", "d", "b" ]
     },
     "ToString": {
-      "a4": "Char32: G, o, o, d",
-      "s5": "Char32: G, o, o, d, b"
+      "a4": "G, o, o, d",
+      "s5": "G, o, o, d, b"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6507,8 +6507,8 @@
       "s": [ "0xFFFFFFFFFFFFCFC7" ]
     },
     "ToString": {
-      "a1": "Hex64: 0xFFFFFFFFFFFFCFC7",
-      "s": "Hex64: 0xFFFFFFFFFFFFCFC7"
+      "a1": "0xFFFFFFFFFFFFCFC7",
+      "s": "0xFFFFFFFFFFFFCFC7"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6536,8 +6536,8 @@
       "s": [ 2000000000 ]
     },
     "ToString": {
-      "a1": "Pid: 2000000000",
-      "s": "Pid: 2000000000"
+      "a1": "2000000000",
+      "s": "2000000000"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6565,8 +6565,8 @@
       "s": [ 24810 ]
     },
     "ToString": {
-      "a1": "Port: 24810",
-      "s": "Port: 24810"
+      "a1": "24810",
+      "s": "24810"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6594,8 +6594,8 @@
       "s": [ "ERRNO(2000000000)" ]
     },
     "ToString": {
-      "a1": "Errno: 2000000000",
-      "s": "Errno: 2000000000"
+      "a1": "ERRNO(2000000000)",
+      "s": "ERRNO(2000000000)"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6623,8 +6623,8 @@
       "s": [ "2033-05-18T03:33:20Z" ]
     },
     "ToString": {
-      "a1": "Time32: 2033-05-18T03:33:20Z",
-      "s": "Time32: 2033-05-18T03:33:20Z"
+      "a1": "2033-05-18T03:33:20Z",
+      "s": "2033-05-18T03:33:20Z"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6652,8 +6652,8 @@
       "s": [ "TIME(9000000000000000000)" ]
     },
     "ToString": {
-      "a1": "Time64: 9000000000000000000",
-      "s": "Time64: 9000000000000000000"
+      "a1": "TIME(9000000000000000000)",
+      "s": "TIME(9000000000000000000)"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6681,8 +6681,8 @@
       "s1": [ "01020304-0506-0708-0102-030405060708" ]
     },
     "ToString": {
-      "s0": "Guid: ",
-      "s1": "Guid: 01020304-0506-0708-0102-030405060708"
+      "s0": "",
+      "s1": "01020304-0506-0708-0102-030405060708"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6710,8 +6710,8 @@
       "s1": [ "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08" ]
     },
     "ToString": {
-      "s0": "HexByte128: ",
-      "s1": "HexByte128: 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
+      "s0": "",
+      "s1": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6775,17 +6775,17 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "V8": "UInt8: 200",
-      "V16": "UInt16: 60000",
-      "V32": "UInt32: 4000000000",
-      "V64": "UInt64: 18000000000000000000",
-      "V128": "HexByte128: 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
-      "NChar8": "ZStringUtf8: hjkl",
-      "NChar16": "ZStringUtf16: hjkl",
-      "NChar32": "ZStringUtf32: hjkl",
-      "LChar8": "StringUtf8: hjkl",
-      "LChar16": "StringUtf16: hjkl",
-      "LChar32": "StringUtf32: hjkl"
+      "V8": "200",
+      "V16": "60000",
+      "V32": "4000000000",
+      "V64": "18000000000000000000",
+      "V128": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6849,17 +6849,17 @@
       "LChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
     },
     "ToString": {
-      "V8": "HexByte8: 01",
-      "V16": "HexByte16: 01 02",
-      "V32": "HexByte32: 01 02 03 04",
-      "V64": "HexByte64: 01 02 03 04 05 06 07 08",
-      "V128": "HexByte128: 01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
-      "NChar8": "ZHexBytes8: 68 6A 6B 6C",
-      "NChar16": "ZHexBytes16: 68 00 6A 00 6B 00 6C 00",
-      "NChar32": "ZHexBytes32: 68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
-      "LChar8": "HexBytes8: 68 6A 6B 6C",
-      "LChar16": "HexBytes16: 68 00 6A 00 6B 00 6C 00",
-      "LChar32": "HexBytes32: 68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
+      "V8": "01",
+      "V16": "01 02",
+      "V32": "01 02 03 04",
+      "V64": "01 02 03 04 05 06 07 08",
+      "V128": "01 02 03 04 05 06 07 08 01 02 03 04 05 06 07 08",
+      "NChar8": "68 6A 6B 6C",
+      "NChar16": "68 00 6A 00 6B 00 6C 00",
+      "NChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00",
+      "LChar8": "68 6A 6B 6C",
+      "LChar16": "68 00 6A 00 6B 00 6C 00",
+      "LChar32": "68 00 00 00 6A 00 00 00 6B 00 00 00 6C 00 00 00"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6895,10 +6895,10 @@
       "i16": "BOOL(30000)"
     },
     "ToString": {
-      "false16": "Bool16: false",
-      "true16": "Bool16: true",
-      "u16": "Bool16: 60000",
-      "i16": "Bool16: 30000"
+      "false16": "false",
+      "true16": "true",
+      "u16": "BOOL(60000)",
+      "i16": "BOOL(30000)"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6942,12 +6942,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtf8: hjkl",
-      "NChar16": "ZStringUtf16: hjkl",
-      "NChar32": "ZStringUtf32: hjkl",
-      "LChar8": "StringUtf8: hjkl",
-      "LChar16": "StringUtf16: hjkl",
-      "LChar32": "StringUtf32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -6991,12 +6991,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtfBom8: hjkl",
-      "NChar16": "ZStringUtfBom16: hjkl",
-      "NChar32": "ZStringUtfBom32: hjkl",
-      "LChar8": "StringUtfBom8: hjkl",
-      "LChar16": "StringUtfBom16: hjkl",
-      "LChar32": "StringUtfBom32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7040,12 +7040,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringXml8: hjkl",
-      "NChar16": "ZStringXml16: hjkl",
-      "NChar32": "ZStringXml32: hjkl",
-      "LChar8": "StringXml8: hjkl",
-      "LChar16": "StringXml16: hjkl",
-      "LChar32": "StringXml32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7089,12 +7089,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringJson8: hjkl",
-      "NChar16": "ZStringJson16: hjkl",
-      "NChar32": "ZStringJson32: hjkl",
-      "LChar8": "StringJson8: hjkl",
-      "LChar16": "StringJson16: hjkl",
-      "LChar32": "StringJson32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7138,12 +7138,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtfBom8: hjkl",
-      "NChar16": "ZStringUtfBom16: hjkl",
-      "NChar32": "ZStringUtfBom32: hjkl",
-      "LChar8": "StringUtfBom8: hjkl",
-      "LChar16": "StringUtfBom16: hjkl",
-      "LChar32": "StringUtfBom32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7187,12 +7187,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringXml8: hjkl",
-      "NChar16": "ZStringXml16: hjkl",
-      "NChar32": "ZStringXml32: hjkl",
-      "LChar8": "StringXml8: hjkl",
-      "LChar16": "StringXml16: hjkl",
-      "LChar32": "StringXml32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7236,12 +7236,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringJson8: hjkl",
-      "NChar16": "ZStringJson16: hjkl",
-      "NChar32": "ZStringJson32: hjkl",
-      "LChar8": "StringJson8: hjkl",
-      "LChar16": "StringJson16: hjkl",
-      "LChar32": "StringJson32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7285,12 +7285,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringUtfBom8: hjkl",
-      "NChar16": "ZStringUtfBom16: hjkl",
-      "NChar32": "ZStringUtfBom32: hjkl",
-      "LChar8": "StringUtfBom8: hjkl",
-      "LChar16": "StringUtfBom16: hjkl",
-      "LChar32": "StringUtfBom32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7334,12 +7334,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringXml8: hjkl",
-      "NChar16": "ZStringXml16: hjkl",
-      "NChar32": "ZStringXml32: hjkl",
-      "LChar8": "StringXml8: hjkl",
-      "LChar16": "StringXml16: hjkl",
-      "LChar32": "StringXml32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7383,12 +7383,12 @@
       "LChar32": "hjkl"
     },
     "ToString": {
-      "NChar8": "ZStringJson8: hjkl",
-      "NChar16": "ZStringJson16: hjkl",
-      "NChar32": "ZStringJson32: hjkl",
-      "LChar8": "StringJson8: hjkl",
-      "LChar16": "StringJson16: hjkl",
-      "LChar32": "StringJson32: hjkl"
+      "NChar8": "hjkl",
+      "NChar16": "hjkl",
+      "NChar32": "hjkl",
+      "LChar8": "hjkl",
+      "LChar16": "hjkl",
+      "LChar32": "hjkl"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7448,20 +7448,20 @@
       "five": 5
     },
     "ToString": {
-      "five": "Int32: 5",
+      "five": "5",
       "Struct1": {
-        "NChar8": "ZStringUtf8: hjkl" },
+        "NChar8": "hjkl" },
       "StructArray": [ {
           "Struct2": {
-            "K": "Char8: A",
-            "NChar16": "ZHexBytes16: 68 00 6A 00 6B 00 6C 00" } }, {
+            "K": "A",
+            "NChar16": "68 00 6A 00 6B 00 6C 00" } }, {
           "Struct2": {
-            "K": "Char8: B",
-            "NChar16": "ZHexBytes16: FF FE 68 00 6A 00 6B 00 6C 00" } }, {
+            "K": "B",
+            "NChar16": "FF FE 68 00 6A 00 6B 00 6C 00" } }, {
           "Struct2": {
-            "K": "Char8: C",
-            "NChar16": "ZHexBytes16: FE FF 00 68 00 6A 00 6B 00 6C" } } ],
-      "five": "Int32: 5"
+            "K": "C",
+            "NChar16": "FE FF 00 68 00 6A 00 6B 00 6C" } } ],
+      "five": "5"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7503,11 +7503,11 @@
       "five": 5
     },
     "ToString": {
-      "five": "Int32: 5",
+      "five": "5",
       "Struct1": {
-        "NChar8": "ZStringUtf8: hjkl" },
+        "NChar8": "hjkl" },
       "StructArray": [ ],
-      "five": "Int32: 5"
+      "five": "5"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7539,9 +7539,9 @@
       "five": 5
     },
     "ToString": {
-      "five": "Int32: 5",
-      "MyStrings3": [ "ZStringUtf8: ABC" "ZStringUtf8: " "ZStringUtf8: XYZ" ],
-      "five": "Int32: 5"
+      "five": "5",
+      "MyStrings3": [ "ABC" "" "XYZ" ],
+      "five": "5"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7569,8 +7569,8 @@
       "true": true
     },
     "ToString": {
-      "false;tag=0x1234": "Bool8: false",
-      "true": "Bool8: true"
+      "false;tag=0x1234": "false",
+      "true": "true"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7598,8 +7598,8 @@
       "A": "A"
     },
     "ToString": {
-      "0": "Char8: \u0000",
-      "A": "Char8: A"
+      "0": " ",
+      "A": "A"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7627,8 +7627,8 @@
       "A": "A"
     },
     "ToString": {
-      "0": "Char16: \u0000",
-      "A": "Char16: A"
+      "0": " ",
+      "A": "A"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7656,8 +7656,8 @@
       "A": "A"
     },
     "ToString": {
-      "0": "Char32: \u0000",
-      "A": "Char32: A"
+      "0": " ",
+      "A": "A"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7685,8 +7685,8 @@
       "A": "A"
     },
     "ToString": {
-      "0": "Char32: \u0000",
-      "A": "Char32: A"
+      "0": " ",
+      "A": "A"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7714,8 +7714,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "Int8: 0",
-      "A": "Int8: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7743,8 +7743,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "UInt8: 0",
-      "A": "UInt8: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7772,8 +7772,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "Int16: 0",
-      "A": "Int16: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7801,8 +7801,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "UInt16: 0",
-      "A": "UInt16: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7830,8 +7830,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "Int32: 0",
-      "A": "Int32: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7859,8 +7859,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "UInt32: 0",
-      "A": "UInt32: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7888,8 +7888,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "Int64: 0",
-      "A": "Int64: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7917,8 +7917,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "UInt64: 0",
-      "A": "UInt64: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7946,8 +7946,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "Int64: 0",
-      "A": "Int64: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -7975,8 +7975,8 @@
       "A": 65
     },
     "ToString": {
-      "0": "UInt64: 0",
-      "A": "UInt64: 65"
+      "0": "0",
+      "A": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8004,8 +8004,8 @@
       "65": 65
     },
     "ToString": {
-      "0": "Float32: 0",
-      "65": "Float32: 65"
+      "0": "0",
+      "65": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8033,8 +8033,8 @@
       "65": 65
     },
     "ToString": {
-      "0": "Float64: 0",
-      "65": "Float64: 65"
+      "0": "0",
+      "65": "65"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8062,8 +8062,8 @@
       "p": "0xFFFFFFFFFFFFCFC7"
     },
     "ToString": {
-      "0": "Hex64: 0x0",
-      "p": "Hex64: 0xFFFFFFFFFFFFCFC7"
+      "0": "0x0",
+      "p": "0xFFFFFFFFFFFFCFC7"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8091,8 +8091,8 @@
       "p": "0xFFFFFFFFFFFFCFC7"
     },
     "ToString": {
-      "0": "Hex64: 0x0",
-      "p": "Hex64: 0xFFFFFFFFFFFFCFC7"
+      "0": "0x0",
+      "p": "0xFFFFFFFFFFFFCFC7"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8120,8 +8120,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZString8: ",
-      "hello": "ZString8: hello"
+      "0": "",
+      "hello": "hello"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8149,8 +8149,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZString8: ",
-      "hello": "ZString8: hello"
+      "0": "",
+      "hello": "hello"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8178,8 +8178,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZStringUtf16: ",
-      "hello": "ZStringUtf16: hello"
+      "0": "",
+      "hello": "hello"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8207,8 +8207,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZStringUtf16: ",
-      "hello": "ZStringUtf16: hello"
+      "0": "",
+      "hello": "hello"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8236,8 +8236,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZStringUtf32: ",
-      "hello": "ZStringUtf32: hello"
+      "0": "",
+      "hello": "hello"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8265,8 +8265,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZStringUtf32: ",
-      "hello": "ZStringUtf32: hello"
+      "0": "",
+      "hello": "hello"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8294,8 +8294,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZStringUtf32: ",
-      "hello": "ZStringUtf32: hello"
+      "0": "",
+      "hello": "hello"
     }
   },
   /* TestProviderCpp_L5K0 */
@@ -8323,8 +8323,8 @@
       "hello": "hello"
     },
     "ToString": {
-      "0": "ZStringUtf32: ",
-      "hello": "ZStringUtf32: hello"
+      "0": "",
+      "hello": "hello"
     }
   }
 ]

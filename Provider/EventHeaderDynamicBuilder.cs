@@ -2088,6 +2088,82 @@ public class EventHeaderDynamicBuilder : IDisposable
     }
 
     /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.BinaryLength16Char8"/> field to the event
+    /// (counted sequence of 8-bit values, e.g. a binary blob).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddBinary(
+        ReadOnlySpan<char> name,
+        ReadOnlySpan<byte> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(name, EventHeaderFieldEncoding.BinaryLength16Char8, format, tag);
+        this.AddDataStringT(value);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.BinaryLength16Char8"/> field to the event
+    /// (counted sequence of 8-bit values, e.g. a binary blob).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddBinary(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<byte> value,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.BinaryLength16Char8, format, tag);
+        this.AddDataStringT(value);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.BinaryLength16Char8"/> array to the event
+    /// (e.g. array of binary blobs).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddBinaryArray(
+        ReadOnlySpan<char> name,
+        ReadOnlySpan<ReadOnlyMemory<byte>> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(name, EventHeaderFieldEncoding.BinaryLength16Char8 | VArrayFlag, format, tag);
+        this.AddDataU16((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
+    /// Adds a <see cref="EventHeaderFieldEncoding.BinaryLength16Char8"/> array to the event
+    /// (e.g. array of binary blobs, array of UTF-8 strings, array of Latin1 strings, etc.).
+    /// Default format is <see cref="EventHeaderFieldFormat.Default"/> (formats as HexBytes).
+    /// </summary>
+    /// <returns>this</returns>
+    public EventHeaderDynamicBuilder AddBinaryArray(
+        ReadOnlySpan<byte> nameUtf8,
+        ReadOnlySpan<ReadOnlyMemory<byte>> values,
+        EventHeaderFieldFormat format = EventHeaderFieldFormat.Default,
+        ushort tag = 0)
+    {
+        this.AddMeta(nameUtf8, EventHeaderFieldEncoding.BinaryLength16Char8 | VArrayFlag, format, tag);
+        this.AddDataU16((UInt16)values.Length);
+        foreach (var v in values)
+        {
+            this.AddDataStringT(v.Span);
+        }
+        return this;
+    }
+
+    /// <summary>
     /// Adds a new logical field with the specified name and indicates that the next
     /// fieldCount logical fields should be considered as members of this field.
     /// Note that fieldCount must be in the range 1 to 127 (must NOT be 0).

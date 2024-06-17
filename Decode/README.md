@@ -119,7 +119,7 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
-### 0.1.4 (TBD)
+### 0.2.0 (TBD)
 
 - Renamed `PerfItemType` to `PerfItemMetadata`. Renamed corresponding
   methods and properties, `GetItemType()` ==> `GetItemMetadata()`,
@@ -136,6 +136,11 @@ project. Feedback and contributions are welcome.
 - Removed item metadata `IsArrayOrElement` and `EncodingAndArrayFlags`
   properties.
 - Added item value `AppendJsonTo()` method.
+- Moved `AppendJsonEventIdentityTo()` and `AppendJsonEventInfoTo()` methods
+  from `EventHeaderEnumerator` to `EventHeaderEventInfo`.
+- Add support for `BinaryLength16Char8` encoding.
+- Add support for extended formats for `StringLength16Char8` encoding.
+- Add support for `IPAddress` format.
 
 ### 0.1.3 (2024-05-20)
 

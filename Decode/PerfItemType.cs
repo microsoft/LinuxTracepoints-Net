@@ -72,6 +72,8 @@ namespace Microsoft.LinuxTracepoints.Decode
     /// </summary>
     public readonly ref struct PerfItemMetadata
     {
+        private const EventHeaderFieldEncoding ScalarFlag = EventHeaderFieldEncoding.ChainFlag;
+
         /// <summary>
         /// Initializes a new instance of the PerfItemMetadata struct.
         /// <br/>
@@ -118,7 +120,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             this.ElementCount = elementCount;
             this.FieldTag = fieldTag;
             this.TypeSize = typeSize;
-            this.EncodingAndArrayFlagAndIsScalar = encodingAndArrayFlag | (isScalar ? EventHeaderFieldEncoding.ChainFlag : 0);
+            this.EncodingAndArrayFlagAndIsScalar = encodingAndArrayFlag | (isScalar ? ScalarFlag : 0);
             this.Format = format;
             this.ByteReader = byteReader;
 
@@ -128,7 +130,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             Debug.Assert(!format.HasChainFlag());
 
             // Cannot set both VArrayFlag and CArrayFlag.
-            Debug.Assert(encodingAndArrayFlag.ArrayFlag() != EventHeaderFieldEncoding.ArrayFlagMask);
+            Debug.Assert(encodingAndArrayFlag.ArrayFlags() != EventHeaderFieldEncoding.ArrayFlagMask);
 
             if (isScalar)
             {
@@ -141,7 +143,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 Debug.Assert(encodingAndArrayFlag.IsArray());
             }
 
-            if (encodingAndArrayFlag.BaseEncoding() == EventHeaderFieldEncoding.Struct)
+            if (encodingAndArrayFlag.WithoutFlags() == EventHeaderFieldEncoding.Struct)
             {
                 Debug.Assert(typeSize == 0); // Structs are not simple types.
                 Debug.Assert(format != 0); // No zero-length structs.
@@ -169,7 +171,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public byte TypeSize { get; }
 
         /// <summary>
-        /// Returns Encoding | ArrayFlag | (IsScalar ? ChainFlag : 0).
+        /// Returns Encoding | ArrayFlag | (IsScalar ? ScalarFlag : 0).
         /// </summary>
         private EventHeaderFieldEncoding EncodingAndArrayFlagAndIsScalar { get; }
 
@@ -195,7 +197,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns false if this item is an array (an array-begin or an array-end item).
         /// </summary>
         public bool IsScalar =>
-            0 != (this.EncodingAndArrayFlagAndIsScalar & EventHeaderFieldEncoding.ChainFlag);
+            0 != (this.EncodingAndArrayFlagAndIsScalar & ScalarFlag);
 
         /// <summary>
         /// Returns true if this item represents an element within an array.
@@ -206,7 +208,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             get
             {
                 var enc = this.EncodingAndArrayFlagAndIsScalar;
-                return 0 != (enc & EventHeaderFieldEncoding.ChainFlag) && // ItemIsScalar
+                return 0 != (enc & ScalarFlag) && // ItemIsScalar
                     0 != (enc & EventHeaderFieldEncoding.ArrayFlagMask);  // FieldIsArray
             }
         }

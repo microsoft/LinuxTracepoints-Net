@@ -148,7 +148,7 @@ namespace DecodeSample
                         var eventInfo = this.enumerator.GetEventInfo();
 
                         // Add the EventHeader-specific info.
-                        this.enumerator.AppendJsonEventInfoTo(this.scratch, this.scratch.Length != 0);
+                        eventInfo.AppendJsonEventInfoTo(this.scratch, this.scratch.Length != 0);
                         this.writer.WriteLine($"  info = {{ {this.scratch} }}");
 
                         // Transition past the initial BeforeFirstItem state.

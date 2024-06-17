@@ -529,7 +529,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             Debug.Assert(this.Name.Length > 0);
             Debug.Assert(this.Field.Length > 0);
 
-            var encodingValue = this.DeducedEncoding.BaseEncoding();
+            var encodingValue = this.DeducedEncoding.WithoutFlags();
             switch (encodingValue)
             {
                 case EventHeaderFieldEncoding.Value8:

@@ -430,7 +430,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// of the event if no more items. Returns true if moved to a valid item,
         /// false if no more items or decoding error.
         /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// PRECONDITION: Can be called when State.CanMoveNext(), i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
         /// </para></summary>
         /// <remarks><para>
@@ -480,7 +480,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// PRECONDITION: Can be called when State.CanMoveNext(), i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
         /// </summary>
@@ -530,7 +530,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.Value_Scalar:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.Value);
-                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct);
                     Debug.Assert(!m_fieldType.Encoding.IsArray());
                     Debug.Assert(eventDataSpan.Length - m_dataPosRaw >= m_itemSizeRaw);
 
@@ -541,7 +541,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.Value_SimpleArrayElement:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.Value);
-                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct);
                     Debug.Assert(m_fieldType.Encoding.IsArray());
                     Debug.Assert(m_stackTop.ArrayIndex < m_stackTop.ArrayCount);
                     Debug.Assert(m_elementSize != 0); // Eligible for fast path.
@@ -567,7 +567,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.Value_ComplexArrayElement:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.Value);
-                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct);
                     Debug.Assert(m_fieldType.Encoding.IsArray());
                     Debug.Assert(m_stackTop.ArrayIndex < m_stackTop.ArrayCount);
                     Debug.Assert(m_elementSize == 0); // Not eligible for fast path.
@@ -605,14 +605,14 @@ namespace Microsoft.LinuxTracepoints.Decode
                     else if (m_elementSize != 0)
                     {
                         // First element of simple array.
-                        Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct);
+                        Debug.Assert(m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct);
                         m_itemSizeCooked = m_elementSize;
                         m_itemSizeRaw = m_elementSize;
                         SetState(EventHeaderEnumeratorState.Value, SubState.Value_SimpleArrayElement);
                         StartValueSimple();
                         movedToItem = true;
                     }
-                    else if (m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct)
+                    else if (m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct)
                     {
                         // First element of complex array.
                         SetState(EventHeaderEnumeratorState.Value, SubState.Value_ComplexArrayElement);
@@ -636,7 +636,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     // 0-length array of struct means we won't naturally traverse
                     // the child struct's metadata. Since m_stackTop.NextOffset
                     // won't get updated naturally, we need to update it manually.
-                    if (m_fieldType.Encoding.BaseEncoding() == EventHeaderFieldEncoding.Struct &&
+                    if (m_fieldType.Encoding.WithoutFlags() == EventHeaderFieldEncoding.Struct &&
                         m_stackTop.ArrayCount == 0 &&
                         !SkipStructMetadata(eventDataSpan))
                     {
@@ -672,7 +672,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case SubState.StructEnd:
 
                     Debug.Assert(m_state == EventHeaderEnumeratorState.StructEnd);
-                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() == EventHeaderFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.WithoutFlags() == EventHeaderFieldEncoding.Struct);
                     Debug.Assert(m_itemSizeRaw == 0);
 
                     m_stackTop.ArrayIndex += 1;
@@ -717,7 +717,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Otherwise, this is the same as MoveNext.
         /// </item></list>
         /// <para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// PRECONDITION: Can be called when State.CanMoveNext(), i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
         /// </summary>
@@ -796,7 +796,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// PRECONDITION: Can be called when State.CanMoveNext(), i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
         /// </summary>
@@ -813,6 +813,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         public bool MoveNextSibling(ReadOnlySpan<byte> eventDataSpan)
         {
             Debug.Assert(m_eventData.Length == eventDataSpan.Length);
+            Debug.Assert(m_state.CanMoveNext());
 
             bool movedToItem;
             int depth = 0; // May reach -1 if we start on ArrayEnd/StructEnd.
@@ -844,7 +845,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                         {
                             // Array of simple elements - jump directly to next sibling.
                             Debug.Assert(m_subState == SubState.ArrayBegin);
-                            Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct);
+                            Debug.Assert(m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct);
                             Debug.Assert(m_fieldType.Encoding.IsArray());
                             Debug.Assert(m_stackTop.ArrayIndex == 0);
                             m_dataPosRaw += m_stackTop.ArrayCount * m_elementSize;
@@ -962,7 +963,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     movedToItem = SetErrorState(EventHeaderEnumeratorError.InvalidData);
                 }
                 else if (
-                    EventHeaderFieldEncoding.Struct == m_fieldType.Encoding.BaseEncoding() &&
+                    EventHeaderFieldEncoding.Struct == m_fieldType.Encoding.WithoutFlags() &&
                     m_fieldType.Format == 0)
                 {
                     // Struct must have at least 1 field (potential for DoS).
@@ -1087,7 +1088,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// the information returned by GetItemInfo().
         /// The current item changes each time MoveNext() is called.
         /// </para><para>
-        /// PRECONDITION: Can be called when State > BeforeFirstItem, i.e. after MoveNext
+        /// PRECONDITION: Can be called when State.CanGetItemInfo(), i.e. after MoveNext
         /// returns true.
         /// </para>
         /// </summary>
@@ -1118,7 +1119,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// the item's type (integer, string, float, etc.), data pointer, data size.
         /// The current item changes each time MoveNext() is called.
         /// </para><para>
-        /// PRECONDITION: Can be called when State > BeforeFirstItem, i.e. after MoveNext
+        /// PRECONDITION: Can be called when State.CanGetItemInfo(), i.e. after MoveNext
         /// returns true.
         /// </para>
         /// </summary>
@@ -1134,7 +1135,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// provided eventDataSpan instead of accessing the Span property of a ReadOnlyMemory
         /// field.
         /// </para><para>
-        /// PRECONDITION: Can be called when State > BeforeFirstItem, i.e. after MoveNext
+        /// PRECONDITION: Can be called when State.CanGetItemInfo(), i.e. after MoveNext
         /// returns true.
         /// </para>
         /// </summary>
@@ -1189,259 +1190,12 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         /// <summary>
         /// <para>
-        /// Appends the current event identity to the provided StringBuilder as a JSON string,
-        /// e.g. <c>"MyProvider:MyEvent"</c> (including the quotation marks).
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
-        /// </para><para>
-        /// The event identity includes the provider name and event name, e.g. "MyProvider:MyEvent".
-        /// This is commonly used as the value of the "n" property in the JSON rendering of the event.
-        /// </para>
-        /// </summary>
-        public void AppendJsonEventIdentityTo(StringBuilder sb)
-        {
-            AppendJsonEventIdentityTo(m_eventData.Span, sb);
-        }
-
-        /// <summary>
-        /// <para>
-        /// Advanced scenarios: This is the same as AppendJsonEventIdentityTo(sb) except that
-        /// it uses the provided eventDataSpan instead of accessing the Span property of a
-        /// ReadOnlyMemory field.
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
-        /// </para><para>
-        /// This is useful as a performance optimization when you have the eventData span
-        /// available and want to avoid the overhead of repeatedly converting from
-        /// ReadOnlyMemory to ReadOnlySpan.
-        /// </para><para>
-        /// The provided eventDataSpan must be equal to the Span property of the eventData
-        /// parameter that was passed to StartEvent().
-        /// </para>
-        /// </summary>
-        public void AppendJsonEventIdentityTo(ReadOnlySpan<byte> eventDataSpan, StringBuilder sb)
-        {
-            Debug.Assert(m_eventData.Length == eventDataSpan.Length);
-
-            sb.Append('"');
-            PerfConvert.StringAppendWithControlCharsJsonEscape(
-                sb,
-                m_tracepointName.AsSpan().Slice(0, m_tracepointName.LastIndexOf('_')));
-            sb.Append(':');
-            PerfConvert.StringAppendWithControlCharsJsonEscape(
-                sb,
-                eventDataSpan.Slice(m_metaBegin, m_eventNameSize),
-                Text.Encoding.UTF8);
-            sb.Append('"');
-        }
-
-        /// <summary>
-        /// <para>
-        /// Appends event metadata to the provided StringBuilder as a comma-separated list
-        /// of 0 or more JSON name-value pairs, e.g. <c>"level": 5, "keyword": 3</c>
-        /// (including the quotation marks).
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
-        /// </para><para>
-        /// One name-value pair is appended for each metadata item that is both requested
-        /// by infoOptions and has a meaningful value available in the event. For example,
-        /// the "id" metadata item is only appended if the event has a non-zero Id value,
-        /// even if the infoOptions parameter includes PerfInfoOptions.Id.
-        /// </para><para>
-        /// The following metadata items are supported:
-        /// <list type="bullet"><item>
-        /// "provider": "MyProviderName"
-        /// </item><item>
-        /// "event": "MyEventName"
-        /// </item><item>
-        /// "id": 123 (omitted if zero)
-        /// </item><item>
-        /// "version": 1 (omitted if zero)
-        /// </item><item>
-        /// "level": 5 (omitted if zero)
-        /// </item><item>
-        /// "keyword": "0x1" (omitted if zero)
-        /// </item><item>
-        /// "opcode": 1 (omitted if zero)
-        /// </item><item>
-        /// "tag": "0x123" (omitted if zero)
-        /// </item><item>
-        /// "activity": "12345678-1234-1234-1234-1234567890AB" (omitted if not present)
-        /// </item><item>
-        /// "relatedActivity": "12345678-1234-1234-1234-1234567890AB" (omitted if not present)
-        /// </item><item>
-        /// "options": "Gmygroup" (omitted if not present)
-        /// </item><item>
-        /// "flags": "0x7" (omitted if zero)
-        /// </item></list>
-        /// </para>
-        /// </summary>
-        /// <returns>
-        /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
-        /// addCommaBeforeNextItem was true OR if any metadata items were appended.
-        /// </returns>
-        public bool AppendJsonEventInfoTo(
-            StringBuilder sb,
-            bool addCommaBeforeNextItem = false,
-            PerfInfoOptions infoOptions = PerfInfoOptions.Default,
-            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
-        {
-            return AppendJsonEventInfoTo(m_eventData.Span, sb, addCommaBeforeNextItem, infoOptions, convertOptions);
-        }
-
-        /// <summary>
-        /// <para>
-        /// Advanced scenarios: This is the same as AppendJsonEventInfoTo(sb, ...) except that
-        /// it uses the provided eventDataSpan instead of accessing the Span property of a
-        /// ReadOnlyMemory field.
-        /// </para><para>
-        /// PRECONDITION: Can be called when State != None, i.e. at any time after a
-        /// successful call to StartEvent, until a call to Clear.
-        /// </para>
-        /// </summary>
-        /// <remarks>
-        /// <para>
-        /// This is useful as a performance optimization when you have the eventData span
-        /// available and want to avoid the overhead of repeatedly converting from
-        /// ReadOnlyMemory to ReadOnlySpan.
-        /// </para><para>
-        /// The provided eventDataSpan must be equal to the Span property of the eventData
-        /// parameter that was passed to StartEvent().
-        /// </para>
-        /// </remarks>
-        public bool AppendJsonEventInfoTo(
-            ReadOnlySpan<byte> eventDataSpan,
-            StringBuilder sb,
-            bool addCommaBeforeNextItem,
-            PerfInfoOptions infoOptions = PerfInfoOptions.Default,
-            PerfConvertOptions convertOptions = PerfConvertOptions.Default)
-        {
-            Debug.Assert(m_eventData.Length == eventDataSpan.Length);
-
-            var w = new JsonWriter(sb, convertOptions, addCommaBeforeNextItem);
-
-            int providerNameEnd =
-                0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Options))
-                ? m_tracepointName.LastIndexOf('_')
-                : 0;
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Provider))
-            {
-                PerfConvert.StringAppendJson(
-                    w.WriteValueNoEscapeName("provider"),
-                    m_tracepointName.AsSpan().Slice(0, providerNameEnd));
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Event))
-            {
-                PerfConvert.StringAppendJson(
-                    w.WriteValueNoEscapeName("event"),
-                    eventDataSpan.Slice(m_metaBegin, m_eventNameSize),
-                    Text.Encoding.UTF8);
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Id) && m_header.Id != 0)
-            {
-                PerfConvert.UInt32DecimalAppend(
-                    w.WriteValueNoEscapeName("id"),
-                    m_header.Id);
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Version) && m_header.Version != 0)
-            {
-                PerfConvert.UInt32DecimalAppend(
-                    w.WriteValueNoEscapeName("version"),
-                    m_header.Version);
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Level) && m_header.Level != 0)
-            {
-                PerfConvert.UInt32DecimalAppend(
-                    w.WriteValueNoEscapeName("level"),
-                    (byte)m_header.Level);
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Keyword) && m_keyword != 0)
-            {
-                PerfConvert.UInt64HexAppendJson(
-                    w.WriteValueNoEscapeName("keyword"),
-                    m_keyword,
-                    convertOptions);
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Opcode) && m_header.Opcode != 0)
-            {
-                PerfConvert.UInt32DecimalAppend(
-                    w.WriteValueNoEscapeName("opcode"),
-                    (byte)m_header.Opcode);
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Tag) && m_header.Tag != 0)
-            {
-                PerfConvert.UInt32HexAppendJson(
-                    w.WriteValueNoEscapeName("tag"),
-                    m_header.Tag,
-                    convertOptions);
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Activity) && m_activityIdSize >= 16)
-            {
-                w.WriteValueNoEscapeName("activity");
-                sb.Append('"');
-                PerfConvert.GuidAppend(
-                    sb,
-                    PerfConvert.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin)));
-                sb.Append('"');
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.RelatedActivity) && m_activityIdSize >= 32)
-            {
-                w.WriteValueNoEscapeName("relatedActivity");
-                sb.Append('"');
-                PerfConvert.GuidAppend(
-                    sb,
-                    PerfConvert.ReadGuidBigEndian(eventDataSpan.Slice(m_activityIdBegin + 16)));
-                sb.Append('"');
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Options))
-            {
-                var n = m_tracepointName;
-                for (int i = providerNameEnd + 1; i < n.Length; i += 1)
-                {
-                    var ch = n[i];
-                    if ('A' <= ch && ch <= 'Z' && ch != 'L' && ch != 'K')
-                    {
-                        PerfConvert.StringAppendJson(
-                            w.WriteValueNoEscapeName("options"),
-                            n.AsSpan(i));
-                        break;
-                    }
-                }
-            }
-
-            if (infoOptions.HasFlag(PerfInfoOptions.Flags))
-            {
-                PerfConvert.UInt32HexAppendJson(
-                    w.WriteValueNoEscapeName("flags"),
-                    (byte)m_header.Flags,
-                    convertOptions);
-            }
-
-            return w.Comma;
-        }
-
-        /// <summary>
-        /// <para>
         /// Appends a JSON representation of the current item to the provided StringBuilder,
         /// e.g. for a string Value <c>"MyField": "My Value"</c> (includes the quotation marks),
         /// or for an ArrayBegin <c>"MyField": [ 1, 2, 3 ]</c>. Consumes the current item and its
         /// descendents as if by a call to MoveNextSibling.
         /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// PRECONDITION: Can be called when State.CanMoveNext(), i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
         /// </para><para>
         /// After calling this method, check <c>enumerator.State</c> to determine whether the
@@ -1455,11 +1209,11 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Value: Appends the current item as a JSON value like <c>123</c> (if convertOptions omits
         /// <c>RootName</c> or the item is an element of an array) or a JSON name-value pair like
         /// <c>"MyField": 123</c> (if convertOptions includes <c>RootName</c> and item is not an array
-        /// element).. Moves enumeration to the next item.
+        /// element). Moves enumeration to the next item.
         /// </item><item>
         /// StructBegin: Appends the current item as a JSON object like
         /// <c>{ "StructField1": 123, "StructField2": "Hello" }</c> (if convertOptions omits
-        /// <c>RootName</c> or the item is an element of an array) or a JSON name-object pairlike
+        /// <c>RootName</c> or the item is an element of an array) or a JSON name-object pair like
         /// <c>"MyStruct": { "StructField1": 123, "StructField2": "Hello" }</c> (if convertOptions
         /// includes <c>RootName</c> and item is not an array element). Moves enumeration past the
         /// end of the item and its descendents, i.e. after the matching StructEnd.
@@ -1494,7 +1248,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// except that it uses the provided eventDataSpan instead of accessing the Span
         /// property of a ReadOnlyMemory field.
         /// </para><para>
-        /// PRECONDITION: Can be called when State >= BeforeFirstItem, i.e. after a
+        /// PRECONDITION: Can be called when State.CanMoveNext(), i.e. after a
         /// successful call to StartEvent, until MoveNext returns false.
         /// </para>
         /// </summary>
@@ -1610,7 +1364,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private bool SkipStructMetadata(ReadOnlySpan<byte> eventDataSpan)
         {
-            Debug.Assert(m_fieldType.Encoding.BaseEncoding() == EventHeaderFieldEncoding.Struct);
+            Debug.Assert(m_fieldType.Encoding.WithoutFlags() == EventHeaderFieldEncoding.Struct);
 
             bool ok;
             for (uint remainingFieldCount = (byte)m_fieldType.Format; ;
@@ -1635,7 +1389,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
                 }
 
-                if (EventHeaderFieldEncoding.Struct == type.Encoding.BaseEncoding())
+                if (EventHeaderFieldEncoding.Struct == type.Encoding.WithoutFlags())
                 {
                     remainingFieldCount += (byte)type.Format;
                 }
@@ -1765,7 +1519,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 m_stackTop = stack[m_stackIndex];
 
                 m_fieldType = ReadFieldType(eventDataSpan, m_stackTop.NameOffset + m_stackTop.NameSize + 1);
-                Debug.Assert(EventHeaderFieldEncoding.Struct == m_fieldType.Encoding.BaseEncoding());
+                Debug.Assert(EventHeaderFieldEncoding.Struct == m_fieldType.Encoding.WithoutFlags());
                 m_elementSize = 0;
 
                 // Unless parent is in the middle of an array, we need to set the
@@ -1885,7 +1639,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             // Determine the m_elementSize value.
             bool movedToItem;
-            switch (m_fieldType.Encoding.BaseEncoding())
+            switch (m_fieldType.Encoding.WithoutFlags())
             {
                 case EventHeaderFieldEncoding.Struct:
                     movedToItem = true;
@@ -1917,6 +1671,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.StringLength16Char8:
                 case EventHeaderFieldEncoding.StringLength16Char16:
                 case EventHeaderFieldEncoding.StringLength16Char32:
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
                     movedToItem = true;
                     goto Done;
 
@@ -1951,7 +1706,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
         private void StartStruct()
         {
-            Debug.Assert(m_fieldType.Encoding.BaseEncoding() == EventHeaderFieldEncoding.Struct);
+            Debug.Assert(m_fieldType.Encoding.WithoutFlags() == EventHeaderFieldEncoding.Struct);
             m_elementSize = 0;
             m_itemSizeRaw = 0;
             m_dataPosCooked = m_dataPosRaw;
@@ -1970,7 +1725,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             m_elementSize = 0;
 
             bool movedToItem;
-            switch (m_fieldType.Encoding.BaseEncoding())
+            switch (m_fieldType.Encoding.WithoutFlags())
             {
                 case EventHeaderFieldEncoding.Value8:
                     m_itemSizeRaw = m_itemSizeCooked = m_elementSize = 1;
@@ -2030,6 +1785,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     break;
 
                 case EventHeaderFieldEncoding.StringLength16Char8:
+                case EventHeaderFieldEncoding.BinaryLength16Char8:
                     StartValueStringLength16(eventDataSpan, 0);
                     break;
 
@@ -2044,7 +1800,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 case EventHeaderFieldEncoding.Invalid:
                 case EventHeaderFieldEncoding.Struct: // Should never happen.
                 default:
-                    Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct);
+                    Debug.Assert(m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct);
                     m_itemSizeRaw = m_itemSizeCooked = 0;
                     movedToItem = SetErrorState(EventHeaderEnumeratorError.InvalidData);
                     goto Done;
@@ -2069,7 +1825,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         {
             Debug.Assert(m_stackTop.ArrayIndex < m_stackTop.ArrayCount);
             Debug.Assert(m_fieldType.Encoding.IsArray());
-            Debug.Assert(m_fieldType.Encoding.BaseEncoding() != EventHeaderFieldEncoding.Struct);
+            Debug.Assert(m_fieldType.Encoding.WithoutFlags() != EventHeaderFieldEncoding.Struct);
             Debug.Assert(m_elementSize != 0);
             Debug.Assert(m_itemSizeCooked == m_elementSize);
             Debug.Assert(m_itemSizeRaw == m_elementSize);
