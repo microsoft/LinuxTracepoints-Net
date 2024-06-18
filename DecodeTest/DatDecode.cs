@@ -146,7 +146,7 @@
                     this.writer.WritePropertyNameOnNewLine("info");
                     this.writer.WriteStartObject();
 
-                    eventInfo.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false, PerfInfoOptions.All, PerfConvertOptions.All);
+                    eventInfo.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false, PerfMetaOptions.All, PerfConvertOptions.All);
 
                     this.writer.WriteEndObject(); // info
                     this.writer.WriteEndObjectOnNewLine(); // AppendJsonItemN
@@ -174,8 +174,8 @@
                     this.writer.WritePropertyNameOnNewLine("info");
                     this.writer.WriteStartObject();
 
-                    eventInfo.AppendJsonEventInfoTo(this.writer.WriteRawValueBuilder(), false,
-                        PerfInfoOptions.Default & ~PerfInfoOptions.Level,
+                    eventInfo.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false,
+                        PerfMetaOptions.Default & ~PerfMetaOptions.Level,
                         PerfConvertOptions.None);
 
                     this.writer.WriteEndObject(); // info

@@ -138,6 +138,8 @@ project. Feedback and contributions are welcome.
 - Added item value `AppendJsonTo()` method.
 - Moved `AppendJsonEventIdentityTo()` and `AppendJsonEventInfoTo()` methods
   from `EventHeaderEnumerator` to `EventHeaderEventInfo`.
+- Renamed "info" suffix to "meta". Renamed `AppendJsonEventInfoTo` to
+  AppendJsonEventMetaTo`, `PerfInfoOptions` to `PerfMetaOptions`, etc.
 - Add support for `BinaryLength16Char8` encoding.
 - Add support for extended formats for `StringLength16Char8` encoding.
 - Add support for `IPAddress` format.

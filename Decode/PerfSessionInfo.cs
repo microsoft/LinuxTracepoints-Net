@@ -196,10 +196,10 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Used by PerfSampleEventInfo, PerfNonSampleEventInfo.
         /// </summary>
-        internal bool AppendJsonEventInfoTo(
+        internal bool AppendJsonEventMetaTo(
             StringBuilder sb,
             bool addCommaBeforeNextItem,
-            PerfInfoOptions infoOptions,
+            PerfMetaOptions metaOptions,
             PerfConvertOptions convertOptions,
             PerfEventAttrSampleType sampleType,
             ulong time,
@@ -212,7 +212,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             var w = new JsonWriter(sb, convertOptions, addCommaBeforeNextItem);
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Time) &&
-                infoOptions.HasFlag(PerfInfoOptions.Time))
+                metaOptions.HasFlag(PerfMetaOptions.Time))
             {
                 w.WriteValueNoEscapeName("time");
                 if (this.ClockOffsetKnown && this.TimeToTimeSpec(time).DateTime is DateTime dt)
@@ -228,7 +228,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) &&
-                infoOptions.HasFlag(PerfInfoOptions.Cpu))
+                metaOptions.HasFlag(PerfMetaOptions.Cpu))
             {
                 w.WriteValueNoEscapeName("cpu");
                 PerfConvert.UInt32DecimalAppend(sb, cpu);
@@ -236,21 +236,21 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
             {
-                if (infoOptions.HasFlag(PerfInfoOptions.Pid))
+                if (metaOptions.HasFlag(PerfMetaOptions.Pid))
                 {
                     w.WriteValueNoEscapeName("pid");
                     PerfConvert.UInt32DecimalAppend(sb, pid);
                 }
 
-                if (infoOptions.HasFlag(PerfInfoOptions.Tid) &&
-                    (pid != tid || !infoOptions.HasFlag(PerfInfoOptions.Pid)))
+                if (metaOptions.HasFlag(PerfMetaOptions.Tid) &&
+                    (pid != tid || !metaOptions.HasFlag(PerfMetaOptions.Pid)))
                 {
                     w.WriteValueNoEscapeName("tid");
                     PerfConvert.UInt32DecimalAppend(sb, tid);
                 }
             }
 
-            if (0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Event)))
+            if (0 != (metaOptions & (PerfMetaOptions.Provider | PerfMetaOptions.Event)))
             {
                 ReadOnlySpan<char> providerName, eventName;
 
@@ -275,14 +275,14 @@ namespace Microsoft.LinuxTracepoints.Decode
                     }
                 }
 
-                if (infoOptions.HasFlag(PerfInfoOptions.Provider) &&
+                if (metaOptions.HasFlag(PerfMetaOptions.Provider) &&
                     !providerName.IsEmpty)
                 {
                     w.WriteValueNoEscapeName("provider");
                     PerfConvert.StringAppendJson(sb, providerName);
                 }
 
-                if (infoOptions.HasFlag(PerfInfoOptions.Event) &&
+                if (metaOptions.HasFlag(PerfMetaOptions.Event) &&
                     !eventName.IsEmpty)
                 {
                     w.WriteValueNoEscapeName("event");
