@@ -82,7 +82,7 @@ namespace DecodeSample
                     {
                         // Event info was found. Include it in the output.
                         this.scratch.Clear();
-                        nonSampleEventInfo.AppendJsonEventInfoTo(this.scratch);
+                        nonSampleEventInfo.AppendJsonEventMetaTo(this.scratch);
                         this.writer.WriteLine($"  info = {{ {this.scratch} }}");
                     }
                 }
@@ -107,7 +107,7 @@ namespace DecodeSample
                     // Found event info (attributes). Include data from it in the output.
                     // Will be written to output later, after we know the format of the event.
                     this.scratch.Clear();
-                    sampleEventInfo.AppendJsonEventInfoTo(this.scratch);
+                    sampleEventInfo.AppendJsonEventMetaTo(this.scratch);
 
                     var eventFormat = sampleEventInfo.Format;
                     if (eventFormat.IsEmpty)
@@ -144,11 +144,11 @@ namespace DecodeSample
 
                         // eventInfo has a bunch of information about the event.
                         // We won't use it in this example, since we get the same information in JSON
-                        // format from AppendJsonEventInfoTo.
+                        // format from AppendJsonEventMetaTo.
                         var eventInfo = this.enumerator.GetEventInfo();
 
                         // Add the EventHeader-specific info.
-                        eventInfo.AppendJsonEventInfoTo(this.scratch, this.scratch.Length != 0);
+                        eventInfo.AppendJsonEventMetaTo(this.scratch, this.scratch.Length != 0);
                         this.writer.WriteLine($"  info = {{ {this.scratch} }}");
 
                         // Transition past the initial BeforeFirstItem state.

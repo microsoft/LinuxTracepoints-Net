@@ -26,25 +26,25 @@ namespace DecodePerfToJson
             }
         }
 
-        private static readonly EO[] infoOptions = {
-            new EO("N",                 (uint)PerfInfoOptions.N,         (uint)PerfInfoOptions.Default),
-            new EO("Time",              (uint)PerfInfoOptions.Time,      (uint)PerfInfoOptions.Default),
-            new EO("Cpu",               (uint)PerfInfoOptions.Cpu,       (uint)PerfInfoOptions.Default),
-            new EO("Pid",               (uint)PerfInfoOptions.Pid,       (uint)PerfInfoOptions.Default),
-            new EO("Tid",               (uint)PerfInfoOptions.Tid,       (uint)PerfInfoOptions.Default),
-            new EO("Id",                (uint)PerfInfoOptions.Id,        (uint)PerfInfoOptions.Default),
-            new EO("Version",           (uint)PerfInfoOptions.Version,   (uint)PerfInfoOptions.Default),
-            new EO("Level",             (uint)PerfInfoOptions.Level,     (uint)PerfInfoOptions.Default),
-            new EO("Keyword",           (uint)PerfInfoOptions.Keyword,   (uint)PerfInfoOptions.Default),
-            new EO("Opcode",            (uint)PerfInfoOptions.Opcode,    (uint)PerfInfoOptions.Default),
-            new EO("Tag",               (uint)PerfInfoOptions.Tag,       (uint)PerfInfoOptions.Default),
-            new EO("Activity",          (uint)PerfInfoOptions.Activity,  (uint)PerfInfoOptions.Default),
-            new EO("RelatedActivity",   (uint)PerfInfoOptions.RelatedActivity, (uint)PerfInfoOptions.Default),
-            new EO("Provider",          (uint)PerfInfoOptions.Provider,  (uint)PerfInfoOptions.Default),
-            new EO("Event",             (uint)PerfInfoOptions.Event,     (uint)PerfInfoOptions.Default),
-            new EO("Options",           (uint)PerfInfoOptions.Options,   (uint)PerfInfoOptions.Default),
-            new EO("Flags",             (uint)PerfInfoOptions.Flags,     (uint)PerfInfoOptions.Default),
-            new EO("Common",            (uint)PerfInfoOptions.Common,    (uint)PerfInfoOptions.Default),
+        private static readonly EO[] metaOptions = {
+            new EO("N",                 (uint)PerfMetaOptions.N,         (uint)PerfMetaOptions.Default),
+            new EO("Time",              (uint)PerfMetaOptions.Time,      (uint)PerfMetaOptions.Default),
+            new EO("Cpu",               (uint)PerfMetaOptions.Cpu,       (uint)PerfMetaOptions.Default),
+            new EO("Pid",               (uint)PerfMetaOptions.Pid,       (uint)PerfMetaOptions.Default),
+            new EO("Tid",               (uint)PerfMetaOptions.Tid,       (uint)PerfMetaOptions.Default),
+            new EO("Id",                (uint)PerfMetaOptions.Id,        (uint)PerfMetaOptions.Default),
+            new EO("Version",           (uint)PerfMetaOptions.Version,   (uint)PerfMetaOptions.Default),
+            new EO("Level",             (uint)PerfMetaOptions.Level,     (uint)PerfMetaOptions.Default),
+            new EO("Keyword",           (uint)PerfMetaOptions.Keyword,   (uint)PerfMetaOptions.Default),
+            new EO("Opcode",            (uint)PerfMetaOptions.Opcode,    (uint)PerfMetaOptions.Default),
+            new EO("Tag",               (uint)PerfMetaOptions.Tag,       (uint)PerfMetaOptions.Default),
+            new EO("Activity",          (uint)PerfMetaOptions.Activity,  (uint)PerfMetaOptions.Default),
+            new EO("RelatedActivity",   (uint)PerfMetaOptions.RelatedActivity, (uint)PerfMetaOptions.Default),
+            new EO("Provider",          (uint)PerfMetaOptions.Provider,  (uint)PerfMetaOptions.Default),
+            new EO("Event",             (uint)PerfMetaOptions.Event,     (uint)PerfMetaOptions.Default),
+            new EO("Options",           (uint)PerfMetaOptions.Options,   (uint)PerfMetaOptions.Default),
+            new EO("Flags",             (uint)PerfMetaOptions.Flags,     (uint)PerfMetaOptions.Default),
+            new EO("Common",            (uint)PerfMetaOptions.Common,    (uint)PerfMetaOptions.Default),
         };
 
         private static readonly EO[] convertOptions = {
@@ -89,7 +89,7 @@ namespace DecodePerfToJson
             var outputName = "";
             var sort = PerfDataFileEventOrder.Time;
             var nonsample = false;
-            var info = PerfInfoOptions.Default;
+            var meta = PerfMetaOptions.Default;
             var json = PerfConvertOptions.Default;
             var validate = false;
             var help = false;
@@ -144,15 +144,15 @@ namespace DecodePerfToJson
                             case "nonsample":
                                 nonsample = true;
                                 break;
-                            case "info":
+                            case "meta":
                                 if (argIndex + 1 >= args.Length)
                                 {
-                                    Console.Error.WriteLine("Missing argument for --info flag");
+                                    Console.Error.WriteLine("Missing argument for --meta flag");
                                 }
                                 else
                                 {
                                     argIndex += 1;
-                                    info = (PerfInfoOptions)MakeOptions("--info", infoOptions, args[argIndex], ref help);
+                                    meta = (PerfMetaOptions)MakeOptions("--meta", metaOptions, args[argIndex], ref help);
                                 }
                                 break;
                             case "json":
@@ -227,15 +227,15 @@ namespace DecodePerfToJson
                                 case 'n':
                                     nonsample = true;
                                     break;
-                                case 'i':
+                                case 'm':
                                     if (argIndex + 1 >= args.Length)
                                     {
-                                        Console.Error.WriteLine("Missing argument for -i flag");
+                                        Console.Error.WriteLine("Missing argument for -m flag");
                                     }
                                     else
                                     {
                                         argIndex += 1;
-                                        info = (PerfInfoOptions)MakeOptions("-i", infoOptions, args[argIndex], ref help);
+                                        meta = (PerfMetaOptions)MakeOptions("-m", metaOptions, args[argIndex], ref help);
                                     }
                                     break;
                                 case 'j':
@@ -290,13 +290,13 @@ Options:
   -o, --output <file>  Write output to the specified file (default: stdout).
   -s, --sort <order>   Order events by file or time (default: time).
   -n, --nonsample      Include non-sample events in the output.
-  -i, --info <options> Comma-separated list of fields to include in ""info"".
+  -m, --meta <options> Comma-separated list of fields to include in ""meta"".
   -j, --json <options> Comma-separated list of JSON control options.
   -v, --validate       Validate the JSON output.
   -V, --novalidate     Do not validate the JSON output (default).
   -h, --help           Show this help message.
 
-Info options:
+Meta options:
 
   N               ""n"" field with the event identity before event.
   Time            ""time"" field with the event timestamp.
@@ -317,13 +317,13 @@ Info options:
   Flags           ""flags"" field with EventHeader provider flags.
   Common          Include ""common"" fields before the user fields.
 
-  Info fields will be omitted if not available or if the field has a default
+  Meta fields will be omitted if not available or if the field has a default
   value. For example, the ""opcode"" field will be omitted if it is 0, and the
   ""tid"" field will be omitted if it is the same as the ""pid"".
 
-  On by default:  {MakeList(infoOptions, true)}
+  On by default:  {MakeList(metaOptions, true)}
 
-  Off by default: {MakeList(infoOptions, false)}
+  Off by default: {MakeList(metaOptions, false)}
 
 JSON options:
 
@@ -362,7 +362,7 @@ JSON options:
                     SkipValidation = !validate }))
             {
                 decode.JsonOptions = json;
-                decode.InfoOptions = info;
+                decode.MetaOptions = meta;
                 decode.ShowNonSample = nonsample;
                 decode.JsonWriter.WriteStartArray();
                 decode.WriteFile(inputName, sort);

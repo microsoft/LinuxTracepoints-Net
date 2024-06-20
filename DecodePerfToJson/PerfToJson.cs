@@ -26,7 +26,7 @@ namespace DecodePerfToJson
             JsonWriterOptions writerOptions = default)
         {
             this.JsonWriter = new Utf8JsonWriter(utf8JsonBufferWriter, writerOptions);
-            this.InfoOptions = PerfInfoOptions.Default;
+            this.MetaOptions = PerfMetaOptions.Default;
             this.JsonOptions = PerfConvertOptions.Default;
         }
 
@@ -35,13 +35,13 @@ namespace DecodePerfToJson
             JsonWriterOptions writerOptions = default)
         {
             this.JsonWriter = new Utf8JsonWriter(utf8JsonStream, writerOptions);
-            this.InfoOptions = PerfInfoOptions.Default;
+            this.MetaOptions = PerfMetaOptions.Default;
             this.JsonOptions = PerfConvertOptions.Default;
         }
 
         public Utf8JsonWriter JsonWriter { get; }
 
-        public PerfInfoOptions InfoOptions { get; set; }
+        public PerfMetaOptions MetaOptions { get; set; }
 
         /// <summary>
         /// Respected options:
@@ -134,7 +134,7 @@ namespace DecodePerfToJson
                     if (result != PerfDataFileResult.Ok)
                     {
                         // Unable to lookup attributes for event. Unexpected.
-                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
+                        if (this.MetaOptions.HasFlag(PerfMetaOptions.N))
                         {
                             this.JsonWriter.WriteNull("n");
                         }
@@ -145,7 +145,7 @@ namespace DecodePerfToJson
                     else if (sampleEventInfo.Format.IsEmpty)
                     {
                         // No TraceFS format for this event. Unexpected.
-                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
+                        if (this.MetaOptions.HasFlag(PerfMetaOptions.N))
                         {
                             this.JsonWriter.WriteString("n", sampleEventInfo.Name);
                         }
@@ -153,35 +153,35 @@ namespace DecodePerfToJson
                         this.JsonWriter.WriteString("GetSampleEventInfo", "NoFormat");
                         this.JsonWriter.WriteNumber("size", eventBytes.Memory.Length);
 
-                        if (0 != (this.InfoOptions & ~PerfInfoOptions.N))
+                        if (0 != (this.MetaOptions & ~PerfMetaOptions.N))
                         {
-                            this.JsonWriter.WriteStartObject("info");
+                            this.JsonWriter.WriteStartObject("meta");
                             WriteSampleMeta(sampleEventInfo, true);
-                            this.JsonWriter.WriteEndObject(); // info
+                            this.JsonWriter.WriteEndObject(); // meta
                         }
                     }
                     else if (sampleEventInfo.Format.DecodingStyle != PerfEventDecodingStyle.EventHeader ||
                         !this.enumerator.StartEvent(sampleEventInfo))
                     {
                         // Non-EventHeader decoding.
-                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
+                        if (this.MetaOptions.HasFlag(PerfMetaOptions.N))
                         {
                             this.JsonWriter.WriteString("n", sampleEventInfo.GetName()); // Garbage
                         }
 
                         // Write the event fields. Skip the common fields by default.
                         var infoFormat = sampleEventInfo.Format;
-                        var firstField = this.InfoOptions.HasFlag(PerfInfoOptions.Common) ? 0 : infoFormat.CommonFieldCount;
+                        var firstField = this.MetaOptions.HasFlag(PerfMetaOptions.Common) ? 0 : infoFormat.CommonFieldCount;
                         for (int i = firstField; i < infoFormat.Fields.Count; i++)
                         {
                             this.WriteField(sampleEventInfo, i, ref charBuf);
                         }
 
-                        if (0 != (this.InfoOptions & ~PerfInfoOptions.N))
+                        if (0 != (this.MetaOptions & ~PerfMetaOptions.N))
                         {
-                            this.JsonWriter.WriteStartObject("info");
+                            this.JsonWriter.WriteStartObject("meta");
                             WriteSampleMeta(sampleEventInfo, true);
-                            this.JsonWriter.WriteEndObject(); // info
+                            this.JsonWriter.WriteEndObject(); // meta
                         }
                     }
                     else
@@ -191,7 +191,7 @@ namespace DecodePerfToJson
                         var infoFormat = sampleEventInfo.Format;
                         var ei = this.enumerator.GetEventInfo();
 
-                        if (this.InfoOptions.HasFlag(PerfInfoOptions.N))
+                        if (this.MetaOptions.HasFlag(PerfMetaOptions.N))
                         {
                             var systemName = infoFormat.SystemName;
                             var providerName = ei.ProviderName;
@@ -222,7 +222,7 @@ namespace DecodePerfToJson
                             this.JsonWriter.WriteString("n", charBuf.Slice(0, pos));
                         }
 
-                        if (this.InfoOptions.HasFlag(PerfInfoOptions.Common))
+                        if (this.MetaOptions.HasFlag(PerfMetaOptions.Common))
                         {
                             for (var i = 0; i < infoFormat.CommonFieldCount; i++)
                             {
@@ -286,78 +286,78 @@ namespace DecodePerfToJson
 
                     EventDone:
 
-                        if (0 != (this.InfoOptions & ~PerfInfoOptions.N))
+                        if (0 != (this.MetaOptions & ~PerfMetaOptions.N))
                         {
-                            this.JsonWriter.WriteStartObject("info");
+                            this.JsonWriter.WriteStartObject("meta");
 
                             WriteSampleMeta(sampleEventInfo, false);
 
-                            // Same as enumerator.AppendJsonEventInfoTo, but with a Utf8JsonWriter.
+                            // Same as enumerator.AppendJsonEventMetaTo, but with a Utf8JsonWriter.
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Provider))
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Provider))
                             {
                                 this.JsonWriter.WriteString("provider", ei.ProviderName);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Event))
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Event))
                             {
                                 this.JsonWriter.WriteString("event", ei.NameBytes);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Id) && ei.Header.Id != 0)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Id) && ei.Header.Id != 0)
                             {
                                 this.JsonWriter.WriteNumber("id", ei.Header.Id);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Version) && ei.Header.Version != 0)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Version) && ei.Header.Version != 0)
                             {
                                 this.JsonWriter.WriteNumber("version", ei.Header.Version);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Level) && ei.Header.Level != 0)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Level) && ei.Header.Level != 0)
                             {
                                 this.JsonWriter.WriteNumber("level", (byte)ei.Header.Level);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Keyword) && ei.Keyword != 0)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Keyword) && ei.Keyword != 0)
                             {
                                 this.JsonWriter.WritePropertyName("keyword");
                                 this.WriteHex64Value(charBuf, ei.Keyword);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Opcode) && ei.Header.Opcode != 0)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Opcode) && ei.Header.Opcode != 0)
                             {
                                 this.JsonWriter.WriteNumber("opcode", (byte)ei.Header.Opcode);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Tag) && ei.Header.Tag != 0)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Tag) && ei.Header.Tag != 0)
                             {
                                 this.JsonWriter.WritePropertyName("tag");
                                 this.WriteHex32Value(charBuf, ei.Header.Tag);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Activity) && ei.ActivityId is Guid aid)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Activity) && ei.ActivityId is Guid aid)
                             {
                                 this.JsonWriter.WriteString("activity", aid);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.RelatedActivity) && ei.RelatedActivityId is Guid rid)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.RelatedActivity) && ei.RelatedActivityId is Guid rid)
                             {
                                 this.JsonWriter.WriteString("relatedActivity", rid);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Options) && !ei.Options.IsEmpty)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Options) && !ei.Options.IsEmpty)
                             {
                                 this.JsonWriter.WriteString("options", ei.Options);
                             }
 
-                            if (this.InfoOptions.HasFlag(PerfInfoOptions.Flags) && ei.Header.Flags != 0)
+                            if (this.MetaOptions.HasFlag(PerfMetaOptions.Flags) && ei.Header.Flags != 0)
                             {
                                 this.JsonWriter.WritePropertyName("flags");
                                 this.WriteHex32Value(charBuf, (uint)ei.Header.Flags);
                             }
 
-                            this.JsonWriter.WriteEndObject(); // info
+                            this.JsonWriter.WriteEndObject(); // meta
                         }
                     }
                 }
@@ -384,7 +384,7 @@ namespace DecodePerfToJson
         }
 
         /// <summary>
-        /// Same as nonSampleEventInfo.AppendJsonEventInfoTo, but with a Utf8JsonWriter
+        /// Same as nonSampleEventInfo.AppendJsonEventMetaTo, but with a Utf8JsonWriter
         /// instead of a StringBuilder.
         /// </summary>
         private void WriteSampleMeta(in PerfSampleEventInfo info, bool showProviderEvent)
@@ -400,7 +400,7 @@ namespace DecodePerfToJson
         }
 
         /// <summary>
-        /// Same as nonSampleEventInfo.AppendJsonEventInfoTo, but with a Utf8JsonWriter
+        /// Same as nonSampleEventInfo.AppendJsonEventMetaTo, but with a Utf8JsonWriter
         /// instead of a StringBuilder.
         /// </summary>
         private void WriteNonSampleMeta(in PerfNonSampleEventInfo info)
@@ -416,7 +416,7 @@ namespace DecodePerfToJson
         }
 
         /// <summary>
-        /// Same as nonSampleEventInfo.AppendJsonEventInfoTo, but with a Utf8JsonWriter
+        /// Same as nonSampleEventInfo.AppendJsonEventMetaTo, but with a Utf8JsonWriter
         /// instead of a StringBuilder.
         /// </summary>
         private void WriteCommonMetadata(
@@ -429,7 +429,7 @@ namespace DecodePerfToJson
             string? name)
         {
             if (sampleType.HasFlag(PerfEventAttrSampleType.Time) &&
-                this.InfoOptions.HasFlag(PerfInfoOptions.Time))
+                this.MetaOptions.HasFlag(PerfMetaOptions.Time))
             {
                 if (sessionInfo.ClockOffsetKnown && sessionInfo.TimeToTimeSpec(time).DateTime is DateTime dt)
                 {
@@ -442,26 +442,26 @@ namespace DecodePerfToJson
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Cpu) &&
-                this.InfoOptions.HasFlag(PerfInfoOptions.Cpu))
+                this.MetaOptions.HasFlag(PerfMetaOptions.Cpu))
             {
                 this.JsonWriter.WriteNumber("cpu", cpu);
             }
 
             if (sampleType.HasFlag(PerfEventAttrSampleType.Tid))
             {
-                if (this.InfoOptions.HasFlag(PerfInfoOptions.Pid))
+                if (this.MetaOptions.HasFlag(PerfMetaOptions.Pid))
                 {
                     this.JsonWriter.WriteNumber("pid", pid);
                 }
 
-                if (this.InfoOptions.HasFlag(PerfInfoOptions.Tid) &&
-                    (pid != tid || !this.InfoOptions.HasFlag(PerfInfoOptions.Pid)))
+                if (this.MetaOptions.HasFlag(PerfMetaOptions.Tid) &&
+                    (pid != tid || !this.MetaOptions.HasFlag(PerfMetaOptions.Pid)))
                 {
                     this.JsonWriter.WriteNumber("tid", tid);
                 }
             }
 
-            if (0 != (this.InfoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Event)) &&
+            if (0 != (this.MetaOptions & (PerfMetaOptions.Provider | PerfMetaOptions.Event)) &&
                 !string.IsNullOrEmpty(name))
             {
                 var nameSpan = name.AsSpan();
@@ -478,13 +478,13 @@ namespace DecodePerfToJson
                     eventName = nameSpan.Slice(colonPos + 1);
                 }
 
-                if (this.InfoOptions.HasFlag(PerfInfoOptions.Provider) &&
+                if (this.MetaOptions.HasFlag(PerfMetaOptions.Provider) &&
                     !providerName.IsEmpty)
                 {
                     this.JsonWriter.WriteString("provider", providerName);
                 }
 
-                if (this.InfoOptions.HasFlag(PerfInfoOptions.Event) &&
+                if (this.MetaOptions.HasFlag(PerfMetaOptions.Event) &&
                     !eventName.IsEmpty)
                 {
                     this.JsonWriter.WriteString("event", eventName);

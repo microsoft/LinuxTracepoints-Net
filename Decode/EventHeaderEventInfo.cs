@@ -199,9 +199,9 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// (including the quotation marks).
         /// </para><para>
         /// One name-value pair is appended for each metadata item that is both requested
-        /// by infoOptions and has a meaningful value available in the event. For example,
+        /// by metaOptions and has a meaningful value available in the event. For example,
         /// the "id" metadata item is only appended if the event has a non-zero Id value,
-        /// even if the infoOptions parameter includes PerfInfoOptions.Id.
+        /// even if the metaOptions parameter includes PerfMetaOptions.Id.
         /// </para><para>
         /// The following metadata items are supported:
         /// <list type="bullet"><item>
@@ -235,27 +235,27 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
         /// addCommaBeforeNextItem was true OR if any metadata items were appended.
         /// </returns>
-        public bool AppendJsonEventInfoTo(
+        public bool AppendJsonEventMetaTo(
             StringBuilder sb,
             bool addCommaBeforeNextItem,
-            PerfInfoOptions infoOptions = PerfInfoOptions.Default,
+            PerfMetaOptions metaOptions = PerfMetaOptions.Default,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
             var w = new JsonWriter(sb, convertOptions, addCommaBeforeNextItem);
 
             int providerNameEnd =
-                0 != (infoOptions & (PerfInfoOptions.Provider | PerfInfoOptions.Options))
+                0 != (metaOptions & (PerfMetaOptions.Provider | PerfMetaOptions.Options))
                 ? this.TracepointName.LastIndexOf('_')
                 : 0;
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Provider))
+            if (metaOptions.HasFlag(PerfMetaOptions.Provider))
             {
                 PerfConvert.StringAppendJson(
                     w.WriteValueNoEscapeName("provider"),
                     this.TracepointName.AsSpan().Slice(0, providerNameEnd));
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Event))
+            if (metaOptions.HasFlag(PerfMetaOptions.Event))
             {
                 PerfConvert.StringAppendJson(
                     w.WriteValueNoEscapeName("event"),
@@ -263,28 +263,28 @@ namespace Microsoft.LinuxTracepoints.Decode
                     Encoding.UTF8);
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Id) && this.Header.Id != 0)
+            if (metaOptions.HasFlag(PerfMetaOptions.Id) && this.Header.Id != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("id"),
                     this.Header.Id);
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Version) && this.Header.Version != 0)
+            if (metaOptions.HasFlag(PerfMetaOptions.Version) && this.Header.Version != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("version"),
                     this.Header.Version);
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Level) && this.Header.Level != 0)
+            if (metaOptions.HasFlag(PerfMetaOptions.Level) && this.Header.Level != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("level"),
                     (byte)this.Header.Level);
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Keyword) && this.Keyword != 0)
+            if (metaOptions.HasFlag(PerfMetaOptions.Keyword) && this.Keyword != 0)
             {
                 PerfConvert.UInt64HexAppendJson(
                     w.WriteValueNoEscapeName("keyword"),
@@ -292,14 +292,14 @@ namespace Microsoft.LinuxTracepoints.Decode
                     convertOptions);
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Opcode) && this.Header.Opcode != 0)
+            if (metaOptions.HasFlag(PerfMetaOptions.Opcode) && this.Header.Opcode != 0)
             {
                 PerfConvert.UInt32DecimalAppend(
                     w.WriteValueNoEscapeName("opcode"),
                     (byte)this.Header.Opcode);
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Tag) && this.Header.Tag != 0)
+            if (metaOptions.HasFlag(PerfMetaOptions.Tag) && this.Header.Tag != 0)
             {
                 PerfConvert.UInt32HexAppendJson(
                     w.WriteValueNoEscapeName("tag"),
@@ -307,7 +307,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                     convertOptions);
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Activity) && this.ActivityIdLength >= 16)
+            if (metaOptions.HasFlag(PerfMetaOptions.Activity) && this.ActivityIdLength >= 16)
             {
                 w.WriteValueNoEscapeName("activity");
                 sb.Append('"');
@@ -317,7 +317,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.RelatedActivity) && this.ActivityIdLength >= 32)
+            if (metaOptions.HasFlag(PerfMetaOptions.RelatedActivity) && this.ActivityIdLength >= 32)
             {
                 w.WriteValueNoEscapeName("relatedActivity");
                 sb.Append('"');
@@ -327,7 +327,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 sb.Append('"');
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Options))
+            if (metaOptions.HasFlag(PerfMetaOptions.Options))
             {
                 var n = this.TracepointName;
                 for (int i = providerNameEnd + 1; i < n.Length; i += 1)
@@ -343,7 +343,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 }
             }
 
-            if (infoOptions.HasFlag(PerfInfoOptions.Flags))
+            if (metaOptions.HasFlag(PerfMetaOptions.Flags))
             {
                 PerfConvert.UInt32HexAppendJson(
                     w.WriteValueNoEscapeName("flags"),

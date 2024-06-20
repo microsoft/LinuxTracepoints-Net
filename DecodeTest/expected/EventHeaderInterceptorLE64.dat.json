@@ -8326,5 +8326,4451 @@
       "0": "",
       "hello": "hello"
     }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8" },
+      "s0one": { "Encoding": "StringLength16Char8" },
+      "b0big": { "Encoding": "BinaryLength16Char8" },
+      "s0big": { "Encoding": "StringLength16Char8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:default",
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": "",
+      "info": { "provider": "TestProviderDyn", "event": "default", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":"","s0one":"","b0big":"","s0big":"",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "MoveNextSibling": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8" },
+      "s1one": { "Encoding": "StringLength16Char8" },
+      "b1big": { "Encoding": "BinaryLength16Char8" },
+      "s1big": { "Encoding": "StringLength16Char8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:default",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "default", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8" },
+      "s2one": { "Encoding": "StringLength16Char8" },
+      "b2big": { "Encoding": "BinaryLength16Char8" },
+      "s2big": { "Encoding": "StringLength16Char8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:default",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "default", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8" },
+      "s4one": { "Encoding": "StringLength16Char8" },
+      "b4big": { "Encoding": "BinaryLength16Char8" },
+      "s4big": { "Encoding": "StringLength16Char8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:default",
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����",
+      "info": { "provider": "TestProviderDyn", "event": "default", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"01 00 00 00","s4one":"\u0001\u0000\u0000\u0000","b4big":"F3 F2 F1 F0","s4big":"����",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    },
+    "MoveNextSibling": {
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    },
+    "ToString": {
+      "b4one": "01 00 00 00",
+      "s4one": "    ",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8" },
+      "s8one": { "Encoding": "StringLength16Char8" },
+      "b8big": { "Encoding": "BinaryLength16Char8" },
+      "s8big": { "Encoding": "StringLength16Char8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:default",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "default", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8" },
+      "s16one": { "Encoding": "StringLength16Char8" },
+      "b16big": { "Encoding": "BinaryLength16Char8" },
+      "s16big": { "Encoding": "StringLength16Char8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:default",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "default", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:unsigned_int",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "unsigned_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:unsigned_int",
+      "b1one": 1,
+      "s1one": 1,
+      "b1big": 240,
+      "s1big": 240,
+      "info": { "provider": "TestProviderDyn", "event": "unsigned_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":1,"s1one":1,"b1big":240,"s1big":240,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": 1,
+      "s1one": 1,
+      "b1big": 240,
+      "s1big": 240
+    },
+    "MoveNextSibling": {
+      "b1one": 1,
+      "s1one": 1,
+      "b1big": 240,
+      "s1big": 240
+    },
+    "ToString": {
+      "b1one": "1",
+      "s1one": "1",
+      "b1big": "240",
+      "s1big": "240"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:unsigned_int",
+      "b2one": 1,
+      "s2one": 1,
+      "b2big": 61681,
+      "s2big": 61681,
+      "info": { "provider": "TestProviderDyn", "event": "unsigned_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":1,"s2one":1,"b2big":61681,"s2big":61681,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": 1,
+      "s2one": 1,
+      "b2big": 61681,
+      "s2big": 61681
+    },
+    "MoveNextSibling": {
+      "b2one": 1,
+      "s2one": 1,
+      "b2big": 61681,
+      "s2big": 61681
+    },
+    "ToString": {
+      "b2one": "1",
+      "s2one": "1",
+      "b2big": "61681",
+      "s2big": "61681"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:unsigned_int",
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": 4042388211,
+      "s4big": 4042388211,
+      "info": { "provider": "TestProviderDyn", "event": "unsigned_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":1,"s4one":1,"b4big":4042388211,"s4big":4042388211,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": 4042388211,
+      "s4big": 4042388211
+    },
+    "MoveNextSibling": {
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": 4042388211,
+      "s4big": 4042388211
+    },
+    "ToString": {
+      "b4one": "1",
+      "s4one": "1",
+      "b4big": "4042388211",
+      "s4big": "4042388211"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:unsigned_int",
+      "b8one": 1,
+      "s8one": 1,
+      "b8big": 17361925168090707703,
+      "s8big": 17361925168090707703,
+      "info": { "provider": "TestProviderDyn", "event": "unsigned_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":1,"s8one":1,"b8big":17361925168090707703,"s8big":17361925168090707703,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": 1,
+      "s8one": 1,
+      "b8big": 17361925168090707703,
+      "s8big": 17361925168090707703
+    },
+    "MoveNextSibling": {
+      "b8one": 1,
+      "s8one": 1,
+      "b8big": 17361925168090707703,
+      "s8big": 17361925168090707703
+    },
+    "ToString": {
+      "b8one": "1",
+      "s8one": "1",
+      "b8big": "17361925168090707703",
+      "s8big": "17361925168090707703"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "UnsignedInt" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "UnsignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:unsigned_int",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "unsigned_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "SignedInt" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "SignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:signed_int",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "signed_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "SignedInt" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "SignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:signed_int",
+      "b1one": 1,
+      "s1one": 1,
+      "b1big": -16,
+      "s1big": -16,
+      "info": { "provider": "TestProviderDyn", "event": "signed_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":1,"s1one":1,"b1big":-16,"s1big":-16,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": 1,
+      "s1one": 1,
+      "b1big": -16,
+      "s1big": -16
+    },
+    "MoveNextSibling": {
+      "b1one": 1,
+      "s1one": 1,
+      "b1big": -16,
+      "s1big": -16
+    },
+    "ToString": {
+      "b1one": "1",
+      "s1one": "1",
+      "b1big": "-16",
+      "s1big": "-16"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "SignedInt" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "SignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:signed_int",
+      "b2one": 1,
+      "s2one": 1,
+      "b2big": -3855,
+      "s2big": -3855,
+      "info": { "provider": "TestProviderDyn", "event": "signed_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":1,"s2one":1,"b2big":-3855,"s2big":-3855,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": 1,
+      "s2one": 1,
+      "b2big": -3855,
+      "s2big": -3855
+    },
+    "MoveNextSibling": {
+      "b2one": 1,
+      "s2one": 1,
+      "b2big": -3855,
+      "s2big": -3855
+    },
+    "ToString": {
+      "b2one": "1",
+      "s2one": "1",
+      "b2big": "-3855",
+      "s2big": "-3855"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "SignedInt" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "SignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:signed_int",
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": -252579085,
+      "s4big": -252579085,
+      "info": { "provider": "TestProviderDyn", "event": "signed_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":1,"s4one":1,"b4big":-252579085,"s4big":-252579085,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": -252579085,
+      "s4big": -252579085
+    },
+    "MoveNextSibling": {
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": -252579085,
+      "s4big": -252579085
+    },
+    "ToString": {
+      "b4one": "1",
+      "s4one": "1",
+      "b4big": "-252579085",
+      "s4big": "-252579085"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "SignedInt" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "SignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:signed_int",
+      "b8one": 1,
+      "s8one": 1,
+      "b8big": -1084818905618843913,
+      "s8big": -1084818905618843913,
+      "info": { "provider": "TestProviderDyn", "event": "signed_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":1,"s8one":1,"b8big":-1084818905618843913,"s8big":-1084818905618843913,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": 1,
+      "s8one": 1,
+      "b8big": -1084818905618843913,
+      "s8big": -1084818905618843913
+    },
+    "MoveNextSibling": {
+      "b8one": 1,
+      "s8one": 1,
+      "b8big": -1084818905618843913,
+      "s8big": -1084818905618843913
+    },
+    "ToString": {
+      "b8one": "1",
+      "s8one": "1",
+      "b8big": "-1084818905618843913",
+      "s8big": "-1084818905618843913"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "SignedInt" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "SignedInt" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "SignedInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:signed_int",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "signed_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "HexInt" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "HexInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_int",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "hex_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "HexInt" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "HexInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_int",
+      "b1one": "0x1",
+      "s1one": "0x1",
+      "b1big": "0xF0",
+      "s1big": "0xF0",
+      "info": { "provider": "TestProviderDyn", "event": "hex_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"0x1","s1one":"0x1","b1big":"0xF0","s1big":"0xF0",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "0x1",
+      "s1one": "0x1",
+      "b1big": "0xF0",
+      "s1big": "0xF0"
+    },
+    "MoveNextSibling": {
+      "b1one": "0x1",
+      "s1one": "0x1",
+      "b1big": "0xF0",
+      "s1big": "0xF0"
+    },
+    "ToString": {
+      "b1one": "0x1",
+      "s1one": "0x1",
+      "b1big": "0xF0",
+      "s1big": "0xF0"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "HexInt" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "HexInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_int",
+      "b2one": "0x1",
+      "s2one": "0x1",
+      "b2big": "0xF0F1",
+      "s2big": "0xF0F1",
+      "info": { "provider": "TestProviderDyn", "event": "hex_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"0x1","s2one":"0x1","b2big":"0xF0F1","s2big":"0xF0F1",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "0x1",
+      "s2one": "0x1",
+      "b2big": "0xF0F1",
+      "s2big": "0xF0F1"
+    },
+    "MoveNextSibling": {
+      "b2one": "0x1",
+      "s2one": "0x1",
+      "b2big": "0xF0F1",
+      "s2big": "0xF0F1"
+    },
+    "ToString": {
+      "b2one": "0x1",
+      "s2one": "0x1",
+      "b2big": "0xF0F1",
+      "s2big": "0xF0F1"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "HexInt" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "HexInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_int",
+      "b4one": "0x1",
+      "s4one": "0x1",
+      "b4big": "0xF0F1F2F3",
+      "s4big": "0xF0F1F2F3",
+      "info": { "provider": "TestProviderDyn", "event": "hex_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"0x1","s4one":"0x1","b4big":"0xF0F1F2F3","s4big":"0xF0F1F2F3",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "0x1",
+      "s4one": "0x1",
+      "b4big": "0xF0F1F2F3",
+      "s4big": "0xF0F1F2F3"
+    },
+    "MoveNextSibling": {
+      "b4one": "0x1",
+      "s4one": "0x1",
+      "b4big": "0xF0F1F2F3",
+      "s4big": "0xF0F1F2F3"
+    },
+    "ToString": {
+      "b4one": "0x1",
+      "s4one": "0x1",
+      "b4big": "0xF0F1F2F3",
+      "s4big": "0xF0F1F2F3"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "HexInt" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "HexInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_int",
+      "b8one": "0x1",
+      "s8one": "0x1",
+      "b8big": "0xF0F1F2F3F4F5F6F7",
+      "s8big": "0xF0F1F2F3F4F5F6F7",
+      "info": { "provider": "TestProviderDyn", "event": "hex_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"0x1","s8one":"0x1","b8big":"0xF0F1F2F3F4F5F6F7","s8big":"0xF0F1F2F3F4F5F6F7",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "0x1",
+      "s8one": "0x1",
+      "b8big": "0xF0F1F2F3F4F5F6F7",
+      "s8big": "0xF0F1F2F3F4F5F6F7"
+    },
+    "MoveNextSibling": {
+      "b8one": "0x1",
+      "s8one": "0x1",
+      "b8big": "0xF0F1F2F3F4F5F6F7",
+      "s8big": "0xF0F1F2F3F4F5F6F7"
+    },
+    "ToString": {
+      "b8one": "0x1",
+      "s8one": "0x1",
+      "b8big": "0xF0F1F2F3F4F5F6F7",
+      "s8big": "0xF0F1F2F3F4F5F6F7"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "HexInt" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "HexInt" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "HexInt" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_int",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "hex_int", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "Errno" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "Errno" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:errno",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "errno", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "Errno" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "Errno" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:errno",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "errno", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "Errno" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "Errno" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:errno",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "errno", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "Errno" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "Errno" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:errno",
+      "b4one": "EPERM(1)",
+      "s4one": "EPERM(1)",
+      "b4big": "ERRNO(-252579085)",
+      "s4big": "ERRNO(-252579085)",
+      "info": { "provider": "TestProviderDyn", "event": "errno", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"EPERM(1)","s4one":"EPERM(1)","b4big":"ERRNO(-252579085)","s4big":"ERRNO(-252579085)",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "EPERM(1)",
+      "s4one": "EPERM(1)",
+      "b4big": "ERRNO(-252579085)",
+      "s4big": "ERRNO(-252579085)"
+    },
+    "MoveNextSibling": {
+      "b4one": "EPERM(1)",
+      "s4one": "EPERM(1)",
+      "b4big": "ERRNO(-252579085)",
+      "s4big": "ERRNO(-252579085)"
+    },
+    "ToString": {
+      "b4one": "EPERM(1)",
+      "s4one": "EPERM(1)",
+      "b4big": "ERRNO(-252579085)",
+      "s4big": "ERRNO(-252579085)"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "Errno" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "Errno" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:errno",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "errno", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "Errno" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "Errno" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "Errno" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:errno",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "errno", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "Pid" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "Pid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:pid",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "pid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "Pid" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "Pid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:pid",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "pid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "Pid" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "Pid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:pid",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "pid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "Pid" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "Pid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:pid",
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": -252579085,
+      "s4big": -252579085,
+      "info": { "provider": "TestProviderDyn", "event": "pid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":1,"s4one":1,"b4big":-252579085,"s4big":-252579085,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": -252579085,
+      "s4big": -252579085
+    },
+    "MoveNextSibling": {
+      "b4one": 1,
+      "s4one": 1,
+      "b4big": -252579085,
+      "s4big": -252579085
+    },
+    "ToString": {
+      "b4one": "1",
+      "s4one": "1",
+      "b4big": "-252579085",
+      "s4big": "-252579085"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "Pid" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "Pid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:pid",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "pid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "Pid" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "Pid" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "Pid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:pid",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "pid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "Time" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "Time" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:time",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "time", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "Time" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "Time" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:time",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "time", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "Time" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "Time" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:time",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "time", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "Time" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "Time" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:time",
+      "b4one": "1970-01-01T00:00:01Z",
+      "s4one": "1970-01-01T00:00:01Z",
+      "b4big": "1961-12-30T15:08:35Z",
+      "s4big": "1961-12-30T15:08:35Z",
+      "info": { "provider": "TestProviderDyn", "event": "time", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"1970-01-01T00:00:01Z","s4one":"1970-01-01T00:00:01Z","b4big":"1961-12-30T15:08:35Z","s4big":"1961-12-30T15:08:35Z",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "1970-01-01T00:00:01Z",
+      "s4one": "1970-01-01T00:00:01Z",
+      "b4big": "1961-12-30T15:08:35Z",
+      "s4big": "1961-12-30T15:08:35Z"
+    },
+    "MoveNextSibling": {
+      "b4one": "1970-01-01T00:00:01Z",
+      "s4one": "1970-01-01T00:00:01Z",
+      "b4big": "1961-12-30T15:08:35Z",
+      "s4big": "1961-12-30T15:08:35Z"
+    },
+    "ToString": {
+      "b4one": "1970-01-01T00:00:01Z",
+      "s4one": "1970-01-01T00:00:01Z",
+      "b4big": "1961-12-30T15:08:35Z",
+      "s4big": "1961-12-30T15:08:35Z"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "Time" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "Time" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:time",
+      "b8one": "1970-01-01T00:00:01Z",
+      "s8one": "1970-01-01T00:00:01Z",
+      "b8big": "TIME(-1084818905618843913)",
+      "s8big": "TIME(-1084818905618843913)",
+      "info": { "provider": "TestProviderDyn", "event": "time", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"1970-01-01T00:00:01Z","s8one":"1970-01-01T00:00:01Z","b8big":"TIME(-1084818905618843913)","s8big":"TIME(-1084818905618843913)",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "1970-01-01T00:00:01Z",
+      "s8one": "1970-01-01T00:00:01Z",
+      "b8big": "TIME(-1084818905618843913)",
+      "s8big": "TIME(-1084818905618843913)"
+    },
+    "MoveNextSibling": {
+      "b8one": "1970-01-01T00:00:01Z",
+      "s8one": "1970-01-01T00:00:01Z",
+      "b8big": "TIME(-1084818905618843913)",
+      "s8big": "TIME(-1084818905618843913)"
+    },
+    "ToString": {
+      "b8one": "1970-01-01T00:00:01Z",
+      "s8one": "1970-01-01T00:00:01Z",
+      "b8big": "TIME(-1084818905618843913)",
+      "s8big": "TIME(-1084818905618843913)"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "Time" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "Time" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "Time" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:time",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "time", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "Boolean" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "Boolean" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:boolean",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "boolean", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "Boolean" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "Boolean" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:boolean",
+      "b1one": true,
+      "s1one": true,
+      "b1big": "BOOL(240)",
+      "s1big": "BOOL(240)",
+      "info": { "provider": "TestProviderDyn", "event": "boolean", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":true,"s1one":true,"b1big":"BOOL(240)","s1big":"BOOL(240)",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": true,
+      "s1one": true,
+      "b1big": "BOOL(240)",
+      "s1big": "BOOL(240)"
+    },
+    "MoveNextSibling": {
+      "b1one": true,
+      "s1one": true,
+      "b1big": "BOOL(240)",
+      "s1big": "BOOL(240)"
+    },
+    "ToString": {
+      "b1one": "true",
+      "s1one": "true",
+      "b1big": "BOOL(240)",
+      "s1big": "BOOL(240)"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "Boolean" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "Boolean" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:boolean",
+      "b2one": true,
+      "s2one": true,
+      "b2big": "BOOL(61681)",
+      "s2big": "BOOL(61681)",
+      "info": { "provider": "TestProviderDyn", "event": "boolean", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":true,"s2one":true,"b2big":"BOOL(61681)","s2big":"BOOL(61681)",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": true,
+      "s2one": true,
+      "b2big": "BOOL(61681)",
+      "s2big": "BOOL(61681)"
+    },
+    "MoveNextSibling": {
+      "b2one": true,
+      "s2one": true,
+      "b2big": "BOOL(61681)",
+      "s2big": "BOOL(61681)"
+    },
+    "ToString": {
+      "b2one": "true",
+      "s2one": "true",
+      "b2big": "BOOL(61681)",
+      "s2big": "BOOL(61681)"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "Boolean" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "Boolean" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:boolean",
+      "b4one": true,
+      "s4one": true,
+      "b4big": "BOOL(-252579085)",
+      "s4big": "BOOL(-252579085)",
+      "info": { "provider": "TestProviderDyn", "event": "boolean", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":true,"s4one":true,"b4big":"BOOL(-252579085)","s4big":"BOOL(-252579085)",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": true,
+      "s4one": true,
+      "b4big": "BOOL(-252579085)",
+      "s4big": "BOOL(-252579085)"
+    },
+    "MoveNextSibling": {
+      "b4one": true,
+      "s4one": true,
+      "b4big": "BOOL(-252579085)",
+      "s4big": "BOOL(-252579085)"
+    },
+    "ToString": {
+      "b4one": "true",
+      "s4one": "true",
+      "b4big": "BOOL(-252579085)",
+      "s4big": "BOOL(-252579085)"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "Boolean" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "Boolean" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:boolean",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "boolean", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "Boolean" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "Boolean" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "Boolean" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:boolean",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "boolean", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "Float" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "Float" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:float",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "float", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "Float" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "Float" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:float",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "float", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "Float" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "Float" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:float",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "float", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "Float" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "Float" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:float",
+      "b4one": 1.40129846e-45,
+      "s4one": 1.40129846e-45,
+      "b4big": -5.9903676e+29,
+      "s4big": -5.9903676e+29,
+      "info": { "provider": "TestProviderDyn", "event": "float", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":1.40129846e-45,"s4one":1.40129846e-45,"b4big":-5.9903676e+29,"s4big":-5.9903676e+29,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": 1.40129846e-45,
+      "s4one": 1.40129846e-45,
+      "b4big": -5.9903676e+29,
+      "s4big": -5.9903676e+29
+    },
+    "MoveNextSibling": {
+      "b4one": 1.40129846e-45,
+      "s4one": 1.40129846e-45,
+      "b4big": -5.9903676e+29,
+      "s4big": -5.9903676e+29
+    },
+    "ToString": {
+      "b4one": "1.40129846e-45",
+      "s4one": "1.40129846e-45",
+      "b4big": "-5.9903676e+29",
+      "s4big": "-5.9903676e+29"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "Float" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "Float" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:float",
+      "b8one": 4.9406564584124654e-324,
+      "s8one": 4.9406564584124654e-324,
+      "b8big": -1.1413996157316056e+236,
+      "s8big": -1.1413996157316056e+236,
+      "info": { "provider": "TestProviderDyn", "event": "float", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":4.9406564584124654e-324,"s8one":4.9406564584124654e-324,"b8big":-1.1413996157316056e+236,"s8big":-1.1413996157316056e+236,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": 4.9406564584124654e-324,
+      "s8one": 4.9406564584124654e-324,
+      "b8big": -1.1413996157316056e+236,
+      "s8big": -1.1413996157316056e+236
+    },
+    "MoveNextSibling": {
+      "b8one": 4.9406564584124654e-324,
+      "s8one": 4.9406564584124654e-324,
+      "b8big": -1.1413996157316056e+236,
+      "s8big": -1.1413996157316056e+236
+    },
+    "ToString": {
+      "b8one": "4.9406564584124654e-324",
+      "s8one": "4.9406564584124654e-324",
+      "b8big": "-1.1413996157316056e+236",
+      "s8big": "-1.1413996157316056e+236"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "Float" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "Float" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "Float" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:float",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "float", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "HexBytes" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "HexBytes" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_bytes",
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": "",
+      "info": { "provider": "TestProviderDyn", "event": "hex_bytes", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":"","s0one":"","b0big":"","s0big":"",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "MoveNextSibling": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "HexBytes" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "HexBytes" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_bytes",
+      "b1one": "01",
+      "s1one": "01",
+      "b1big": "F0",
+      "s1big": "F0",
+      "info": { "provider": "TestProviderDyn", "event": "hex_bytes", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"01","b1big":"F0","s1big":"F0",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "01",
+      "b1big": "F0",
+      "s1big": "F0"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "01",
+      "b1big": "F0",
+      "s1big": "F0"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": "01",
+      "b1big": "F0",
+      "s1big": "F0"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "HexBytes" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "HexBytes" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_bytes",
+      "b2one": "01 00",
+      "s2one": "01 00",
+      "b2big": "F1 F0",
+      "s2big": "F1 F0",
+      "info": { "provider": "TestProviderDyn", "event": "hex_bytes", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"01 00","b2big":"F1 F0","s2big":"F1 F0",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "01 00",
+      "b2big": "F1 F0",
+      "s2big": "F1 F0"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "01 00",
+      "b2big": "F1 F0",
+      "s2big": "F1 F0"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "01 00",
+      "b2big": "F1 F0",
+      "s2big": "F1 F0"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "HexBytes" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "HexBytes" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_bytes",
+      "b4one": "01 00 00 00",
+      "s4one": "01 00 00 00",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "F3 F2 F1 F0",
+      "info": { "provider": "TestProviderDyn", "event": "hex_bytes", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"01 00 00 00","s4one":"01 00 00 00","b4big":"F3 F2 F1 F0","s4big":"F3 F2 F1 F0",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "01 00 00 00",
+      "s4one": "01 00 00 00",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "F3 F2 F1 F0"
+    },
+    "MoveNextSibling": {
+      "b4one": "01 00 00 00",
+      "s4one": "01 00 00 00",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "F3 F2 F1 F0"
+    },
+    "ToString": {
+      "b4one": "01 00 00 00",
+      "s4one": "01 00 00 00",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "F3 F2 F1 F0"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "HexBytes" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "HexBytes" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_bytes",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "01 00 00 00 00 00 00 00",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "info": { "provider": "TestProviderDyn", "event": "hex_bytes", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"01 00 00 00 00 00 00 00","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"F7 F6 F5 F4 F3 F2 F1 F0",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "01 00 00 00 00 00 00 00",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "F7 F6 F5 F4 F3 F2 F1 F0"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "01 00 00 00 00 00 00 00",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "F7 F6 F5 F4 F3 F2 F1 F0"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "01 00 00 00 00 00 00 00",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "F7 F6 F5 F4 F3 F2 F1 F0"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "HexBytes" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "HexBytes" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "HexBytes" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:hex_bytes",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "info": { "provider": "TestProviderDyn", "event": "hex_bytes", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "String8" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "String8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string8",
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": "",
+      "info": { "provider": "TestProviderDyn", "event": "string8", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":"","s0one":"","b0big":"","s0big":"",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "MoveNextSibling": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "String8" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "String8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string8",
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "ð",
+      "s1big": "ð",
+      "info": { "provider": "TestProviderDyn", "event": "string8", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"\u0001","s1one":"\u0001","b1big":"ð","s1big":"ð",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "ð",
+      "s1big": "ð"
+    },
+    "MoveNextSibling": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "ð",
+      "s1big": "ð"
+    },
+    "ToString": {
+      "b1one": " ",
+      "s1one": " ",
+      "b1big": "ð",
+      "s1big": "ð"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "String8" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "String8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string8",
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "ñð",
+      "s2big": "ñð",
+      "info": { "provider": "TestProviderDyn", "event": "string8", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"\u0001\u0000","s2one":"\u0001\u0000","b2big":"ñð","s2big":"ñð",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "ñð",
+      "s2big": "ñð"
+    },
+    "MoveNextSibling": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "ñð",
+      "s2big": "ñð"
+    },
+    "ToString": {
+      "b2one": "  ",
+      "s2one": "  ",
+      "b2big": "ñð",
+      "s2big": "ñð"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "String8" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "String8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string8",
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "óòñð",
+      "s4big": "óòñð",
+      "info": { "provider": "TestProviderDyn", "event": "string8", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"\u0001\u0000\u0000\u0000","s4one":"\u0001\u0000\u0000\u0000","b4big":"óòñð","s4big":"óòñð",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "óòñð",
+      "s4big": "óòñð"
+    },
+    "MoveNextSibling": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "óòñð",
+      "s4big": "óòñð"
+    },
+    "ToString": {
+      "b4one": "    ",
+      "s4one": "    ",
+      "b4big": "óòñð",
+      "s4big": "óòñð"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "String8" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "String8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string8",
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "÷öõôóòñð",
+      "s8big": "÷öõôóòñð",
+      "info": { "provider": "TestProviderDyn", "event": "string8", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"÷öõôóòñð","s8big":"÷öõôóòñð",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "÷öõôóòñð",
+      "s8big": "÷öõôóòñð"
+    },
+    "MoveNextSibling": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "÷öõôóòñð",
+      "s8big": "÷öõôóòñð"
+    },
+    "ToString": {
+      "b8one": "        ",
+      "s8one": "        ",
+      "b8big": "÷öõôóòñð",
+      "s8big": "÷öõôóòñð"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "String8" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "String8" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "String8" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string8",
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "ðñòóôõö÷øùúûüýþÿ",
+      "s16big": "ðñòóôõö÷øùúûüýþÿ",
+      "info": { "provider": "TestProviderDyn", "event": "string8", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"ðñòóôõö÷øùúûüýþÿ","s16big":"ðñòóôõö÷øùúûüýþÿ",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "ðñòóôõö÷øùúûüýþÿ",
+      "s16big": "ðñòóôõö÷øùúûüýþÿ"
+    },
+    "MoveNextSibling": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "ðñòóôõö÷øùúûüýþÿ",
+      "s16big": "ðñòóôõö÷øùúûüýþÿ"
+    },
+    "ToString": {
+      "b16one": "                ",
+      "s16one": "                ",
+      "b16big": "ðñòóôõö÷øùúûüýþÿ",
+      "s16big": "ðñòóôõö÷øùúûüýþÿ"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "StringUtf" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "StringUtf" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf",
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": "",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":"","s0one":"","b0big":"","s0big":"",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "MoveNextSibling": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "StringUtf" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "StringUtf" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf",
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"\u0001","s1one":"\u0001","b1big":"�","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": " ",
+      "s1one": " ",
+      "b1big": "�",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "StringUtf" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "StringUtf" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf",
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"\u0001\u0000","s2one":"\u0001\u0000","b2big":"��","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "  ",
+      "s2one": "  ",
+      "b2big": "��",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "StringUtf" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "StringUtf" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf",
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"\u0001\u0000\u0000\u0000","s4one":"\u0001\u0000\u0000\u0000","b4big":"����","s4big":"����",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "MoveNextSibling": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "ToString": {
+      "b4one": "    ",
+      "s4one": "    ",
+      "b4big": "����",
+      "s4big": "����"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "StringUtf" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "StringUtf" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf",
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"��������","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "        ",
+      "s8one": "        ",
+      "b8big": "��������",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "StringUtf" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtf" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "StringUtf" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf",
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"����������������","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "                ",
+      "s16one": "                ",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf_bom",
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": "",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf_bom", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":"","s0one":"","b0big":"","s0big":"",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "MoveNextSibling": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf_bom",
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf_bom", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"\u0001","s1one":"\u0001","b1big":"�","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": " ",
+      "s1one": " ",
+      "b1big": "�",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf_bom",
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf_bom", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"\u0001\u0000","s2one":"\u0001\u0000","b2big":"��","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "  ",
+      "s2one": "  ",
+      "b2big": "��",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf_bom",
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf_bom", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"\u0001\u0000\u0000\u0000","s4one":"\u0001\u0000\u0000\u0000","b4big":"����","s4big":"����",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "MoveNextSibling": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "ToString": {
+      "b4one": "    ",
+      "s4one": "    ",
+      "b4big": "����",
+      "s4big": "����"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf_bom",
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf_bom", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"��������","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "        ",
+      "s8one": "        ",
+      "b8big": "��������",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "StringUtfBom" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "StringUtfBom" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_utf_bom",
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "string_utf_bom", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"����������������","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "                ",
+      "s16one": "                ",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "StringXml" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "StringXml" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_xml",
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": "",
+      "info": { "provider": "TestProviderDyn", "event": "string_xml", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":"","s0one":"","b0big":"","s0big":"",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "MoveNextSibling": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "StringXml" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "StringXml" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_xml",
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "string_xml", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"\u0001","s1one":"\u0001","b1big":"�","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": " ",
+      "s1one": " ",
+      "b1big": "�",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "StringXml" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "StringXml" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_xml",
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "string_xml", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"\u0001\u0000","s2one":"\u0001\u0000","b2big":"��","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "  ",
+      "s2one": "  ",
+      "b2big": "��",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "StringXml" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "StringXml" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_xml",
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����",
+      "info": { "provider": "TestProviderDyn", "event": "string_xml", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"\u0001\u0000\u0000\u0000","s4one":"\u0001\u0000\u0000\u0000","b4big":"����","s4big":"����",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "MoveNextSibling": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "ToString": {
+      "b4one": "    ",
+      "s4one": "    ",
+      "b4big": "����",
+      "s4big": "����"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "StringXml" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "StringXml" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_xml",
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "string_xml", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"��������","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "        ",
+      "s8one": "        ",
+      "b8big": "��������",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "StringXml" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "StringXml" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "StringXml" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_xml",
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "string_xml", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"����������������","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "                ",
+      "s16one": "                ",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "StringJson" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "StringJson" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_json",
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": "",
+      "info": { "provider": "TestProviderDyn", "event": "string_json", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":"","s0one":"","b0big":"","s0big":"",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "MoveNextSibling": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "StringJson" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "StringJson" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_json",
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "string_json", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"\u0001","s1one":"\u0001","b1big":"�","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "\u0001",
+      "s1one": "\u0001",
+      "b1big": "�",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": " ",
+      "s1one": " ",
+      "b1big": "�",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "StringJson" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "StringJson" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_json",
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "string_json", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"\u0001\u0000","s2one":"\u0001\u0000","b2big":"��","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "\u0001\u0000",
+      "s2one": "\u0001\u0000",
+      "b2big": "��",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "  ",
+      "s2one": "  ",
+      "b2big": "��",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "StringJson" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "StringJson" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_json",
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����",
+      "info": { "provider": "TestProviderDyn", "event": "string_json", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"\u0001\u0000\u0000\u0000","s4one":"\u0001\u0000\u0000\u0000","b4big":"����","s4big":"����",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "MoveNextSibling": {
+      "b4one": "\u0001\u0000\u0000\u0000",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "����",
+      "s4big": "����"
+    },
+    "ToString": {
+      "b4one": "    ",
+      "s4one": "    ",
+      "b4big": "����",
+      "s4big": "����"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "StringJson" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "StringJson" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_json",
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "string_json", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"��������","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "��������",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "        ",
+      "s8one": "        ",
+      "b8big": "��������",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "StringJson" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "StringJson" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "StringJson" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:string_json",
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "string_json", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"����������������","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "                ",
+      "s16one": "                ",
+      "b16big": "����������������",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "Uuid" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "Uuid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:uuid",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "uuid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "Uuid" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "Uuid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:uuid",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "uuid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "Uuid" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "Uuid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:uuid",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "uuid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "Uuid" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "Uuid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:uuid",
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����",
+      "info": { "provider": "TestProviderDyn", "event": "uuid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"01 00 00 00","s4one":"\u0001\u0000\u0000\u0000","b4big":"F3 F2 F1 F0","s4big":"����",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    },
+    "MoveNextSibling": {
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    },
+    "ToString": {
+      "b4one": "01 00 00 00",
+      "s4one": "    ",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "Uuid" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "Uuid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:uuid",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "uuid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "Uuid" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "Uuid" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "Uuid" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:uuid",
+      "b16one": "00000000-0000-0000-0000-000000000001",
+      "s16one": "00000000-0000-0000-0000-000000000001",
+      "b16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff",
+      "s16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff",
+      "info": { "provider": "TestProviderDyn", "event": "uuid", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00000000-0000-0000-0000-000000000001","s16one":"00000000-0000-0000-0000-000000000001","b16big":"f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff","s16big":"f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00000000-0000-0000-0000-000000000001",
+      "s16one": "00000000-0000-0000-0000-000000000001",
+      "b16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff",
+      "s16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff"
+    },
+    "MoveNextSibling": {
+      "b16one": "00000000-0000-0000-0000-000000000001",
+      "s16one": "00000000-0000-0000-0000-000000000001",
+      "b16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff",
+      "s16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff"
+    },
+    "ToString": {
+      "b16one": "00000000-0000-0000-0000-000000000001",
+      "s16one": "00000000-0000-0000-0000-000000000001",
+      "b16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff",
+      "s16big": "f0f1f2f3-f4f5-f6f7-f8f9-fafbfcfdfeff"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "Port" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "Port" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:port",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "port", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "Port" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "Port" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:port",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "port", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "Port" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "Port" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:port",
+      "b2one": 256,
+      "s2one": 256,
+      "b2big": 61936,
+      "s2big": 61936,
+      "info": { "provider": "TestProviderDyn", "event": "port", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":256,"s2one":256,"b2big":61936,"s2big":61936,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": 256,
+      "s2one": 256,
+      "b2big": 61936,
+      "s2big": 61936
+    },
+    "MoveNextSibling": {
+      "b2one": 256,
+      "s2one": 256,
+      "b2big": 61936,
+      "s2big": 61936
+    },
+    "ToString": {
+      "b2one": "256",
+      "s2one": "256",
+      "b2big": "61936",
+      "s2big": "61936"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "Port" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "Port" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:port",
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����",
+      "info": { "provider": "TestProviderDyn", "event": "port", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"01 00 00 00","s4one":"\u0001\u0000\u0000\u0000","b4big":"F3 F2 F1 F0","s4big":"����",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    },
+    "MoveNextSibling": {
+      "b4one": "01 00 00 00",
+      "s4one": "\u0001\u0000\u0000\u0000",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    },
+    "ToString": {
+      "b4one": "01 00 00 00",
+      "s4one": "    ",
+      "b4big": "F3 F2 F1 F0",
+      "s4big": "����"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "Port" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "Port" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:port",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "port", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "Port" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "Port" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "Port" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:port",
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������",
+      "info": { "provider": "TestProviderDyn", "event": "port", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01","s16one":"\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001","b16big":"F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF","s16big":"����������������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "MoveNextSibling": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0000\u0001",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    },
+    "ToString": {
+      "b16one": "00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01",
+      "s16one": "                ",
+      "b16big": "F0 F1 F2 F3 F4 F5 F6 F7 F8 F9 FA FB FC FD FE FF",
+      "s16big": "����������������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "IPAddress" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "IPAddress" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "ip_address", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "IPAddress" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "IPAddress" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "IPAddress" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "IPAddress" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "IPAddress" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "IPAddress" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address",
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"1.0.0.0","s4one":"1.0.0.0","b4big":"243.242.241.240","s4big":"243.242.241.240",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240"
+    },
+    "MoveNextSibling": {
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240"
+    },
+    "ToString": {
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "IPAddress" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "IPAddress" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "IPAddress" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddress" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "IPAddress" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address",
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"::1","s16one":"::1","b16big":"f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff","s16big":"f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff"
+    },
+    "MoveNextSibling": {
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff"
+    },
+    "ToString": {
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b0one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s0one": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" },
+      "b0big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s0big": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address_obsolete",
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null,
+      "info": { "provider": "TestProviderDyn", "event": "ip_address_obsolete", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b0one":null,"s0one":null,"b0big":null,"s0big":null,
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "MoveNextSibling": {
+      "b0one": null,
+      "s0one": null,
+      "b0big": null,
+      "s0big": null
+    },
+    "ToString": {
+      "b0one": "",
+      "s0one": "",
+      "b0big": "",
+      "s0big": ""
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b1one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s1one": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" },
+      "b1big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s1big": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address_obsolete",
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address_obsolete", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b1one":"01","s1one":"\u0001","b1big":"F0","s1big":"�",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "MoveNextSibling": {
+      "b1one": "01",
+      "s1one": "\u0001",
+      "b1big": "F0",
+      "s1big": "�"
+    },
+    "ToString": {
+      "b1one": "01",
+      "s1one": " ",
+      "b1big": "F0",
+      "s1big": "�"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b2one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s2one": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" },
+      "b2big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s2big": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address_obsolete",
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address_obsolete", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b2one":"01 00","s2one":"\u0001\u0000","b2big":"F1 F0","s2big":"��",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "MoveNextSibling": {
+      "b2one": "01 00",
+      "s2one": "\u0001\u0000",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    },
+    "ToString": {
+      "b2one": "01 00",
+      "s2one": "  ",
+      "b2big": "F1 F0",
+      "s2big": "��"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b4one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s4one": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" },
+      "b4big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s4big": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address_obsolete",
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address_obsolete", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b4one":"1.0.0.0","s4one":"1.0.0.0","b4big":"243.242.241.240","s4big":"243.242.241.240",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240"
+    },
+    "MoveNextSibling": {
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240"
+    },
+    "ToString": {
+      "b4one": "1.0.0.0",
+      "s4one": "1.0.0.0",
+      "b4big": "243.242.241.240",
+      "s4big": "243.242.241.240"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b8one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s8one": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" },
+      "b8big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s8big": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address_obsolete",
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address_obsolete", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b8one":"01 00 00 00 00 00 00 00","s8one":"\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000","b8big":"F7 F6 F5 F4 F3 F2 F1 F0","s8big":"��������",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "MoveNextSibling": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "\u0001\u0000\u0000\u0000\u0000\u0000\u0000\u0000",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    },
+    "ToString": {
+      "b8one": "01 00 00 00 00 00 00 00",
+      "s8one": "        ",
+      "b8big": "F7 F6 F5 F4 F3 F2 F1 F0",
+      "s8big": "��������"
+    }
+  },
+  /* TestProviderDyn_L5K1 */
+  {
+    "MoveNextMetadata": {
+      "b16one": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s16one": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" },
+      "b16big": { "Encoding": "BinaryLength16Char8", "Format": "IPAddressObsolete" },
+      "s16big": { "Encoding": "StringLength16Char8", "Format": "IPAddressObsolete" }
+    },
+    "AppendJsonItemN": {
+      "n": "TestProviderDyn:ip_address_obsolete",
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "info": { "provider": "TestProviderDyn", "event": "ip_address_obsolete", "level": 5, "keyword": "0x1", "flags": "0x7" }
+    },
+    "AppendJsonItem1": {
+      "b16one":"::1","s16one":"::1","b16big":"f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff","s16big":"f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "info": { "keyword":1 }
+    },
+    "MoveNext": {
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff"
+    },
+    "MoveNextSibling": {
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff"
+    },
+    "ToString": {
+      "b16one": "::1",
+      "s16one": "::1",
+      "b16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff",
+      "s16big": "f0f1:f2f3:f4f5:f6f7:f8f9:fafb:fcfd:feff"
+    }
   }
 ]

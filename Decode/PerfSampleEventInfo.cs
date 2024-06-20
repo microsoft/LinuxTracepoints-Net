@@ -350,7 +350,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// PRECONDITION: Can be called after a successful call to reader.GetSampleEventInfo.
         /// </para><para>
         /// One name-value pair is appended for each metadata item that is both requested
-        /// by infoOptions and has a meaningful value available in the event info.
+        /// by metaOptions and has a meaningful value available in the event info.
         /// </para><para>
         /// The following metadata items are supported:
         /// <list type="bullet"><item>
@@ -373,16 +373,16 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// Returns true if a comma would be needed before subsequent JSON output, i.e. if
         /// addCommaBeforeNextItem was true OR if any metadata items were appended.
         /// </returns>
-        public readonly bool AppendJsonEventInfoTo(
+        public readonly bool AppendJsonEventMetaTo(
             StringBuilder sb,
             bool addCommaBeforeNextItem = false,
-            PerfInfoOptions infoOptions = PerfInfoOptions.Default,
+            PerfMetaOptions metaOptions = PerfMetaOptions.Default,
             PerfConvertOptions convertOptions = PerfConvertOptions.Default)
         {
-            return this.SessionInfo.AppendJsonEventInfoTo(
+            return this.SessionInfo.AppendJsonEventMetaTo(
                 sb,
                 addCommaBeforeNextItem,
-                infoOptions,
+                metaOptions,
                 convertOptions,
                 this.SampleType,
                 this.Time,
