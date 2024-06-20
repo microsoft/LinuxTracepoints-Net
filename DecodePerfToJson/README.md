@@ -3,6 +3,7 @@
 Tool for converting perf.data files to JSON text.
 
 ```
+
 Usage: DecodePerfToJson [options] input.perf.data
 
 Converts a perf.data file to JSON. Supports EventHeader-encoded events.
@@ -12,13 +13,13 @@ Options:
   -o, --output <file>  Write output to the specified file (default: stdout).
   -s, --sort <order>   Order events by file or time (default: time).
   -n, --nonsample      Include non-sample events in the output.
-  -i, --info <options> Comma-separated list of fields to include in "info".
+  -m, --meta <options> Comma-separated list of fields to include in "meta".
   -j, --json <options> Comma-separated list of JSON control options.
   -v, --validate       Validate the JSON output.
   -V, --novalidate     Do not validate the JSON output (default).
   -h, --help           Show this help message.
 
-Info options:
+Meta options:
 
   N               "n" field with the event identity before event.
   Time            "time" field with the event timestamp.
@@ -39,7 +40,7 @@ Info options:
   Flags           "flags" field with EventHeader provider flags.
   Common          Include "common" fields before the user fields.
 
-  Info fields will be omitted if not available or if the field has a default
+  Meta fields will be omitted if not available or if the field has a default
   value. For example, the "opcode" field will be omitted if it is 0, and the
   "tid" field will be omitted if it is the same as the "pid".
 
@@ -82,11 +83,12 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
-### 0.2.0 (TBD)
+### 0.2.0 (2024-06-19)
 
 - Add support for `BinaryLength16Char8` encoding.
 - Add support for extended formats for `StringLength16Char8` encoding.
 - Add support for `IPAddress` format.
+- Rename "info" suffix to "meta".
 
 ### 0.1.3 (2024-05-20)
 

@@ -26,7 +26,7 @@
     <PackageTags>Tracepoints;Perf;Perf.data</PackageTags>
     <RepositoryUrl>https://github.com/microsoft/LinuxTracepoints-Net</RepositoryUrl>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <VersionPrefix>0.1.3</VersionPrefix>
+    <VersionPrefix>0.2.0</VersionPrefix>
     <VersionSuffix>alpha</VersionSuffix>
 
   </PropertyGroup>

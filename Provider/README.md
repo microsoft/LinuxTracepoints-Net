@@ -163,7 +163,7 @@ provider.Dispose();
 
 ## Changelog
 
-### 0.2.0 (TBD)
+### 0.2.0 (2024-06-19)
 
 - Add support for `BinaryLength16Char8` encoding.
 
