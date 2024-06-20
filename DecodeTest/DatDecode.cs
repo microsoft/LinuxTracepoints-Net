@@ -143,7 +143,7 @@
                         this.writer.WriteCommentValue($"Pos {pos}: Unexpected state {e.State}.");
                     }
 
-                    this.writer.WritePropertyNameOnNewLine("info");
+                    this.writer.WritePropertyNameOnNewLine("meta");
                     this.writer.WriteStartObject();
 
                     eventInfo.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false, PerfMetaOptions.All, PerfConvertOptions.All);
@@ -171,7 +171,7 @@
                         this.writer.WriteCommentValue($"Pos {pos}: Unexpected state {e.State}.");
                     }
 
-                    this.writer.WritePropertyNameOnNewLine("info");
+                    this.writer.WritePropertyNameOnNewLine("meta");
                     this.writer.WriteStartObject();
 
                     eventInfo.AppendJsonEventMetaTo(this.writer.WriteRawValueBuilder(), false,

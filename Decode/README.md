@@ -119,7 +119,7 @@ project. Feedback and contributions are welcome.
 
 ## Changelog
 
-### 0.2.0 (TBD)
+### 0.2.0 (2024-06-19)
 
 - Renamed `PerfItemType` to `PerfItemMetadata`. Renamed corresponding
   methods and properties, `GetItemType()` ==> `GetItemMetadata()`,
