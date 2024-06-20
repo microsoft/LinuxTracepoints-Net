@@ -54,7 +54,7 @@ JSON options:
   FieldTag                    Fields with nonzero field tags are included in
                               field name e.g. "Name;tag=0xNN": value.
   FloatNonFiniteAsString      Non-finite float is a string instead of a null.
-  IntHexAsString                 Hex integer is string "0xNNN" instead of a
+  IntHexAsString              Hex integer is string "0xNNN" instead of a
                               number.
   BoolOutOfRangeAsString      Boolean other than 0..1 is string "BOOL(N)"
                               instead of a number.
