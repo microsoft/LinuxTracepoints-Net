@@ -68,7 +68,7 @@ namespace Microsoft.LinuxTracepoints.Decode
             return i;
         }
 
-        // Given p pointing after the opening brance, returns position after the closing brace.
+        // Given p pointing after the opening brace, returns position after the closing brace.
         public static int ConsumeBraced(int pos, ReadOnlySpan<char> str, char open, char close)
         {
             var i = pos;
