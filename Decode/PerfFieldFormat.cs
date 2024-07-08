@@ -60,7 +60,7 @@ namespace Microsoft.LinuxTracepoints.Decode
     public class PerfFieldFormat
     {
         /// <summary>
-        /// Initializes Field, Offset, and Size properties exactly as specified.
+        /// Initializes Field, Offset, Size, and Signed properties exactly as specified.
         /// Parses and deduces the other properties. The signed parameter should be null
         /// if the "signed:" property is not present in the format line.
         /// </summary>
@@ -134,9 +134,9 @@ namespace Microsoft.LinuxTracepoints.Decode
                             foundRelLoc = true;
                         }
                         else if (
-                            tokenizer.Value != "__attribute__" &&
-                            tokenizer.Value != "const" &&
-                            tokenizer.Value != "volatile")
+                            !tokenizer.Value.SequenceEqual("__attribute__") &&
+                            !tokenizer.Value.SequenceEqual("const") &&
+                            !tokenizer.Value.SequenceEqual("volatile"))
                         {
                             baseType = nameSpan;
                             nameSpan = tokenizer.Value;
