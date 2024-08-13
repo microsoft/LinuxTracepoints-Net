@@ -3,7 +3,7 @@
     using Microsoft.LinuxTracepoints.Decode;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using System;
-    using Path = System.IO.Path;
+    using System.IO;
     using ZipFile = System.IO.Compression.ZipFile;
 
     [TestClass]
@@ -30,46 +30,85 @@
         /// </summary>
         private void ParseFormat(string formatZipFileName)
         {
-            var formatBytesSpan = this.formatBytes.AsSpan();
-            var formatCharsSpan = this.formatChars.AsSpan();
-            var fakeEventDataSpan = this.fakeEventData.AsSpan();
-            using (var zip = ZipFile.OpenRead(Path.Combine(TestContext.TestDeploymentDir, "input", formatZipFileName)))
+            var actualDirectory = Path.Combine(TestContext.DeploymentDirectory, "actual");
+            Directory.CreateDirectory(actualDirectory);
+            var logFileName = Path.Combine(actualDirectory, Path.ChangeExtension(formatZipFileName, "log"));
+            using (var log = new StreamWriter(logFileName))
             {
-                foreach (var formatEntry in zip.Entries)
+                var formatBytesSpan = this.formatBytes.AsSpan();
+                var formatCharsSpan = this.formatChars.AsSpan();
+                var fakeEventDataSpan = this.fakeEventData.AsSpan();
+                using (var zip = ZipFile.OpenRead(Path.Combine(TestContext.TestDeploymentDir, "input", formatZipFileName)))
                 {
-                    Assert.IsTrue(formatEntry.Length <= FormatSizeMax, "Format file too large");
-                    var entryLength = (int)formatEntry.Length;
-
-                    var name = formatEntry.Name;
-                    var nameParts = name.Split(' ', 2); // All files should be named "SystemName EventName"
-                    var systemName = nameParts[0];
-                    var eventName = nameParts[1];
-
-                    using (var stream = formatEntry.Open())
+                    foreach (var formatEntry in zip.Entries)
                     {
-                        var bytesRead = stream.Read(formatBytesSpan);
-                        Assert.AreEqual(entryLength, bytesRead);
-                        var charsRead = PerfConvert.EncodingLatin1.GetChars(formatBytesSpan.Slice(0, bytesRead), formatCharsSpan);
-                        Assert.AreEqual(entryLength, charsRead);
-                    }
+                        Assert.IsTrue(formatEntry.Length <= FormatSizeMax, "Format file too large");
+                        var entryLength = (int)formatEntry.Length;
 
-                    var format = PerfEventFormat.Parse(false, systemName, formatCharsSpan.Slice(0, entryLength));
-                    Assert.IsNotNull(format);
-                    Assert.AreEqual(systemName, format.SystemName);
-                    Assert.AreEqual(eventName, format.Name);
-                    Assert.IsNotNull(format.PrintFmt);
-                    Assert.IsNotNull(format.Fields);
-                    Assert.AreNotEqual(0, format.Id);
-                    Assert.IsTrue(format.CommonFieldCount <= format.Fields.Count);
+                        var name = formatEntry.Name;
+                        var nameParts = name.Split(' ', 2); // All files should be named "SystemName EventName"
+                        var systemName = nameParts[0];
+                        var eventName = nameParts[1];
 
-                    foreach (var field in format.Fields)
-                    {
-                        Assert.IsNotNull(field.Name);
-                        Assert.IsNotNull(field.Field);
-                        field.GetFieldBytes(fakeEventDataSpan, PerfByteReader.HostEndian);
-                        field.GetFieldBytes(fakeEventDataSpan, PerfByteReader.SwapEndian);
-                        field.GetFieldValue(fakeEventDataSpan, PerfByteReader.HostEndian);
-                        field.GetFieldValue(fakeEventDataSpan, PerfByteReader.SwapEndian);
+                        using (var stream = formatEntry.Open())
+                        {
+                            var bytesRead = stream.Read(formatBytesSpan);
+                            Assert.AreEqual(entryLength, bytesRead);
+                            var charsRead = PerfConvert.EncodingLatin1.GetChars(formatBytesSpan.Slice(0, bytesRead), formatCharsSpan);
+                            Assert.AreEqual(entryLength, charsRead);
+                        }
+
+                        var format = PerfEventFormat.Parse(false, systemName, formatCharsSpan.Slice(0, entryLength));
+                        Assert.IsNotNull(format);
+                        Assert.AreEqual(systemName, format.SystemName);
+                        Assert.AreEqual(eventName, format.Name);
+                        Assert.IsNotNull(format.PrintFmt);
+                        Assert.IsNotNull(format.Fields);
+                        Assert.AreNotEqual(0, format.Id);
+                        Assert.IsTrue(format.CommonFieldCount <= format.Fields.Count);
+
+                        log.WriteLine(name);
+                        log.WriteLine("  sys={0}, nam={1}, id={2}, cfc={3}, cfs={4} ds={5}",
+                                format.SystemName,
+                                format.Name,
+                                format.Id,
+                                format.CommonFieldCount,
+                                format.CommonFieldsSize,
+                                format.DecodingStyle);
+
+                        foreach (var field in format.Fields)
+                        {
+                            Assert.IsNotNull(field.Name);
+                            Assert.IsNotNull(field.Field);
+                            field.GetFieldBytes(fakeEventDataSpan, PerfByteReader.HostEndian);
+                            field.GetFieldBytes(fakeEventDataSpan, PerfByteReader.SwapEndian);
+                            field.GetFieldValue(fakeEventDataSpan, PerfByteReader.HostEndian);
+                            field.GetFieldValue(fakeEventDataSpan, PerfByteReader.SwapEndian);
+
+                            var signedStr = !field.Signed.HasValue
+                                ? "default"
+                                : field.Signed.Value
+                                ? "signed"
+                                : "unsigned";
+                            log.WriteLine("  {0}: \"{1}\" {2} {3} {4}",
+                                field.Name,
+                                field.Field,
+                                field.Offset,
+                                field.Size,
+                                signedStr);
+                            log.WriteLine("  - array: {0} raw={1} deduced={2}",
+                                field.Array,
+                                field.SpecifiedArrayCount,
+                                field.DeducedArrayCount);
+                            log.WriteLine("  - enc: raw={0}/{1} deduced={2}/{3}",
+                                (int)field.SpecifiedEncoding,
+                                (int)field.SpecifiedFormat,
+                                (int)field.DeducedEncoding,
+                                (int)field.DeducedFormat);
+                            log.WriteLine("  - element: size={0} shift={1}",
+                                (byte)(1 << (field.ElementSizeShift & 0x1F)),
+                                field.ElementSizeShift);
+                        }
                     }
                 }
             }
