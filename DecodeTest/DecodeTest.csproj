@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <Target Name="CopyTestDependencies" AfterTargets="Build">
-    <Copy SourceFiles="$(NuGetPackageRoot)microsoft.applicationinsights\2.23.0\lib\netstandard2.0\Microsoft.ApplicationInsights.dll" DestinationFolder="$(TargetDir)" Condition="Exists('$(NuGetPackageRoot)microsoft.applicationinsights\2.23.0\lib\netstandard2.0\Microsoft.ApplicationInsights.dll')" />
+    <Copy SourceFiles="$(NuGetPackageRoot)microsoft.applicationinsights\**\lib\netstandard2.0\Microsoft.ApplicationInsights.dll" DestinationFolder="$(TargetDir)" />
   </Target>
 
   <ItemGroup>

@@ -13,7 +13,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RollForward>LatestMajor</RollForward>
