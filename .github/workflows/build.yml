@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          3.1.x
+          8.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore LinuxTracepoints-Net.sln
+
+    - name: Build
+      run: dotnet build LinuxTracepoints-Net.sln --no-restore --configuration Release
+
+    - name: Test
+      run: dotnet test LinuxTracepoints-Net.sln --no-build --configuration Release --verbosity normal
