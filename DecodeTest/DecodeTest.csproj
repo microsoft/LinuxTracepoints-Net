@@ -11,9 +11,9 @@
     <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
 
-  <Target Name="CopyTestDependencies" AfterTargets="Build">
+  <!-- <Target Name="CopyTestDependencies" AfterTargets="Build">
     <Copy SourceFiles="$(NuGetPackageRoot)microsoft.applicationinsights\**\lib\netstandard2.0\Microsoft.ApplicationInsights.dll" DestinationFolder="$(TargetDir)" />
-  </Target>
+  </Target> -->
 
   <ItemGroup>
     <Compile Include="..\DecodePerfToJson\PerfToJson.cs" Link="PerfToJson.cs" />
