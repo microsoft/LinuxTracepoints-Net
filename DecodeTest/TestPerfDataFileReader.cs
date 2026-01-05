@@ -17,7 +17,7 @@
 
         private void DecodeWithJsonWriter(string inputFileName)
         {
-            var inputFilePath = Path.Combine(TestContext.TestDeploymentDir, "input", inputFileName);
+            var inputFilePath = Path.Combine(TestContext.DeploymentDirectory, "input", inputFileName);
 
             var buffer = new ArrayBufferWriter<byte>();
             using (var decode = new DecodePerfJsonWriter(
@@ -41,7 +41,7 @@
 
         private void DecodeWithDataToWriter(string inputFileName)
         {
-            var inputFilePath = Path.Combine(TestContext.TestDeploymentDir, "input", inputFileName);
+            var inputFilePath = Path.Combine(TestContext.DeploymentDirectory, "input", inputFileName);
 
             var writer = new StringWriter(CultureInfo.InvariantCulture);
             using (var dataToWriter = new DataToWriter(writer, false))

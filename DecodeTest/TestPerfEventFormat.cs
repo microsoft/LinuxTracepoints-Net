@@ -38,7 +38,7 @@
                 var formatBytesSpan = this.formatBytes.AsSpan();
                 var formatCharsSpan = this.formatChars.AsSpan();
                 var fakeEventDataSpan = this.fakeEventData.AsSpan();
-                using (var zip = ZipFile.OpenRead(Path.Combine(TestContext.TestDeploymentDir, "input", formatZipFileName)))
+                using (var zip = ZipFile.OpenRead(Path.Combine(TestContext.DeploymentDirectory, "input", formatZipFileName)))
                 {
                     foreach (var formatEntry in zip.Entries)
                     {
@@ -64,7 +64,7 @@
                         Assert.AreEqual(eventName, format.Name);
                         Assert.IsNotNull(format.PrintFmt);
                         Assert.IsNotNull(format.Fields);
-                        Assert.AreNotEqual(0, format.Id);
+                        Assert.AreNotEqual<uint>(0, format.Id);
                         Assert.IsTrue(format.CommonFieldCount <= format.Fields.Count);
 
                         log.WriteLine(name);

@@ -16,7 +16,7 @@ namespace DecodeTest
 
             writer.Reset();
             writer.WriteStartArray();
-            decode.DecodeFile(Path.Combine(TestContext.TestDeploymentDir, "input", inputName));
+            decode.DecodeFile(Path.Combine(TestContext.DeploymentDirectory, "input", inputName));
             writer.WriteEndArrayOnNewLine();
 
             var result = writer.ToString();
