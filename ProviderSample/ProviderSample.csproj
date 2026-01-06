@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <IsPackable>False</IsPackable>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RollForward>LatestMajor</RollForward>

@@ -23,6 +23,8 @@
             string fileName,
             string actualText)
         {
+            Assert.IsNotNull(testContext.DeploymentDirectory);
+
             var actualDirectory = Path.Combine(testContext.DeploymentDirectory, "actual");
             Directory.CreateDirectory(actualDirectory);
 
@@ -39,7 +41,7 @@
             var expectedText = File.ReadAllText(expectedFilePath, Encoding.UTF8);
             var expectedLines = expectedText.Split(LineSplitChars, StringSplitOptions.RemoveEmptyEntries);
 
-            Assert.AreEqual(expectedLines.Length, actualLines.Length);
+            Assert.HasCount(expectedLines.Length, actualLines);
 
             bool anyDifferences = false;
             for (var i = 0; i < expectedLines.Length; i++)

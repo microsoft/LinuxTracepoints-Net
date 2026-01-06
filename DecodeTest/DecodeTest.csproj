@@ -1,34 +1,16 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="MSTest.Sdk">
 
   <Import Project="../Common.proj" />
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <OutputType>Library</OutputType>
-    <IsPackable>false</IsPackable>
-    <IsTestProject>true</IsTestProject>
+    <TargetFramework>net10.0</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
+    <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
   </PropertyGroup>
-
-  <!-- <Target Name="CopyTestDependencies" AfterTargets="Build">
-    <Copy SourceFiles="$(NuGetPackageRoot)microsoft.applicationinsights\**\lib\netstandard2.0\Microsoft.ApplicationInsights.dll" DestinationFolder="$(TargetDir)" />
-  </Target> -->
 
   <ItemGroup>
     <Compile Include="..\DecodePerfToJson\PerfToJson.cs" Link="PerfToJson.cs" />
     <Compile Include="..\DecodeSample\DataToWriter.cs" Link="DataToWriter.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="MSTest" Version="3.6.3">
-      <PrivateAssets>all</PrivateAssets>
-      <ExcludeAssets>runtime</ExcludeAssets>
-      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
-    <PackageReference Include="MSTest.TestAdapter" Version="3.6.3" />
-    <PackageReference Include="MSTest.TestFramework" Version="3.6.3" />
   </ItemGroup>
 
   <ItemGroup>

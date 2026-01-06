@@ -34,6 +34,6 @@ internal static class Utility
                 *p2 = BinaryPrimitives.ReverseEndianness(*p2);
             }
         }
-        MemoryMarshal.Write(destination, ref value);
+        MemoryMarshal.Write(destination, in value);
     }
 }

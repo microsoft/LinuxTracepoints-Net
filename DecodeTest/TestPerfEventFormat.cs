@@ -18,6 +18,7 @@
         public TestContext TestContext { get; set; } = null!;
 
         [TestMethod]
+        [DeploymentItem(@"input/formats0.zip", @"input")]
         public void ParseFormats()
         {
             ParseFormat("formats0.zip");
@@ -30,6 +31,8 @@
         /// </summary>
         private void ParseFormat(string formatZipFileName)
         {
+            Assert.IsNotNull(TestContext.DeploymentDirectory);
+            
             var actualDirectory = Path.Combine(TestContext.DeploymentDirectory, "actual");
             Directory.CreateDirectory(actualDirectory);
             var logFileName = Path.Combine(actualDirectory, Path.ChangeExtension(formatZipFileName, "log"));
@@ -42,7 +45,7 @@
                 {
                     foreach (var formatEntry in zip.Entries)
                     {
-                        Assert.IsTrue(formatEntry.Length <= FormatSizeMax, "Format file too large");
+                        Assert.IsLessThanOrEqualTo(FormatSizeMax, formatEntry.Length, "Format file too large");
                         var entryLength = (int)formatEntry.Length;
 
                         var name = formatEntry.Name;
@@ -65,7 +68,7 @@
                         Assert.IsNotNull(format.PrintFmt);
                         Assert.IsNotNull(format.Fields);
                         Assert.AreNotEqual<uint>(0, format.Id);
-                        Assert.IsTrue(format.CommonFieldCount <= format.Fields.Count);
+                        Assert.IsLessThanOrEqualTo(format.Fields.Count, format.CommonFieldCount);
 
                         log.WriteLine(name);
                         log.WriteLine("  sys={0}, nam={1}, id={2}, cfc={3}, cfs={4} ds={5}",

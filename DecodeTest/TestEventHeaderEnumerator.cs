@@ -11,6 +11,8 @@ namespace DecodeTest
 
         private void Decode(string inputName)
         {
+            Assert.IsNotNull(TestContext.DeploymentDirectory);
+            
             var writer = new JsonStringWriter(2);
             var decode = new DatDecode(writer);
 
@@ -24,6 +26,8 @@ namespace DecodeTest
         }
 
         [TestMethod]
+        [DeploymentItem(@"input/EventHeaderInterceptorLE64.dat", @"input")]
+        [DeploymentItem(@"expected/EventHeaderInterceptorLE64.dat.json", @"expected")]
         public void DecodeDat()
         {
             Decode("EventHeaderInterceptorLE64.dat");

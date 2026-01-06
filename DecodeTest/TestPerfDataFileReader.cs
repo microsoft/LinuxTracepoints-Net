@@ -17,6 +17,8 @@
 
         private void DecodeWithJsonWriter(string inputFileName)
         {
+            Assert.IsNotNull(TestContext.DeploymentDirectory);
+            
             var inputFilePath = Path.Combine(TestContext.DeploymentDirectory, "input", inputFileName);
 
             var buffer = new ArrayBufferWriter<byte>();
@@ -41,6 +43,8 @@
 
         private void DecodeWithDataToWriter(string inputFileName)
         {
+            Assert.IsNotNull(TestContext.DeploymentDirectory);
+
             var inputFilePath = Path.Combine(TestContext.DeploymentDirectory, "input", inputFileName);
 
             var writer = new StringWriter(CultureInfo.InvariantCulture);
@@ -53,6 +57,9 @@
         }
 
         [TestMethod]
+        [DeploymentItem(@"input/perf.data", @"input")]
+        [DeploymentItem(@"expected/perf.data.json", @"expected")]
+        [DeploymentItem(@"expected/perf.data.txt", @"expected")]
         public void DecodePerfData()
         {
             var inputName = "perf.data";
@@ -61,6 +68,9 @@
         }
 
         [TestMethod]
+        [DeploymentItem(@"input/pipe.data", @"input")]
+        [DeploymentItem(@"expected/pipe.data.json", @"expected")]
+        [DeploymentItem(@"expected/pipe.data.txt", @"expected")]
         public void DecodePipeData()
         {
             var inputName = "pipe.data";
