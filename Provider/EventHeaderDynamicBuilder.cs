@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#pragma warning disable CS9191 // "Consider using in instead" - requires .net 8+
+
 namespace Microsoft.LinuxTracepoints.Provider;
 
 using System;
@@ -2489,9 +2491,7 @@ public class EventHeaderDynamicBuilder : IDisposable
             this.addFailed = true;
         }
         else
-        {
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
+        {   
             MemoryMarshal.Write(dest, ref value);
         }
     }
@@ -2525,8 +2525,6 @@ public class EventHeaderDynamicBuilder : IDisposable
         }
         else
         {
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
             MemoryMarshal.Write(dest, ref value);
         }
     }
@@ -2548,8 +2546,6 @@ public class EventHeaderDynamicBuilder : IDisposable
         else
         {
             UInt16 lenU16 = (UInt16)value.Length;
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
             MemoryMarshal.Write(dest, ref lenU16);
             valueBytes.CopyTo(dest.Slice(sizeof(UInt16)));
         }
@@ -2591,8 +2587,6 @@ public class EventHeaderDynamicBuilder : IDisposable
         {
             valueBytes.CopyTo(dest);
             var zero = default(T);
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
             MemoryMarshal.Write(dest.Slice(valueBytes.Length), ref zero);
         }
     }
@@ -2609,8 +2603,6 @@ public class EventHeaderDynamicBuilder : IDisposable
         else
         {
             var countU16 = (UInt16)values.Length;
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
             MemoryMarshal.Write(dest, ref countU16);
             valuesBytes.CopyTo(dest.Slice(sizeof(UInt16)));
         }
@@ -2626,8 +2618,6 @@ public class EventHeaderDynamicBuilder : IDisposable
         else
         {
             var countU16 = (UInt16)values.Length;
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
             MemoryMarshal.Write(dest, ref countU16);
             var pos = sizeof(UInt16);
             foreach (var v in values)
@@ -2667,8 +2657,6 @@ public class EventHeaderDynamicBuilder : IDisposable
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
             metaSpan[pos++] = (byte)(format | EventHeaderFieldFormat.ChainFlag);
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
             MemoryMarshal.Write(metaSpan.Slice(pos), ref tag);
             pos += sizeof(UInt16);
             this.meta.SetUsed(pos);
@@ -2738,8 +2726,6 @@ public class EventHeaderDynamicBuilder : IDisposable
             metaSpan[pos++] = 0;
             metaSpan[pos++] = (byte)(encoding | EventHeaderFieldEncoding.ChainFlag);
             metaSpan[pos++] = (byte)(format | EventHeaderFieldFormat.ChainFlag);
-            // "Consider using in instead" - requires .net 8+
-            #pragma warning disable CS9191
             MemoryMarshal.Write(metaSpan.Slice(pos), ref tag);
             pos += sizeof(UInt16);
             this.meta.SetUsed(pos);

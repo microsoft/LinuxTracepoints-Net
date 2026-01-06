@@ -1065,7 +1065,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             id = m_byteReader.ReadU64(bytesSpan.Slice(m_sampleIdOffset));
 
-            PerfEventDesc eventDesc;
+            PerfEventDesc? eventDesc;
             if (!m_eventDescById.TryGetValue(id, out eventDesc))
             {
                 result = PerfDataFileResult.IdNotFound;
@@ -1393,7 +1393,7 @@ namespace Microsoft.LinuxTracepoints.Decode
 
             id = m_byteReader.ReadU64(bytesSpan.Slice(bytesSpan.Length - m_nonSampleIdOffset));
 
-            PerfEventDesc eventDesc;
+            PerfEventDesc? eventDesc;
             if (!m_eventDescById.TryGetValue(id, out eventDesc))
             {
                 result = PerfDataFileResult.IdNotFound;
@@ -2213,7 +2213,7 @@ namespace Microsoft.LinuxTracepoints.Decode
                 ids[i] = m_byteReader.ReadU64(idsBytes.Slice(i * sizeof(UInt64)));
             }
 
-            PerfEventFormat format;
+            PerfEventFormat? format;
             if (attr.Type != PerfEventAttrType.Tracepoint ||
                 !m_formatById.TryGetValue((UInt32)attr.Config, out format))
             {
@@ -2319,8 +2319,13 @@ namespace Microsoft.LinuxTracepoints.Decode
             public PerfEventHeader Header;
             public ReadOnlyMemory<byte> Memory;
 
-            public int CompareTo(QueueEntry other)
+            public int CompareTo(QueueEntry? other)
             {
+                if (other == null)
+                {
+                    return 1;
+                }
+
                 var compare = this.Time.CompareTo(other.Time);
                 if (compare == 0)
                 {

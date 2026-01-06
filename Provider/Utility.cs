@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#pragma warning disable CS9191 // "Consider using in instead" - requires .net 8+
+
 namespace Microsoft.LinuxTracepoints.Provider;
 
 using System;
@@ -34,8 +36,6 @@ internal static class Utility
                 *p2 = BinaryPrimitives.ReverseEndianness(*p2);
             }
         }
-        // "Consider using in instead" - requires .net 8+
-        #pragma warning disable CS9191
         MemoryMarshal.Write(destination, ref value);
     }
 }

@@ -66,7 +66,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns true if obj is PerfByteReader and this.FromBigEndian == obj.FromBigEndian.
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is PerfByteReader other)
             {
