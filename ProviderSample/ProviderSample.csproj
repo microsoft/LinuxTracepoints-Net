@@ -4,7 +4,7 @@
 
   <PropertyGroup>
     <IsPackable>False</IsPackable>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0;net10.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
     <RollForward>LatestMajor</RollForward>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>

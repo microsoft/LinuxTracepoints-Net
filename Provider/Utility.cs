@@ -34,6 +34,8 @@ internal static class Utility
                 *p2 = BinaryPrimitives.ReverseEndianness(*p2);
             }
         }
-        MemoryMarshal.Write(destination, in value);
+        // "Consider using in instead" - requires .net 8+
+        #pragma warning disable CS9191
+        MemoryMarshal.Write(destination, ref value);
     }
 }

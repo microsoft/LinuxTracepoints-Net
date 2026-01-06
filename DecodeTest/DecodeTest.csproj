@@ -3,7 +3,7 @@
   <Import Project="../Common.proj" />
 
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <UseCommonOutputDirectory>false</UseCommonOutputDirectory>
   </PropertyGroup>
