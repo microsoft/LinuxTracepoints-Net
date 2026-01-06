@@ -6,9 +6,9 @@
     <IsPackable>False</IsPackable>
     <TargetFramework>net8.0</TargetFramework>
     <OutputType>Exe</OutputType>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RollForward>LatestMajor</RollForward>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>

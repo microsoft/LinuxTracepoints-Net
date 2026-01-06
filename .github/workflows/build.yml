@@ -27,5 +27,3 @@ jobs:
 
     - name: Test
       run: dotnet test --solution LinuxTracepoints-Net.sln --configuration Release --verbosity normal
-      env:
-        VSTEST_HOST_DEBUG: 0
