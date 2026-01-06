@@ -4,11 +4,11 @@
 
   <PropertyGroup>
     <IsPackable>False</IsPackable>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0;net10.0</TargetFrameworks>
     <OutputType>Exe</OutputType>
-    <CheckEolTargetFramework>false</CheckEolTargetFramework>
     <RollForward>LatestMajor</RollForward>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <IsTestProject>false</IsTestProject>
   </PropertyGroup>
 
   <ItemGroup>

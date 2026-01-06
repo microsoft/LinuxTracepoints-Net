@@ -19,21 +19,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DecodeSample", "DecodeSample\DecodeSample.csproj", "{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}"
 EndProject
-Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "wpa", "C:\Program Files (x86)\Windows Kits\10\Windows Performance Toolkit\wpa.exe", "{D31B2680-10FB-4E19-A6AC-91A4A02601C4}"
-	ProjectSection(DebuggerProjectSystem) = preProject
-		PortSupplier = 00000000-0000-0000-0000-000000000000
-		Executable = E:\latest\wpa.exe
-		RemoteMachine = DCOOK2
-		StartingDirectory = E:\repos\LinuxTracepoints-Net\bin\
-		Arguments = -nodefault -addsearchdir E:\repos\LinuxTracepoints-Net\bin\Debug
-		Environment = Default
-		LaunchingEngine = 2e36f1d4-b23c-435d-ab41-18e608940038
-		UseLegacyDebugEngines = No
-		LaunchSQLEngine = No
-		AttachLaunchAction = No
-		IORedirection = Auto
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Provider", "Provider\Provider.csproj", "{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProviderSample", "ProviderSample\ProviderSample.csproj", "{DD16875B-C2E2-4DF7-B9A5-320F13048B23}"
@@ -64,8 +49,6 @@ Global
 		{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F0A5B56F-16A7-4151-9A19-26BD20DA8D5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D31B2680-10FB-4E19-A6AC-91A4A02601C4}.Debug|Any CPU.ActiveCfg = Release|Any CPU
-		{D31B2680-10FB-4E19-A6AC-91A4A02601C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3C34C8F-C9E8-4FD2-8E6C-59A358D64C01}.Release|Any CPU.ActiveCfg = Release|Any CPU

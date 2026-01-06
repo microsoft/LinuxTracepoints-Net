@@ -19,8 +19,8 @@
             byte[] bytes;
             DateTime dt;
 
-            Assert.AreEqual(null, PerfConvert.EncodingFromBom(Array.Empty<byte>()));
-            Assert.AreEqual(null, PerfConvert.EncodingFromBom(new byte[] { 1, 2, 3 }));
+            Assert.IsNull(PerfConvert.EncodingFromBom(Array.Empty<byte>()));
+            Assert.IsNull(PerfConvert.EncodingFromBom(new byte[] { 1, 2, 3 }));
             Assert.AreEqual(Encoding.UTF8, PerfConvert.EncodingFromBom(Encoding.UTF8.Preamble));
             Assert.AreEqual(Encoding.Unicode, PerfConvert.EncodingFromBom(Encoding.Unicode.Preamble));
             Assert.AreEqual(Encoding.BigEndianUnicode, PerfConvert.EncodingFromBom(Encoding.BigEndianUnicode.Preamble));

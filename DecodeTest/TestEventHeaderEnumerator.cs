@@ -11,12 +11,14 @@ namespace DecodeTest
 
         private void Decode(string inputName)
         {
+            Assert.IsNotNull(TestContext.DeploymentDirectory);
+            
             var writer = new JsonStringWriter(2);
             var decode = new DatDecode(writer);
 
             writer.Reset();
             writer.WriteStartArray();
-            decode.DecodeFile(Path.Combine(TestContext.TestDeploymentDir, "input", inputName));
+            decode.DecodeFile(Path.Combine(TestContext.DeploymentDirectory, "input", inputName));
             writer.WriteEndArrayOnNewLine();
 
             var result = writer.ToString();
@@ -24,6 +26,8 @@ namespace DecodeTest
         }
 
         [TestMethod]
+        [DeploymentItem(@"input/EventHeaderInterceptorLE64.dat", @"input")]
+        [DeploymentItem(@"expected/EventHeaderInterceptorLE64.dat.json", @"expected")]
         public void DecodeDat()
         {
             Decode("EventHeaderInterceptorLE64.dat");

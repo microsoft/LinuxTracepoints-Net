@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#pragma warning disable CA1512 // "Use 'ArgumentOutOfRangeException.ThrowIfGreaterThan'" - requires .net 8+
+
 namespace Microsoft.LinuxTracepoints.Decode
 {
     using System;

@@ -1,6 +1,8 @@
 ﻿// Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#pragma warning disable CS9191 // "Consider using in instead" - requires .net 8+
+
 namespace Microsoft.LinuxTracepoints.Provider;
 
 using System;
@@ -2489,7 +2491,7 @@ public class EventHeaderDynamicBuilder : IDisposable
             this.addFailed = true;
         }
         else
-        {
+        {   
             MemoryMarshal.Write(dest, ref value);
         }
     }

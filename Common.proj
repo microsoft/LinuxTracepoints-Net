@@ -11,7 +11,7 @@
 
     <BaseOutputPath>..\bin</BaseOutputPath>
     <IntermediateOutputPath>..\obj</IntermediateOutputPath>
-    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AppendTargetFrameworkToOutputPath>true</AppendTargetFrameworkToOutputPath>
     <UseCommonOutputDirectory>true</UseCommonOutputDirectory>
 
     <Authors>Microsoft</Authors>
@@ -26,15 +26,15 @@
     <PackageTags>Tracepoints;Perf;Perf.data</PackageTags>
     <RepositoryUrl>https://github.com/microsoft/LinuxTracepoints-Net</RepositoryUrl>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    <VersionPrefix>0.2.0</VersionPrefix>
+    <VersionPrefix>0.2.1</VersionPrefix>
     <VersionSuffix>alpha</VersionSuffix>
 
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\LinuxTracepoints.png">
+    <None Include="../LinuxTracepoints.png">
       <Pack>True</Pack>
-      <PackagePath>images\</PackagePath>
+      <PackagePath>images/</PackagePath>
     </None>
   </ItemGroup>
 

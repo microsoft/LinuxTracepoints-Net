@@ -135,7 +135,7 @@ namespace Microsoft.LinuxTracepoints.Decode
         /// <summary>
         /// Returns true if obj is a PerfTimeSpec and is equal to this.
         /// </summary>
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj is PerfTimeSpec other)
             {
